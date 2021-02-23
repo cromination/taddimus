@@ -18,6 +18,13 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 == Changelog ==
 
+##### [Version 3.0.10](https://github.com/Codeinwp/hestia-pro/compare/v3.0.9...v3.0.10) (2021-02-18)
+
+- [Fix] Starter content
+
+
+
+
 ##### [Version 3.0.9](https://github.com/Codeinwp/hestia-pro/compare/v3.0.8...v3.0.9) (2021-02-18)
 
 - [Feat] Improve the starter content

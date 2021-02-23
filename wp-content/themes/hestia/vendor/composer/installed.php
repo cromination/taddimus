@@ -1,24 +1,24 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => 'v3.0.9',
-    'version' => '3.0.9.0',
+    'pretty_version' => 'v3.0.10',
+    'version' => '3.0.10.0',
     'aliases' => 
     array (
     ),
-    'reference' => 'e941976fa7e2679527ada0b52ad797ef91da70a9',
+    'reference' => 'd0160c296e6487cf967fb171d7d2307be2452b68',
     'name' => 'codeinwp/hestia-pro',
   ),
   'versions' => 
   array (
     'codeinwp/hestia-pro' => 
     array (
-      'pretty_version' => 'v3.0.9',
-      'version' => '3.0.9.0',
+      'pretty_version' => 'v3.0.10',
+      'version' => '3.0.10.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'e941976fa7e2679527ada0b52ad797ef91da70a9',
+      'reference' => 'd0160c296e6487cf967fb171d7d2307be2452b68',
     ),
     'codeinwp/themeisle-sdk' => 
     array (

@@ -15,134 +15,78 @@ class Hestia_Starter_Content {
 	const CONTACT_SLUG = 'contact';
 
 	/**
+	 * Run the hooks and filters.
+	 */
+	public function __construct() {
+		$is_fresh_site = get_option( 'fresh_site' );
+
+		if ( ! $is_fresh_site ) {
+			return;
+		}
+
+		if ( ! is_customize_preview() ) {
+			return;
+		}
+
+		add_filter(
+			'default_post_metadata',
+			array( $this, 'starter_meta' ),
+			99,
+			3
+		);
+	}
+
+	/**
+	 * Load default starter meta.
+	 *
+	 * @param mixed  $value Value.
+	 * @param int    $post_id Post id.
+	 * @param string $meta_key Meta key.
+	 *
+	 * @return string Meta value.
+	 */
+	public function starter_meta( $value, $post_id, $meta_key ) {
+		if ( get_post_type( $post_id ) !== 'page' ) {
+			return $value;
+		}
+
+		if ( get_the_title( $post_id ) !== 'Contact' ) {
+			return $value;
+		}
+
+		if ( $meta_key === '_wp_page_template' ) {
+			return 'page-templates/template-pagebuilder-full-width.php';
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Navigation items
 	 *
 	 * @return array
 	 */
 	private function get_nav_menu_items() {
 		return array(
-			'page_home'           => array(
+			'page_home'        => array(
 				'type'      => 'post_type',
 				'object'    => 'page',
 				'object_id' => '{{' . self::HOME_SLUG . '}}',
 			),
-			'page_blog'           => array(
+			'page_blog'        => array(
 				'type'      => 'post_type',
 				'object'    => 'page',
 				'object_id' => '{{' . self::BLOG_SLUG . '}}',
 			),
-			'page_contact'        => array(
+			'page_contact'     => array(
 				'type'      => 'post_type',
 				'object'    => 'page',
 				'object_id' => '{{' . self::CONTACT_SLUG . '}}',
 			),
-			'link_menu_button'    => array(
-				'url'     => '#',
+			'link_menu_button' => array(
+				'url'     => '#about',
 				'title'   => _x( 'More', 'Theme starter content', 'hestia' ),
 				'classes' => array( 'btn', 'btn-round', 'btn-primary', 'hestia-mega-menu' ),
-			),
-			'link_mm_col_1'       => array(
-				'url'              => '#',
-				'title'            => _x( 'col-1', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-col' ),
-				'menu_item_parent' => -4,
-			),
-			'link_mm_col_1_title' => array(
-				'url'              => '#',
-				'title'            => _x( 'SETUP', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-heading' ),
-				'menu_item_parent' => -5,
-			),
-			'link_mm_col_1_1'     => array(
-				'url'              => '#',
-				'title'            => _x( '1 minute setup', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -5,
-			),
-			'link_mm_col_1_2'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Live Customizer', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -5,
-			),
-			'link_mm_col_1_3'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Video Tutorials', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -5,
-			),
-			'link_mm_col_2'       => array(
-				'url'              => '#',
-				'title'            => _x( 'col-2', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-col' ),
-				'menu_item_parent' => -4,
-			),
-			'link_mm_col_2_title' => array(
-				'url'              => '#',
-				'title'            => _x( 'CONTENT', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-heading' ),
-				'menu_item_parent' => -10,
-			),
-			'link_mm_col_2_1'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Custom Backgrounds', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -10,
-			),
-			'link_mm_col_2_2'     => array(
-				'url'              => '#',
-				'title'            => _x( 'SEO Optimized', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -10,
-			),
-			'link_mm_col_2_3'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Translation & RTL Ready', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -10,
-			),
-			'link_mm_col_3'       => array(
-				'url'              => '#',
-				'title'            => _x( 'col-3', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-col' ),
-				'menu_item_parent' => -4,
-			),
-			'link_mm_col_3_title' => array(
-				'url'              => '#',
-				'title'            => _x( 'DESIGN', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-heading' ),
-				'menu_item_parent' => -15,
-			),
-			'link_mm_col_3_1'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Responsive Design', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -15,
-			),
-			'link_mm_col_3_2'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Optimized for Speed', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -15,
-			),
-			'link_mm_col_3_3'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Fast Updates & Support', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -15,
-			),
-			'link_mm_col_4'       => array(
-				'url'              => '#',
-				'title'            => _x( 'col-4', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-col' ),
-				'menu_item_parent' => -4,
-			),
-			'link_mm_col_4_title' => array(
-				'url'              => '#',
-				'title'            => _x( 'INTEGRATIONS', 'Theme starter content', 'hestia' ),
-				'classes'          => array( 'hestia-mm-heading' ),
-				'menu_item_parent' => -20,
-			),
-			'link_mm_col_4_1'     => array(
-				'url'              => '#',
-				'title'            => _x( 'WooCommerce Ready', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -20,
-			),
-			'link_mm_col_4_2'     => array(
-				'url'              => '#',
-				'title'            => _x( 'Drag-and-Drop Builder', 'Theme starter content', 'hestia' ),
-				'menu_item_parent' => -20,
 			),
 		);
 	}
