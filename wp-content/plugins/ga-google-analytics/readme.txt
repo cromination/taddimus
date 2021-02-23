@@ -9,9 +9,9 @@ Author URI: https://plugin-planet.com/
 Donate link: https://monzillamedia.com/donate.html
 Contributors: specialk
 Requires at least: 4.1
-Tested up to: 5.6
-Stable tag: 20201120
-Version: 20201120
+Tested up to: 5.7
+Stable tag: 20210211
+Version: 20210211
 Requires PHP: 5.6.20
 Text Domain: ga-google-analytics
 Domain Path: /languages
@@ -42,7 +42,7 @@ To enable __Google Analytics 4__:
 1. Follow [this guide](https://support.google.com/analytics/answer/9306384) to create a GA 4 account
 2. During account creation, you'll get a tracking (measurement) ID
 3. Add your new tracking ID to the plugin setting, "GA Tracking ID"
-4. Select "Global Site Tag" for the plugin setting, "Global Site Tag"
+4. Select "Global Site Tag" for the plugin setting, "Tracking Method"
 
 Save changes and done. Wait 24-48 hours before viewing collected data in your GA account.
 
@@ -208,7 +208,7 @@ To enable __Google Analytics 4__:
 1. Follow [this guide](https://support.google.com/analytics/answer/9306384) to create a GA 4 account
 2. During account creation, you'll get a tracking (measurement) ID
 3. Add your new tracking ID to the plugin setting, "GA Tracking ID"
-4. Select "Global Site Tag" for the plugin setting, "Global Site Tag"
+4. Select "Global Site Tag" for the plugin setting, "Tracking Method"
 
 Save changes and done. Wait 24-48 hours before viewing collected data in your GA account.
 
@@ -319,6 +319,10 @@ If you like GA Google Analytics, please take a moment to [give a 5-star rating](
 
 > New Pro version available! Check out [GA Pro &raquo;](https://plugin-planet.com/ga-google-analytics-pro/)
 
+
+**20210211**
+
+* Tests on WordPress 5.7
 
 **20201120**
 
