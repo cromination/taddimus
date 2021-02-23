@@ -15,220 +15,252 @@ class Hestia_Woocommerce_Manager extends Hestia_Abstract_Module {
 	 *
 	 * @return bool|void
 	 */
-	function should_load() {
-		return class_exists( 'WooCommerce' );
+	protected function should_load() {
+		return class_exists( 'WooCommerce', false );
 	}
 
 	/**
 	 * Run module.
 	 */
 	function run_module() {
-		add_action( 'wp', array( $this, 'run' ) );
-		add_action( 'elementor/widget/before_render_content', array( $this, 'fix_related_products' ) );
-	}
-
-
-	/**
-	 * Fix related products in elementor preview.
-	 *
-	 * @return bool
-	 */
-	public function fix_related_products() {
-		if ( ! class_exists( '\Elementor\Plugin' ) ) {
-			return false;
-		}
-		if ( ! \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
-			return false;
-		}
-		if ( ! is_product() ) {
-			return false;
-		}
-		$this->manage_product_listing_layout();
-
-		return true;
-	}
-
-	/**
-	 * Manage shop elements
-	 */
-	public function run() {
-		$this->manage_before_shop_loop_elements();
-		$this->manage_sale_tag();
-		$this->manage_product_listing_layout();
-		$this->manage_related_products();
-		$this->load_fa_on_account();
-	}
-
-	/**
-	 * Load font awesome on account page.
-	 *
-	 * @return bool
-	 */
-	private function load_fa_on_account() {
-		if ( ! $this->should_load() ) {
-			return false;
-		}
-		if ( ! is_account_page() ) {
-			return false;
-		}
-		hestia_load_fa();
-		return true;
-	}
-
-	/**
-	 * Manage related products.
-	 */
-	private function manage_related_products() {
-		$hooks = array(
-			'add'    => array(
-				array( 'woocommerce_after_single_product', 'woocommerce_output_related_products', 20 ),
-			),
-			'remove' => array(
-				array( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 ),
-			),
+		$submodules = array(
+			'Hestia_Woo_Shop_Page'    => HESTIA_PHP_INCLUDE . 'modules/woo_enhancements/views/class-hestia-woo-shop-page.php',
+			'Hestia_Woo_Product_Page' => HESTIA_PHP_INCLUDE . 'modules/woo_enhancements/views/class-hestia-woo-product-page.php',
+			'Hestia_Woo_Account_Page' => HESTIA_PHP_INCLUDE . 'modules/woo_enhancements/views/class-hestia-woo-account-page.php',
 		);
-
-		$this->process_hooks( $hooks );
-
-		add_action(
-			'elementor/theme/before_do_single',
-			function() use ( $hooks ) {
-				$this->process_hooks( $hooks, true );
+		foreach ( $submodules as $module => $path ) {
+			if ( ! is_file( $path ) ) {
+				continue;
 			}
-		);
+			require $path;
+			$instance = new $module();
+			add_action( 'wp', array( $instance, 'run' ) );
+		}
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
 	/**
-	 * Manage product listing.
+	 * Check if there is an elementor template for shop.
 	 */
-	private function manage_product_listing_layout() {
-		$hooks = array(
-			'add'    => array(
-				array( 'woocommerce_before_shop_loop_item_title', 'hestia_woocommerce_template_loop_product_thumbnail', 10 ),
-				array( 'woocommerce_before_shop_loop_item', 'hestia_woocommerce_before_shop_loop_item', 10 ),
-				array( 'woocommerce_after_shop_loop_item', 'hestia_woocommerce_after_shop_loop_item', 20 ),
-				array( 'woocommerce_shop_loop_item_title', 'hestia_woocommerce_template_loop_product_title', 10 ),
-			),
-			'remove' => array(
-				array( 'woocommerce_before_shop_loop_item_title', 'woocommerce_template_loop_product_thumbnail', 10 ),
-				array( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 ),
-				array( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 ),
-				array( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 ),
-				array( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10 ),
-				array( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5 ),
-				array( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 ),
-			),
-		);
-
-		$this->process_hooks( $hooks );
+	public static function is_elementor_template( $location, $cond ) {
+		if ( ! did_action( 'elementor_pro/init' ) ) {
+			return false;
+		}
+		if ( ! class_exists( '\ElementorPro\Plugin', false ) ) {
+			return false;
+		}
+		$conditions_manager = \ElementorPro\Plugin::instance()->modules_manager->get_modules( 'theme-builder' )->get_conditions_manager();
+		$documents          = $conditions_manager->get_documents_for_location( $location );
+		foreach ( $documents as $document ) {
+			$conditions = $conditions_manager->get_document_conditions( $document );
+			foreach ( $conditions as $condition ) {
+				if ( 'include' === $condition['type'] && $cond === $condition['name'] ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
-	 * Process hooks.
+	 * Enqueue theme scripts.
+	 */
+	public function enqueue_scripts() {
+		$is_elementor_shop_template    = self::is_elementor_template( 'archive', 'product_archive' );
+		$is_elementor_product_template = self::is_elementor_template( 'single', 'product' );
+		if ( $is_elementor_shop_template || $is_elementor_product_template ) {
+			return false;
+		}
+
+		wp_enqueue_style( 'hestia_woocommerce_style', get_template_directory_uri() . '/assets/css/woocommerce' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.css', array(), HESTIA_VERSION );
+		wp_style_add_data( 'hestia_woocommerce_style', 'rtl', 'replace' );
+		if ( ! HESTIA_DEBUG ) {
+			wp_style_add_data( 'hestia_woocommerce_style', 'suffix', '.min' );
+		}
+
+		$hestia_cart_url = '';
+		if ( function_exists( 'wc_get_cart_url' ) ) {
+			$hestia_cart_url = wc_get_cart_url();
+		}
+
+		wp_localize_script(
+			'hestia_scripts',
+			'hestiaViewcart',
+			array(
+				'view_cart_label' => esc_html__( 'View cart', 'hestia' ), // label of View cart button,
+				'view_cart_link'  => esc_url( $hestia_cart_url ), // link of View cart button
+			)
+		);
+
+		wp_add_inline_style( 'hestia_woocommerce_style', $this->woo_colors_inline_style() );
+	}
+
+	/**
+	 * WooCommerce inline color style.
 	 *
-	 * @param array $hooks Hooks.
-	 * @param bool  $inverse Inverse flag.
+	 * @return string
 	 */
-	private function process_hooks( $hooks, $inverse = false ) {
-		$hooks_to_add    = $inverse === true ? $hooks['remove'] : $hooks['add'];
-		$hooks_to_remove = $inverse === true ? $hooks['add'] : $hooks['remove'];
-
-		foreach ( $hooks_to_add as $hook ) {
-			add_action( $hook[0], $hook[1], $hook[2] );
+	private function woo_colors_inline_style() {
+		if ( ! class_exists( 'WooCommerce', false ) ) {
+			return '';
 		}
 
-		foreach ( $hooks_to_remove as $hook ) {
-			remove_action( $hook[0], $hook[1], $hook[2] );
-		}
-	}
+		$color_accent           = get_theme_mod( 'accent_color', apply_filters( 'hestia_accent_color_default', '#e91e63' ) );
+		$custom_css_woocommerce = '';
 
-	/**
-	 * Manage elements that are displayed before shop content.
-	 */
-	private function manage_before_shop_loop_elements() {
-
-		/**
-		 * Remove breadcrumbs, result count, catalog ordering and taxonomy archive description to reposition them.
-		 */
-		add_action( 'woocommerce_before_main_content', array( $this, 'hestia_woocommerce_remove_shop_elements' ) );
-		add_action( 'hestia_woocommerce_custom_reposition_left_shop_elements', array( $this, 'hestia_woocommerce_reposition_left_shop_elements' ) );
-		add_action( 'hestia_woocommerce_custom_reposition_right_shop_elements', array( $this, 'hestia_woocommerce_reposition_right_shop_elements' ) );
-	}
-
-
-	/**
-	 * Reposition breadcrumb, sorting and results count - removing
-	 */
-	public function hestia_woocommerce_remove_shop_elements() {
-		remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20 );
-		remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
-		remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
-		remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description', 10 );
-	}
-
-	/**
-	 * Reposition breadcrumb and results count - adding
-	 */
-	public function hestia_woocommerce_reposition_left_shop_elements() {
-		woocommerce_breadcrumb();
-		woocommerce_result_count();
-	}
-
-	/**
-	 * Reposition ordering - adding
-	 */
-	public function hestia_woocommerce_reposition_right_shop_elements() {
-		woocommerce_catalog_ordering();
-	}
-
-	/**
-	 * Render the sidebar trigger button.
-	 */
-	private function render_sidebar_trigger() {
-		if ( ! is_active_sidebar( 'sidebar-woocommerce' ) ) {
-			return false;
-		}
-		if ( ! is_shop() && ! is_product_category() && ! is_product_tag() ) {
-			return false;
+		$custom_css_woocommerce .= ! empty( $color_accent ) ? '
+		.woocommerce-cart .shop_table .actions .coupon .input-text:focus,
+		.woocommerce-checkout #customer_details .input-text:focus, .woocommerce-checkout #customer_details select:focus,
+		.woocommerce-checkout #order_review .input-text:focus,
+		.woocommerce-checkout #order_review select:focus,
+		.woocommerce-checkout .woocommerce-form .input-text:focus,
+		.woocommerce-checkout .woocommerce-form select:focus,
+		.woocommerce div.product form.cart .variations select:focus,
+		.woocommerce .woocommerce-ordering select:focus {
+			background-image: -webkit-gradient(linear,left top, left bottom,from(' . esc_html( $color_accent ) . '),to(' . esc_html( $color_accent ) . ')),-webkit-gradient(linear,left top, left bottom,from(#d2d2d2),to(#d2d2d2));
+			background-image: -webkit-linear-gradient(linear,left top, left bottom,from(' . esc_html( $color_accent ) . '),to(' . esc_html( $color_accent ) . ')),-webkit-linear-gradient(linear,left top, left bottom,from(#d2d2d2),to(#d2d2d2));
+			background-image: linear-gradient(linear,left top, left bottom,from(' . esc_html( $color_accent ) . '),to(' . esc_html( $color_accent ) . ')),linear-gradient(linear,left top, left bottom,from(#d2d2d2),to(#d2d2d2));
 		}
 
-		$sidebar_layout = hestia_get_shop_sidebar_layout();
-		if ( $sidebar_layout === 'full-width' ) {
-			return false;
+		.woocommerce div.product .woocommerce-tabs ul.tabs.wc-tabs li.active a {
+			color:' . esc_html( $color_accent ) . ';
 		}
-		echo '<div class="hestia-sidebar-toggle-container">';
-		echo '<span class="hestia-sidebar-open btn btn-border"><i class="fas fa-filter" aria-hidden="true"></i></span>';
-		echo '</div>';
-
-		return true;
-	}
-
-	/**
-	 * Manage WooCommerce sale tag on products.
-	 */
-	private function manage_sale_tag() {
-		remove_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10 );
-		add_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 20 );
-
-		if ( is_product() ) {
-			remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 );
-			add_action( 'woocommerce_before_single_product_summary', array( $this, 'hestia_wrap_product_image' ), 18 );
-			add_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 21 );
-			add_action( 'woocommerce_before_single_product_summary', array( $this, 'hestia_close_wrap' ), 22 );
+		
+		.woocommerce div.product .woocommerce-tabs ul.tabs.wc-tabs li.active a,
+		.woocommerce div.product .woocommerce-tabs ul.tabs.wc-tabs li a:hover {
+			border-color:' . esc_html( $color_accent ) . '
 		}
-	}
+		
+		.woocommerce div.product form.cart .reset_variations:after{
+			background-color:' . esc_html( $color_accent ) . '
+		}
+		
+		.added_to_cart.wc-forward:hover,
+		#add_payment_method .wc-proceed-to-checkout a.checkout-button:hover,
+		#add_payment_method .wc-proceed-to-checkout a.checkout-button,
+		.added_to_cart.wc-forward,
+		.woocommerce nav.woocommerce-pagination ul li span.current,
+		.woocommerce ul.products li.product .onsale,
+		.woocommerce span.onsale,
+		.woocommerce .single-product div.product form.cart .button,
+		.woocommerce #respond input#submit,
+		.woocommerce button.button,
+		.woocommerce input.button,
+		.woocommerce-cart .wc-proceed-to-checkout a.checkout-button,
+		.woocommerce-checkout .wc-proceed-to-checkout a.checkout-button,
+		.woocommerce #respond input#submit.alt,
+		.woocommerce a.button.alt,
+		.woocommerce button.button.alt,
+		.woocommerce input.button.alt,
+		.woocommerce input.button:disabled,
+		.woocommerce input.button:disabled[disabled],
+		.woocommerce a.button.wc-backward,
+		.woocommerce .single-product div.product form.cart .button:hover,
+		.woocommerce #respond input#submit:hover,
+		.woocommerce button.button:hover,
+		.woocommerce input.button:hover,
+		.woocommerce-cart .wc-proceed-to-checkout a.checkout-button:hover,
+		.woocommerce-checkout .wc-proceed-to-checkout a.checkout-button:hover,
+		.woocommerce #respond input#submit.alt:hover,
+		.woocommerce a.button.alt:hover,
+		.woocommerce button.button.alt:hover,
+		.woocommerce input.button.alt:hover,
+		.woocommerce input.button:disabled:hover,
+		.woocommerce input.button:disabled[disabled]:hover,
+		.woocommerce #respond input#submit.alt.disabled,
+		.woocommerce #respond input#submit.alt.disabled:hover,
+		.woocommerce #respond input#submit.alt:disabled,
+		.woocommerce #respond input#submit.alt:disabled:hover,
+		.woocommerce #respond input#submit.alt:disabled[disabled],
+		.woocommerce #respond input#submit.alt:disabled[disabled]:hover,
+		.woocommerce a.button.alt.disabled,
+		.woocommerce a.button.alt.disabled:hover,
+		.woocommerce a.button.alt:disabled,
+		.woocommerce a.button.alt:disabled:hover,
+		.woocommerce a.button.alt:disabled[disabled],
+		.woocommerce a.button.alt:disabled[disabled]:hover,
+		.woocommerce button.button.alt.disabled,
+		.woocommerce button.button.alt.disabled:hover,
+		.woocommerce button.button.alt:disabled,
+		.woocommerce button.button.alt:disabled:hover,
+		.woocommerce button.button.alt:disabled[disabled],
+		.woocommerce button.button.alt:disabled[disabled]:hover,
+		.woocommerce input.button.alt.disabled,
+		.woocommerce input.button.alt.disabled:hover,
+		.woocommerce input.button.alt:disabled,
+		.woocommerce input.button.alt:disabled:hover,
+		.woocommerce input.button.alt:disabled[disabled],
+		.woocommerce input.button.alt:disabled[disabled]:hover,
+		.woocommerce-button,
+		.woocommerce-Button,
+		.woocommerce-button:hover,
+		.woocommerce-Button:hover,
+		#secondary div[id^=woocommerce_price_filter] .price_slider .ui-slider-range,
+		.footer div[id^=woocommerce_price_filter] .price_slider .ui-slider-range,
+		div[id^=woocommerce_product_tag_cloud].widget a,
+		div[id^=woocommerce_widget_cart].widget .buttons .button,
+		div.woocommerce table.my_account_orders .button {
+		    background-color: ' . esc_html( $color_accent ) . ';
+		}
+		
+		.added_to_cart.wc-forward,
+		.woocommerce .single-product div.product form.cart .button,
+		.woocommerce #respond input#submit,
+		.woocommerce button.button,
+		.woocommerce input.button,
+		#add_payment_method .wc-proceed-to-checkout a.checkout-button,
+		.woocommerce-cart .wc-proceed-to-checkout a.checkout-button,
+		.woocommerce-checkout .wc-proceed-to-checkout a.checkout-button,
+		.woocommerce #respond input#submit.alt,
+		.woocommerce a.button.alt,
+		.woocommerce button.button.alt,
+		.woocommerce input.button.alt,
+		.woocommerce input.button:disabled,
+		.woocommerce input.button:disabled[disabled],
+		.woocommerce a.button.wc-backward,
+		.woocommerce div[id^=woocommerce_widget_cart].widget .buttons .button,
+		.woocommerce-button,
+		.woocommerce-Button,
+		div.woocommerce table.my_account_orders .button {
+		    -webkit-box-shadow: 0 2px 2px 0 ' . hestia_hex_rgba( $color_accent, '0.14' ) . ',0 3px 1px -2px ' . hestia_hex_rgba( $color_accent, '0.2' ) . ',0 1px 5px 0 ' . hestia_hex_rgba( $color_accent, '0.12' ) . ';
+		    box-shadow: 0 2px 2px 0 ' . hestia_hex_rgba( $color_accent, '0.14' ) . ',0 3px 1px -2px ' . hestia_hex_rgba( $color_accent, '0.2' ) . ',0 1px 5px 0 ' . hestia_hex_rgba( $color_accent, '0.12' ) . ';
+		}
+		
+		.woocommerce nav.woocommerce-pagination ul li span.current,
+		.added_to_cart.wc-forward:hover,
+		.woocommerce .single-product div.product form.cart .button:hover,
+		.woocommerce #respond input#submit:hover,
+		.woocommerce button.button:hover,
+		.woocommerce input.button:hover,
+		#add_payment_method .wc-proceed-to-checkout a.checkout-button:hover,
+		.woocommerce-cart .wc-proceed-to-checkout a.checkout-button:hover,
+		.woocommerce-checkout .wc-proceed-to-checkout a.checkout-button:hover,
+		.woocommerce #respond input#submit.alt:hover,
+		.woocommerce a.button.alt:hover,
+		.woocommerce button.button.alt:hover,
+		.woocommerce input.button.alt:hover,
+		.woocommerce input.button:disabled:hover,
+		.woocommerce input.button:disabled[disabled]:hover,
+		.woocommerce a.button.wc-backward:hover,
+		.woocommerce div[id^=woocommerce_widget_cart].widget .buttons .button:hover,
+		.hestia-sidebar-open.btn.btn-rose:hover,
+		.hestia-sidebar-close.btn.btn-rose:hover,
+		.pagination span.current:hover,
+		.woocommerce-button:hover,
+		.woocommerce-Button:hover,
+		div.woocommerce table.my_account_orders .button:hover {
+			-webkit-box-shadow: 0 14px 26px -12px ' . hestia_hex_rgba( $color_accent, '0.42' ) . ',0 4px 23px 0 rgba(0,0,0,0.12),0 8px 10px -5px ' . hestia_hex_rgba( $color_accent, '0.2' ) . ';
+		    box-shadow: 0 14px 26px -12px ' . hestia_hex_rgba( $color_accent, '0.42' ) . ',0 4px 23px 0 rgba(0,0,0,0.12),0 8px 10px -5px ' . hestia_hex_rgba( $color_accent, '0.2' ) . ';
+			color: #fff;
+		}
+		
+		#secondary div[id^=woocommerce_price_filter] .price_slider .ui-slider-handle,
+		.footer div[id^=woocommerce_price_filter] .price_slider .ui-slider-handle {
+			border-color: ' . esc_html( $color_accent ) . ';
+		}
+		' : '';
 
-	/**
-	 * Wrap product image in a div.
-	 */
-	public function hestia_wrap_product_image() {
-		echo '<div class="hestia-product-image-wrap">';
-	}
-
-	/**
-	 * Close product image wrap.
-	 */
-	public function hestia_close_wrap() {
-		echo '</div>';
+		return $custom_css_woocommerce;
 	}
 }

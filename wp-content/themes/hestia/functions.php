@@ -6,7 +6,7 @@
  * @since   Hestia 1.0
  */
 
-define( 'HESTIA_VERSION', '3.0.8' );
+define( 'HESTIA_VERSION', '3.0.9' );
 define( 'HESTIA_VENDOR_VERSION', '1.0.2' );
 define( 'HESTIA_PHP_INCLUDE', trailingslashit( get_template_directory() ) . 'inc/' );
 define( 'HESTIA_CORE_DIR', HESTIA_PHP_INCLUDE . 'core/' );
@@ -29,6 +29,10 @@ if ( class_exists( 'WooCommerce', false ) ) {
 if ( function_exists( 'max_mega_menu_is_enabled' ) ) {
 	require_once( HESTIA_PHP_INCLUDE . 'compatibility/max-mega-menu/functions.php' );
 }
+
+// Load starter content
+require_once( HESTIA_PHP_INCLUDE . 'compatibility/class-hestia-starter-content.php' );
+
 
 /**
  * Adds notice for PHP < 5.3.29 hosts.

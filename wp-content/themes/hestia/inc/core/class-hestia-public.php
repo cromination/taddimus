@@ -105,25 +105,6 @@ class Hestia_Public {
 			return;
 		}
 
-		wp_enqueue_style( 'hestia_woocommerce_style', get_template_directory_uri() . '/assets/css/woocommerce' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.css', array(), HESTIA_VERSION );
-		wp_style_add_data( 'hestia_woocommerce_style', 'rtl', 'replace' );
-		if ( ! HESTIA_DEBUG ) {
-			wp_style_add_data( 'hestia_woocommerce_style', 'suffix', '.min' );
-		}
-
-		$hestia_cart_url = '';
-		if ( function_exists( 'wc_get_cart_url' ) ) {
-			$hestia_cart_url = wc_get_cart_url();
-		}
-
-		wp_localize_script(
-			'hestia_scripts',
-			'hestiaViewcart',
-			array(
-				'view_cart_label' => esc_html__( 'View cart', 'hestia' ), // label of View cart button,
-				'view_cart_link'  => esc_url( $hestia_cart_url ), // link of View cart button
-			)
-		);
 	}
 
 	/**
@@ -403,10 +384,12 @@ class Hestia_Public {
 		add_theme_support( 'custom-header', $header_settings );
 		add_theme_support( 'customize-selective-refresh-widgets' );
 		add_theme_support( 'custom-background', $custom_background_settings );
-		add_theme_support( 'starter-content', $this->get_starter_content() );
 		add_theme_support( 'themeisle-demo-import', $this->get_ti_demo_content_support_data() );
 		add_theme_support( 'align-wide' );
 		add_theme_support( 'header-footer-elementor' );
+		if ( class_exists( 'Hestia_Starter_Content', false ) ) {
+			add_theme_support( 'starter-content', ( new Hestia_Starter_Content() )->get() );
+		}
 
 		/**
 		 * Add support for wide alignments.
@@ -493,53 +476,6 @@ class Hestia_Public {
 	public function filter_html_widget_content( $content ) {
 		maybe_trigger_fa_loading( $content );
 		return $content;
-	}
-
-	/**
-	 * Get the starter content.
-	 *
-	 * @return array starter content.
-	 */
-	private function get_starter_content() {
-		$default_home_content        = '<div class="col-md-5"><h3>' . esc_html__( 'About Hestia', 'hestia' ) . '</h3>' . esc_html__( 'Need more details? Please check our full documentation for detailed information on how to use Hestia.', 'hestia' ) . '</div><div class="col-md-6 col-md-offset-1"><img class="size-medium alignright" src="' . esc_url( get_template_directory_uri() . '/assets/img/about-content.png' ) . '"/></div>';
-		$default_home_featured_image = get_template_directory_uri() . '/assets/img/contact.jpg';
-
-		/*
-		 * Starter Content Support
-		 */
-		$starter_content = array(
-			'attachments' => array(
-				'featured-image-home' => array(
-					'post_title'   => __( 'Featured Image Homepage', 'hestia' ),
-					'post_content' => __( 'Featured Image Homepage', 'hestia' ),
-					'file'         => 'assets/img/contact.jpg',
-				),
-			),
-			'posts'       => array(
-				'home' => array(
-					'post_content' => $default_home_content,
-					'thumbnail'    => '{{featured-image-home}}',
-				),
-				'blog',
-			),
-			'nav_menus'   => array(
-				'primary' => array(
-					'name'  => esc_html__( 'Primary Menu', 'hestia' ),
-					'items' => array(
-						'page_home',
-						'page_blog',
-					),
-				),
-			),
-			'options'     => array(
-				'show_on_front'            => 'page',
-				'page_on_front'            => '{{home}}',
-				'page_for_posts'           => '{{blog}}',
-				'hestia_feature_thumbnail' => $default_home_featured_image,
-			),
-		);
-
-		return $starter_content;
 	}
 
 	/**

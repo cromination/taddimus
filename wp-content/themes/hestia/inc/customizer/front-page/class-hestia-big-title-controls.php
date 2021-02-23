@@ -419,7 +419,7 @@ class Hestia_Big_Title_Controls extends Hestia_Front_Page_Section_Controls_Abstr
 			return;
 		}
 
-		$this->change_customizer_object( 'setting', 'hestia_big_title_background', 'default', esc_url( apply_filters( 'hestia_big_title_background_default', get_template_directory_uri() . '/assets/img/slider2.jpg' ) ) );
+		$this->change_customizer_object( 'setting', 'hestia_big_title_background', 'default', esc_url( apply_filters( 'hestia_big_title_background_default', get_template_directory_uri() . '/assets/img/slider1.jpg' ) ) );
 		$this->change_customizer_object( 'setting', 'hestia_big_title_title', 'default', esc_html__( 'Change in the Customizer', 'hestia' ) );
 		$this->change_customizer_object( 'setting', 'hestia_big_title_text', 'default', esc_html__( 'Change in the Customizer', 'hestia' ) );
 		$this->change_customizer_object( 'setting', 'hestia_big_title_button_text', 'default', esc_html__( 'Change in the Customizer', 'hestia' ) );

@@ -1021,7 +1021,7 @@ jQuery( document ).ready(
 	}
 );
 
-jQuery( window ).load(
+jQuery( window ).on( 'load',
 	function () {
 		jQuery.hestiaFeatures.initMasonry();
 		jQuery.hestia.sidebarToggle();

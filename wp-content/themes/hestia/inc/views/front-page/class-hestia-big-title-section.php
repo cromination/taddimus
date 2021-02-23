@@ -115,7 +115,7 @@ class Hestia_Big_Title_Section extends Hestia_First_Front_Page_Section {
 	protected function get_big_title_background() {
 		$background = '';
 		if ( ! $this->should_display_parallax() ) {
-			$background = get_theme_mod( 'hestia_big_title_background', apply_filters( 'hestia_big_title_background_default', get_template_directory_uri() . '/assets/img/slider2.jpg' ) );
+			$background = get_theme_mod( 'hestia_big_title_background', apply_filters( 'hestia_big_title_background_default', get_template_directory_uri() . '/assets/img/slider1.jpg' ) );
 		}
 
 		return $background;

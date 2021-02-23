@@ -762,10 +762,10 @@
 
                     // BUTTONS BOX SHADOW
                     style += 'div.wpforms-container .wpforms-form button[type=submit].wpforms-submit, body:not(.woocommerce-page) input[type="submit"], body:not(.woocommerce-page) input[type="button"], .btn.btn-primary:not(.btn-left):not(.btn-right), .woocommerce-product-search button, aside a.button, .widget.woocommerce a.button, .woocommerce.widget button, .woocommerce div[id^=woocommerce_widget_cart].widget .buttons .button, .single-product button.button.single_add_to_cart_button, .single-product #respond input#submit, .woocommerce-cart .wc-proceed-to-checkout a.checkout-button, .woocommerce-checkout button.button[type="submit"]' +
-                        '{ ' +
-                        '-webkit-box-shadow: 0 2px 2px 0 ' + accentColorVariation5 + ',0 3px 1px -2px ' + accentColorVariation2 + ',0 1px 5px 0 ' + accentColorVariation4 + ';' +
-                        'box-shadow: 0 2px 2px 0 ' + accentColorVariation5 + ',0 3px 1px -2px ' + accentColorVariation2 + ',0 1px 5px 0 ' + accentColorVariation4 + ';' +
-                        '}';
+                      '{ ' +
+                      '-webkit-box-shadow: 0 2px 2px 0 ' + accentColorVariation5 + ',0 3px 1px -2px ' + accentColorVariation2 + ',0 1px 5px 0 ' + accentColorVariation4 + ';' +
+                      'box-shadow: 0 2px 2px 0 ' + accentColorVariation5 + ',0 3px 1px -2px ' + accentColorVariation2 + ',0 1px 5px 0 ' + accentColorVariation4 + ';' +
+                      '}';
 
                     // BUTTONS BOX SHADOW ON HOVER
                     style += 'input#searchsubmit:hover, .pagination span.current, .btn.btn-primary:not(.btn-left):not(.btn-right):hover, .btn.btn-primary:focus, .btn.btn-primary:active, .btn.btn-primary.active, .btn.btn-primary:active:focus, .btn.btn-primary:not(.btn-left):not(.btn-right):active:hover, .woocommerce nav.woocommerce-pagination ul li span.current, .added_to_cart.wc-forward:hover, .woocommerce .single-product div.product form.cart .button:hover, .woocommerce #respond input#submit:hover, body:not(.woocommerce-cart) .woocommerce button.button:hover, .woocommerce input.button:hover, #add_payment_method .wc-proceed-to-checkout a.checkout-button:hover, .woocommerce-cart .wc-proceed-to-checkout a.checkout-button:hover, .woocommerce-checkout .wc-proceed-to-checkout a.checkout-button:hover, .woocommerce #respond input#submit.alt:hover, .woocommerce a.button.alt:hover, .woocommerce button.button.alt:hover, .woocommerce input.button.alt:hover, .woocommerce input.button:disabled:hover, .woocommerce input.button:disabled[disabled]:hover, .woocommerce-message a.button:hover, .woocommerce a.button.wc-backward:hover, .hestia-sidebar-open.btn.btn-rose:hover, .hestia-sidebar-close.btn.btn-rose:hover, div.wpforms-container .wpforms-form button[type=submit].wpforms-submit:hover, input[type="submit"]:hover, .woocommerce-product-search button:hover, aside a.button:hover' +

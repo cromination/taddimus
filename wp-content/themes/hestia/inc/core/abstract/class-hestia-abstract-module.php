@@ -22,7 +22,7 @@ abstract class Hestia_Abstract_Module {
 	 *
 	 * @return bool
 	 */
-	abstract function should_load();
+	abstract protected function should_load();
 
 	/**
 	 * Run module's functions.

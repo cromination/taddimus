@@ -1,9 +1,16 @@
+##### [Version 3.0.9](https://github.com/Codeinwp/hestia-pro/compare/v3.0.8...v3.0.9) (2021-02-18)
+
+- [Feat] Improve the starter content
+- [Fix] jQuery .load() function is deprecated
+- [Fix] Elementor Pro template for shop and single product
+- [Fix] Custom Layout can't be edited with PHP Editor
+- [Fix] Custom Layout can't be edited with Beaver Builder
+- [Fix] Custom Layout template not translatable with WPML
+- [Fix] Infinite scroll not working on product tags/categories
+- [Fix] The results counter of WooCommerce is not updating when loading a new page with infinite scroll
+- [Fix] The infinite scroll not working properly when having plain permalinks
+
 ##### [Version 3.0.8](https://github.com/Codeinwp/hestia-pro/compare/v3.0.7...v3.0.8) (2020-12-10)
-
-[Fix] Compatibility with WP 5.6
-[Fix] jQuery .load() function is deprecated
-
-##### [Version 3.0.7](https://github.com/Codeinwp/hestia-pro/compare/v3.0.6...v3.0.7) (2020-12-10)
 
 - [Fix] Compatibility with WP 5.6
 - [Fix] jQuery .load() function is deprecated

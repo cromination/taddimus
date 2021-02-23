@@ -123,7 +123,7 @@ var WPEditorWidget = {
     }
 };
 
-jQuery( window ).load(function () {
+jQuery( window ).on( 'load', function () {
 
 	var editor;
 
