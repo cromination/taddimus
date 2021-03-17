@@ -1,12 +1,12 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => 'v2.10.3',
-    'version' => '2.10.3.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => 'cbf5ab41a338c51c216ce5cd32c06666609cccf7',
+    'reference' => '0c06e77d520bebcf2962cb2bb3302530507fac05',
     'name' => 'codeinwp/themeisle-companion',
   ),
   'versions' => 
@@ -42,12 +42,12 @@
     ),
     'codeinwp/gutenberg-blocks' => 
     array (
-      'pretty_version' => '1.5.11',
-      'version' => '1.5.11.0',
+      'pretty_version' => '1.6.1',
+      'version' => '1.6.1.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'a7449863ee9c45bb201e25aedd51f0c86565c67d',
+      'reference' => '86ce7144e5c10d713443d04a35c026104083a5d1',
     ),
     'codeinwp/templates-directory' => 
     array (
@@ -61,12 +61,12 @@
     ),
     'codeinwp/themeisle-companion' => 
     array (
-      'pretty_version' => 'v2.10.3',
-      'version' => '2.10.3.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => 'cbf5ab41a338c51c216ce5cd32c06666609cccf7',
+      'reference' => '0c06e77d520bebcf2962cb2bb3302530507fac05',
     ),
     'codeinwp/themeisle-content-forms' => 
     array (
@@ -80,12 +80,12 @@
     ),
     'codeinwp/themeisle-sdk' => 
     array (
-      'pretty_version' => '3.2.16',
-      'version' => '3.2.16.0',
+      'pretty_version' => '3.2.18',
+      'version' => '3.2.18.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'b116dffbe39ea9e37169fdd683bab54c545fe560',
+      'reference' => '8ea22767fb6b2c453b678b3626c38db3b7c79fe5',
     ),
     'guzzlehttp/psr7' => 
     array (

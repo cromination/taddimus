@@ -74,9 +74,9 @@ abstract class Premium_Placeholder extends \Elementor\Widget_Base {
 			[
 				'raw'             => sprintf(
 					'<div><h3>%s</h3><a href="%s" target="_blank">%s</a></div>',
-					__( 'This widget is part of the pro version of Sizzify.', 'textdomain' ),
+					__( 'This widget is part of the pro version of Sizzify.', 'themeisle-companion' ),
 					$this->get_upsell_link(),
-					__( 'Upgrade Here!', 'textdomain' )
+					__( 'Upgrade Here!', 'themeisle-companion' )
 				),
 				'type'            => \Elementor\Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',

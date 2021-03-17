@@ -6,7 +6,7 @@ Author URI:     https://themeisle.com
 Tested up to:   5.6
 Requires PHP:   5.4.0
 Description:    Hestia is a modern WordPress theme for professionals. It fits creative business, small businesses (restaurants, wedding planners, sport/medical shops), startups, corporate businesses, online agencies and firms, portfolios, ecommerce (WooCommerce), and freelancers. It has a multipurpose one-page design, widgetized footer, blog/news page and a clean look, is compatible with: Flat Parallax Slider, Photo Gallery, Travel Map and Elementor Page Builder . The theme is responsive, WPML, Retina ready, SEO friendly, and uses Material Kit for design.
-Version:        3.0.10
+Version:        3.0.14
 License:        GNU General Public License v2 or later
 License URI:    http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:    hestia
@@ -1208,6 +1208,11 @@ body.menu-open {
 
 input[type="radio"] + label, input[type="checkbox"] + label {
   font-weight: 400;
+}
+
+blockquote.has-text-align-right {
+  border-left: 0;
+  border-right: 5px solid #eee;
 }
 
 blockquote cite {
@@ -6420,6 +6425,11 @@ body:not(.home) .wrapper .content-area {
   .team .card-image img,
   .authors-on-blog .card-image img {
     object-fit: cover;
+  }
+  .hestia-team .col-xs-6:nth-of-type(2n+1),
+  .team .col-xs-6:nth-of-type(2n+1),
+  .authors-on-blog .col-xs-6:nth-of-type(2n+1) {
+    clear: both;
   }
   .hestia-team .card .content,
   .team .card .content,

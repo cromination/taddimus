@@ -52,7 +52,7 @@ class CSS_Handler extends Base_CSS {
 						'id' => array(
 							'type'              => 'integer',
 							'required'          => true,
-							'description'       => __( 'ID of the Post.', 'textdomain' ),
+							'description'       => __( 'ID of the Post.', 'themeisle-companion' ),
 							'validate_callback' => function ( $param, $request, $key ) {
 								return is_numeric( $param );
 							},
@@ -76,7 +76,7 @@ class CSS_Handler extends Base_CSS {
 						'id' => array(
 							'type'              => 'integer',
 							'required'          => true,
-							'description'       => __( 'ID of the Reusable Block.', 'textdomain' ),
+							'description'       => __( 'ID of the Reusable Block.', 'themeisle-companion' ),
 							'validate_callback' => function ( $param, $request, $key ) {
 								return is_numeric( $param );
 							},
@@ -107,7 +107,7 @@ class CSS_Handler extends Base_CSS {
 		$post_id = $request->get_param( 'id' );
 		self::generate_css_file( $post_id );
 
-		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'textdomain' ) ) );
+		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'themeisle-companion' ) ) );
 	}
 
 	/**
@@ -178,7 +178,7 @@ class CSS_Handler extends Base_CSS {
 
 		self::save_css_file( $post_id, $css );
 
-		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'textdomain' ) ) );
+		return rest_ensure_response( array( 'message' => __( 'CSS updated.', 'themeisle-companion' ) ) );
 	}
 
 
@@ -339,7 +339,7 @@ class CSS_Handler extends Base_CSS {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'textdomain' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'themeisle-companion' ), '1.0.0' );
 	}
 
 	/**
@@ -351,6 +351,6 @@ class CSS_Handler extends Base_CSS {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'textdomain' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'themeisle-companion' ), '1.0.0' );
 	}
 }

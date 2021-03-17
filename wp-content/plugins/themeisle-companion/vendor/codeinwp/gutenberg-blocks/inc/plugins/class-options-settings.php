@@ -29,7 +29,7 @@ class Options_Settings {
 
 	/**
 	 * Register Settings
-	 * 
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 */
@@ -39,7 +39,7 @@ class Options_Settings {
 			'themeisle_google_map_block_api_key',
 			array(
 				'type'              => 'string',
-				'description'       => __( 'Google Map API key for the Google Maps Gutenberg Block.', 'textdomain' ),
+				'description'       => __( 'Google Map API key for the Google Maps Gutenberg Block.', 'themeisle-companion' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'show_in_rest'      => true,
 				'default'           => '',
@@ -51,7 +51,7 @@ class Options_Settings {
 			'themeisle_blocks_settings_default_block',
 			array(
 				'type'              => 'boolean',
-				'description'       => __( 'Make Section block your default block for Pages?', 'textdomain' ),
+				'description'       => __( 'Make Section block your default block for Pages?', 'themeisle-companion' ),
 				'sanitize_callback' => 'rest_sanitize_boolean',
 				'show_in_rest'      => true,
 				'default'           => true,
@@ -63,7 +63,7 @@ class Options_Settings {
 			'themeisle_blocks_settings_global_defaults',
 			array(
 				'type'              => 'string',
-				'description'       => __( 'Global defaults for Gutenberg Blocks.', 'textdomain' ),
+				'description'       => __( 'Global defaults for Gutenberg Blocks.', 'themeisle-companion' ),
 				'sanitize_callback' => 'sanitize_text_field',
 				'show_in_rest'      => true,
 				'default'           => '',
@@ -75,7 +75,7 @@ class Options_Settings {
 			'themeisle_allow_json_upload',
 			array(
 				'type'              => 'boolean',
-				'description'       => __( 'Allow JSON Upload to Media Library.', 'textdomain' ),
+				'description'       => __( 'Allow JSON Upload to Media Library.', 'themeisle-companion' ),
 				'sanitize_callback' => 'rest_sanitize_boolean',
 				'show_in_rest'      => true,
 				'default'           => false,
@@ -85,7 +85,7 @@ class Options_Settings {
 
 	/**
 	 * Display Default Block
-	 * 
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 */
@@ -130,7 +130,7 @@ class Options_Settings {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'textdomain' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'themeisle-companion' ), '1.0.0' );
 	}
 
 	/**
@@ -142,6 +142,6 @@ class Options_Settings {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'textdomain' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'themeisle-companion' ), '1.0.0' );
 	}
 }

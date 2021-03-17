@@ -17,8 +17,8 @@ $html = '';
 if ( is_array( $templates_array ) ) { ?>
 	<div class="obfx-template-dir wrap">
 
-        <h2 class="wp-heading-inline"> <?php echo apply_filters( 'obfx_template_dir_page_title', __( 'Orbit Fox Template Directory', 'textdomain' ) ); ?></h2>
-        <button id="obfx-template-dir-fetch-templates" class="button-primary button"><i class="dashicons dashicons-update"></i><?php echo __( 'Sync Templates', 'textdomain' ); ?></button>
+        <h2 class="wp-heading-inline"> <?php echo apply_filters( 'obfx_template_dir_page_title', __( 'Orbit Fox Template Directory', 'themeisle-companion' ) ); ?></h2>
+        <button id="obfx-template-dir-fetch-templates" class="button-primary button"><i class="dashicons dashicons-update"></i><?php echo __( 'Sync Templates', 'themeisle-companion' ); ?></button>
         <div class="obfx-template-browser">
 			<?php
 			foreach ( $templates_array as $template => $properties ) {
@@ -30,7 +30,7 @@ if ( is_array( $templates_array ) ) { ?>
 					<div class="more-details obfx-preview-template"
 						 data-demo-url="<?php echo esc_url( $properties['demo_url'] ); ?>"
 						 data-template-slug="<?php echo esc_attr( $template ); ?>">
-						<span><?php echo __( 'More Details', 'textdomain' ); ?></span></div>
+						<span><?php echo __( 'More Details', 'themeisle-companion' ); ?></span></div>
 					<div class="obfx-template-screenshot">
 						<img src="<?php echo esc_url( $properties['screenshot'] ); ?>"
 							 alt="<?php echo esc_html( $properties['title'] ); ?>">
@@ -41,7 +41,7 @@ if ( is_array( $templates_array ) ) { ?>
 						<?php if ( ! empty( $properties['demo_url'] ) ) { ?>
 							<a class="button obfx-preview-template"
 							   data-demo-url="<?php echo esc_url( $properties['demo_url'] ); ?>"
-							   data-template-slug="<?php echo esc_attr( $template ); ?>"><?php echo __( 'Preview', 'textdomain' ); ?></a>
+							   data-template-slug="<?php echo esc_attr( $template ); ?>"><?php echo __( 'Preview', 'themeisle-companion' ); ?></a>
 						<?php } ?>
 					</div>
 				</div>
@@ -56,16 +56,16 @@ if ( is_array( $templates_array ) ) { ?>
 	<div class="wp-full-overlay-sidebar">
 		<div class="wp-full-overlay-header">
 			<button class="close-full-overlay"><span
-						class="screen-reader-text"><?php esc_html_e( 'Close', 'textdomain' ); ?></span></button>
+						class="screen-reader-text"><?php esc_html_e( 'Close', 'themeisle-companion' ); ?></span></button>
 			<div class="obfx-next-prev">
 				<button class="previous-theme"><span
-							class="screen-reader-text"><?php esc_html_e( 'Previous', 'textdomain' ); ?></span></button>
+							class="screen-reader-text"><?php esc_html_e( 'Previous', 'themeisle-companion' ); ?></span></button>
 				<button class="next-theme"><span
-							class="screen-reader-text"><?php esc_html_e( 'Next', 'textdomain' ); ?></span></button>
+							class="screen-reader-text"><?php esc_html_e( 'Next', 'themeisle-companion' ); ?></span></button>
 			</div>
-			<span class="obfx-import-template button button-primary"><?php esc_html_e( 'Import', 'textdomain' ); ?></span>
+			<span class="obfx-import-template button button-primary"><?php esc_html_e( 'Import', 'themeisle-companion' ); ?></span>
 			<a href="https://themeisle.com/plugins/sizzify-elementor-addons-templates" target="_blank"
-  class="obfx-upsell-button button button-primary"><?php esc_html_e( 'See Pro Version', 'textdomain' ); ?></a>
+  class="obfx-upsell-button button button-primary"><?php esc_html_e( 'See Pro Version', 'themeisle-companion' ); ?></a>
 
 		</div>
 		<div class="wp-full-overlay-sidebar-content">
@@ -98,7 +98,7 @@ if ( is_array( $templates_array ) ) { ?>
 					<?php
 					if ( ! empty( $properties['required_plugins'] ) && is_array( $properties['required_plugins'] ) ) { ?>
 						<div class="obfx-required-plugins">
-							<p><?php esc_html_e( 'Required Plugins', 'textdomain' ); ?></p>
+							<p><?php esc_html_e( 'Required Plugins', 'themeisle-companion' ); ?></p>
 							<?php
 							foreach ( $properties['required_plugins'] as $plugin_slug => $details ) {
 								if ( $this->check_plugin_state( $plugin_slug ) === 'install' ) {
@@ -129,18 +129,18 @@ if ( is_array( $templates_array ) ) { ?>
 		<div class="wp-full-overlay-footer">
 			<button type="button" class="collapse-sidebar button" aria-expanded="true" aria-label="Collapse Sidebar">
 				<span class="collapse-sidebar-arrow"></span>
-				<span class="collapse-sidebar-label"><?php esc_html_e( 'Collapse', 'textdomain' ); ?></span>
+				<span class="collapse-sidebar-label"><?php esc_html_e( 'Collapse', 'themeisle-companion' ); ?></span>
 			</button>
 			<div class="devices-wrapper">
 				<div class="devices obfx-responsive-preview">
 					<button type="button" class="preview-desktop active" aria-pressed="true" data-device="desktop">
-						<span class="screen-reader-text"><?php esc_html_e( 'Enter desktop preview mode', 'textdomain' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Enter desktop preview mode', 'themeisle-companion' ); ?></span>
 					</button>
 					<button type="button" class="preview-tablet" aria-pressed="false" data-device="tablet">
-						<span class="screen-reader-text"><?php esc_html_e( 'Enter tablet preview mode', 'textdomain' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Enter tablet preview mode', 'themeisle-companion' ); ?></span>
 					</button>
 					<button type="button" class="preview-mobile" aria-pressed="false" data-device="mobile">
-						<span class="screen-reader-text"><?php esc_html_e( 'Enter mobile preview mode', 'textdomain' ); ?></span>
+						<span class="screen-reader-text"><?php esc_html_e( 'Enter mobile preview mode', 'themeisle-companion' ); ?></span>
 					</button>
 				</div>
 			</div>

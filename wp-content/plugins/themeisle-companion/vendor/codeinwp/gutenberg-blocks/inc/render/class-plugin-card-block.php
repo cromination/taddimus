@@ -98,25 +98,25 @@ class Plugin_Card_Block extends Base_Block {
 					<div class="wp-block-themeisle-blocks-plugin-cards-details">
 						<div class="wp-block-themeisle-blocks-plugin-cards-description">' . esc_html( $results->short_description ) . '</div>
 						<div class="wp-block-themeisle-blocks-plugin-cards-stats">
-							<h5>' . __( 'Plugin Stats', 'textdomain' ) . '</h5>
+							<h5>' . __( 'Plugin Stats', 'themeisle-companion' ) . '</h5>
 							<div class="wp-block-themeisle-blocks-plugin-cards-stats-list">
 								<div class="wp-block-themeisle-blocks-plugin-cards-stat">
 									<span class="wp-block-themeisle-blocks-plugin-cards-text-large">' . number_format( $results->active_installs ) . '+</span>
-									' . __( 'active installs', 'textdomain' ) . '
+									' . __( 'active installs', 'themeisle-companion' ) . '
 								</div>
 								<div class="wp-block-themeisle-blocks-plugin-cards-stat">
 									<span class="wp-block-themeisle-blocks-plugin-cards-text-large">' . floatval( $results->version ) . '+</span>
-									' . __( 'version', 'textdomain' ) . '
+									' . __( 'version', 'themeisle-companion' ) . '
 								</div>
 								<div class="wp-block-themeisle-blocks-plugin-cards-stat">
 									<span class="wp-block-themeisle-blocks-plugin-cards-text-large">' . floatval( $results->tested ) . '+</span>
-									' . __( 'tested up to', 'textdomain' ) . '
+									' . __( 'tested up to', 'themeisle-companion' ) . '
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="wp-block-themeisle-blocks-plugin-cards-download">
-						<a href="' . esc_url( $results->download_link ) . '">' . __( 'Download', 'textdomain' ) . '</a>
+						<a href="' . esc_url( $results->download_link ) . '">' . __( 'Download', 'themeisle-companion' ) . '</a>
 					</div>
 				</div>
 			</div>';
@@ -138,7 +138,7 @@ class Plugin_Card_Block extends Base_Block {
 	protected function search( $request ) {
 		$return = array(
 			'success' => false,
-			'data'    => esc_html__( 'Something went wrong', 'textdomain' ),
+			'data'    => esc_html__( 'Something went wrong', 'themeisle-companion' ),
 		);
 
 		$slug = $request;

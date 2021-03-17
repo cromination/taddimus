@@ -341,7 +341,7 @@ class Rollback extends Abstract_Module {
 	 * @return bool Which version is greater?
 	 */
 	public function sort_rollback_array( $a, $b ) {
-		return version_compare( $a['version'], $b['version'], '<' ) > 0;
+		return version_compare( $b['version'], $a['version'] );
 	}
 
 	/**

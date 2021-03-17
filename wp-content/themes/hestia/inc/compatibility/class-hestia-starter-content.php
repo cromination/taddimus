@@ -50,12 +50,15 @@ class Hestia_Starter_Content {
 			return $value;
 		}
 
-		if ( get_the_title( $post_id ) !== 'Contact' ) {
-			return $value;
-		}
-
 		if ( $meta_key === '_wp_page_template' ) {
-			return 'page-templates/template-pagebuilder-full-width.php';
+
+			if ( get_the_title( $post_id ) === 'Contact' ) {
+				return 'page-templates/template-pagebuilder-full-width.php';
+			}
+
+			if ( get_the_title( $post_id ) === 'Home' ) {
+				return '';
+			}
 		}
 
 		return $value;
@@ -126,6 +129,17 @@ class Hestia_Starter_Content {
 		$nav_items                   = $this->get_nav_menu_items();
 		$contact_default             = $this->get_default_contact_content();
 		$default_home_featured_image = get_template_directory_uri() . '/assets/img/contact.jpg';
+		$default_slides              = array(
+			array(
+				'image_url' => get_template_directory_uri() . '/assets/img/slider1.jpg',
+				'title'     => esc_html__( 'Lorem Ipsum', 'hestia' ),
+				'subtitle'  => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'hestia' ),
+				'text'      => esc_html__( 'Button', 'hestia' ),
+				'link'      => '#',
+				'id'        => 'customizer_repeater_56d7ea7f40a56',
+				'color'     => '#e91e63',
+			),
+		);
 
 		return array(
 			'theme_mods'  => array(
@@ -136,6 +150,8 @@ class Hestia_Starter_Content {
 				'hestia_contact_title'         => 'Get in Touch',
 				'hestia_contact_content_new'   => $contact_default,
 				'hestia_blog_sidebar_layout'   => 'full-width',
+				'hestia_slider_content'        => json_encode( $default_slides ),
+				'disable_frontpage_sections'   => false,
 			),
 			'attachments' => array(
 				'featured-image-home' => array(

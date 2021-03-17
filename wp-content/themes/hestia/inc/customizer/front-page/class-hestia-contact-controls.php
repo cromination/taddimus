@@ -152,7 +152,7 @@ class Hestia_Contact_Controls extends Hestia_Front_Page_Section_Controls_Abstrac
 				'hestia_contact_content_new',
 				array(
 					'default'           => wp_kses_post( $this->content_default() ),
-					'sanitize_callback' => 'wp_kses_post',
+					'sanitize_callback' => 'Hestia_Contact_Controls::sanitize_contact_field',
 					'transport'         => $this->selective_refresh,
 				),
 				array(
@@ -220,5 +220,24 @@ class Hestia_Contact_Controls extends Hestia_Front_Page_Section_Controls_Abstrac
 	public function change_controls() {
 		$this->change_customizer_object( 'setting', 'hestia_contact_title', 'default', esc_html__( 'Get in Touch', 'hestia' ) );
 		$this->change_customizer_object( 'setting', 'hestia_contact_subtitle', 'default', esc_html__( 'Change this subtitle in the Customizer', 'hestia' ) );
+	}
+
+	/**
+	 * Sanitize contact input
+	 *
+	 * @param string $content Contact field content.
+	 *
+	 * @return string
+	 */
+	public static function sanitize_contact_field( $content ) {
+		$allowed_tags           = wp_kses_allowed_html( 'post' );
+		$allowed_tags['iframe'] = array(
+			'src'             => true,
+			'height'          => true,
+			'width'           => true,
+			'frameborder'     => true,
+			'allowfullscreen' => true,
+		);
+		return wp_kses( $content, $allowed_tags );
 	}
 }

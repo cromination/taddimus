@@ -25,24 +25,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => 'v3.0.10',
-    'version' => '3.0.10.0',
+    'pretty_version' => 'v3.0.14',
+    'version' => '3.0.14.0',
     'aliases' => 
     array (
     ),
-    'reference' => 'd0160c296e6487cf967fb171d7d2307be2452b68',
+    'reference' => '128dc7da61926e9aff81b63fbc4c01177c8a28fc',
     'name' => 'codeinwp/hestia-pro',
   ),
   'versions' => 
   array (
     'codeinwp/hestia-pro' => 
     array (
-      'pretty_version' => 'v3.0.10',
-      'version' => '3.0.10.0',
+      'pretty_version' => 'v3.0.14',
+      'version' => '3.0.14.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'd0160c296e6487cf967fb171d7d2307be2452b68',
+      'reference' => '128dc7da61926e9aff81b63fbc4c01177c8a28fc',
     ),
     'codeinwp/themeisle-sdk' => 
     array (
@@ -304,7 +304,6 @@ self::$canGetVendors = method_exists('Composer\Autoload\ClassLoader', 'getRegist
 $installed = array();
 
 if (self::$canGetVendors) {
-
 foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
 if (isset(self::$installedByVendor[$vendorDir])) {
 $installed[] = self::$installedByVendor[$vendorDir];

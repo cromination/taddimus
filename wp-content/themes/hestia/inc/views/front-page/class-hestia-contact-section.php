@@ -105,7 +105,7 @@ class Hestia_Contact_Section extends Hestia_Abstract_Main {
 			$contact_content_default = $this->content_default();
 		}
 
-		$hestia_contact_content = get_theme_mod( 'hestia_contact_content_new', wp_kses_post( $contact_content_default ) );
+		$hestia_contact_content = get_theme_mod( 'hestia_contact_content_new', $contact_content_default );
 
 		/**
 		 * In case this function is called as shortcode, we remove the container and we add 'is-shortcode' class.
@@ -146,7 +146,7 @@ class Hestia_Contact_Section extends Hestia_Abstract_Main {
 
 						if ( ! empty( $hestia_contact_content ) ) {
 							echo '<div class="hestia-description">';
-							echo wp_kses_post( force_balance_tags( $hestia_contact_content ) );
+							echo Hestia_Contact_Controls::sanitize_contact_field( force_balance_tags( $hestia_contact_content ) );
 							echo '</div>';
 						}
 
@@ -209,7 +209,7 @@ class Hestia_Contact_Section extends Hestia_Abstract_Main {
 				<p>Michael Jordan <br> +40 762 321 762<br>Mon - Fri, 8:00-22:00</p>
 			</div>
 		</div>';
-
+		$html = Hestia_Contact_Controls::sanitize_contact_field( $html );
 		return apply_filters( 'hestia_contact_content_default', $html );
 	}
 
