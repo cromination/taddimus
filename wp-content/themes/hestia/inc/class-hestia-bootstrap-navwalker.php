@@ -56,9 +56,9 @@ class Hestia_Bootstrap_Navwalker extends Walker_Nav_Menu {
 		 * a 0 if the strings are equal.
 		 */
 
-		if ( strcasecmp( $item->attr_title, 'divider' ) === 0 && $depth >= 1 ) {
+		if ( property_exists( $item, 'attr_title' ) && strcasecmp( $item->attr_title, 'divider' ) === 0 && $depth >= 1 ) {
 			$output .= $indent . '<li role="presentation" class="divider">';
-		} elseif ( strcasecmp( $item->title, 'divider' ) === 0 && $depth >= 1 ) {
+		} elseif ( property_exists( $item, 'divider' ) && strcasecmp( $item->title, 'divider' ) === 0 && $depth >= 1 ) {
 			$output .= $indent . '<li role="presentation" class="divider">';
 		} else {
 

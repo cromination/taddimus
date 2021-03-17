@@ -97,7 +97,8 @@ class Hestia_Header extends Hestia_Abstract_Main {
 
 		$disabled_frontpage = get_theme_mod( 'disable_frontpage_sections', false );
 		$disabled_big_title = get_theme_mod( 'hestia_big_title_hide', false );
-		if ( ! is_front_page() || $disabled_frontpage || $disabled_big_title ) {
+		$is_blog_frontpage  = get_option( 'show_on_front' ) !== 'page' && is_front_page();
+		if ( ! is_front_page() || $is_blog_frontpage || $disabled_frontpage || $disabled_big_title ) {
 			$class .= ' navbar-not-transparent';
 		}
 

@@ -198,7 +198,7 @@ class Posts_Grid_Block extends Base_Block {
 						if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
 							$list_items_markup .= sprintf(
 								'%1$s <time datetime="%2$s">%3$s</time> ',
-								__( 'on', 'textdomain' ),
+								__( 'on', 'themeisle-companion' ),
 								esc_attr( get_the_date( 'c', $id ) ),
 								esc_html( get_the_date( 'j F, Y', $id ) )
 							);
@@ -207,7 +207,7 @@ class Posts_Grid_Block extends Base_Block {
 						if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
 							$list_items_markup .= sprintf(
 								'%1$s %2$s',
-								__( 'by', 'textdomain' ),
+								__( 'by', 'themeisle-companion' ),
 								get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) )
 							);
 						}
@@ -273,13 +273,7 @@ class Posts_Grid_Block extends Base_Block {
 	 * @return string
 	 */
 	protected function get_excerpt_by_id( $post_id, $excerpt_length = 200 ) {
-		if ( has_excerpt( $post_id ) ) {
-			$excerpt = get_the_excerpt( $post_id );
-		} else {
-			$post    = get_post( $post_id );
-			$excerpt = $post->post_content;
-			$excerpt = wp_strip_all_tags( strip_shortcodes( $excerpt ) );
-		}
+		$excerpt = get_the_excerpt( $post_id );
 
 		if ( strlen( $excerpt ) > $excerpt_length ) {
 			$excerpt = substr( $excerpt, 0, $excerpt_length ) . '…';

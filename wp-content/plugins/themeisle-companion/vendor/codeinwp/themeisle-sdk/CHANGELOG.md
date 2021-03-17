@@ -1,3 +1,11 @@
+##### [Version 3.2.18](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.17...v3.2.18) (2021-03-04)
+
+* Fix regression on rollback order
+
+##### [Version 3.2.17](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.16...v3.2.17) (2021-03-04)
+
+* Fix compatibility with PHP 8 due to usort
+
 ##### [Version 3.2.16](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.15...v3.2.16) (2020-11-17)
 
 * Fix long texts on rollback.

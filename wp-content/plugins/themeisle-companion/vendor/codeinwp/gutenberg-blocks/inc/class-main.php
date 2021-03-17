@@ -52,6 +52,13 @@ class Main {
 	public static $is_lottie_loaded = false;
 
 	/**
+	 * Flag to mark that Leaflet scripts has been loaded.
+	 *
+	 * @var bool $is_lottie_loaded Is Lottie loaded?
+	 */
+	public static $is_leaflet_loaded = false;
+
+	/**
 	 * Define assets version.
 	 *
 	 * @var string $assets_version Holds assets version.
@@ -83,7 +90,7 @@ class Main {
 	 */
 	public function __construct( $name ) {
 		$this->name        = $name;
-		$this->description = __( 'A set of awesome Gutenberg Blocks!', 'textdomain' );
+		$this->description = __( 'A set of awesome Gutenberg Blocks!', 'themeisle-companion' );
 	}
 
 	/**
@@ -94,7 +101,7 @@ class Main {
 	 */
 	public function init() {
 		if ( ! defined( 'THEMEISLE_BLOCKS_VERSION' ) ) {
-			define( 'THEMEISLE_BLOCKS_VERSION', '1.5.11' );
+			define( 'THEMEISLE_BLOCKS_VERSION', '1.6.1' );
 			define( 'THEMEISLE_BLOCKS_DEV', false );
 		}
 
@@ -202,6 +209,36 @@ class Main {
 			[],
 			self::$assets_version
 		);
+
+		wp_enqueue_script(
+			'themeisle-gutenberg-map-block',
+			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
+			array( 'wp-dom-ready' ),
+			self::$assets_version,
+			true
+		);
+
+		wp_enqueue_style(
+			'leaflet-theme',
+			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.css',
+			[],
+			self::$assets_version
+		);
+
+		wp_enqueue_script(
+			'themeisle-gutenberg-map-block-gesture',
+			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
+			array( 'wp-dom-ready' ),
+			self::$assets_version,
+			true
+		);
+
+		wp_enqueue_style(
+			'leaflet-theme-gesture',
+			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.css',
+			[],
+			self::$assets_version
+		);
 	}
 
 	/**
@@ -221,7 +258,7 @@ class Main {
 				if ( $block_name === $block['blockName'] ) {
 					array_push( $target, $block );
 				}
-	
+
 				if ( count( $block['innerBlocks'] ) ) {
 					$target = $this->loop_blocks( $block['innerBlocks'], $block_name, $target );
 				}
@@ -250,27 +287,36 @@ class Main {
 			self::$assets_version
 		);
 
-		if ( ! self::$is_fa_loaded && ( has_block( 'themeisle-blocks/button-group', $post ) || has_block( 'themeisle-blocks/button', $post ) || has_block( 'themeisle-blocks/font-awesome-icons', $post ) || has_block( 'themeisle-blocks/sharing-icons', $post ) || has_block( 'themeisle-blocks/plugin-cards', $post ) || has_block( 'block', $post ) ) ) {
+		if ( ! self::$is_fa_loaded && ( has_block( 'themeisle-blocks/button-group', $post ) || has_block( 'themeisle-blocks/button', $post ) || has_block( 'themeisle-blocks/font-awesome-icons', $post ) || has_block( 'themeisle-blocks/icon-list-item', $post ) || has_block( 'themeisle-blocks/sharing-icons', $post ) || has_block( 'themeisle-blocks/plugin-cards', $post ) || has_block( 'block', $post ) ) ) {
 			$has_fa = false;
 
-			if ( ( ! has_block( 'themeisle-blocks/sharing-icons', $post ) && ! has_block( 'themeisle-blocks/plugin-cards', $post ) && ! has_block( 'block', $post ) ) && ( has_block( 'themeisle-blocks/button', $post ) || has_block( 'themeisle-blocks/font-awesome-icons', $post ) ) ) {
+			if ( ( ! has_block( 'themeisle-blocks/sharing-icons', $post ) && ! has_block( 'themeisle-blocks/plugin-cards', $post ) && ! has_block( 'block', $post ) ) && ( has_block( 'themeisle-blocks/button', $post ) || has_block( 'themeisle-blocks/font-awesome-icons', $post ) || has_block( 'themeisle-blocks/icon-list-item', $post ) ) ) {
 				if ( empty( $post ) ) {
 					$post = get_the_ID();
 				}
 
 				$blocks = parse_blocks( $content );
-	
+
 				$used_blocks = $this->loop_blocks(
 					$blocks,
 					array(
 						'themeisle-blocks/button',
 						'themeisle-blocks/font-awesome-icons',
+						'themeisle-blocks/icon-list',
+						'themeisle-blocks/icon-list-item',
 					)
 				);
 
 				foreach ( $used_blocks as $block ) {
 					if ( ! $has_fa && isset( $block['attrs']['library'] ) && 'themeisle-icons' === $block['attrs']['library'] ) {
-						$has_fa = false;
+						continue;
+					}
+
+					if ( ! $has_fa && 'themeisle-blocks/button' === $block['blockName'] && ! isset( $block['attrs']['iconType'] ) ) {
+						continue;
+					}
+
+					if ( ! $has_fa && 'themeisle-blocks/icon-list' === $block['blockName'] && isset( $block['attrs']['defaultLibrary'] ) && 'themeisle-icons' === $block['attrs']['defaultLibrary'] ) {
 						continue;
 					}
 
@@ -283,7 +329,7 @@ class Main {
 			if ( $has_fa ) {
 				wp_enqueue_style( 'font-awesome-5' );
 				wp_enqueue_style( 'font-awesome-4-shims' );
-	
+
 				self::$is_fa_loaded = true;
 			}
 		}
@@ -305,7 +351,7 @@ class Main {
 					self::$assets_version,
 					true
 				);
-	
+
 				wp_enqueue_script( //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 					'google-maps',
 					'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript',
@@ -313,7 +359,7 @@ class Main {
 					'',
 					true
 				);
-	
+
 				self::$is_map_loaded = true;
 			}
 		}
@@ -375,7 +421,7 @@ class Main {
 
 			self::$is_circle_counter_loaded = true;
 		}
-		
+
 		if ( ! self::$is_lottie_loaded && has_block( 'themeisle-blocks/lottie', $post ) ) {
 			wp_enqueue_script(
 				'lottie-player',
@@ -402,6 +448,48 @@ class Main {
 			);
 
 			self::$is_lottie_loaded = true;
+		}
+
+		if ( ! self::$is_leaflet_loaded && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {
+			wp_enqueue_script(
+				'themeisle-gutenberg-map-leaflet',
+				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
+				array( 'wp-dom-ready' ),
+				self::$assets_version,
+				true
+			);
+
+			wp_enqueue_style(
+				'leaflet-css',
+				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.css',
+				[],
+				self::$assets_version
+			);
+
+			wp_enqueue_script(
+				'themeisle-gutenberg-map-leaflet-gesture',
+				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
+				array( 'wp-dom-ready' ),
+				self::$assets_version,
+				true
+			);
+
+			wp_enqueue_style(
+				'leaflet-theme-gesture',
+				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.css',
+				[],
+				self::$assets_version
+			);
+
+			wp_enqueue_script(
+				'themeisle-gutenberg-leaflet-block',
+				plugin_dir_url( $this->get_dir() ) . 'build/leaflet-map.js',
+				array( 'wp-dom-ready', 'themeisle-gutenberg-map-leaflet', 'themeisle-gutenberg-map-leaflet-gesture', 'wp-i18n' ),
+				self::$assets_version,
+				true
+			);
+
+			self::$is_leaflet_loaded = true;
 		}
 	}
 
@@ -436,7 +524,7 @@ class Main {
 				return $content;
 			}
 		);
-		
+
 	}
 
 	/**
@@ -501,6 +589,7 @@ class Main {
 		$classnames = array(
 			'\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
@@ -709,7 +798,7 @@ class Main {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'textdomain' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'themeisle-companion' ), '1.0.0' );
 	}
 
 	/**
@@ -721,6 +810,6 @@ class Main {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'textdomain' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'themeisle-companion' ), '1.0.0' );
 	}
 }

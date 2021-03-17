@@ -18,6 +18,34 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 == Changelog ==
 
+##### [Version 3.0.14](https://github.com/Codeinwp/hestia-pro/compare/v3.0.13...v3.0.14) (2021-03-15)
+
+- [Fix] PHP 8 Error
+- [Fix] Navbar error that appears in some cases
+
+
+
+
+##### [Version 3.0.13](https://github.com/Codeinwp/hestia-pro/compare/v3.0.12...v3.0.13) (2021-03-03)
+
+- [Fix] starter content error
+
+
+
+
+##### [Version 3.0.12](https://github.com/Codeinwp/hestia-pro/compare/v3.0.11...v3.0.12) (2021-03-03)
+
+- [Fix] Starter content
+
+
+
+
+##### [Version 3.0.11](https://github.com/Codeinwp/hestia-pro/compare/v3.0.10...v3.0.11) (2021-03-03)
+
+- [Fix] Fix blockquote position in the editor. Add a border on the right when the block is aligned to right.
+- [Fix] Fix the team section alignment on mobile when the title of one member has more characters.
+- [Fix] Fix transparent logo appears on the blog page when the front page is set as latest
+
 ##### [Version 3.0.10](https://github.com/Codeinwp/hestia-pro/compare/v3.0.9...v3.0.10) (2021-02-18)
 
 - [Fix] Starter content
