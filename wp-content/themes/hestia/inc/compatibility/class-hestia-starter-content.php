@@ -51,13 +51,8 @@ class Hestia_Starter_Content {
 		}
 
 		if ( $meta_key === '_wp_page_template' ) {
-
 			if ( get_the_title( $post_id ) === 'Contact' ) {
 				return 'page-templates/template-pagebuilder-full-width.php';
-			}
-
-			if ( get_the_title( $post_id ) === 'Home' ) {
-				return '';
 			}
 		}
 

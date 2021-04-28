@@ -11,7 +11,7 @@
  */
 
 
-if ( ! is_page_template() && ! get_theme_mod( 'disable_frontpage_sections', false ) ) {
+if ( ( ! is_page_template() || get_option( 'fresh_site' ) ) && ! get_theme_mod( 'disable_frontpage_sections', false ) ) {
 
 		get_header();
 		/**

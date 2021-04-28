@@ -25,24 +25,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => 'v3.0.14',
-    'version' => '3.0.14.0',
+    'pretty_version' => 'v3.0.16',
+    'version' => '3.0.16.0',
     'aliases' => 
     array (
     ),
-    'reference' => '128dc7da61926e9aff81b63fbc4c01177c8a28fc',
+    'reference' => '7522a08331d13c5d55adc37ac5b448b00f777047',
     'name' => 'codeinwp/hestia-pro',
   ),
   'versions' => 
   array (
     'codeinwp/hestia-pro' => 
     array (
-      'pretty_version' => 'v3.0.14',
-      'version' => '3.0.14.0',
+      'pretty_version' => 'v3.0.16',
+      'version' => '3.0.16.0',
       'aliases' => 
       array (
       ),
-      'reference' => '128dc7da61926e9aff81b63fbc4c01177c8a28fc',
+      'reference' => '7522a08331d13c5d55adc37ac5b448b00f777047',
     ),
     'codeinwp/themeisle-sdk' => 
     array (

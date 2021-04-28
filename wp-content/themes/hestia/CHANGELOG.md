@@ -1,3 +1,14 @@
+##### [Version 3.0.16](https://github.com/Codeinwp/hestia-pro/compare/v3.0.15...v3.0.16) (2021-04-19)
+
+- [Fix] Page template on the front page not appearing
+- [Fix] Starter content issue
+
+##### [Version 3.0.15](https://github.com/Codeinwp/hestia-pro/compare/v3.0.14...v3.0.15) (2021-04-19)
+
+- [Fix] Embed block alignment
+- [Fix] WooCommerce shortcodes displaying products that don't have proper spacing and font size
+- [Fix] Empty pot file
+
 ##### [Version 3.0.14](https://github.com/Codeinwp/hestia-pro/compare/v3.0.13...v3.0.14) (2021-03-15)
 
 - [Fix] PHP 8 Error
