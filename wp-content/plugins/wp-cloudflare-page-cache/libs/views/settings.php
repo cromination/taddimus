@@ -1554,11 +1554,11 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                     </div>
 
 
-                    <!-- Swift Performance Lite Options -->
+                    <!-- Swift Performance (Lite/Pro) Options -->
                     <div class="main_section_header">
                         <h3>
-                            <?php echo __( 'Swift Performance Lite settings', 'wp-cloudflare-page-cache' ); ?>
-                            <?php if( is_plugin_active( 'swift-performance-lite/performance.php' ) ): ?>
+                            <?php echo __( 'Swift Performance (Lite/Pro) settings', 'wp-cloudflare-page-cache' ); ?>
+                            <?php if( is_plugin_active( 'swift-performance-lite/performance.php' ) || is_plugin_active( 'swift-performance/performance.php' ) ): ?>
                                 <span class="swcfpc_plugin_active"><?php _e('Active plugin', 'wp-cloudflare-page-cache'); ?></span>
                             <?php else: ?>
                                 <span class="swcfpc_plugin_inactive"><?php _e('Inactive plugin', 'wp-cloudflare-page-cache'); ?></span>
@@ -1566,7 +1566,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
-                    <?php if( is_plugin_active( 'swift-performance-lite/performance.php' ) ): ?>
+                    <?php if( is_plugin_active( 'swift-performance-lite/performance.php' ) || is_plugin_active( 'swift-performance/performance.php' ) ): ?>
                         <div class="description_section highlighted">
                             <?php _e('It is strongly recommended to disable the page caching functions of other plugins. If you want to add a page cache as fallback to Cloudflare, enable the fallback cache option of this plugin.', 'wp-cloudflare-page-cache'); ?>
                         </div>
@@ -1577,8 +1577,8 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                             <label><?php _e('Automatically purge the cache when', 'wp-cloudflare-page-cache'); ?></label>
                         </div>
                         <div class="right_column">
-                            <div><input type="checkbox" name="swcfpc_cf_spl_purge_on_flush_all" value="1" <?php echo $this->main_instance->get_single_config('cf_spl_purge_on_flush_all', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Swift Performance Lite flushs all caches', 'wp-cloudflare-page-cache'); ?> - <strong><?php _e('(recommended)', 'wp-cloudflare-page-cache'); ?></strong></div>
-                            <div><input type="checkbox" name="swcfpc_cf_spl_purge_on_flush_single_post" value="1" <?php echo $this->main_instance->get_single_config('cf_spl_purge_on_flush_single_post', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Swift Performance Lite flushs single post cache', 'wp-cloudflare-page-cache'); ?> - <strong><?php _e('(recommended)', 'wp-cloudflare-page-cache'); ?></strong></div>
+                            <div><input type="checkbox" name="swcfpc_cf_spl_purge_on_flush_all" value="1" <?php echo $this->main_instance->get_single_config('cf_spl_purge_on_flush_all', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Swift Performance (Lite/Pro) flushs all caches', 'wp-cloudflare-page-cache'); ?> - <strong><?php _e('(recommended)', 'wp-cloudflare-page-cache'); ?></strong></div>
+                            <div><input type="checkbox" name="swcfpc_cf_spl_purge_on_flush_single_post" value="1" <?php echo $this->main_instance->get_single_config('cf_spl_purge_on_flush_single_post', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Swift Performance (Lite/Pro) flushs single post cache', 'wp-cloudflare-page-cache'); ?> - <strong><?php _e('(recommended)', 'wp-cloudflare-page-cache'); ?></strong></div>
                         </div>
                         <div class="clear"></div>
                     </div>

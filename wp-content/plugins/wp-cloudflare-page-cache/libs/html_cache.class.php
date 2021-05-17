@@ -71,12 +71,14 @@ class SWCFPC_Html_Cache
 
     function add_current_url_to_cache() {
 
+        global $wp_query;
+
         $this->objects = $this->main_instance->get_objects();
 
         $parts = parse_url( home_url() );
         $current_url = "{$parts['scheme']}://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 
-        if( function_exists('is_404') && is_404() ) {
+        if( isset($wp_query) && function_exists('is_404') && is_404() ) {
 
             if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) 
                 $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached because it returns 404." );

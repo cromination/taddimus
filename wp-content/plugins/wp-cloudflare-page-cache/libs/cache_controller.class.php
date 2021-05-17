@@ -168,7 +168,7 @@ class SWCFPC_Cache_Controller
             add_action('wc_after_products_ending_sales', array($this, 'woocommerce_purge_scheduled_sales'), PHP_INT_MAX);
         }
 
-        // Swift Performance Lite actions
+        // Swift Performance (Lite/Pro) actions
         if( $this->main_instance->get_single_config('cf_spl_purge_on_flush_all', 0) > 0 ) {
             add_action('swift_performance_after_clear_all_cache', array($this, 'spl_purge_all'), PHP_INT_MAX);
             add_action('swift_performance_after_clear_expired_cache', array($this, 'spl_purge_all'), PHP_INT_MAX);
@@ -1483,6 +1483,11 @@ class SWCFPC_Cache_Controller
             if( $cache_bypass === true )
                 return true;
 
+        }
+
+        // Bypass post protected by password
+        if( is_object($post) && post_password_required($post->ID) !== false ) {
+            return true;
         }
 
         // Bypass single post by metabox
