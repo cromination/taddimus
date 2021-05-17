@@ -1,7 +1,7 @@
 {
     "packages": [
         {
-            "name": "a5hleyrich/wp-background-processing",
+            "name": "deliciousbrains/wp-background-processing",
             "version": "1.0.2",
             "version_normalized": "1.0.2.0",
             "source": {
@@ -42,9 +42,9 @@
             "description": "WP Background Processing can be used to fire off non-blocking asynchronous requests or as a background processing tool, allowing you to queue tasks.",
             "support": {
                 "issues": "https://github.com/deliciousbrains/wp-background-processing/issues",
-                "source": "https://github.com/deliciousbrains/wp-background-processing/tree/1.0.2"
+                "source": "https://github.com/deliciousbrains/wp-background-processing/tree/master"
             },
-            "install-path": "../a5hleyrich/wp-background-processing"
+            "install-path": "../deliciousbrains/wp-background-processing"
         }
     ],
     "dev": false,
