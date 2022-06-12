@@ -1,6 +1,6 @@
 {  
    "name": "cromination/wordpress-base",
-   "description": "Tadd Barnes Boilerplate Composer project for WordPress sites hosted on WP Engine",
+   "description": "Taddimus.com Boilerplate Composer project for WordPress",
    "type": "project",
     "config": {
         "vendor-dir": "vendor",
