@@ -20,6 +20,7 @@ web/wp-content/advanced-cache.php
 web/wp-content/wp-cache-config.php
 web/wp-content/cache/*
 web/wp-content/cache/supercache/*
+web/wp-content/uploads-webpc/*
 
 # wpengine specific
 .smushit-status
