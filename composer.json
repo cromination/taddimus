@@ -1,0 +1,46 @@
+{  
+   "name": "cromination/wordpress-base",
+   "description": "Tadd Barnes Boilerplate Composer project for WordPress sites hosted on WP Engine",
+   "type": "project",
+    "config": {
+        "vendor-dir": "/Sites/taddimus/vendor",
+      "allow-plugins": {
+         "composer/installers": true,
+         "johnpbloch/wordpress-core-installer": true,
+         "cweagans/composer-patches": true,
+         "wikimedia/composer-merge-plugin": true
+      }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url" : "https://wpackagist.org"
+        }
+    ],
+    "require": {
+        "composer/installers": "^1.2",
+        "cweagans/composer-patches": "^1.6",
+        "johnpbloch/wordpress": "^6.0",
+        "wpackagist-plugin/autoptimize": "^3.0",
+        "wpackagist-plugin/wp-cloudflare-page-cache": "^4.6",
+        "wpackagist-plugin/wordpress-seo": "^19",
+        "wpackagist-plugin/varnish-http-purge": "^5.0",
+        "wpackagist-plugin/http-security": "^2.5",
+        "wpackagist-plugin/themeisle-companion": "^2.10",
+        "wpackagist-theme/twentyseventeen": "^3.0",
+        "wpackagist-theme/twentynineteen": "^2.2",
+        "wpackagist-theme/twentytwenty": "^1.4",
+        "wpackagist-theme/hestia": "^3.0",
+        "wpackagist-plugin/webp-converter-for-media": "^4.2",
+        "wp-cli/wp-cli-bundle": "*",
+        "wikimedia/composer-merge-plugin": "^2.0"
+    },
+    "extra": {
+        "wordpress-install-dir": "web/",
+        "installer-paths": {
+            "htdocs/wp-content/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
+            "htdocs/wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
+            "htdocs/wp-content/themes/{$name}/": ["type:wordpress-theme"]
+        }
+    }
+}

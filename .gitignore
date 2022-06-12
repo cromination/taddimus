@@ -1,0 +1,78 @@
+*~
+.DS_Store
+.svn
+.cvs
+*.bak
+*.swp
+Thumbs.db
+
+# dev ignores
+wp-config-local.php
+*.sql
+
+# wordpress specific
+wp-config.php
+web/wp-content/uploads/
+web/wp-content/blogs.dir/
+web/wp-content/upgrade/*
+web/wp-content/backup-db/*
+web/wp-content/advanced-cache.php
+web/wp-content/wp-cache-config.php
+web/wp-content/cache/*
+web/wp-content/cache/supercache/*
+
+# wpengine specific
+.smushit-status
+.gitattributes
+_wpeprivate
+web/wp-content/object-cache.php
+web/wp-content/mu-plugins/mu-plugin.php
+web/wp-content/mu-plugins/slt-force-strong-passwords.php
+web/wp-content/mu-plugins/limit-login-attempts
+web/wp-content/mu-plugins/wpengine-common
+web/wp-content/mysql.sql
+
+# large file types
+# a CDN should be used for these
+*.hqx
+*.bin
+*.exe
+*.dll
+*.deb
+*.dmg
+*.iso
+*.img
+*.msi
+*.msp
+*.msm
+*.mid
+*.midi
+*.kar
+*.mp3
+*.ogg
+*.m4a
+*.ra
+*.3gpp
+*.3gp
+*.mp4
+*.mpeg
+*.mpg
+*.mov
+*.webm
+*.flv
+*.m4v
+*.mng
+*.asx
+*.asf
+*.wmv
+*.avi
+
+# ignore editor files
+.idea
+.sublime-project
+.sublime-workspace
+
+# Ignore DB Dumps
+dumps
+*.sql.gz
+.backups
