@@ -1,10 +1,9 @@
-# BEGIN WordPress
+# BEGIN WordPress 
 # The directives (lines) between "BEGIN WordPress" and "END WordPress" are
 # dynamically generated, and should only be modified via WordPress filters.
 # Any changes to the directives between these markers will be overwritten.
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -12,9 +11,44 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.php [L]
 </IfModule>
 
+RedirectMatch 404 /\.git
+
+<FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css)$">
+<IfModule mod_headers.c>
+Header add Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Origin "*"
+</IfModule>
+</FilesMatch>
+
+# Don't run .php extensions
+# <Files *.php> 
+# Order deny,allow 
+# Deny from all 
+# Allow from index.php wp-blog-header.php
+# </Files> 
+
+# Block xmlrpc.php attacks
+<Files xmlrpc.php>
+order deny,allow
+deny from all
+</Files>
+
+# Block crawling of WordPress config file
+ <Files wp-config.php>
+ order allow,deny
+ deny from all
+ </Files>
+
+# Block hotlinking
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?taddimus.com [NC]
+RewriteRule \.(jpg|jpeg|png|gif|svg)$ - [NC,F,L]
+
+# Protect all htaccess files
+<files ~ "^.*\.([Hh][Tt][Aa])">
+order allow,deny
+deny from all
+satisfy all
+</files>
+
 # END WordPress
-# BEGIN WP Cloudflare Super Page Cache
-# The directives (lines) between "BEGIN WP Cloudflare Super Page Cache" and "END WP Cloudflare Super Page Cache" are
-# dynamically generated, and should only be modified via WordPress filters.
-# Any changes to the directives between these markers will be overwritten.
-# END WP Cloudflare Super Page Cache

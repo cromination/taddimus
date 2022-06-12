@@ -2,8 +2,8 @@
 Contributors: Ipstenu, mikeschroder, techpriester, danielbachhuber
 Tags: proxy, purge, cache, varnish, nginx
 Requires at least: 5.0
-Tested up to: 5.9
-Stable tag: 5.1.2
+Tested up to: 6.0
+Stable tag: 5.1.3
 Requires PHP: 5.6
 
 Automatically empty proxy cached content when your site is modified.
@@ -247,6 +247,10 @@ This plugin is installed by default for _all_ DreamPress installs on DreamHost, 
 
 == Changelog ==
 
+= 5.1.3 =
+* June 2022
+* Check if a required option exists before trying to use it
+
 = 5.1.2 = 
 * April 2022
 * Fix typo in readme
@@ -273,4 +277,3 @@ This plugin is installed by default for _all_ DreamPress installs on DreamHost, 
 5. Change Proxy IP address
 6. Activate Dev Mode
 7. Dev Mode Warning (24 hour notice)
-

@@ -3,7 +3,7 @@
    "description": "Tadd Barnes Boilerplate Composer project for WordPress sites hosted on WP Engine",
    "type": "project",
     "config": {
-        "vendor-dir": "/Sites/taddimus/vendor",
+        "vendor-dir": "vendor",
       "allow-plugins": {
          "composer/installers": true,
          "johnpbloch/wordpress-core-installer": true,
@@ -37,10 +37,20 @@
     },
     "extra": {
         "wordpress-install-dir": "web/",
+        "wordpress-scaffold": {
+            "locations": {
+                "web-root": "web/"
+            },
+        "file-mapping": {
+            "[web-root]/.htaccess": false,
+            "[web-root]/wp-config.php": false,
+            "[web-root]/robots.txt": false
+            }
+        },
         "installer-paths": {
-            "htdocs/wp-content/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
-            "htdocs/wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
-            "htdocs/wp-content/themes/{$name}/": ["type:wordpress-theme"]
+            "web/wp-content/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
+            "web/wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
+            "web/wp-content/themes/{$name}/": ["type:wordpress-theme"]
         }
     }
 }
