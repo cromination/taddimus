@@ -5133,6 +5133,27 @@
             "install-path": "../../web/wp-content/plugins/varnish-http-purge"
         },
         {
+            "name": "wpackagist-plugin/w3-total-cache",
+            "version": "2.2.1",
+            "version_normalized": "2.2.1.0",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/w3-total-cache/",
+                "reference": "tags/2.2.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/w3-total-cache.2.2.1.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-plugin",
+            "installation-source": "dist",
+            "homepage": "https://wordpress.org/plugins/w3-total-cache/",
+            "install-path": "../../web/wp-content/plugins/w3-total-cache"
+        },
+        {
             "name": "wpackagist-plugin/webp-converter-for-media",
             "version": "4.3.6",
             "version_normalized": "4.3.6.0",
@@ -5155,16 +5176,16 @@
         },
         {
             "name": "wpackagist-plugin/wordpress-seo",
-            "version": "19.0",
-            "version_normalized": "19.0.0.0",
+            "version": "19.1",
+            "version_normalized": "19.1.0.0",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/wordpress-seo/",
-                "reference": "tags/19.0"
+                "reference": "tags/19.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/wordpress-seo.19.0.zip"
+                "url": "https://downloads.wordpress.org/plugin/wordpress-seo.19.1.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
