@@ -33,6 +33,7 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 		SkipLarger $skip_larger,
 		ServerConfigurator $server_configurator
 	) {
+		parent::__construct();
 		$this->skip_crashed        = $skip_crashed;
 		$this->skip_larger         = $skip_larger;
 		$this->server_configurator = $server_configurator;

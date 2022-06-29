@@ -17,8 +17,8 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 */
 	private $token_repository;
 
-	public function __construct( TokenRepository $token_repository = null ) {
-		$this->token_repository = $token_repository ?: new TokenRepository();
+	public function __construct( TokenRepository $token_repository ) {
+		$this->token_repository = $token_repository;
 	}
 
 	/**

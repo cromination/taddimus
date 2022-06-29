@@ -17,7 +17,11 @@
 		<p>
 			<?php
 			echo esc_html(
-				__( 'You are using Cloudflare, right? Please follow the steps below for the plugin to function properly:', 'webp-converter-for-media' )
+				sprintf(
+				/* translators: %1$s: service name */
+					__( 'You are using %1$s, right? Please follow the steps below for the plugin to function properly:', 'webp-converter-for-media' ),
+					'Cloudflare'
+				)
 			);
 			?>
 		</p>

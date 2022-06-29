@@ -4,6 +4,7 @@ namespace WebpConverter\Plugin\Activation;
 
 use WebpConverter\Notice\AvifSupportNotice;
 use WebpConverter\Notice\CloudflareNotice;
+use WebpConverter\Notice\LitespeedNotice;
 use WebpConverter\Notice\NoticeIntegration;
 use WebpConverter\Notice\ThanksNotice;
 use WebpConverter\Notice\WelcomeNotice;
@@ -38,6 +39,7 @@ class DefaultSettings {
 		( new NoticeIntegration( $this->plugin_info, new ThanksNotice() ) )->set_default_value();
 		( new NoticeIntegration( $this->plugin_info, new AvifSupportNotice() ) )->set_default_value();
 		( new NoticeIntegration( $this->plugin_info, new CloudflareNotice() ) )->set_default_value();
+		( new NoticeIntegration( $this->plugin_info, new LitespeedNotice() ) )->set_default_value();
 	}
 
 	/**

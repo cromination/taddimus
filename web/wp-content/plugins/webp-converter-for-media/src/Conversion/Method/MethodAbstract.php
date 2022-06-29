@@ -12,6 +12,15 @@ use WebpConverter\Settings\Option\ExtraFeaturesOption;
 abstract class MethodAbstract implements MethodInterface {
 
 	/**
+	 * @var OutputPath
+	 */
+	private $output_path;
+
+	public function __construct( OutputPath $output_path = null ) {
+		$this->output_path = $output_path ?: new OutputPath();
+	}
+
+	/**
 	 * @var bool
 	 */
 	protected $is_fatal_error = false;
@@ -125,7 +134,7 @@ abstract class MethodAbstract implements MethodInterface {
 	 * @throws Exception\OutputPathException
 	 */
 	protected function get_image_output_path( string $source_path, string $format ): string {
-		if ( ! $output_path = OutputPath::get_path( $source_path, true, $format ) ) {
+		if ( ! $output_path = $this->output_path->get_path( $source_path, true, $format ) ) {
 			throw new Exception\OutputPathException( $source_path );
 		}
 

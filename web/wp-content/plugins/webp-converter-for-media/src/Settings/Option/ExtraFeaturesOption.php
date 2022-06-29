@@ -22,7 +22,7 @@ class ExtraFeaturesOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_priority(): int {
-		return 80;
+		return 90;
 	}
 
 	/**

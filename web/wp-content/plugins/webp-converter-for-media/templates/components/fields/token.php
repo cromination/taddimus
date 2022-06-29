@@ -1,6 +1,6 @@
 <?php
 /**
- * Token field displayed in plugin settings form.
+ * Field displayed in plugin settings form.
  *
  * @var string  $submit_activate_token   .
  * @var string  $submit_deactivate_token .

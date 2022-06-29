@@ -183,8 +183,8 @@ class GdMethod extends LibraryMethodAbstract {
 
 		$count = 0;
 		while ( ! feof( $fh ) && ( $count < 2 ) ) {
-			$chunk  = fread( $fh, 1024 * 100 );
-			$count += preg_match_all( '#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk ?: '', $matches );
+			$chunk = fread( $fh, 1024 * 100 );
+			$count = $count + preg_match_all( '#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk ?: '', $matches );
 		}
 
 		fclose( $fh );

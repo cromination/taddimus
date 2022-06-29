@@ -10,6 +10,7 @@ use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Service\ServerConfigurator;
 use WebpConverter\Settings\Option\AccessTokenOption;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
+use WebpConverter\Settings\Option\ImageResizeOption;
 use WebpConverter\Settings\Option\ImagesQualityOption;
 use WebpConverter\Settings\Option\OutputFormatsOption;
 use WebpConverter\WebpConverterConstants;
@@ -20,7 +21,7 @@ use WebpConverter\WebpConverterConstants;
 class RemoteMethod extends MethodAbstract {
 
 	const METHOD_NAME        = 'remote';
-	const MAX_FILESIZE_BYTES = ( 10 * 1024 * 1024 );
+	const MAX_FILESIZE_BYTES = ( 25 * 1024 * 1024 );
 
 	/**
 	 * @var SkipCrashed
@@ -51,7 +52,9 @@ class RemoteMethod extends MethodAbstract {
 		SkipCrashed $skip_crashed,
 		SkipLarger $skip_larger,
 		TokenRepository $token_repository,
-		ServerConfigurator $server_configurator ) {
+		ServerConfigurator $server_configurator
+	) {
+		parent::__construct();
 		$this->skip_crashed        = $skip_crashed;
 		$this->skip_larger         = $skip_larger;
 		$this->token_repository    = $token_repository;
@@ -126,9 +129,8 @@ class RemoteMethod extends MethodAbstract {
 		$this->token  = $this->token_repository->get_token();
 
 		foreach ( $output_formats as $output_format ) {
-			$valid_file_paths               = $this->skip_invalid_paths( $file_paths, $output_format );
-			$source_paths[ $output_format ] = $valid_file_paths;
-			$output_paths[ $output_format ] = $this->get_output_paths( $valid_file_paths, $output_format );
+			$source_paths[ $output_format ] = $file_paths;
+			$output_paths[ $output_format ] = $this->get_output_paths( $file_paths, $output_format );
 		}
 
 		if ( ! $regenerate_force ) {
@@ -137,6 +139,7 @@ class RemoteMethod extends MethodAbstract {
 					if ( file_exists( $output_paths[ $output_format ][ $path_index ] ) ) {
 						unset( $source_paths[ $output_format ][ $path_index ] );
 						unset( $output_paths[ $output_format ][ $path_index ] );
+						$this->files_to_conversion -= 1;
 					}
 				}
 			}
@@ -165,26 +168,6 @@ class RemoteMethod extends MethodAbstract {
 		}
 
 		$this->token_repository->update_token( $this->token );
-	}
-
-	/**
-	 * @param string[] $file_paths    .
-	 * @param string   $output_format .
-	 *
-	 * @return string[]
-	 */
-	private function skip_invalid_paths( array $file_paths, string $output_format ): array {
-		$valid_paths = [];
-		foreach ( $file_paths as $file_path ) {
-			$source_format = strtolower( pathinfo( $file_path, PATHINFO_EXTENSION ) );
-
-			if ( $source_format === $output_format ) {
-				continue;
-			}
-			$valid_paths[] = $file_path;
-		}
-
-		return $valid_paths;
 	}
 
 	/**
@@ -335,6 +318,12 @@ class RemoteMethod extends MethodAbstract {
 				'output_format'  => $output_format,
 				'quality_level'  => $plugin_settings[ ImagesQualityOption::OPTION_NAME ],
 				'strip_metadata' => ( ! in_array( ExtraFeaturesOption::OPTION_VALUE_KEEP_METADATA, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) ),
+				'max_width'      => ( $plugin_settings[ ImageResizeOption::OPTION_NAME ][0] === 'yes' )
+					? $plugin_settings[ ImageResizeOption::OPTION_NAME ][1]
+					: 0,
+				'max_height'     => ( $plugin_settings[ ImageResizeOption::OPTION_NAME ][0] === 'yes' )
+					? $plugin_settings[ ImageResizeOption::OPTION_NAME ][2]
+					: 0,
 			]
 		);
 		curl_setopt(

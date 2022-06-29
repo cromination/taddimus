@@ -3,7 +3,6 @@
 namespace WebpConverter\Action;
 
 use WebpConverter\Conversion\Method\MethodIntegrator;
-use WebpConverter\Conversion\PathsValidator;
 use WebpConverter\HookableInterface;
 use WebpConverter\PluginData;
 
@@ -11,8 +10,6 @@ use WebpConverter\PluginData;
  * Initializes conversion of all images in list of paths.
  */
 class ConvertPaths implements HookableInterface {
-
-	use PathsValidator;
 
 	/**
 	 * @var PluginData
@@ -52,7 +49,7 @@ class ConvertPaths implements HookableInterface {
 	 */
 	private function remove_paths_from_excluded_paths( array $source_paths ): array {
 		foreach ( $source_paths as $path_index => $path ) {
-			if ( ! $this->is_supported_source_file( $path ) ) {
+			if ( ! apply_filters( 'webpc_supported_source_file', true, basename( $path ), $path ) ) {
 				unset( $source_paths[ $path_index ] );
 			}
 		}

@@ -329,6 +329,11 @@ After making changes, remember to restart the machine:
 
 == Changelog ==
 
+= 4.4.0 (2022-06-19) =
+* `[Changed]` Calculation of number of images to be converted
+* `[Added]` Resizing of images before conversion
+* `[Added]` Notification asking to clear cache for LiteSpeed
+
 = 4.3.6 (2022-06-03) =
 * `[Fixed]` Notification about Cloudflare cache
 

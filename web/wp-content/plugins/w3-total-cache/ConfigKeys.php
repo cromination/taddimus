@@ -101,11 +101,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'dbcache.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'dbcache.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'dbcache.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'dbcache.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'dbcache.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'dbcache.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -298,11 +314,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'objectcache.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'objectcache.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'objectcache.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'objectcache.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'objectcache.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'objectcache.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -414,11 +446,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'pgcache.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'pgcache.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'pgcache.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'pgcache.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'pgcache.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'pgcache.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -784,11 +832,27 @@ $keys = array(
 			'127.0.0.1:6379'
 		)
 	),
+	'minify.redis.verify_tls_certificates' => array(
+		'type' => 'boolean',
+		'default' => true
+	),
 	'minify.redis.password' => array(
 		'type' => 'string',
 		'default' => ''
 	),
 	'minify.redis.dbid' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'minify.redis.timeout' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'minify.redis.retry_interval' => array(
+		'type' => 'integer',
+		'default' => 0
+	),
+	'minify.redis.read_timeout' => array(
 		'type' => 'integer',
 		'default' => 0
 	),
@@ -1337,6 +1401,10 @@ $keys = array(
 	'cdn.cf.ssl' => array(
 		'type' => 'string',
 		'default' => 'auto'
+	),
+	'cdn.cf.public_objects' => array(
+		'type' => 'string',
+		'default' => 'enabled'
 	),
 	'cdn.cf2.key' => array(
 		'type' => 'string',
@@ -2451,7 +2519,12 @@ $keys = array(
 		'default' => array(
 			'compression' => 'lossy',
 			'auto'        => 'enabled',
+			'visibility'  => 'never',
 		),
+	),
+	'imageservice.configuration_overloaded' => array(
+		'type' => 'boolean',
+		'default' => true,
 	),
 
 	// extensions keys:
@@ -2544,5 +2617,9 @@ $overloading_keys_scope = array(
 	array(
 		'key' => 'varnish.configuration_overloaded',
 		'prefix' => 'varnish.'
-	)
+	),
+	array(
+		'key' => 'imageservice.configuration_overloaded',
+		'prefix' => 'imageservice.'
+	),
 );

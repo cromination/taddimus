@@ -5,6 +5,7 @@ namespace WebpConverter\Settings\Option;
 use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
+use WebpConverter\Repository\TokenRepository;
 use WebpConverter\WebpConverterConstants;
 
 /**
@@ -13,6 +14,11 @@ use WebpConverter\WebpConverterConstants;
 class OutputFormatsOption extends OptionAbstract {
 
 	const OPTION_NAME = 'output_formats';
+
+	/**
+	 * @var TokenRepository
+	 */
+	private $token_repository;
 
 	/**
 	 * @var ConversionMethodOption
@@ -26,7 +32,8 @@ class OutputFormatsOption extends OptionAbstract {
 	 */
 	private $formats_integration;
 
-	public function __construct( ConversionMethodOption $conversion_method_option ) {
+	public function __construct( TokenRepository $token_repository, ConversionMethodOption $conversion_method_option ) {
+		$this->token_repository         = $token_repository;
 		$this->conversion_method_option = $conversion_method_option;
 		$this->formats_integration      = new FormatFactory();
 	}
@@ -63,15 +70,19 @@ class OutputFormatsOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_notice_lines() {
-		return [
+		$notice = [
 			__( 'The AVIF format is a new extension - is the successor to WebP. It allows you to achieve even higher levels of image compression, and the quality of the converted images is better than in WebP.', 'webp-converter-for-media' ),
-			sprintf(
+		];
+
+		if ( $this->token_repository->get_token()->get_token_value() === null ) {
+			$notice[] = sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
 				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-output-formats-info' ) ) . '" target="_blank">',
 				'<span class="dashicons dashicons-arrow-right-alt"></span></a>'
-			),
-		];
+			);
+		}
+		return $notice;
 	}
 
 	/**

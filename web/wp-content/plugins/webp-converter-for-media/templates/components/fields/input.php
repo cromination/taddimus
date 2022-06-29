@@ -1,6 +1,6 @@
 <?php
 /**
- * Text field displayed in plugin settings form.
+ * Field displayed in plugin settings form.
  *
  * @var mixed[] $option Data of field.
  * @var string  $index  Index of field.

@@ -13,6 +13,15 @@ use WebpConverter\HookableInterface;
 class DeletePaths implements HookableInterface {
 
 	/**
+	 * @var OutputPath
+	 */
+	private $output_path;
+
+	public function __construct( OutputPath $output_path = null ) {
+		$this->output_path = $output_path ?: new OutputPath();
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
@@ -41,7 +50,7 @@ class DeletePaths implements HookableInterface {
 	 * @return void
 	 */
 	private function delete_file_by_path( string $path ) {
-		if ( ! ( $output_paths = OutputPath::get_paths( $path ) ) ) {
+		if ( ! ( $output_paths = $this->output_path->get_paths( $path ) ) ) {
 			return;
 		}
 

@@ -87,6 +87,19 @@ class OptionIntegration {
 			case OptionAbstract::OPTION_TYPE_INPUT:
 			case OptionAbstract::OPTION_TYPE_TOKEN:
 				return sanitize_text_field( $current_value );
+			case OptionAbstract::OPTION_TYPE_IMAGE_SIZE:
+				if ( ! is_array( $current_value ) ) {
+					return [ '', '', '' ];
+				}
+
+				$value_min = intval( $current_value[1] ?? '' );
+				$value_max = intval( $current_value[2] ?? '' );
+
+				return [
+					( ( $current_value[0] ?? '' ) === 'yes' ) ? 'yes' : '',
+					( $value_min <= 1 ) ? '' : (string) $value_min,
+					( $value_max <= 1 ) ? '' : (string) $value_max,
+				];
 		}
 
 		return null;

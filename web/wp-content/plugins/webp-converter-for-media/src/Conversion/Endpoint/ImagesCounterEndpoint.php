@@ -7,7 +7,6 @@ use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\PathsFinder;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
-use WebpConverter\Service\StatsManager;
 
 /**
  * Calculates the number of all images to be converted.
@@ -24,19 +23,12 @@ class ImagesCounterEndpoint extends EndpointAbstract {
 	 */
 	private $token_repository;
 
-	/**
-	 * @var StatsManager
-	 */
-	private $stats_manager;
-
 	public function __construct(
 		PluginData $plugin_data,
-		TokenRepository $token_repository,
-		StatsManager $stats_manager = null
+		TokenRepository $token_repository
 	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository;
-		$this->stats_manager    = $stats_manager ?: new StatsManager();
 	}
 
 	/**
@@ -50,18 +42,16 @@ class ImagesCounterEndpoint extends EndpointAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_route_response( \WP_REST_Request $request ) {
-		$images_count = count(
-			( new PathsFinder( $this->plugin_data, $this->token_repository ) )
-				->get_paths( true, [ AvifFormat::FORMAT_EXTENSION, WebpFormat::FORMAT_EXTENSION ] )
-		);
-		$this->stats_manager->set_calculation_images_count( $images_count );
+		$images_count = ( new PathsFinder( $this->plugin_data, $this->token_repository ) )
+			->get_paths_count( [ AvifFormat::FORMAT_EXTENSION, WebpFormat::FORMAT_EXTENSION ] );
 
 		return new \WP_REST_Response(
 			[
 				'value_output' => sprintf(
 				/* translators: %1$s: images count */
-					__( '%1$s for AVIF and %1$s for WebP', 'webp-converter-for-media' ),
-					number_format( $images_count, 0, '', ' ' )
+					__( '%1$s for AVIF and %2$s for WebP', 'webp-converter-for-media' ),
+					number_format( $images_count[ AvifFormat::FORMAT_EXTENSION ] ?? 0, 0, '', ' ' ),
+					number_format( $images_count[ WebpFormat::FORMAT_EXTENSION ] ?? 0, 0, '', ' ' )
 				),
 			],
 			200

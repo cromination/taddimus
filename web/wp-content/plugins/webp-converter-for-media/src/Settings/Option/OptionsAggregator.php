@@ -2,6 +2,8 @@
 
 namespace WebpConverter\Settings\Option;
 
+use WebpConverter\Repository\TokenRepository;
+
 /**
  * .
  */
@@ -14,15 +16,17 @@ class OptionsAggregator {
 	 */
 	private $options = [];
 
-	public function __construct() {
-		$conversion_method = new ConversionMethodOption();
+	public function __construct( TokenRepository $token_repository = null ) {
+		$token_repository  = $token_repository ?: new TokenRepository();
+		$conversion_method = new ConversionMethodOption( $token_repository );
 
-		$this->set_option( new SupportedExtensionsOption() );
+		$this->set_option( new SupportedExtensionsOption( $token_repository ) );
 		$this->set_option( new SupportedDirectoriesOption() );
-		$this->set_option( new AccessTokenOption() );
-		$this->set_option( new OutputFormatsOption( $conversion_method ) );
+		$this->set_option( new AccessTokenOption( $token_repository ) );
+		$this->set_option( new OutputFormatsOption( $token_repository, $conversion_method ) );
 		$this->set_option( $conversion_method );
 		$this->set_option( new ImagesQualityOption() );
+		$this->set_option( new ImageResizeOption( $token_repository ) );
 		$this->set_option( new LoaderTypeOption() );
 		$this->set_option( new ExtraFeaturesOption() );
 	}

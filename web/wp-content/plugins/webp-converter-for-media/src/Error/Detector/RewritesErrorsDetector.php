@@ -46,10 +46,21 @@ class RewritesErrorsDetector implements ErrorDetector {
 	 */
 	private $file_loader;
 
-	public function __construct( PluginInfo $plugin_info, PluginData $plugin_data, FileLoader $file_loader = null ) {
+	/**
+	 * @var OutputPath
+	 */
+	private $output_path;
+
+	public function __construct(
+		PluginInfo $plugin_info,
+		PluginData $plugin_data,
+		FileLoader $file_loader = null,
+		OutputPath $output_path = null
+	) {
 		$this->plugin_info = $plugin_info;
 		$this->plugin_data = $plugin_data;
 		$this->file_loader = $file_loader ?: new FileLoader( $plugin_info, $plugin_data );
+		$this->output_path = $output_path ?: new OutputPath();
 	}
 
 	/**
@@ -125,11 +136,11 @@ class RewritesErrorsDetector implements ErrorDetector {
 			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_PNG, $path_file_png2 );
 		}
 
-		if ( ( $output_path = OutputPath::get_path( $path_file_png, true, WebpFormat::FORMAT_EXTENSION ) )
+		if ( ( $output_path = $this->output_path->get_path( $path_file_png, true, WebpFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {
 			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
 		}
-		if ( ( $output_path = OutputPath::get_path( $path_file_png2, true, WebpFormat::FORMAT_EXTENSION ) )
+		if ( ( $output_path = $this->output_path->get_path( $path_file_png2, true, WebpFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {
 			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
 		}
