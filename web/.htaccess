@@ -170,12 +170,10 @@ satisfy all
     ExpiresByType application/zip A31536000
 </IfModule>
 <IfModule mod_deflate.c>
-    <IfModule mod_filter.c>
         AddOutputFilterByType DEFLATE text/css text/x-component application/x-javascript application/javascript text/javascript text/x-js text/html text/richtext text/plain text/xsd text/xsl text/xml image/bmp application/java application/msword application/vnd.ms-fontobject application/x-msdownload image/x-icon application/json application/vnd.ms-access video/webm application/vnd.ms-project application/x-font-otf application/vnd.ms-opentype application/vnd.oasis.opendocument.database application/vnd.oasis.opendocument.chart application/vnd.oasis.opendocument.formula application/vnd.oasis.opendocument.graphics application/vnd.oasis.opendocument.presentation application/vnd.oasis.opendocument.spreadsheet application/vnd.oasis.opendocument.text audio/ogg application/pdf application/vnd.ms-powerpoint image/svg+xml application/x-shockwave-flash image/tiff application/x-font-ttf application/vnd.ms-opentype audio/wav application/vnd.ms-write application/font-woff application/font-woff2 application/vnd.ms-excel
     <IfModule mod_mime.c>
         # DEFLATE by extension
         AddOutputFilter DEFLATE js css htm html xml
-    </IfModule>
     </IfModule>
 </IfModule>
 <FilesMatch "\.(css|htc|less|js|js2|js3|js4|CSS|HTC|LESS|JS|JS2|JS3|JS4)$">
@@ -197,5 +195,4 @@ satisfy all
     Header set Referrer-Policy "no-referrer-when-downgrade"
 </IfModule>
 # END W3TC Browser Cache
-
 # END WordPress
