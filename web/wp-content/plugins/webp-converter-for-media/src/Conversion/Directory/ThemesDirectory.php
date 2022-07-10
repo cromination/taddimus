@@ -8,7 +8,7 @@ namespace WebpConverter\Conversion\Directory;
 class ThemesDirectory extends DirectoryAbstract {
 
 	const DIRECTORY_TYPE = 'themes';
-	const DIRECTORY_PATH = 'wp-content/themes';
+	const DIRECTORY_PATH = '%s/themes';
 
 	/**
 	 * {@inheritdoc}
@@ -28,6 +28,6 @@ class ThemesDirectory extends DirectoryAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_relative_path(): string {
-		return self::DIRECTORY_PATH;
+		return sprintf( self::DIRECTORY_PATH, basename( WP_CONTENT_DIR ) );
 	}
 }

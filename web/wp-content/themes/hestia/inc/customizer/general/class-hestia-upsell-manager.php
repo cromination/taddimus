@@ -24,6 +24,16 @@ class Hestia_Upsell_Manager extends Hestia_Register_Customizer_Controls {
 	public function add_controls() {
 		$this->add_main_upsell();
 
+		$description = sprintf(
+			/* translators: %s is the Learn more link */
+			__( 'Remove branding label and get access to more options in our premium version. %s', 'hestia' ),
+			/* translators: %s is the Learn more label*/
+			sprintf(
+				'<a class="button button-primary" target="_blank" href="https://themeisle.com/themes/hestia-pro/upgrade/?utm_medium=customizer&utm_source=late_upsell&utm_campaign=hestia" style="display: block; clear: both; width: fit-content; margin-top: 5px;">%s</a>',
+				__( 'Learn more', 'hestia' )
+			)
+		);
+		$this->add_small_pro_notices( array( 'hestia_footer_content' ), $description );
 		if ( function_exists( 'hestia_check_passed_time' ) && hestia_check_passed_time( '21600' ) ) {
 			$this->add_front_page_sections_upsells();
 			$this->add_typography_upsells();
@@ -70,6 +80,7 @@ class Hestia_Upsell_Manager extends Hestia_Register_Customizer_Controls {
 						esc_html__( 'Pricing Plans Section', 'hestia' ),
 						esc_html__( 'Section Reordering', 'hestia' ),
 						esc_html__( 'Quality Support', 'hestia' ),
+						esc_html__( 'Remove Branding Label', 'hestia' ),
 					),
 					'explained_features' => array(
 						esc_html__( 'You will be able to add more content to your site header with an awesome slider.', 'hestia' ),
@@ -212,26 +223,32 @@ class Hestia_Upsell_Manager extends Hestia_Register_Customizer_Controls {
 
 	/**
 	 * Small pro notices in the extended sections area.
+	 *
+	 * @param array $sections The customizer sections where to display the upsell.
 	 */
-	private function add_small_pro_notices() {
+	private function add_small_pro_notices( $sections = array(), $description = '' ) {
 
-		$sections    = array(
-			'hestia_general',
-			'colors',
-			'hestia_shop',
-			'hestia_blog',
-			'hestia_footer_content',
-			'hestia_blog_layout',
-		);
-		$description = sprintf(
+		if ( empty( $sections ) ) {
+			$sections = array(
+				'hestia_general',
+				'colors',
+				'hestia_shop',
+				'hestia_blog',
+				'hestia_blog_layout',
+			);
+		}
+
+		if ( empty( $description ) ) {
+			$description = sprintf(
 			/* translators: %s is the Learn more link */
-			__( 'More options are available for this section in our premium version. %s', 'hestia' ),
-			/* translators: %s is the Learn more label*/
-			sprintf(
-				'<a class="button button-primary" target="_blank" href="https://themeisle.com/themes/hestia-pro/upgrade/?utm_medium=customizer&utm_source=late_upsell&utm_campaign=hestia" style="display: block; clear: both; width: fit-content; margin-top: 5px;">%s</a>',
-				__( 'Learn more', 'hestia' )
-			)
-		);
+				__( 'More options are available for this section in our premium version. %s', 'hestia' ),
+				/* translators: %s is the Learn more label*/
+				sprintf(
+					'<a class="button button-primary" target="_blank" href="https://themeisle.com/themes/hestia-pro/upgrade/?utm_medium=customizer&utm_source=late_upsell&utm_campaign=hestia" style="display: block; clear: both; width: fit-content; margin-top: 5px;">%s</a>',
+					__( 'Learn more', 'hestia' )
+				)
+			);
+		}
 
 		foreach ( $sections as $section ) {
 			$this->add_control(

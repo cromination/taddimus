@@ -18,7 +18,7 @@
 	<tr>
 		<td class="e">webpc_site_url</td>
 		<td class="v">
-			<?php echo esc_html( apply_filters( 'webpc_site_url', get_site_url() ) ); ?>
+			<?php echo esc_html( apply_filters( 'webpc_site_url', get_home_url() ) ); ?>
 		</td>
 	</tr>
 	<tr>

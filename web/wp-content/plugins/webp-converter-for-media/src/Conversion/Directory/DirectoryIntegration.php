@@ -141,7 +141,7 @@ class DirectoryIntegration implements HookableInterface {
 			}
 		}
 
-		$source_url = apply_filters( 'webpc_site_url', get_site_url() );
+		$source_url = apply_filters( 'webpc_site_url', get_home_url() );
 		return sprintf( '%1$s/%2$s', $source_url, $directory_name );
 	}
 }

@@ -25,6 +25,11 @@ class TI_About_Render {
 	 */
 	private $custom_tabs = array();
 
+    /**
+     * Branding notice.
+     */
+    private $branding_notice = array();
+
 	/**
 	 * TI_About_Render constructor.
 	 *
@@ -36,6 +41,9 @@ class TI_About_Render {
 		$this->theme      = $theme_args;
 		$this->tabs       = $data;
 		$this->about_page = $about_page;
+        if ( isset( $data['branding_notice'] ) ){
+            $this->branding_notice = $data['branding_notice'];
+        }
 		if ( isset( $this->tabs['custom_tabs'] ) ) {
 			$this->custom_tabs = $data['custom_tabs'];
 			unset( $this->tabs['custom_tabs'] );
@@ -92,6 +100,7 @@ class TI_About_Render {
 				} ?>
 			</div>
 			<?php $this->render_tabs_list(); ?>
+            <?php $this->render_branding_notice(); ?>
 		</div>
 		<?php
 	}
@@ -131,6 +140,64 @@ class TI_About_Render {
 		}
 		echo '</ul>';
 	}
+
+    /**
+     * Render the branding notice.
+     */
+    private function render_branding_notice() {
+        if ( empty( $this->branding_notice ) ){
+            return;
+        }
+
+        $style = '
+        .ti-notice-wrap{
+            background: #f0f0f1;
+            width: 100%
+        }
+        .ti-branding-notice{
+            margin: 30px 40px 0 40px;
+            padding: 30px 40px;
+            background: #2271b1;
+            color: #fff;
+            display: flex;
+            align-items: center;
+        }
+        .ti-upgrade-btn{
+            padding: 10px 15px;
+            background-color: transparent;
+            border: 2px solid #fff;
+            border-radius: 2px;
+            box-shadow: none;
+            color: #fff;
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: 600;
+            height: auto;
+            line-height: normal;
+            margin-left: auto;
+        }
+        .ti-upgrade-btn:hover{
+            background: #fff;
+            box-shadow: none;
+            color: #0073aa;
+        }
+		';
+
+        echo '<style>' . $style . '</style>';
+        echo '<div class="ti-notice-wrap">';
+        echo '<div class="ti-branding-notice">';
+        if ( isset( $this->branding_notice['text'] ) ){
+            echo '<p>' . wp_kses_post( $this->branding_notice['text'] ) . '</p>';
+        }
+
+        if ( isset( $this->branding_notice['url'] ) && isset( $this->branding_notice['cta'] ) ){
+            echo '<a target="_blank" class="ti-upgrade-btn" href="' . esc_url($this->branding_notice['url']) . '">';
+            echo wp_kses_post( $this->branding_notice['cta'] );
+            echo '</a>';
+        }
+        echo '</div>';
+        echo '</div>';
+    }
 
 	/**
 	 * Render tab content

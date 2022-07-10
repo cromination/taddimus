@@ -1,3 +1,7 @@
+##### [Version 3.2.26](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.25...v3.2.26) (2022-05-12)
+
+- [Fix] Solve rollback sometimes not available
+
 ##### [Version 3.2.25](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.24...v3.2.25) (2022-03-28)
 
 - Force update request after rollback

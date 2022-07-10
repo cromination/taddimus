@@ -53,14 +53,19 @@ class Hestia_Authors_Section extends Hestia_Abstract_Main {
 			$text     = ! empty( $team_item['text'] ) ? apply_filters( 'hestia_translate_single_string', $team_item['text'], 'Team section', 'Text' ) : '';
 			$link     = ! empty( $team_item['link'] ) ? apply_filters( 'hestia_translate_single_string', $team_item['link'], 'Team section', 'Link' ) : '';
 			$icons    = ! empty( $team_item['social_repeater'] ) ? $team_item['social_repeater'] : '';
-
+			$image_id = function_exists( 'attachment_url_to_postid' ) ? attachment_url_to_postid( preg_replace( '/-\d{1,4}x\d{1,4}/i', '', $image ) ) : '';
+			$srcset   = ! empty( $image_id ) && $image_id !== 0 ? wp_get_attachment_image_srcset( $image_id, 'full' ) : '';
 			echo '<div class="col-xs-12 col-ms-6 col-sm-6"><div class="card card-profile card-plain">';
 				echo '<div class="col-md-5"><div class="card-image">';
 			if ( ! empty( $image ) ) {
 				if ( ! empty( $link ) ) {
 					echo '<a href="' . esc_url( $link ) . '">';
 				}
-				echo '<img class="img" src="' . esc_url( $image ) . '">';
+				echo '<img class="img" src="' . esc_url( $image ) . '"';
+				if ( ! empty( $srcset ) ) {
+					echo ' srcset="' . esc_attr( $srcset ) . '" ';
+				}
+				echo '>';
 				if ( ! empty( $link ) ) {
 					echo '</a>';
 				}

@@ -18,6 +18,16 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 ## Changelog ##
 
+##### [Version 3.0.23](https://github.com/Codeinwp/hestia-pro/compare/v3.0.22...v3.0.23) (2022-07-01)
+
+- [Fix] Field placeholder over text in the comments box
+- [Fix] Add the missing srcset attributes for images on the front page
+- Remove the Gutenberg templates as the feature from Otter Blocks is deprecated
+- From 3.0.23 we decided to remove the copyright control from the free version. You can continue using it if you roll back to 3.0.22 or you can upgrade to pro, using a one-time 50% discount by using HESTIABRANDING50 discount code. The promotion is available until the 8th of July.
+
+
+
+
 ##### [Version 3.0.22](https://github.com/Codeinwp/hestia-pro/compare/v3.0.21...v3.0.22) (2022-05-05)
 
 - [Fix] Error when trying to create a new custom layout

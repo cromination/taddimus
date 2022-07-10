@@ -126,18 +126,15 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 	 * Also used as callback for selective refresh.
 	 */
 	public function bottom_footer_content() {
-		$hestia_general_credits = get_theme_mod(
-			'hestia_general_credits',
+		$hestia_general_credits = sprintf(
+		/* translators: %1$s is Theme Name, %2$s is WordPress */
+			esc_html__( '%1$s | Developed by %2$s', 'hestia' ),
+			esc_html__( 'Hestia', 'hestia' ),
+			/* translators: %1$s is URL, %2$s is WordPress */
 			sprintf(
-				/* translators: %1$s is Theme Name, %2$s is WordPress */
-				esc_html__( '%1$s | Developed by %2$s', 'hestia' ),
-				esc_html__( 'Hestia', 'hestia' ),
-				/* translators: %1$s is URL, %2$s is WordPress */
-				sprintf(
-					'<a href="%1$s" rel="nofollow">%2$s</a>',
-					esc_url( __( 'https://themeisle.com', 'hestia' ) ),
-					'ThemeIsle'
-				)
+				'<a href="%1$s" rel="nofollow">%2$s</a>',
+				esc_url( __( 'https://themeisle.com', 'hestia' ) ),
+				'ThemeIsle'
 			)
 		);
 
@@ -149,13 +146,10 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 				'menu_class'     => 'footer-menu',
 			)
 		);
-		?>
-		<?php if ( ! empty( $hestia_general_credits ) || is_customize_preview() ) : ?>
-			<div class="copyright <?php echo esc_attr( $this->add_footer_copyright_alignment_class() ); ?>">
-				<?php echo wp_kses_post( $hestia_general_credits ); ?>
-			</div>
-			<?php
-		endif;
+
+		echo '<div class="copyright ' . esc_attr( $this->add_footer_copyright_alignment_class() ) . '">';
+		echo wp_kses_post( $hestia_general_credits );
+		echo '</div>';
 	}
 
 	/**
@@ -163,7 +157,7 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 	 *
 	 * @return string
 	 */
-	private function add_footer_copyright_alignment_class() {
+	protected function add_footer_copyright_alignment_class() {
 		$hestia_copyright_alignment = get_theme_mod( 'hestia_copyright_alignment', 'right' );
 		if ( $hestia_copyright_alignment === 'left' ) {
 			return 'pull-left';

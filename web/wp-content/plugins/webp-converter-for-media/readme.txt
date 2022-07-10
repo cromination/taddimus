@@ -176,7 +176,7 @@ For the following sample custom WordPress structure:
 Use the following filters:
 
 `add_filter( 'webpc_site_root', function( $path ) {
-	return 'C:/WAMP/www/project/webp'; // your valid path to root
+	return 'C:/WAMP/www/project/web'; // your valid path to root
 } );
 add_filter( 'webpc_dir_name', function( $path, $directory ) {
 	if ( $directory !== 'uploads' ) {
@@ -329,41 +329,14 @@ After making changes, remember to restart the machine:
 
 == Changelog ==
 
+= 4.4.1 (2022-06-30) =
+* `[Added]` Inheritance of mod_rewrite rules from parent directories
+* `[Added]` Support for custom /wp-content directory name
+
 = 4.4.0 (2022-06-19) =
 * `[Changed]` Calculation of number of images to be converted
 * `[Added]` Resizing of images before conversion
 * `[Added]` Notification asking to clear cache for LiteSpeed
-
-= 4.3.6 (2022-06-03) =
-* `[Fixed]` Notification about Cloudflare cache
-
-= 4.3.5 (2022-06-02) =
-* `[Changed]` Generating rewrite rules for via .htaccess loading mode (applies to rewrites_not_working server configuration error)
-* `[Added]` Support for Hide My WP plugin
-
-= 4.3.4 (2022-05-10) =
-* `[Changed]` Generating rewrite rules for via .htaccess loading mode (applies to rewrites_not_working server configuration error)
-* `[Changed]` Message about rewrites_not_executed server configuration error
-
-= 4.3.3 (2022-05-08) =
-* `[Fixed]` Calculation of number of images to be converted
-* `[Added]` Filter `webpc_option_quality_levels` to change conversion quality levels
-
-= 4.3.2 (2022-04-20) =
-* `[Added]` Added conversion skip for animated GIF images
-* `[Added]` Added new information about status of image conversion
-* `[Added]` Added ability to convert only to AVIF format
-
-= 4.3.1 (2022-04-05) =
-* `[Fixed]` Generating rewrite rules for via .htaccess loading mode
-
-= 4.3.0 (2022-04-01) =
-* `[Fixed]` Authorization of access to REST API
-* `[Changed]` Description of plugin operation in plugin settings
-* `[Added]` Command "wp webp-converter calculate" for WP-CLI
-* `[Added]` Command "wp webp-converter regenerate" for WP-CLI
-* `[Added]` Converting .webp files to AVIF format
-* `[Added]` Support for environments where DOCUMENT_ROOT is different from WordPress installation directory
 
 See [changelog.txt](https://plugins.svn.wordpress.org/webp-converter-for-media/trunk/changelog.txt) for previous versions.
 

@@ -98,7 +98,7 @@ class Rollback extends Abstract_Module {
 	 */
 	private function get_api_versions() {
 
-		$cache_key      = $this->product->get_key() . '_' . preg_replace( '/[^0-9a-zA-Z ]/m', '', $this->product->get_version() ) . 'versions';
+		$cache_key      = $this->product->get_cache_key();
 		$cache_versions = get_transient( $cache_key );
 		if ( false === $cache_versions ) {
 			$versions = $this->get_remote_versions();

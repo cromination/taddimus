@@ -182,10 +182,11 @@ class HtaccessLoader extends LoaderAbstract {
 		foreach ( $this->format_factory->get_mime_types( $settings[ OutputFormatsOption::OPTION_NAME ] ) as $format => $mime_type ) {
 			$content .= '<IfModule mod_rewrite.c>' . PHP_EOL;
 			$content .= '  RewriteEngine On' . PHP_EOL;
+			$content .= '  RewriteOptions Inherit' . PHP_EOL;
 			foreach ( $settings[ SupportedExtensionsOption::OPTION_NAME ] as $ext ) {
 				$content .= "  RewriteCond %{HTTP_ACCEPT} ${mime_type}" . PHP_EOL;
 				$content .= "  RewriteCond %{REQUEST_FILENAME} -f" . PHP_EOL;
-				if ( $document_root === '%{DOCUMENT_ROOT}' ) {
+				if ( strpos( $document_root, '%{DOCUMENT_ROOT}' ) !== false ) {
 					$content .= "  RewriteCond ${document_root}${output_path}/$1.${ext}.${format} -f" . PHP_EOL;
 				} else {
 					$content .= "  RewriteCond ${document_root}${output_path}/$1.${ext}.${format} -f [OR]" . PHP_EOL;
@@ -217,7 +218,9 @@ class HtaccessLoader extends LoaderAbstract {
 		if ( $extensions ) {
 			$content .= '  <FilesMatch "(?i)\.(' . $extensions . ')(\.(webp|avif))?$">' . PHP_EOL;
 		}
-		$content .= '    Header always set Cache-Control "private"' . PHP_EOL;
+		if ( ( ( $_SERVER['X-LSCACHE'] ?? '' ) !== 'on' ) || isset( $_SERVER['HTTP_CDN_LOOP'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			$content .= '    Header always set Cache-Control "private"' . PHP_EOL;
+		}
 		$content .= '    Header append Vary "Accept"' . PHP_EOL;
 		if ( $extensions ) {
 			$content .= '  </FilesMatch>' . PHP_EOL;

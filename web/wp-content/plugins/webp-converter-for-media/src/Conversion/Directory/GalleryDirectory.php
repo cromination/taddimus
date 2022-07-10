@@ -8,7 +8,7 @@ namespace WebpConverter\Conversion\Directory;
 class GalleryDirectory extends DirectoryAbstract {
 
 	const DIRECTORY_TYPE = 'gallery';
-	const DIRECTORY_PATH = 'wp-content/gallery';
+	const DIRECTORY_PATH = '%s/gallery';
 
 	/**
 	 * {@inheritdoc}
@@ -28,6 +28,6 @@ class GalleryDirectory extends DirectoryAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_relative_path(): string {
-		return self::DIRECTORY_PATH;
+		return sprintf( self::DIRECTORY_PATH, basename( WP_CONTENT_DIR ) );
 	}
 }

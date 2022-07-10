@@ -206,6 +206,19 @@ class Hestia_Admin {
 				),
 			),
 		);
+
+		if ( $this->show_branding_notice() ) {
+			$config['branding_notice'] = array(
+				'text' => sprintf(
+				// translators: s - Discount Code
+					__( 'From 3.0.23 we decided to remove the copyright control from the free version. You can continue using it if you rollback to 3.0.22 or you can upgrade to pro, using a one time 50%% discount: %s', 'hestia' ),
+					wp_kses_post( '<code>HESTIABRANDING50</code>' )
+				),
+				'url'  => 'https://themeisle.com/themes/hestia-pro/upgrade/?utm_medium=abouthestia&utm_source=copyrightnotice&utm_campaign=hestia',
+				'cta'  => __( 'Upgrade', 'hestia' ),
+			);
+		}
+
 		if ( class_exists( 'Themeisle_Onboarding', false ) ) {
 			$config['welcome_notice']
 				= array(
@@ -218,6 +231,35 @@ class Hestia_Admin {
 		if ( class_exists( 'TI_About_Page', false ) ) {
 			TI_About_Page::init( apply_filters( 'hestia_about_page_array', $config ) );
 		}
+	}
+
+	/**
+	 * Decide if we should show the branding notice or not
+	 *
+	 * @return bool
+	 */
+	private function show_branding_notice() {
+		$install_time = get_option( 'hestia_install' );
+		if ( empty( $install_time ) ) {
+			return false;
+		}
+
+		if ( class_exists( 'Hestia_Addon_Manager' ) ) {
+			return false;
+		}
+
+		$current_time = get_option( 'ti_branding_notice_time' );
+		if ( empty( $current_time ) ) {
+			$current_time = time();
+			update_option( 'ti_branding_notice_time', $current_time );
+		}
+		$difference = $current_time - (int) $install_time;
+		// 86400 is the duration of a day so an old user is one that has the theme activated for more than one day
+		if ( $difference > 86400 && $current_time < strtotime( '2022-07-09' ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

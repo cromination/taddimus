@@ -187,6 +187,7 @@ class Hestia_Autoloader {
 			'Hestia_Team_Section'                         => HESTIA_PHP_INCLUDE . 'addons/views/front-page',
 			'Hestia_Testimonials_Section'                 => HESTIA_PHP_INCLUDE . 'addons/views/front-page',
 			'Hestia_Header_Addon'                         => HESTIA_PHP_INCLUDE . 'addons/views/main',
+			'Hestia_Footer_Addon'                         => HESTIA_PHP_INCLUDE . 'addons/views/main',
 			'Hestia_Buttons_Addon'                        => HESTIA_PHP_INCLUDE . 'addons/views/styles-output',
 			'Hestia_Colors_Addon'                         => HESTIA_PHP_INCLUDE . 'addons/views/styles-output',
 			'Hestia_General_Inline_Style'                 => HESTIA_PHP_INCLUDE . 'addons/views/styles-output',

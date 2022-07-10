@@ -84,16 +84,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.3.7",
+            "version": "2.3.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "10cd375cf85dede2ff417ceab517ef9a0dc55407"
+                "reference": "015f524c9969255a29cdea8890cbd4fec240ee47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/10cd375cf85dede2ff417ceab517ef9a0dc55407",
-                "reference": "10cd375cf85dede2ff417ceab517ef9a0dc55407",
+                "url": "https://api.github.com/repos/composer/composer/zipball/015f524c9969255a29cdea8890cbd4fec240ee47",
+                "reference": "015f524c9969255a29cdea8890cbd4fec240ee47",
                 "shasum": ""
             },
             "require": {
@@ -174,7 +174,7 @@
             "support": {
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/composer/issues",
-                "source": "https://github.com/composer/composer/tree/2.3.7"
+                "source": "https://github.com/composer/composer/tree/2.3.9"
             },
             "funding": [
                 {
@@ -190,7 +190,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-06T14:43:28+00:00"
+            "time": "2022-07-05T14:52:11+00:00"
         },
         {
             "name": "composer/installers",
@@ -4883,15 +4883,15 @@
         },
         {
             "name": "wpackagist-plugin/themeisle-companion",
-            "version": "2.10.12",
+            "version": "2.10.13",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/themeisle-companion/",
-                "reference": "tags/2.10.12"
+                "reference": "tags/2.10.13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/themeisle-companion.2.10.12.zip"
+                "url": "https://downloads.wordpress.org/plugin/themeisle-companion.2.10.13.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -4919,15 +4919,15 @@
         },
         {
             "name": "wpackagist-plugin/w3-total-cache",
-            "version": "2.2.2",
+            "version": "2.2.3",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/w3-total-cache/",
-                "reference": "tags/2.2.2"
+                "reference": "tags/2.2.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/w3-total-cache.2.2.2.zip"
+                "url": "https://downloads.wordpress.org/plugin/w3-total-cache.2.2.3.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -4937,15 +4937,15 @@
         },
         {
             "name": "wpackagist-plugin/webp-converter-for-media",
-            "version": "4.4.0",
+            "version": "4.4.1",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/webp-converter-for-media/",
-                "reference": "tags/4.4.0"
+                "reference": "tags/4.4.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/webp-converter-for-media.4.4.0.zip"
+                "url": "https://downloads.wordpress.org/plugin/webp-converter-for-media.4.4.1.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -4991,15 +4991,15 @@
         },
         {
             "name": "wpackagist-theme/hestia",
-            "version": "3.0.22",
+            "version": "3.0.23",
             "source": {
                 "type": "svn",
                 "url": "https://themes.svn.wordpress.org/hestia/",
-                "reference": "3.0.22"
+                "reference": "3.0.23"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/theme/hestia.3.0.22.zip"
+                "url": "https://downloads.wordpress.org/theme/hestia.3.0.23.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"

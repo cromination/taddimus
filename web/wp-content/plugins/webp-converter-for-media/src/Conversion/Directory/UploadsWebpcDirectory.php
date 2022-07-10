@@ -8,7 +8,7 @@ namespace WebpConverter\Conversion\Directory;
 class UploadsWebpcDirectory extends DirectoryAbstract {
 
 	const DIRECTORY_TYPE = 'webp';
-	const DIRECTORY_PATH = 'wp-content/uploads-webpc';
+	const DIRECTORY_PATH = '%s/uploads-webpc';
 
 	/**
 	 * {@inheritdoc}
@@ -35,6 +35,6 @@ class UploadsWebpcDirectory extends DirectoryAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_relative_path(): string {
-		return self::DIRECTORY_PATH;
+		return sprintf( self::DIRECTORY_PATH, basename( WP_CONTENT_DIR ) );
 	}
 }

@@ -323,6 +323,15 @@ class Product {
 	}
 
 	/**
+	 * Return the product version cache key.
+	 *
+	 * @return string The product version cache key.
+	 */
+	public function get_cache_key() {
+		return $this->get_key() . '_' . preg_replace( '/[^0-9a-zA-Z ]/m', '', $this->get_version() ) . 'versions';
+	}
+
+	/**
 	 * Getter for product name.
 	 *
 	 * @return string The product name.

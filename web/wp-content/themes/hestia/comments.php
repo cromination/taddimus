@@ -67,7 +67,11 @@ if ( post_password_required() ) {
 				?>
 			</div>
 			<div class="media-body">
-				<?php comment_form( hestia_comments_template() ); ?>
+				<?php
+				ob_start();
+				comment_form( hestia_comments_template() );
+				echo str_replace( '<form', '<form autocomplete="off" ', ob_get_clean() );
+				?>
 				<?php if ( ! comments_open() && get_comments_number() ) : ?>
 					<?php if ( is_single() ) : ?>
 						<h4 class="no-comments hestia-title text-center"><?php esc_html_e( 'Comments are closed.', 'hestia' ); ?></h4>

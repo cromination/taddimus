@@ -453,8 +453,6 @@ class Hestia_Public {
 		$this->setup_jetpack();
 		$this->maybe_register_front_page_strings();
 
-		add_filter( 'themeisle_gutenberg_templates', array( $this, 'add_gutenberg_templates' ) );
-
 		add_action( 'after_switch_theme', array( $this, 'should_load_shim' ) );
 
 		add_action( 'wp_loaded', array( $this, 'should_load_shim' ) );
@@ -642,68 +640,6 @@ class Hestia_Public {
 		if ( function_exists( 'hestia_features_register_strings' ) ) {
 			add_action( 'after_setup_theme', 'hestia_features_register_strings', 11 );
 		}
-	}
-
-	/**
-	 * Add new Gutenberg templates on Otter plugin.
-	 *
-	 * @return array
-	 */
-	function add_gutenberg_templates( $templates_list ) {
-
-		$current_theme = apply_filters( 'ti_wl_theme_name', wp_get_theme()->Name );
-
-		$templates = array(
-			array(
-				'title'          => '',
-				'type'           => 'block',
-				'author'         => $current_theme,
-				'keywords'       => array( 'big title', 'header' ),
-				'categories'     => array( 'header' ),
-				'template_url'   => get_template_directory_uri() . '/gutenberg/blocks/big-title/template.json',
-				'screenshot_url' => get_template_directory_uri() . '/gutenberg/blocks/big-title/screenshot.png',
-			),
-			array(
-				'title'          => '',
-				'type'           => 'block',
-				'author'         => $current_theme,
-				'keywords'       => array( 'features', 'services', 'icons' ),
-				'categories'     => array( 'content' ),
-				'template_url'   => get_template_directory_uri() . '/gutenberg/blocks/features/template.json',
-				'screenshot_url' => get_template_directory_uri() . '/gutenberg/blocks/features/screenshot.png',
-			),
-			array(
-				'title'          => '',
-				'type'           => 'block',
-				'author'         => $current_theme,
-				'keywords'       => array( 'about', 'description' ),
-				'categories'     => array( 'content' ),
-				'template_url'   => get_template_directory_uri() . '/gutenberg/blocks/about/template.json',
-				'screenshot_url' => get_template_directory_uri() . '/gutenberg/blocks/about/screenshot.png',
-			),
-			array(
-				'title'          => '',
-				'type'           => 'block',
-				'author'         => $current_theme,
-				'keywords'       => array( 'testimonial', 'clients', 'customer' ),
-				'categories'     => array( 'content' ),
-				'template_url'   => get_template_directory_uri() . '/gutenberg/blocks/clients/template.json',
-				'screenshot_url' => get_template_directory_uri() . '/gutenberg/blocks/clients/screenshot.png',
-			),
-			array(
-				'title'          => '',
-				'type'           => 'block',
-				'author'         => $current_theme,
-				'keywords'       => array( 'team', 'people' ),
-				'categories'     => array( 'content' ),
-				'template_url'   => get_template_directory_uri() . '/gutenberg/blocks/team/template.json',
-				'screenshot_url' => get_template_directory_uri() . '/gutenberg/blocks/team/screenshot.png',
-			),
-		);
-
-		$list = array_merge( $templates, $templates_list );
-
-		return $list;
 	}
 
 	/**

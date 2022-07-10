@@ -24,13 +24,19 @@ do_action( 'hestia_before_attachment_wrapper' )
 						<?php
 						if ( wp_attachment_is_image( $post->ID ) ) :
 							$att_image = wp_get_attachment_image_src( $post->id, 'full' );
+							$srcset    = wp_get_attachment_image_srcset( $post->id, 'full' )
 							?>
 							<a href="<?php echo esc_url( wp_get_attachment_url( $post->id ) ); ?>"
 									title="<?php the_title_attribute(); ?>" rel="attachment">
 								<img src="<?php echo esc_url( $att_image[0] ); ?>"
 										width="<?php echo esc_attr( $att_image[1] ); ?>"
 										height="<?php echo esc_attr( $att_image[2] ); ?>" class="attachment-medium"
-										alt="<?php esc_attr( $post->post_excerpt ); ?>"/>
+										alt="<?php esc_attr( $post->post_excerpt ); ?>"
+									<?php
+									if ( ! empty( $srcset ) ) {
+										echo 'srcset="' . esc_attr( $srcset ) . '"'; }
+									?>
+								/>
 							</a>
 						<?php else : ?>
 							<a href="<?php echo esc_url( wp_get_attachment_url( $post->ID ) ); ?>"

@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 4.4.1 (2022-06-30) =
+* `[Added]` Inheritance of mod_rewrite rules from parent directories
+* `[Added]` Support for custom /wp-content directory name
+
 = 4.4.0 (2022-06-19) =
 * `[Changed]` Calculation of number of images to be converted
 * `[Added]` Resizing of images before conversion
