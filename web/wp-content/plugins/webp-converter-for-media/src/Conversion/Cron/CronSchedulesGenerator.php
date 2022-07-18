@@ -29,7 +29,7 @@ class CronSchedulesGenerator implements HookableInterface {
 	public function add_cron_interval( array $schedules ): array {
 		$schedules[ self::CRON_PATHS_SCHEDULE ] = [
 			'interval' => apply_filters( 'webpc_cron_paths_interval', 3600 ),
-			'display'  => 'WebP Converter for Media',
+			'display'  => 'Converter for Media',
 		];
 		return $schedules;
 	}

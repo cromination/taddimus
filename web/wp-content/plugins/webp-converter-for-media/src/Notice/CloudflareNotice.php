@@ -10,9 +10,8 @@ use WebpConverter\Settings\Page\PageIntegration;
  */
 class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 
-	const NOTICE_OPTION      = 'webpc_notice_cloudflare';
-	const NOTICE_VIEW_PATH   = 'components/notices/cloudflare.php';
-	const NOTICE_ACTION_NAME = 'webpc_notice_cloudflare';
+	const NOTICE_OPTION    = 'webpc_notice_cloudflare';
+	const NOTICE_VIEW_PATH = 'components/notices/clear-cache.php';
 
 	/**
 	 * {@inheritdoc}
@@ -33,6 +32,10 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 	 */
 	public function is_available(): bool {
 		$cdn_server = strtolower( $_SERVER['HTTP_CDN_LOOP'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		if ( isset( $_SERVER['KINSTA_CACHE_ZONE'] ) ) {
+			$cdn_server = '';
+		}
+
 		if ( ( strpos( $cdn_server, 'cloudflare' ) !== false ) || is_plugin_active( 'cloudflare/cloudflare.php' ) ) {
 			return ( isset( $_GET['page'] ) && ( $_GET['page'] === PageIntegration::ADMIN_MENU_PAGE ) ); // phpcs:ignore WordPress.Security.NonceVerification
 		}
@@ -68,7 +71,31 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 	public function get_vars_for_view(): array {
 		return [
 			'ajax_url'     => admin_url( 'admin-ajax.php' ),
-			'close_action' => self::NOTICE_ACTION_NAME,
+			'close_action' => self::NOTICE_OPTION,
+			'service_name' => 'Cloudflare',
+			'steps'        => [
+				sprintf(
+				/* translators: %1$s: service name */
+					__( 'Log in to your %1$s dashboard.', 'webp-converter-for-media' ),
+					'Cloudflare'
+				),
+				sprintf(
+				/* translators: %1$s: button label */
+					__( 'Click %1$s.', 'webp-converter-for-media' ),
+					'<strong>"Caching > Configuration"</strong>'
+				),
+				sprintf(
+				/* translators: %1$s: section label, %2$s: button label */
+					__( 'Under %1$s, click %2$s. A warning window appears.', 'webp-converter-for-media' ),
+					'<strong>"Purge Cache"</strong>',
+					'<strong>"Purge Everything"</strong>'
+				),
+				sprintf(
+				/* translators: %1$s: button label */
+					__( 'If you agree, click %1$s.', 'webp-converter-for-media' ),
+					'<strong>"Purge Everything"</strong>'
+				),
+			],
 		];
 	}
 
@@ -76,6 +103,6 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_ajax_action_to_disable(): string {
-		return self::NOTICE_ACTION_NAME;
+		return self::NOTICE_OPTION;
 	}
 }

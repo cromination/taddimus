@@ -3,9 +3,7 @@
 namespace WebpConverter\Loader;
 
 use WebpConverter\Service\PathsGenerator;
-use WebpConverter\Settings\Option\ExtraFeaturesOption;
 use WebpConverter\Settings\Option\LoaderTypeOption;
-use WebpConverter\Settings\Option\OutputFormatsOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
 
 /**
@@ -138,7 +136,7 @@ class HtaccessLoader extends LoaderAbstract {
 		$content = $this->add_comments_to_rules(
 			[
 				$this->get_mod_mime_rules( $settings ),
-				$this->get_mod_expires_rules( $settings ),
+				$this->get_mod_expires_rules(),
 			]
 		);
 
@@ -179,10 +177,13 @@ class HtaccessLoader extends LoaderAbstract {
 			$output_path .= '/' . $output_path_suffix;
 		}
 
-		foreach ( $this->format_factory->get_mime_types( $settings[ OutputFormatsOption::OPTION_NAME ] ) as $format => $mime_type ) {
+		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
 			$content .= '<IfModule mod_rewrite.c>' . PHP_EOL;
 			$content .= '  RewriteEngine On' . PHP_EOL;
-			$content .= '  RewriteOptions Inherit' . PHP_EOL;
+			if ( apply_filters( 'webpc_htaccess_mod_rewrite_inherit', true ) === true ) {
+				$content .= '  RewriteOptions Inherit' . PHP_EOL;
+			}
+
 			foreach ( $settings[ SupportedExtensionsOption::OPTION_NAME ] as $ext ) {
 				$content .= "  RewriteCond %{HTTP_ACCEPT} ${mime_type}" . PHP_EOL;
 				$content .= "  RewriteCond %{REQUEST_FILENAME} -f" . PHP_EOL;
@@ -192,7 +193,7 @@ class HtaccessLoader extends LoaderAbstract {
 					$content .= "  RewriteCond ${document_root}${output_path}/$1.${ext}.${format} -f [OR]" . PHP_EOL;
 					$content .= "  RewriteCond %{DOCUMENT_ROOT}${root_suffix}${output_path}/$1.${ext}.${format} -f" . PHP_EOL;
 				}
-				if ( ! in_array( ExtraFeaturesOption::OPTION_VALUE_REFERER_DISABLED, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
+				if ( apply_filters( 'webpc_htaccess_mod_rewrite_referer', false ) === true ) {
 					$content .= "  RewriteCond %{HTTP_HOST}@@%{HTTP_REFERER} ^([^@]*)@@https?://\\1/.*" . PHP_EOL;
 				}
 				$content .= "  RewriteRule (.+)\.${ext}$ ${root_suffix}${output_path}/$1.${ext}.${format} [NC,T=${mime_type},L]" . PHP_EOL;
@@ -233,19 +234,14 @@ class HtaccessLoader extends LoaderAbstract {
 	/**
 	 * Generates rules for mod_expires.
 	 *
-	 * @param mixed[] $settings Plugin settings.
-	 *
 	 * @return string Rules for .htaccess file.
 	 */
-	private function get_mod_expires_rules( array $settings ): string {
+	private function get_mod_expires_rules(): string {
 		$content = '';
-		if ( ! in_array( ExtraFeaturesOption::OPTION_VALUE_MOD_EXPIRES, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
-			return $content;
-		}
 
 		$content .= '<IfModule mod_expires.c>' . PHP_EOL;
 		$content .= '  ExpiresActive On' . PHP_EOL;
-		foreach ( $this->format_factory->get_mime_types( $settings[ OutputFormatsOption::OPTION_NAME ] ) as $format => $mime_type ) {
+		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
 			$content .= "  ExpiresByType ${mime_type} \"access plus 1 year\"" . PHP_EOL;
 		}
 		$content .= '</IfModule>';
@@ -267,7 +263,7 @@ class HtaccessLoader extends LoaderAbstract {
 		}
 
 		$content .= '<IfModule mod_mime.c>' . PHP_EOL;
-		foreach ( $this->format_factory->get_mime_types( $settings[ OutputFormatsOption::OPTION_NAME ] ) as $format => $mime_type ) {
+		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
 			$content .= "  AddType ${mime_type} .${format}" . PHP_EOL;
 		}
 		$content .= '</IfModule>';

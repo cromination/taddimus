@@ -114,7 +114,7 @@ class OutputFormatsOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_value_for_debug( array $settings ): array {
+	public function get_debug_value( array $settings ): array {
 		return [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ];
 	}
 

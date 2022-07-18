@@ -20,7 +20,7 @@ class OptionsAggregator {
 		$token_repository  = $token_repository ?: new TokenRepository();
 		$conversion_method = new ConversionMethodOption( $token_repository );
 
-		$this->set_option( new SupportedExtensionsOption( $token_repository ) );
+		$this->set_option( new SupportedExtensionsOption() );
 		$this->set_option( new SupportedDirectoriesOption() );
 		$this->set_option( new AccessTokenOption( $token_repository ) );
 		$this->set_option( new OutputFormatsOption( $token_repository, $conversion_method ) );

@@ -105,7 +105,7 @@ class PageIntegration implements HookableInterface {
 	private function add_settings_page( string $menu_page ) {
 		$page = add_submenu_page(
 			$menu_page,
-			'WebP Converter for Media',
+			'Converter for Media',
 			'Converter for Media',
 			'manage_options',
 			self::ADMIN_MENU_PAGE,

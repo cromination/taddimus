@@ -10,9 +10,8 @@ use WebpConverter\Service\OptionsAccessManager;
  */
 class AvifSupportNotice extends NoticeAbstract implements NoticeInterface {
 
-	const NOTICE_OPTION      = 'webpc_notice_avif_support';
-	const NOTICE_VIEW_PATH   = 'components/notices/avif-support.php';
-	const NOTICE_ACTION_NAME = 'webpc_notice_avif_support';
+	const NOTICE_OPTION    = 'webpc_notice_avif_support';
+	const NOTICE_VIEW_PATH = 'components/notices/avif-support.php';
 
 	/**
 	 * @var TokenRepository
@@ -77,7 +76,7 @@ class AvifSupportNotice extends NoticeAbstract implements NoticeInterface {
 	public function get_vars_for_view(): array {
 		return [
 			'ajax_url'     => admin_url( 'admin-ajax.php' ),
-			'close_action' => self::NOTICE_ACTION_NAME,
+			'close_action' => self::NOTICE_OPTION,
 		];
 	}
 
@@ -85,6 +84,6 @@ class AvifSupportNotice extends NoticeAbstract implements NoticeInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_ajax_action_to_disable(): string {
-		return self::NOTICE_ACTION_NAME;
+		return self::NOTICE_OPTION;
 	}
 }

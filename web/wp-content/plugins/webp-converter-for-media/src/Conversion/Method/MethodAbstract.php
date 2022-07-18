@@ -168,7 +168,7 @@ abstract class MethodAbstract implements MethodInterface {
 	protected function log_conversion_error( string $error_message, array $plugin_settings ) {
 		$features = $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ];
 		if ( in_array( ExtraFeaturesOption::OPTION_VALUE_DEBUG_ENABLED, $features ) ) {
-			error_log( sprintf( 'WebP Converter for Media: %s', $error_message ) ); // phpcs:ignore
+			error_log( sprintf( 'Converter for Media: %s', $error_message ) ); // phpcs:ignore
 		}
 	}
 }

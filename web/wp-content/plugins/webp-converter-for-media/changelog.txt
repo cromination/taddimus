@@ -1,5 +1,19 @@
 == Changelog ==
 
+= 4.5.0 (2022-07-15) =
+* `[Changed]` Plugin name from "WebP Converter to Media" to "Converter for Media"
+* `[Removed]` "Browser Caching for files in output formats" option in plugin settings (will be active always)
+* `[Removed]` "Force redirections to output formats for all domains" option in plugin settings (will be active always)
+* `[Fixed]` Error handling about unreadable source or output path
+* `[Changed]` Error message for bypassing_apache error in server configuration
+* `[Changed]` Error message for rewrites_not_executed error in server configuration
+* `[Added]` Limit of 3 attempts to image regeneration to avoid infinity loops
+* `[Added]` Debug information about saved plugin data
+* `[Added]` Notification asking to clear cache for Cloudways
+* `[Added]` Action `webpc_after_conversion` to operation on output path after image conversion
+* `[Added]` Filter `webpc_htaccess_mod_rewrite_inherit` to disable mod_rewrite inheritance
+* `[Added]` Filter `webpc_htaccess_mod_rewrite_referer` to disable redirections to output formats for other domains
+
 = 4.4.1 (2022-06-30) =
 * `[Added]` Inheritance of mod_rewrite rules from parent directories
 * `[Added]` Support for custom /wp-content directory name

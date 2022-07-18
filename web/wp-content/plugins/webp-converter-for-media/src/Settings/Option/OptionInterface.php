@@ -66,6 +66,15 @@ interface OptionInterface {
 	public function get_default_value( array $settings = null );
 
 	/**
+	 * Returns default value of field when debugging.
+	 *
+	 * @param mixed[] $settings Plugin settings.
+	 *
+	 * @return string|string[]
+	 */
+	public function get_debug_value( array $settings );
+
+	/**
 	 * Returns unavailable values for field.
 	 *
 	 * @param mixed[] $settings Plugin settings.
@@ -75,11 +84,9 @@ interface OptionInterface {
 	public function get_disabled_values( array $settings );
 
 	/**
-	 * Returns default value of field when debugging.
-	 *
-	 * @param mixed[] $settings Plugin settings.
+	 * @param string|string[] $current_value .
 	 *
 	 * @return string|string[]
 	 */
-	public function get_value_for_debug( array $settings );
+	public function parse_value( $current_value );
 }

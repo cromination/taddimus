@@ -17,7 +17,7 @@ use WebpConverter\WebpConverterConstants;
 >
 	<div class="webpContent webpContent--notice webpContent--author">
 		<h4>
-			<?php echo esc_html( __( 'Hello, I am glad that you are with us and use our WebP Converter for Media plugin!', 'webp-converter-for-media' ) ); ?>
+			<?php echo esc_html( __( 'Hello, I am glad that you are with us and use our Converter for Media plugin!', 'webp-converter-for-media' ) ); ?>
 		</h4>
 		<p>
 			<?php

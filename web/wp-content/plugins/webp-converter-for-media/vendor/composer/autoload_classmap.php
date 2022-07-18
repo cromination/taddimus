@@ -123,6 +123,7 @@ return array(
     'WebpConverter\\Model\\Token' => $baseDir . '/src/Model/Token.php',
     'WebpConverter\\Notice\\AvifSupportNotice' => $baseDir . '/src/Notice/AvifSupportNotice.php',
     'WebpConverter\\Notice\\CloudflareNotice' => $baseDir . '/src/Notice/CloudflareNotice.php',
+    'WebpConverter\\Notice\\CloudwaysNotice' => $baseDir . '/src/Notice/CloudwaysNotice.php',
     'WebpConverter\\Notice\\LitespeedNotice' => $baseDir . '/src/Notice/LitespeedNotice.php',
     'WebpConverter\\Notice\\NoticeAbstract' => $baseDir . '/src/Notice/NoticeAbstract.php',
     'WebpConverter\\Notice\\NoticeIntegration' => $baseDir . '/src/Notice/NoticeIntegration.php',

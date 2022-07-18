@@ -33,5 +33,17 @@
 			<?php echo esc_html( wp_upload_dir()['basedir'] ); ?>
 		</td>
 	</tr>
+	<tr>
+		<td class="e">home_url</td>
+		<td class="v">
+			<?php echo esc_html( get_home_url() ); ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="e">site_url</td>
+		<td class="v">
+			<?php echo esc_html( get_site_url() ); ?>
+		</td>
+	</tr>
 	</tbody>
 </table>

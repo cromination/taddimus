@@ -4,6 +4,7 @@ namespace WebpConverter\Plugin\Deactivation;
 
 use WebpConverter\Conversion\Cron\CronStatusManager;
 use WebpConverter\Notice\CloudflareNotice;
+use WebpConverter\Notice\CloudwaysNotice;
 use WebpConverter\Notice\LitespeedNotice;
 use WebpConverter\Service\OptionsAccessManager;
 
@@ -18,6 +19,7 @@ class PluginSettings {
 	 * @return void
 	 */
 	public function remove_plugin_settings() {
+		OptionsAccessManager::delete_option( CloudwaysNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( CloudflareNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( LitespeedNotice::NOTICE_OPTION );
 

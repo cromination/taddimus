@@ -138,6 +138,7 @@ class ComposerStaticInit74037c5a08f9b99adcf3f4137c88ddde
         'WebpConverter\\Model\\Token' => __DIR__ . '/../..' . '/src/Model/Token.php',
         'WebpConverter\\Notice\\AvifSupportNotice' => __DIR__ . '/../..' . '/src/Notice/AvifSupportNotice.php',
         'WebpConverter\\Notice\\CloudflareNotice' => __DIR__ . '/../..' . '/src/Notice/CloudflareNotice.php',
+        'WebpConverter\\Notice\\CloudwaysNotice' => __DIR__ . '/../..' . '/src/Notice/CloudwaysNotice.php',
         'WebpConverter\\Notice\\LitespeedNotice' => __DIR__ . '/../..' . '/src/Notice/LitespeedNotice.php',
         'WebpConverter\\Notice\\NoticeAbstract' => __DIR__ . '/../..' . '/src/Notice/NoticeAbstract.php',
         'WebpConverter\\Notice\\NoticeIntegration' => __DIR__ . '/../..' . '/src/Notice/NoticeIntegration.php',

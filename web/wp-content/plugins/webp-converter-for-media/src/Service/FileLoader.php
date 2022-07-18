@@ -79,6 +79,11 @@ class FileLoader {
 			return 0;
 		}
 
+		if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
+			curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+			curl_setopt( $ch, CURLOPT_USERPWD, sprintf( '%1$s:%2$s', $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		}
+
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );

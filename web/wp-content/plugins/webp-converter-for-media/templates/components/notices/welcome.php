@@ -12,7 +12,7 @@
 >
 	<div class="webpContent webpContent--notice">
 		<h4>
-			<?php echo esc_html( __( 'Thank you for installing our plugin WebP Converter for Media!', 'webp-converter-for-media' ) ); ?>
+			<?php echo esc_html( __( 'Thank you for installing our plugin Converter for Media!', 'webp-converter-for-media' ) ); ?>
 		</h4>
 		<p>
 			<?php

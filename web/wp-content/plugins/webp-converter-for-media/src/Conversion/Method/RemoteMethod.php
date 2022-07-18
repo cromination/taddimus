@@ -117,20 +117,24 @@ class RemoteMethod extends MethodAbstract {
 		$this->server_configurator->set_execution_time();
 
 		$output_formats = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
-		$file_paths     = $this->get_source_paths( $paths, $plugin_settings );
+		$source_paths   = [];
+		$output_paths   = [];
+		$this->token    = $this->token_repository->get_token();
 
 		$this->files_to_conversion += ( count( $paths ) * count( $output_formats ) );
-		if ( ! $file_paths ) {
-			return;
-		}
-
-		$source_paths = [];
-		$output_paths = [];
-		$this->token  = $this->token_repository->get_token();
 
 		foreach ( $output_formats as $output_format ) {
-			$source_paths[ $output_format ] = $file_paths;
-			$output_paths[ $output_format ] = $this->get_output_paths( $file_paths, $output_format );
+			try {
+				$file_paths = $this->get_source_paths( $paths, $plugin_settings, $output_format );
+				if ( ! $file_paths ) {
+					continue;
+				}
+
+				$output_paths[ $output_format ] = $this->get_output_paths( $file_paths, $output_format );
+				$source_paths[ $output_format ] = $file_paths;
+			} catch ( \Exception $e ) {
+				$this->save_conversion_error( $e->getMessage(), $plugin_settings );
+			}
 		}
 
 		if ( ! $regenerate_force ) {
@@ -154,6 +158,7 @@ class RemoteMethod extends MethodAbstract {
 					$output_path = $output_paths[ $output_format ][ $path_index ];
 
 					file_put_contents( $output_path, $converted_file );
+					do_action( 'webpc_after_conversion', $output_path, $source_path );
 
 					try {
 						$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
@@ -189,12 +194,13 @@ class RemoteMethod extends MethodAbstract {
 	/**
 	 * @param string[] $paths           .
 	 * @param mixed[]  $plugin_settings .
+	 * @param string   $output_format   .
 	 *
 	 * @return string[]
 	 *
 	 * @throws Exception\SourcePathException
 	 */
-	private function get_source_paths( array $paths, array $plugin_settings ): array {
+	private function get_source_paths( array $paths, array $plugin_settings, string $output_format ): array {
 		$source_paths = [];
 		foreach ( $paths as $path ) {
 			$source_path = $this->get_image_source_path( $path );
@@ -203,6 +209,11 @@ class RemoteMethod extends MethodAbstract {
 					( new Exception\FilesizeOversizeException( [ self::MAX_FILESIZE_BYTES, $source_path ] ) )->getMessage(),
 					$plugin_settings
 				);
+				continue;
+			}
+
+			$path_extension = strtolower( pathinfo( $path, PATHINFO_EXTENSION ) );
+			if ( $path_extension === $output_format ) {
 				continue;
 			}
 

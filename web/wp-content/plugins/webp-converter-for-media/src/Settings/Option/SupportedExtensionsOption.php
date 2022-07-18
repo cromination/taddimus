@@ -2,24 +2,12 @@
 
 namespace WebpConverter\Settings\Option;
 
-use WebpConverter\Conversion\Format\AvifFormat;
-use WebpConverter\Repository\TokenRepository;
-
 /**
  * {@inheritdoc}
  */
 class SupportedExtensionsOption extends OptionAbstract {
 
 	const OPTION_NAME = 'extensions';
-
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
-
-	public function __construct( TokenRepository $token_repository ) {
-		$this->token_repository = $token_repository;
-	}
 
 	/**
 	 * {@inheritdoc}
@@ -63,8 +51,7 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 */
 	public function get_values( array $settings ): array {
 		return [
-			'jpg'  => '.jpg',
-			'jpeg' => '.jpeg',
+			'jpg'  => '.jpg / .jpeg',
 			'png'  => '.png',
 			'gif'  => '.gif',
 			'webp' => sprintf(
@@ -81,7 +68,7 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 * @return string[]
 	 */
 	public function get_default_value( array $settings = null ): array {
-		return [ 'jpg', 'jpeg', 'png' ];
+		return [ 'jpg', 'png' ];
 	}
 
 	/**
@@ -89,21 +76,19 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_value_for_debug( array $settings ): array {
+	public function get_debug_value( array $settings ): array {
 		return [ 'png2', 'png' ];
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * @param string[] $current_value .
 	 *
 	 * @return string[]
 	 */
-	public function get_disabled_values( array $settings ): array {
-		$output_formats = $settings[ OutputFormatsOption::OPTION_NAME ] ?? [];
-
-		return ( ! in_array( AvifFormat::FORMAT_EXTENSION, $output_formats )
-			|| ! $this->token_repository->get_token()->get_valid_status() )
-			? [ 'webp' ]
-			: [];
+	public function parse_value( $current_value ): array {
+		if ( in_array( 'jpg', $current_value ) ) {
+			$current_value[] = 'jpeg';
+		}
+		return $current_value;
 	}
 }

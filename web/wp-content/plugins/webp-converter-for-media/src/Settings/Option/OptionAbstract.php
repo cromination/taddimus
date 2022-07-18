@@ -31,14 +31,23 @@ abstract class OptionAbstract implements OptionInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_disabled_values( array $settings ) {
-		return null;
+	public function get_debug_value( array $settings ) {
+		return $this->get_default_value( $settings );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_value_for_debug( array $settings ) {
-		return $this->get_default_value( $settings );
+	public function get_disabled_values( array $settings ) {
+		return null;
+	}
+
+	/**
+	 * @param string|string[] $current_value .
+	 *
+	 * @return string|string[]
+	 */
+	public function parse_value( $current_value ) {
+		return $current_value;
 	}
 }

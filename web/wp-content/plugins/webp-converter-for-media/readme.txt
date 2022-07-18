@@ -286,7 +286,7 @@ Find the configuration file in one of the paths *(remember to select configurati
 - `/etc/nginx/sites-available/` or `/etc/nginx/sites-enabled/`
 - `/etc/nginx/conf.d/`
 
-and add this code *(add these lines at the beginning of the `server { ... }` block)*:
+and add this code *(add these lines at the beginning of the `server { ... }` block)* - **remember to add these rules before any other `location {}` rules**:
 
 `# BEGIN WebP Converter for Media`
 `set $ext_avif ".avif";`
@@ -301,7 +301,6 @@ and add this code *(add these lines at the beginning of the `server { ... }` blo
 ``
 `location ~ /wp-content/(?<path>.+)\.(?<ext>jpe?g|png|gif|webp)$ {`
 `	add_header Vary Accept;`
-`	add_header Cache-Control "private" always;`
 `	expires 365d;`
 `	try_files`
 `		/wp-content/uploads-webpc/$path.$ext$ext_avif`
@@ -310,7 +309,7 @@ and add this code *(add these lines at the beginning of the `server { ... }` blo
 `}`
 `# END WebP Converter for Media`
 
-Then edit the configuration file:
+**Then add support for the required MIME types**, if they are not supported. Edit the configuration file:
 - `/etc/nginx/mime.types`
 
 and add this code *(add these lines inside the `types { ... }` block)*:
@@ -322,6 +321,8 @@ After making changes, remember to restart the machine:
 
 `systemctl restart nginx`
 
+In case of problems, please contact us in [the support forum](https://wordpress.org/support/plugin/webp-converter-for-media/). We will try to help.
+
 == Screenshots ==
 
 1. Screenshot of the options panel
@@ -329,14 +330,19 @@ After making changes, remember to restart the machine:
 
 == Changelog ==
 
-= 4.4.1 (2022-06-30) =
-* `[Added]` Inheritance of mod_rewrite rules from parent directories
-* `[Added]` Support for custom /wp-content directory name
-
-= 4.4.0 (2022-06-19) =
-* `[Changed]` Calculation of number of images to be converted
-* `[Added]` Resizing of images before conversion
-* `[Added]` Notification asking to clear cache for LiteSpeed
+= 4.5.0 (2022-07-15) =
+* `[Changed]` Plugin name from "WebP Converter to Media" to "Converter for Media"
+* `[Removed]` "Browser Caching for files in output formats" option in plugin settings (will be active always)
+* `[Removed]` "Force redirections to output formats for all domains" option in plugin settings (will be active always)
+* `[Fixed]` Error handling about unreadable source or output path
+* `[Changed]` Error message for bypassing_apache error in server configuration
+* `[Changed]` Error message for rewrites_not_executed error in server configuration
+* `[Added]` Limit of 3 attempts to image regeneration to avoid infinity loops
+* `[Added]` Debug information about saved plugin data
+* `[Added]` Notification asking to clear cache for Cloudways
+* `[Added]` Action `webpc_after_conversion` to operation on output path after image conversion
+* `[Added]` Filter `webpc_htaccess_mod_rewrite_inherit` to disable mod_rewrite inheritance
+* `[Added]` Filter `webpc_htaccess_mod_rewrite_referer` to disable redirections to output formats for other domains
 
 See [changelog.txt](https://plugins.svn.wordpress.org/webp-converter-for-media/trunk/changelog.txt) for previous versions.
 

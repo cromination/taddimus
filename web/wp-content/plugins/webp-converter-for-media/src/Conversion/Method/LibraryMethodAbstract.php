@@ -81,6 +81,7 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 
 			$image = $this->create_image_by_path( $source_path, $plugin_settings );
 			$this->convert_image_to_output( $image, $source_path, $output_path, $format, $plugin_settings );
+			do_action( 'webpc_after_conversion', $output_path, $source_path );
 
 			$this->skip_crashed->delete_crashed_file( $output_path );
 			$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );

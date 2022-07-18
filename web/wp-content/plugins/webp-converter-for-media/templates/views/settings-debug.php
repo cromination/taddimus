@@ -17,7 +17,7 @@
 <div class="wrap">
 	<hr class="wp-header-end">
 	<div class="webpPage">
-		<h1 class="webpPage__headline"><?php echo esc_html( __( 'WebP Converter for Media', 'webp-converter-for-media' ) ); ?></h1>
+		<h1 class="webpPage__headline"><?php echo esc_html( 'Converter for Media' ); ?></h1>
 		<div class="webpPage__inner">
 			<ul class="webpPage__columns">
 				<li class="webpPage__column webpPage__column--large">

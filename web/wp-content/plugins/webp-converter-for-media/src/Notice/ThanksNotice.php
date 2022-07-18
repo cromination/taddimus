@@ -9,10 +9,9 @@ use WebpConverter\Service\OptionsAccessManager;
  */
 class ThanksNotice extends NoticeAbstract implements NoticeInterface {
 
-	const NOTICE_OPTION      = 'webpc_notice_thanks';
-	const NOTICE_OLD_OPTION  = 'webpc_notice_hidden';
-	const NOTICE_VIEW_PATH   = 'components/notices/thanks.php';
-	const NOTICE_ACTION_NAME = 'webpc_notice_thanks';
+	const NOTICE_OPTION     = 'webpc_notice_thanks';
+	const NOTICE_OLD_OPTION = 'webpc_notice_hidden';
+	const NOTICE_VIEW_PATH  = 'components/notices/thanks.php';
 
 	/**
 	 * {@inheritdoc}
@@ -64,7 +63,7 @@ class ThanksNotice extends NoticeAbstract implements NoticeInterface {
 	public function get_vars_for_view(): array {
 		return [
 			'ajax_url'     => admin_url( 'admin-ajax.php' ),
-			'close_action' => self::NOTICE_ACTION_NAME,
+			'close_action' => self::NOTICE_OPTION,
 		];
 	}
 
@@ -72,6 +71,6 @@ class ThanksNotice extends NoticeAbstract implements NoticeInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_ajax_action_to_disable(): string {
-		return self::NOTICE_ACTION_NAME;
+		return self::NOTICE_OPTION;
 	}
 }

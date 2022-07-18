@@ -37,7 +37,7 @@ class OptionIntegration {
 		$disabled_values = $this->option->get_disabled_values( $settings );
 
 		if ( $is_debug ) {
-			$value = $this->option->get_value_for_debug( $settings );
+			$value = $this->option->get_debug_value( $settings );
 		} else {
 			$value = ( isset( $settings[ $option_name ] ) || $is_save )
 				? $this->get_option_value( $settings[ $option_name ] ?? '', $option_type, $values, $disabled_values )
@@ -52,7 +52,9 @@ class OptionIntegration {
 			'info'         => $this->option->get_info(),
 			'values'       => $values,
 			'disabled'     => $disabled_values ?: [],
-			'value'        => ( $value !== null ) ? $value : $this->option->get_default_value( $settings ),
+			'value'        => $this->option->parse_value(
+				( $value !== null ) ? $value : $this->option->get_default_value( $settings )
+			),
 		];
 	}
 

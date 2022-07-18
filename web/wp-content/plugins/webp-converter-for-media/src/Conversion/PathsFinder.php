@@ -73,12 +73,10 @@ class PathsFinder {
 	}
 
 	/**
-	 * Returns list of server paths of source images to be converted.
-	 *
 	 * @param bool          $skip_converted         Skip converted images?
 	 * @param string[]|null $allowed_output_formats List of extensions or use selected in plugin settings.
 	 *
-	 * @return string[] Server paths of source images.
+	 * @return string[] Server paths of source images to be converted.
 	 */
 	public function get_paths( bool $skip_converted = false, array $allowed_output_formats = null ): array {
 		$allowed_output_formats = $allowed_output_formats
@@ -89,30 +87,13 @@ class PathsFinder {
 			return $paths;
 		}
 
-		foreach ( $paths as $path_index => $path ) {
-			$is_converted = true;
-			foreach ( $allowed_output_formats as $output_format ) {
-				$output_path = $this->output_path->get_path( $path, false, $output_format );
-
-				if ( $output_path && $this->is_converted_file( $output_path ) ) {
-					$is_converted = false;
-					break;
-				}
-			}
-			if ( $is_converted ) {
-				unset( $paths[ $path_index ] );
-			}
-		}
-
-		return $paths;
+		return $this->skip_converted_paths( $paths, $allowed_output_formats );
 	}
 
 	/**
-	 * Returns number of images to be converted to given output formats.
-	 *
 	 * @param string[] $allowed_output_formats List of extensions.
 	 *
-	 * @return int[]
+	 * @return int[] Number of images to be converted to given output formats.
 	 */
 	public function get_paths_count( array $allowed_output_formats ): array {
 		$paths  = $this->find_source_paths( true );
@@ -130,6 +111,34 @@ class PathsFinder {
 
 		$this->stats_manager->set_calculation_images_count( count( $paths ) );
 		return $values;
+	}
+
+	/**
+	 * @param string[]      $source_paths           Server paths of source images.
+	 * @param string[]|null $allowed_output_formats List of extensions or use selected in plugin settings.
+	 *
+	 * @return string[] Server paths of source images.
+	 */
+	public function skip_converted_paths( array $source_paths, array $allowed_output_formats = null ): array {
+		$allowed_output_formats = $allowed_output_formats
+			?: $this->plugin_data->get_plugin_settings()[ OutputFormatsOption::OPTION_NAME ];
+
+		foreach ( $source_paths as $path_index => $path ) {
+			$is_converted = true;
+			foreach ( $allowed_output_formats as $output_format ) {
+				$output_path = $this->output_path->get_path( $path, false, $output_format );
+
+				if ( $output_path && $this->is_converted_file( $output_path ) ) {
+					$is_converted = false;
+					break;
+				}
+			}
+			if ( $is_converted ) {
+				unset( $source_paths[ $path_index ] );
+			}
+		}
+
+		return $source_paths;
 	}
 
 	/**
