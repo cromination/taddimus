@@ -24,6 +24,13 @@ class PluginData {
 	private $plugin_settings = null;
 
 	/**
+	 * Cached settings of plugin without sensitive data.
+	 *
+	 * @var mixed[]|null
+	 */
+	private $plugin_public_settings = null;
+
+	/**
 	 * Cached settings of plugin for debug.
 	 *
 	 * @var mixed[]|null
@@ -37,7 +44,7 @@ class PluginData {
 	/**
 	 * Returns settings of plugin.
 	 *
-	 * @return mixed[] Settings of plugin.
+	 * @return mixed[]
 	 */
 	public function get_plugin_settings(): array {
 		if ( $this->plugin_settings === null ) {
@@ -47,13 +54,25 @@ class PluginData {
 	}
 
 	/**
+	 * Returns settings of plugin without sensitive data.
+	 *
+	 * @return mixed[]
+	 */
+	public function get_public_settings(): array {
+		if ( $this->plugin_public_settings === null ) {
+			$this->plugin_public_settings = $this->settings_object->get_public_values();
+		}
+		return $this->plugin_public_settings;
+	}
+
+	/**
 	 * Returns settings of plugin for debug.
 	 *
-	 * @return mixed[] Settings of plugin for debug.
+	 * @return mixed[]
 	 */
 	public function get_debug_settings(): array {
 		if ( $this->debug_settings === null ) {
-			$this->debug_settings = $this->settings_object->get_values( true );
+			$this->debug_settings = $this->settings_object->get_values( null, true );
 		}
 		return $this->debug_settings;
 	}
@@ -64,7 +83,8 @@ class PluginData {
 	 * @return void
 	 */
 	public function invalidate_plugin_settings() {
-		$this->plugin_settings = null;
-		$this->debug_settings  = null;
+		$this->plugin_settings        = null;
+		$this->plugin_public_settings = null;
+		$this->debug_settings         = null;
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * Information about WordPress config displayed in server configuration widget.
  *
- * @package WebP Converter for Media
+ * @package Converter for Media
  */
 
 ?>

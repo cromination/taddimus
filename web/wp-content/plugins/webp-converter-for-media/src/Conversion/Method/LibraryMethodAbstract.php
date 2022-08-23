@@ -78,6 +78,7 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 			$output_path = $this->get_image_output_path( $source_path, $format );
 
 			$this->skip_crashed->create_crashed_file( $output_path );
+			$this->output_files_converted[ $format ]++;
 
 			$image = $this->create_image_by_path( $source_path, $plugin_settings );
 			$this->convert_image_to_output( $image, $source_path, $output_path, $format, $plugin_settings );
@@ -85,7 +86,7 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 
 			$this->skip_crashed->delete_crashed_file( $output_path );
 			$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
-			$this->update_conversion_stats( $source_path, $output_path );
+			$this->update_conversion_stats( $source_path, $output_path, $format );
 		} catch ( \Exception $e ) {
 			$this->log_conversion_error( $e->getMessage(), $plugin_settings );
 			throw $e;

@@ -4,7 +4,8 @@
  *
  * @var string $ajax_url     URL of admin-ajax.
  * @var string $close_action Action using in WP Ajax.
- * @package WebP Converter for Media
+ *
+ * @package Converter for Media
  */
 
 ?>
@@ -13,7 +14,7 @@
 	data-notice-action="<?php echo esc_attr( $close_action ); ?>"
 	data-notice-url="<?php echo esc_url( $ajax_url ); ?>"
 >
-	<div class="webpContent webpContent--notice">
+	<div class="webpcContent webpcContent--notice">
 		<h4>
 			<?php echo esc_html( __( 'Thank you for using our plugin Converter for Media!', 'webp-converter-for-media' ) ); ?>
 		</h4>
@@ -24,15 +25,15 @@
 			);
 			?>
 		</p>
-		<div class="webpContent__buttons">
+		<div class="webpcContent__buttons">
 			<a href="https://wordpress.org/support/plugin/webp-converter-for-media/reviews/?rate=5#new-post"
 				target="_blank"
-				class="webpContent__button webpButton webpButton--blue webpButton--bg"
+				class="webpcContent__button webpcButton webpcButton--blue webpcButton--bg"
 			>
 				<?php echo esc_html( __( 'Add plugin review', 'webp-converter-for-media' ) ); ?>
 			</a>
 			<button type="button" data-permanently
-				class="webpContent__button webpButton webpButton--gray webpButton--bg"
+				class="webpcContent__button webpcButton webpcButton--gray webpcButton--bg"
 			>
 				<?php echo esc_html( __( 'Hide, do not show again', 'webp-converter-for-media' ) ); ?>
 			</button>

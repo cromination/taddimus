@@ -33,15 +33,15 @@ class ConversionMethodOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_priority(): int {
-		return 50;
+	public function get_name(): string {
+		return self::OPTION_NAME;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_name(): string {
-		return self::OPTION_NAME;
+	public function get_form_name(): string {
+		return OptionAbstract::FORM_TYPE_ADVANCED;
 	}
 
 	/**
@@ -71,7 +71,7 @@ class ConversionMethodOption extends OptionAbstract {
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
 				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-conversion-method-info' ) ) . '" target="_blank">',
-				'<span class="dashicons dashicons-arrow-right-alt"></span></a>'
+				' <span class="dashicons dashicons-arrow-right-alt"></span></a>'
 			);
 		}
 		return $notice;
@@ -82,7 +82,7 @@ class ConversionMethodOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_values( array $settings ): array {
+	public function get_available_values( array $settings ): array {
 		return $this->methods_integration->get_methods();
 	}
 
@@ -95,6 +95,18 @@ class ConversionMethodOption extends OptionAbstract {
 		$methods           = $this->methods_integration->get_methods();
 		$methods_available = $this->methods_integration->get_available_methods();
 		return array_keys( array_diff( $methods, $methods_available ) );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+		if ( ! array_key_exists( $current_value, $available_values ?: [] )
+			|| in_array( $current_value, $disabled_values ?: [] ) ) {
+			return null;
+		}
+
+		return $current_value;
 	}
 
 	/**

@@ -1,19 +1,20 @@
 <?php
 /**
- * Widget displayed errors on plugin settings page.
+ * Widget displayed on plugin settings page.
  *
- * @var string[][] $errors_messages .
- * @var string[]   $errors_codes    .
- * @package WebP Converter for Media
+ * @var string[][] $errors_messages Arrays with array of paragraphs.
+ * @var string[]   $errors_codes    List of server configuration errors.
+ *
+ * @package Converter for Media
  */
 
 ?>
 <?php if ( $errors_messages ) : ?>
-	<div class="webpPage__widget">
-		<h3 class="webpPage__widgetTitle webpPage__widgetTitle--error">
+	<div class="webpcPage__widget">
+		<h3 class="webpcPage__widgetTitle webpcPage__widgetTitle--error">
 			<?php echo esc_html( __( 'Server configuration error', 'webp-converter-for-media' ) ); ?>
 		</h3>
-		<div class="webpContent webpContent--wide">
+		<div class="webpcContent webpcContent--wide">
 			<?php foreach ( $errors_messages as $error_index => $error_lines ) : ?>
 				<?php if ( $error_index > 0 ) : ?>
 					<p>---</p>

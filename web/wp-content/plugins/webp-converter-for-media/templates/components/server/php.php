@@ -2,7 +2,7 @@
 /**
  * Information about PHP configuration displayed in server configuration widget.
  *
- * @package WebP Converter for Media
+ * @package Converter for Media
  */
 
 ?>

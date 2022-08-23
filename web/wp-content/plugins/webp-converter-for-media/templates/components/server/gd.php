@@ -2,7 +2,7 @@
 /**
  * Information about GD library displayed in server configuration widget.
  *
- * @package WebP Converter for Media
+ * @package Converter for Media
  */
 
 ?>

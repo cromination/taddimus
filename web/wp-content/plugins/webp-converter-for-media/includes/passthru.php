@@ -3,7 +3,7 @@
  * Loads images in WebP format or original images if browser does not support WebP.
  *
  * @category WordPress Plugin
- * @package  WebP Converter for Media
+ * @package  Converter for Media
  * @author   Mateusz Gbiorczyk
  * @link     https://wordpress.org/plugins/webp-converter-for-media/
  */

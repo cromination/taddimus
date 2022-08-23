@@ -2,48 +2,30 @@
 /**
  * Field displayed in plugin settings form.
  *
- * @var string  $submit_activate_token   .
- * @var string  $submit_deactivate_token .
- * @var bool    $token_valid_status      .
- * @var string  $api_calculate_url       URL of REST API endpoint.
- * @var mixed[] $option                  Data of field.
- * @var string  $index                   Index of field.
- * @package WebP Converter for Media
+ * @var bool    $token_valid_status Status of PRO version.
+ * @var string  $api_calculate_url  URL of REST API endpoint.
+ * @var mixed[] $option             Data of field.
+ * @var string  $index              Index of field.
+ *
+ * @package Converter for Media
  */
-
-$token_value = ( $token_valid_status )
-	? substr( $option['value'], 0, 32 ) . str_repeat( '*', 32 )
-	: $option['value'];
 
 ?>
 <?php if ( $option['info'] ) : ?>
 	<p><?php echo wp_kses_post( $option['info'] ); ?></p>
 <?php endif; ?>
-<div class="webpInput">
+<div class="webpcInput">
 	<input type="text"
-		name="<?php echo esc_attr( $option['name'] ); ?>"
-		value="<?php echo esc_attr( $token_value ); ?>"
+		name="<?php echo esc_attr( ( $token_valid_status ) ? '' : $option['name'] ); ?>"
+		value="<?php echo esc_attr( $option['value_public'] ); ?>"
 		id="<?php echo esc_attr( $option['name'] ); ?>"
-		class="webpInput__field"
+		class="webpcInput__field"
 		<?php echo ( $token_valid_status ) ? 'readonly' : ''; ?>
 	>
-	<?php if ( ! $token_valid_status ) : ?>
-		<button type="submit"
-			name="<?php echo esc_attr( $submit_activate_token ); ?>"
-			class="webpInput__button webpButton webpButton--green">
-			<?php echo esc_html( __( 'Activate Token', 'webp-converter-for-media' ) ); ?>
-		</button>
-	<?php else : ?>
-		<button type="submit"
-			name="<?php echo esc_attr( $submit_deactivate_token ); ?>"
-			class="webpInput__button webpButton webpButton--red">
-			<?php echo esc_html( __( 'Deactivate Token', 'webp-converter-for-media' ) ); ?>
-		</button>
-	<?php endif; ?>
 </div>
 <p data-calculate-widget data-calculate-widget-api="<?php echo esc_url( $api_calculate_url ); ?>">
 	<?php
-	echo esc_html( __( 'How many maximum images for conversion are left on my website?', 'webp-converter-for-media' ) );
+	echo esc_html( __( 'How many images to convert are remaining on my website?', 'webp-converter-for-media' ) );
 	echo ' ';
 	echo wp_kses_post(
 		sprintf(

@@ -2,6 +2,8 @@
 
 namespace WebpConverter\Error\Notice;
 
+use WebpConverter\WebpConverterConstants;
+
 /**
  * {@inheritdoc}
  */
@@ -23,11 +25,18 @@ class LibsNotInstalledNotice implements ErrorNotice {
 		return [
 			sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
-				__( 'On your server is not installed GD or Imagick library. Please read %1$sthe plugin FAQ%2$s, specifically question about requirements of plugin. This issue is plugin-independent. Please contact your server administrator in this case.', 'webp-converter-for-media' ),
+				__( 'On your server is not installed GD or Imagick library.', 'webp-converter-for-media' ) . ' ' . __( 'This means that you cannot convert images to WebP format on your server, because it does not meet the plugin requirements described in %1$sthe plugin FAQ%2$s. This issue is not dependent on the plugin.', 'webp-converter-for-media' ),
 				'<a href="https://wordpress.org/plugins/webp-converter-for-media/#faq" target="_blank">',
 				'</a>'
 			),
-			__( 'You can also use "Remote server" option in "Conversion method" field in the plugin settings. This option allows you to convert your images using a remote server, so your server does not have to meet all technical requirements for libraries.', 'webp-converter-for-media' ),
+			sprintf(
+			/* translators: %1$s: open strong tag, %2$s: close strong tag, %3$s: open anchor tag, %4$s: close anchor tag */
+				__( '%1$sHowever, we have a solution for you!%2$s You can activate %3$sthe PRO version%4$s of the plugin that allows you to convert images using a remote server. This will allow you to convert images without any problems and speed up your website now.', 'webp-converter-for-media' ),
+				'<strong>',
+				'</strong>',
+				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'error-notice-required-libs' ) ) . '" target="_blank">',
+				'</a>'
+			),
 		];
 	}
 }

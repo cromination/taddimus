@@ -99,11 +99,16 @@ class PathsFinder {
 		$paths  = $this->find_source_paths( true );
 		$values = [];
 		foreach ( $allowed_output_formats as $output_format ) {
-			$values[ $output_format ] = 0;
+			$values[ $output_format ]          = 0;
+			$values[ 'all_' . $output_format ] = 0;
 			foreach ( $paths as $path ) {
 				$output_path = $this->output_path->get_path( $path, false, $output_format );
+				if ( $output_path === null ) {
+					continue;
+				}
 
-				if ( $output_path && $this->is_converted_file( $output_path ) ) {
+				$values[ 'all_' . $output_format ]++;
+				if ( ! $this->is_converted_file( $output_path ) ) {
 					$values[ $output_format ]++;
 				}
 			}
@@ -128,7 +133,7 @@ class PathsFinder {
 			foreach ( $allowed_output_formats as $output_format ) {
 				$output_path = $this->output_path->get_path( $path, false, $output_format );
 
-				if ( $output_path && $this->is_converted_file( $output_path ) ) {
+				if ( $output_path && ! $this->is_converted_file( $output_path ) ) {
 					$is_converted = false;
 					break;
 				}
@@ -170,9 +175,9 @@ class PathsFinder {
 	}
 
 	private function is_converted_file( string $output_path ): bool {
-		return ( ! file_exists( $output_path )
-			&& ! file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION )
-			&& ! file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION )
+		return ( file_exists( $output_path )
+			|| file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION )
+			|| file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION )
 		);
 	}
 

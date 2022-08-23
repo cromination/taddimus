@@ -1,27 +1,16 @@
 <?php
 /**
- * Widget displayed information about plugin operation on plugin settings page.
+ * Widget displayed on plugin settings page.
  *
- * @package WebP Converter for Media
+ * @package Converter for Media
  */
 
 ?>
-<div class="webpPage__widget">
-	<h3 class="webpPage__widgetTitle webpPage__widgetTitle--second">
-		<?php echo esc_html( __( 'How does this work?', 'webp-converter-for-media' ) ); ?>
+<div class="webpcPage__widget">
+	<h3 class="webpcPage__widgetTitle">
+		<?php echo esc_html( __( 'How does it work?', 'webp-converter-for-media' ) ); ?>
 	</h3>
-	<div class="webpContent">
-		<p>
-			<?php
-			echo wp_kses_post(
-				sprintf(
-				/* translators: %1$s: button label */
-					__( 'By adding images to your Media Library, they are automatically converted and saved in the separate directory. Images are converted using a selected conversion method. After installing the plugin, you need to convert all images once using the "%1$s" button.', 'webp-converter-for-media' ),
-					__( 'Regenerate All', 'webp-converter-for-media' )
-				)
-			);
-			?>
-		</p>
+	<div class="webpcContent">
 		<p>
 			<?php
 			echo wp_kses_post(
@@ -36,17 +25,10 @@
 			);
 			?>
 		</p>
-		<p>
-			<?php
-			echo wp_kses_post(
-				__( 'Image URLs are modified using the module mod_rewrite on the server, i.e. the same, thanks to which we can use friendly links in WordPress. Additionally, the MIME type of the sent file is modified.', 'webp-converter-for-media' )
-			);
-			?>
-		</p>
 		<p class="center">
 			<a href="https://wordpress.org/support/topic/how-can-i-check-if-the-plugin-is-working-properly/"
 				target="_blank"
-				class="webpButton webpButton--blue"
+				class="webpcButton webpcButton--blue"
 			>
 				<?php echo esc_html( __( 'Find out more', 'webp-converter-for-media' ) ); ?>
 			</a>

@@ -12,15 +12,15 @@ class SupportedExtensionsOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_priority(): int {
-		return 10;
+	public function get_name(): string {
+		return self::OPTION_NAME;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_name(): string {
-		return self::OPTION_NAME;
+	public function get_form_name(): string {
+		return OptionAbstract::FORM_TYPE_ADVANCED;
 	}
 
 	/**
@@ -49,7 +49,7 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_values( array $settings ): array {
+	public function get_available_values( array $settings ): array {
 		return [
 			'jpg'  => '.jpg / .jpeg',
 			'png'  => '.png',
@@ -64,11 +64,29 @@ class SupportedExtensionsOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
+	 */
+	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+		$valid_values = [];
+		foreach ( $current_value as $option_value ) {
+			if ( array_key_exists( $option_value, $available_values ?: [] )
+				&& ! in_array( $option_value, $disabled_values ?: [] ) ) {
+				$valid_values[] = $option_value;
+			}
+		}
+		if ( in_array( 'jpg', $current_value ) ) {
+			$valid_values[] = 'jpeg';
+		}
+
+		return $valid_values;
+	}
+
+	/**
+	 * {@inheritdoc}
 	 *
 	 * @return string[]
 	 */
 	public function get_default_value( array $settings = null ): array {
-		return [ 'jpg', 'png' ];
+		return [ 'jpg', 'png', 'webp' ];
 	}
 
 	/**
@@ -78,17 +96,5 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 */
 	public function get_debug_value( array $settings ): array {
 		return [ 'png2', 'png' ];
-	}
-
-	/**
-	 * @param string[] $current_value .
-	 *
-	 * @return string[]
-	 */
-	public function parse_value( $current_value ): array {
-		if ( in_array( 'jpg', $current_value ) ) {
-			$current_value[] = 'jpeg';
-		}
-		return $current_value;
 	}
 }

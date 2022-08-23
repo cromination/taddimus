@@ -8,16 +8,22 @@ namespace WebpConverter\Settings\Page;
 interface PageInterface {
 
 	/**
-	 * Returns status if view is active.
-	 *
-	 * @return bool Is view active?
+	 * @return string|null
 	 */
-	public function is_page_active(): bool;
+	public function get_slug();
 
 	/**
-	 * Displays view for plugin settings page.
-	 *
-	 * @return void
+	 * @return string
 	 */
-	public function show_page_view();
+	public function get_label(): string;
+
+	/**
+	 * @return string
+	 */
+	public function get_template_path(): string;
+
+	/**
+	 * @return mixed[]
+	 */
+	public function get_template_vars(): array;
 }

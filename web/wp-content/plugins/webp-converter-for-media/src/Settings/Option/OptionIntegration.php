@@ -33,17 +33,18 @@ class OptionIntegration {
 	public function get_option_data( array $settings, bool $is_debug, bool $is_save ): array {
 		$option_name     = $this->option->get_name();
 		$option_type     = $this->option->get_type();
-		$values          = $this->option->get_values( $settings );
+		$values          = $this->option->get_available_values( $settings );
 		$disabled_values = $this->option->get_disabled_values( $settings );
 
 		if ( $is_debug ) {
 			$value = $this->option->get_debug_value( $settings );
 		} else {
 			$value = ( isset( $settings[ $option_name ] ) || $is_save )
-				? $this->get_option_value( $settings[ $option_name ] ?? '', $option_type, $values, $disabled_values )
-				: $this->option->get_default_value( $settings );
+				? $this->option->get_valid_value( $settings[ $option_name ] ?? null, $values, $disabled_values )
+				: null;
 		}
 
+		$value = ( $value !== null ) ? $value : $this->option->get_default_value( $settings );
 		return [
 			'name'         => $this->option->get_name(),
 			'type'         => $option_type,
@@ -52,58 +53,8 @@ class OptionIntegration {
 			'info'         => $this->option->get_info(),
 			'values'       => $values,
 			'disabled'     => $disabled_values ?: [],
-			'value'        => $this->option->parse_value(
-				( $value !== null ) ? $value : $this->option->get_default_value( $settings )
-			),
+			'value'        => $value,
+			'value_public' => $this->option->get_public_value( $value ),
 		];
-	}
-
-	/**
-	 * Returns value of option based on plugin settings.
-	 *
-	 * @param mixed         $current_value   Value from plugin settings.
-	 * @param string        $option_type     Key of option.
-	 * @param string[]|null $values          Values of option.
-	 * @param string[]|null $disabled_values Disabled values of option.
-	 *
-	 * @return string[]|string|null Value of option.
-	 */
-	private function get_option_value( $current_value, string $option_type, array $values = null, array $disabled_values = null ) {
-		switch ( $option_type ) {
-			case OptionAbstract::OPTION_TYPE_CHECKBOX:
-				$valid_values = [];
-				foreach ( (array) $current_value as $option_value ) {
-					if ( array_key_exists( $option_value, $values ?: [] )
-						&& ! in_array( $option_value, $disabled_values ?: [] ) ) {
-						$valid_values[] = $option_value;
-					}
-				}
-				return $valid_values;
-			case OptionAbstract::OPTION_TYPE_RADIO:
-			case OptionAbstract::OPTION_TYPE_QUALITY:
-				if ( array_key_exists( $current_value, $values ?: [] )
-					&& ! in_array( $current_value, $disabled_values ?: [] ) ) {
-					return $current_value;
-				}
-				return null;
-			case OptionAbstract::OPTION_TYPE_INPUT:
-			case OptionAbstract::OPTION_TYPE_TOKEN:
-				return sanitize_text_field( $current_value );
-			case OptionAbstract::OPTION_TYPE_IMAGE_SIZE:
-				if ( ! is_array( $current_value ) ) {
-					return [ '', '', '' ];
-				}
-
-				$value_min = intval( $current_value[1] ?? '' );
-				$value_max = intval( $current_value[2] ?? '' );
-
-				return [
-					( ( $current_value[0] ?? '' ) === 'yes' ) ? 'yes' : '',
-					( $value_min <= 1 ) ? '' : (string) $value_min,
-					( $value_max <= 1 ) ? '' : (string) $value_max,
-				];
-		}
-
-		return null;
 	}
 }

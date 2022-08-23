@@ -2,6 +2,8 @@
 
 namespace WebpConverter\Conversion\Method;
 
+use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\PluginData;
 use WebpConverter\Settings\Option\ConversionMethodOption;
 
@@ -37,8 +39,10 @@ class MethodIntegrator {
 			'is_fatal_error' => $method->is_fatal_error(),
 			'errors'         => apply_filters( 'webpc_convert_errors', $method->get_errors() ),
 			'files'          => [
-				'all'       => $method->get_files_to_conversion(),
-				'converted' => $method->get_files_converted(),
+				'all'            => $method->get_files_to_conversion(),
+				'converted'      => $method->get_files_converted(),
+				'converted_webp' => $method->get_files_converted_to_format( WebpFormat::FORMAT_EXTENSION ),
+				'converted_avif' => $method->get_files_converted_to_format( AvifFormat::FORMAT_EXTENSION ),
 			],
 			'size'           => [
 				'before' => $method->get_size_before(),

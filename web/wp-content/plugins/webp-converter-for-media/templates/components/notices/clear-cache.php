@@ -6,7 +6,8 @@
  * @var string   $close_action Action using in WP Ajax.
  * @var string   $service_name .
  * @var string[] $steps        Instructions to follow.
- * @package WebP Converter for Media
+ *
+ * @package Converter for Media
  */
 
 ?>
@@ -15,7 +16,7 @@
 	data-notice-action="<?php echo esc_attr( $close_action ); ?>"
 	data-notice-url="<?php echo esc_url( $ajax_url ); ?>"
 >
-	<div class="webpContent webpContent--notice">
+	<div class="webpcContent webpcContent--notice">
 		<p>
 			<?php
 			echo esc_html(
@@ -29,14 +30,14 @@
 		</p>
 		<ul>
 			<?php foreach ( $steps as $step_index => $step_message ) : ?>
-			<li>
-				<?php echo wp_kses_post( ( $step_index + 1 ) . '. ' . $step_message ); ?>
-			</li>
+				<li>
+					<?php echo wp_kses_post( ( $step_index + 1 ) . '. ' . $step_message ); ?>
+				</li>
 			<?php endforeach; ?>
 		</ul>
-		<div class="webpContent__buttons">
+		<div class="webpcContent__buttons">
 			<button type="button" data-permanently
-				class="webpContent__button webpButton webpButton--blue webpButton--bg"
+				class="webpcContent__button webpcButton webpcButton--blue webpcButton--bg"
 			>
 				<?php echo esc_html( __( 'Done', 'webp-converter-for-media' ) ); ?>
 			</button>

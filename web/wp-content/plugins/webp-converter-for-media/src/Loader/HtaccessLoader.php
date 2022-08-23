@@ -212,14 +212,18 @@ class HtaccessLoader extends LoaderAbstract {
 	 * @return string Rules for .htaccess file.
 	 */
 	private function get_mod_headers_rules( array $settings ): string {
-		$content    = '';
-		$extensions = implode( '|', $settings[ SupportedExtensionsOption::OPTION_NAME ] );
+		$content       = '';
+		$extensions    = implode( '|', $settings[ SupportedExtensionsOption::OPTION_NAME ] );
+		$cache_control = apply_filters(
+			'webpc_htaccess_cache_control_private',
+			( ( ( $_SERVER['X-LSCACHE'] ?? '' ) !== 'on' ) || isset( $_SERVER['HTTP_CDN_LOOP'] ) ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		);
 
 		$content .= '<IfModule mod_headers.c>' . PHP_EOL;
 		if ( $extensions ) {
 			$content .= '  <FilesMatch "(?i)\.(' . $extensions . ')(\.(webp|avif))?$">' . PHP_EOL;
 		}
-		if ( ( ( $_SERVER['X-LSCACHE'] ?? '' ) !== 'on' ) || isset( $_SERVER['HTTP_CDN_LOOP'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		if ( $cache_control ) {
 			$content .= '    Header always set Cache-Control "private"' . PHP_EOL;
 		}
 		$content .= '    Header append Vary "Accept"' . PHP_EOL;
@@ -285,11 +289,11 @@ class HtaccessLoader extends LoaderAbstract {
 
 		$rows   = [];
 		$rows[] = '';
-		$rows[] = '# BEGIN WebP Converter';
+		$rows[] = '# BEGIN Converter for Media';
 		$rows[] = '# ! --- DO NOT EDIT PREVIOUS LINE --- !';
 		$rows   = array_merge( $rows, array_filter( $rules ) );
 		$rows[] = '# ! --- DO NOT EDIT NEXT LINE --- !';
-		$rows[] = '# END WebP Converter';
+		$rows[] = '# END Converter for Media';
 		$rows[] = '';
 
 		return implode( PHP_EOL, $rows );
@@ -307,7 +311,11 @@ class HtaccessLoader extends LoaderAbstract {
 		$path_file = $path_dir . '/.htaccess';
 
 		$code = ( is_readable( $path_file ) ) ? file_get_contents( $path_file ) ?: '' : '';
-		$code = preg_replace( '/((:?[\r\n|\r|\n]?)# BEGIN WebP Converter(.*?)# END WebP Converter(:?(:?[\r\n|\r|\n]+)?))/s', '', $code );
+		$code = preg_replace(
+			'/((:?[\r\n|\r|\n]?)# BEGIN (Converter for Media|WebP Converter)(.*?)# END (Converter for Media|WebP Converter)(:?(:?[\r\n|\r|\n]+)?))/s',
+			'',
+			$code
+		);
 		if ( $rules && $code ) {
 			$code = PHP_EOL . $code;
 		}

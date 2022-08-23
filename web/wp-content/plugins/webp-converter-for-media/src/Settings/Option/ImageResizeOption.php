@@ -24,15 +24,15 @@ class ImageResizeOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_priority(): int {
-		return 70;
+	public function get_name(): string {
+		return self::OPTION_NAME;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_name(): string {
-		return self::OPTION_NAME;
+	public function get_form_name(): string {
+		return OptionAbstract::FORM_TYPE_BASIC;
 	}
 
 	/**
@@ -57,11 +57,14 @@ class ImageResizeOption extends OptionAbstract {
 
 		if ( ! $this->token_repository->get_token()->get_valid_status() ) {
 			return sprintf(
-			/* translators: %1$s: option name, %2$s: open anchor tag, %3$s: close anchor tag */
-				__( '%1$s (available in %2$sthe PRO version%3$s)', 'webp-converter-for-media' ),
+				'%1$s (%2$s)',
 				$message,
-				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-image-resize-upgrade' ) ) . '" target="_blank">',
-				'</a>'
+				sprintf(
+				/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+					__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),
+					'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-image-resize-upgrade' ) ) . '" target="_blank">',
+					'</a>'
+				)
 			);
 		}
 		return $message;
@@ -71,23 +74,13 @@ class ImageResizeOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_notice_lines() {
-		$sizes = wp_get_additional_image_sizes();
-		usort(
-			$sizes,
-			function ( $a, $b ) {
-				if ( $a['width'] === $a['height'] ) {
-					return $b['height'] - $a['height'];
-				}
-				return $b['width'] - $a['width'];
-			}
-		);
-
+		$size   = $this->get_max_image_size();
 		$notice = [
 			sprintf(
 			/* translators: %1$s: width value, %2$s: height value */
-				__( 'Reduce even more the weight of converted images that are larger than their largest image size (thumbnail size) using in your theme. The recommended value for you is %1$s x %2$s pixels.', 'webp-converter-for-media' ),
-				$sizes[0]['width'] ?? 0,
-				$sizes[0]['height'] ?? 0
+				__( 'Reduce the weight of converted images that are larger than their largest image size (thumbnail size) used in your theme even more. The recommended value for you is %1$s x %2$s pixels.', 'webp-converter-for-media' ),
+				$size['width'],
+				$size['height']
 			),
 		];
 
@@ -96,7 +89,7 @@ class ImageResizeOption extends OptionAbstract {
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
 				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-image-resize-info' ) ) . '" target="_blank">',
-				'<span class="dashicons dashicons-arrow-right-alt"></span></a>'
+				' <span class="dashicons dashicons-arrow-right-alt"></span></a>'
 			);
 		}
 		return $notice;
@@ -107,17 +100,8 @@ class ImageResizeOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_values( array $settings ): array {
+	public function get_available_values( array $settings ): array {
 		return [];
-	}
-
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @return string[]
-	 */
-	public function get_default_value( array $settings = null ): array {
-		return [ '', '', '' ];
 	}
 
 	/**
@@ -130,5 +114,54 @@ class ImageResizeOption extends OptionAbstract {
 			return [ 'yes' ];
 		}
 		return [];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+		if ( ! is_array( $current_value ) ) {
+			return [ '', '', '' ];
+		}
+
+		$value_min = intval( $current_value[1] ?? '' );
+		$value_max = intval( $current_value[2] ?? '' );
+
+		return [
+			( ( $current_value[0] ?? '' ) === 'yes' ) ? 'yes' : '',
+			( $value_min <= 1 ) ? '' : (string) $value_min,
+			( $value_max <= 1 ) ? '' : (string) $value_max,
+		];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @return mixed[]
+	 */
+	public function get_default_value( array $settings = null ): array {
+		$size = $this->get_max_image_size();
+		return [ '', $size['width'], $size['height'] ];
+	}
+
+	/**
+	 * @return int[]
+	 */
+	private function get_max_image_size(): array {
+		$sizes = wp_get_additional_image_sizes();
+		usort(
+			$sizes,
+			function ( $a, $b ) {
+				if ( $a['width'] === $a['height'] ) {
+					return $b['height'] - $a['height'];
+				}
+				return $b['width'] - $a['width'];
+			}
+		);
+
+		return [
+			'width'  => $sizes[0]['width'] ?? 0,
+			'height' => $sizes[0]['height'] ?? 0,
+		];
 	}
 }

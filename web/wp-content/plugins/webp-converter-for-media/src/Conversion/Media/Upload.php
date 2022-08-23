@@ -6,6 +6,7 @@ use WebpConverter\Conversion\Cron\CronInitiator;
 use WebpConverter\HookableInterface;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
+use WebpConverter\Settings\Option\AutoConversionOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
 
 /**
@@ -61,9 +62,13 @@ class Upload implements HookableInterface {
 			return $data;
 		}
 
-		$allowed_extensions = $this->plugin_data->get_plugin_settings()[ SupportedExtensionsOption::OPTION_NAME ];
-		$file_extension     = strtolower( pathinfo( $data['file'], PATHINFO_EXTENSION ) );
-		if ( ! in_array( $file_extension, $allowed_extensions ) ) {
+		$plugin_settings = $this->plugin_data->get_plugin_settings();
+		if ( ! $plugin_settings[ AutoConversionOption::OPTION_NAME ] ) {
+			return $data;
+		}
+
+		$file_extension = strtolower( pathinfo( $data['file'], PATHINFO_EXTENSION ) );
+		if ( ! in_array( $file_extension, $plugin_settings[ SupportedExtensionsOption::OPTION_NAME ] ) ) {
 			return $data;
 		}
 
@@ -86,6 +91,10 @@ class Upload implements HookableInterface {
 	private function get_sizes_paths( array $data ): array {
 		$directory = $this->get_attachment_directory( $data['file'] );
 		$list      = [];
+
+		if ( isset( $data['original_image'] ) ) {
+			$list[] = $directory . $data['original_image'];
+		}
 
 		$list[] = $directory . basename( $data['file'] );
 		foreach ( $data['sizes'] as $size ) {

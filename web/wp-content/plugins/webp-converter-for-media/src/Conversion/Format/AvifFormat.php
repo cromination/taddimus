@@ -45,11 +45,14 @@ class AvifFormat extends FormatAbstract {
 		}
 
 		return sprintf(
-		/* translators: %1$s: option name, %2$s: open anchor tag, %3$s: close anchor tag */
-			__( '%1$s (available in %2$sthe PRO version%3$s)', 'webp-converter-for-media' ),
+			'%1$s (%2$s)',
 			'AVIF',
-			'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-output-formats-avif-upgrade' ) ) . '" target="_blank">',
-			'</a>'
+			sprintf(
+			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+				__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),
+				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-output-formats-avif-upgrade' ) ) . '" target="_blank">',
+				'</a>'
+			)
 		);
 	}
 

@@ -2,12 +2,11 @@
 /**
  * Information about plugin options displayed in server configuration widget.
  *
- * @package WebP Converter for Media
+ * @package Converter for Media
  */
 
 use WebpConverter\Conversion\Cron\CronStatusManager;
 use WebpConverter\Notice\CloudflareNotice;
-use WebpConverter\Notice\CloudwaysNotice;
 use WebpConverter\Notice\LitespeedNotice;
 use WebpConverter\Service\OptionsAccessManager;
 
@@ -15,12 +14,6 @@ use WebpConverter\Service\OptionsAccessManager;
 <h4>Options</h4>
 <table>
 	<tbody>
-	<tr>
-		<td class="e"><?php echo esc_html( CloudwaysNotice::NOTICE_OPTION ); ?></td>
-		<td class="v">
-			<?php echo esc_html( OptionsAccessManager::get_option( CloudwaysNotice::NOTICE_OPTION ) ?: '-' ); ?>
-		</td>
-	</tr>
 	<tr>
 		<td class="e"><?php echo esc_html( CloudflareNotice::NOTICE_OPTION ); ?></td>
 		<td class="v">

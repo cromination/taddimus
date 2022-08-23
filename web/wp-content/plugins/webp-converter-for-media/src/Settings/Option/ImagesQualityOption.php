@@ -12,15 +12,15 @@ class ImagesQualityOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_priority(): int {
-		return 60;
+	public function get_name(): string {
+		return self::OPTION_NAME;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_name(): string {
-		return self::OPTION_NAME;
+	public function get_form_name(): string {
+		return OptionAbstract::FORM_TYPE_BASIC;
 	}
 
 	/**
@@ -34,14 +34,7 @@ class ImagesQualityOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_label(): string {
-		return __( 'Images quality', 'webp-converter-for-media' );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_info(): string {
-		return __( 'Adjust the quality of the images being converted. Remember that higher quality also means larger file sizes. The recommended value is 85%.', 'webp-converter-for-media' );
+		return __( 'Conversion strategy', 'webp-converter-for-media' );
 	}
 
 	/**
@@ -49,10 +42,10 @@ class ImagesQualityOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_values( array $settings ): array {
+	public function get_available_values( array $settings ): array {
 		$levels = apply_filters(
 			'webpc_option_quality_levels',
-			[ '75', '80', '85', '90', '95', '100' ]
+			[ '75', '80', '85', '90', '95' ]
 		);
 
 		$values = [];
@@ -64,6 +57,17 @@ class ImagesQualityOption extends OptionAbstract {
 		}
 		ksort( $values );
 		return $values;
+	}
+
+	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+		if ( $current_value === '100' ) {
+			return '95';
+		} elseif ( ! array_key_exists( $current_value, $available_values ?: [] )
+			|| in_array( $current_value, $disabled_values ?: [] ) ) {
+			return null;
+		}
+
+		return $current_value;
 	}
 
 	/**

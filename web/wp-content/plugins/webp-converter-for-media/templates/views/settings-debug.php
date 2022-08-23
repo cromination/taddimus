@@ -2,37 +2,63 @@
 /**
  * Debug tab of plugin settings page.
  *
- * @var string  $settings_url          URL of plugin settings page (default view).
- * @var string  $size_png_path         Size of file.
- * @var string  $size_png2_path        Size of file.
- * @var string  $size_png_url          Size of file.
- * @var string  $size_png2_url         Size of file.
- * @var string  $size_png_as_webp_url  Size of file.
- * @var string  $size_png2_as_webp_url Size of file.
- * @var mixed[] $plugin_settings       .
- * @package WebP Converter for Media
+ * @var string     $logo_url              Plugin logo.
+ * @var string[][] $menu_items            Tabs on plugin settings page.
+ * @var string[][] $errors_messages       Arrays with array of paragraphs.
+ * @var string[]   $errors_codes          List of server configuration errors.
+ * @var string     $size_png_path         Size of file.
+ * @var string     $size_png2_path        Size of file.
+ * @var string     $size_png_url          Size of file.
+ * @var string     $size_png2_url         Size of file.
+ * @var string     $size_png_as_webp_url  Size of file.
+ * @var string     $size_png2_as_webp_url Size of file.
+ * @var mixed[]    $plugin_settings       Option keys with values.
+ * @var string     $url_debug_page        URL of debug tag in settings page.
+ *
+ * @package Converter for Media
  */
 
 ?>
 <div class="wrap">
 	<hr class="wp-header-end">
-	<div class="webpPage">
-		<h1 class="webpPage__headline"><?php echo esc_html( 'Converter for Media' ); ?></h1>
-		<div class="webpPage__inner">
-			<ul class="webpPage__columns">
-				<li class="webpPage__column webpPage__column--large">
+	<div class="webpcPage">
+		<div class="webpcPage__headline">
+			<img src="<?php echo esc_attr( $logo_url ); ?>" alt="<?php echo esc_attr( 'Converter for Media' ); ?>">
+		</div>
+		<div class="webpcPage__inner">
+			<ul class="webpcPage__columns">
+				<li class="webpcPage__column webpcPage__column--large">
 					<?php
+					require_once dirname( __DIR__ ) . '/components/widgets/errors.php';
+					require_once dirname( __DIR__ ) . '/components/widgets/menu.php';
 					require_once dirname( __DIR__ ) . '/components/widgets/server.php';
 					?>
 				</li>
-				<li class="webpPage__column webpPage__column--small">
+				<li class="webpcPage__column webpcPage__column--small">
 					<?php
 					require_once dirname( __DIR__ ) . '/components/widgets/about.php';
 					require_once dirname( __DIR__ ) . '/components/widgets/support.php';
-					require_once dirname( __DIR__ ) . '/components/widgets/donate.php';
 					?>
 				</li>
 			</ul>
+		</div>
+		<div class="webpcPage__footer">
+			<div class="webpcPage__footerLogo"></div>
+			<div class="webpcPage__footerContent">
+				<?php
+				echo wp_kses_post(
+					sprintf(
+					/* translators: %1$s: br tag, %2$s: icon heart */
+						__( 'Created with %1$s by %2$s - if you like our plugin, please %3$srate one%4$s%5$s', 'webp-converter-for-media' ),
+						'<span class="webpcPage__footerIcon webpcPage__footerIcon--heart"></span>',
+						'<a href="https://mattplugins.com/?utm_source=webp-converter-for-media&utm_campaign=website-check&utm_medium=plugin-settings-footer" target="_blank">matt plugins</a>',
+						'<a href="https://wordpress.org/support/plugin/webp-converter-for-media/reviews/?rate=5#new-post" target="_blank">',
+						' <span class="webpcPage__footerIcon webpcPage__footerIcon--stars"></span>',
+						'</a>'
+					)
+				);
+				?>
+			</div>
 		</div>
 	</div>
 </div>

@@ -77,6 +77,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\Filesystem\\' => 29,
             'Symfony\\Component\\Console\\' => 26,
+            'Seld\\Signal\\' => 12,
             'Seld\\PharUtils\\' => 15,
             'Seld\\JsonLint\\' => 14,
         ),
@@ -112,6 +113,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
             'Composer\\Pcre\\' => 14,
             'Composer\\MetadataMinifier\\' => 26,
             'Composer\\Installers\\' => 20,
+            'Composer\\ClassMapGenerator\\' => 27,
             'Composer\\CaBundle\\' => 18,
             'Composer\\' => 9,
         ),
@@ -195,6 +197,10 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
         ),
+        'Seld\\Signal\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/seld/signal-handler/src',
+        ),
         'Seld\\PharUtils\\' => 
         array (
             0 => __DIR__ . '/..' . '/seld/phar-utils/src',
@@ -262,6 +268,10 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'Composer\\Installers\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
+        ),
+        'Composer\\ClassMapGenerator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/class-map-generator/src',
         ),
         'Composer\\CaBundle\\' => 
         array (

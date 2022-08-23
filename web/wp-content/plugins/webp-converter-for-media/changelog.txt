@@ -1,5 +1,18 @@
 == Changelog ==
 
+= 5.0.0 (2022-08-20) =
+* `[Changed]` Information about plugin operation and technical support on plugin settings page
+* `[Changed]` Option field for configuration of quality level
+* `[Changed]` Labels of options in plugin settings
+* `[Changed]` Widget for conversion process
+* `[Added]` Filter `webpc_htaccess_cache_control_private` to disable Cache-Control as private
+* `[Added]` Statistics on number of converted images
+* `[Added]` Tabs for plugin settings
+
+= 4.5.1 (2022-07-22) =
+* `[Removed]` Notification asking to clear cache for Cloudways
+* `[Changed]` Error message for bypassing_apache error in server configuration
+
 = 4.5.0 (2022-07-15) =
 * `[Changed]` Plugin name from "WebP Converter to Media" to "Converter for Media"
 * `[Removed]` "Browser Caching for files in output formats" option in plugin settings (will be active always)

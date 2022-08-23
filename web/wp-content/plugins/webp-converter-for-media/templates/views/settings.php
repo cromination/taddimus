@@ -2,55 +2,80 @@
 /**
  * Main tab of plugin settings page.
  *
- * @var string[][] $errors_messages         .
- * @var string[]   $errors_codes            .
- * @var mixed[]    $options                 Options of plugin settings.
- * @var string     $submit_value            Value of submit button.
- * @var string     $submit_activate_token   .
- * @var string     $submit_deactivate_token .
- * @var string     $nonce_input_name        .
- * @var string     $nonce_input_value       .
- * @var bool       $token_valid_status      .
- * @var string     $settings_url            URL of plugin settings page (default view).
- * @var string     $settings_debug_url      URL of plugin settings page (debug view).
- * @var string     $api_calculate_url       URL of REST API endpoint.
- * @var string     $api_paths_url           URL of REST API endpoint.
- * @var string     $api_regenerate_url      URL of REST API endpoint.
- * @package WebP Converter for Media
+ * @var string      $logo_url                 Plugin logo.
+ * @var string[][]  $menu_items               Tabs on plugin settings page.
+ * @var string[][]  $errors_messages          Arrays with array of paragraphs.
+ * @var string[]    $errors_codes             List of server configuration errors.
+ * @var mixed[]     $form_options             Settings options in main container.
+ * @var mixed[]     $form_sidebar_options     Settings options in sidebar.
+ * @var string      $form_input_name          Name of hidden field with form ID.
+ * @var string      $form_input_value         ID of settings form in main container.
+ * @var string      $form_sidebar_input_value ID of settings form in sidebar.
+ * @var string      $nonce_input_name         Name of hidden field with WordPress Nonce value.
+ * @var string      $nonce_input_value        WordPress Nonce value.
+ * @var bool        $token_valid_status       Status of PRO version.
+ * @var string      $api_calculate_url        URL of REST API endpoint.
+ * @var string|null $api_paths_url            URL of REST API endpoint.
+ * @var string|null $api_regenerate_url       URL of REST API endpoint.
+ * @var string      $url_debug_page           URL of debug tag in settings page.
+ * @var string[][]  $output_formats           Data about output formats for regeneration.
+ *
+ * @package Converter for Media
  */
 
 ?>
 <div class="wrap">
 	<hr class="wp-header-end">
-	<form method="post" action="<?php echo esc_url( $settings_url ); ?>" class="webpPage">
-		<h1 class="webpPage__headline"><?php echo esc_html( 'Converter for Media' ); ?></h1>
-		<div class="webpPage__inner">
-			<ul class="webpPage__columns">
-				<li class="webpPage__column webpPage__column--large">
-					<?php if ( isset( $_POST[ $submit_value ] ) ) : // phpcs:ignore ?>
-						<div class="webpPage__alert">
+	<div class="webpcPage">
+		<div class="webpcPage__headline">
+			<img src="<?php echo esc_attr( $logo_url ); ?>" alt="<?php echo esc_attr( 'Converter for Media' ); ?>">
+		</div>
+		<div class="webpcPage__inner">
+			<ul class="webpcPage__columns">
+				<li class="webpcPage__column webpcPage__column--large">
+					<?php if ( ( ( $_POST[ $form_input_name ] ?? '' ) === $form_sidebar_input_value ) && $token_valid_status ) : // phpcs:ignore ?>
+						<div class="webpcPage__alert">
+							<?php echo esc_html( __( 'The access token has been activated!', 'webp-converter-for-media' ) ); ?>
+						</div>
+					<?php elseif ( isset( $_POST[ $form_input_name ] ) ) : // phpcs:ignore ?>
+						<div class="webpcPage__alert">
 							<?php echo esc_html( __( 'Changes were successfully saved!', 'webp-converter-for-media' ) ); ?>
 							<?php echo esc_html( __( 'Please flush cache if you use caching plugin or caching via hosting.', 'webp-converter-for-media' ) ); ?>
-						</div>
-					<?php elseif ( isset( $_POST[ $submit_activate_token ] ) && $token_valid_status ) : // phpcs:ignore ?>
-						<div class="webpPage__alert">
-							<?php echo esc_html( __( 'The access token has been activated!', 'webp-converter-for-media' ) ); ?>
 						</div>
 					<?php endif; ?>
 					<?php
 					require_once dirname( __DIR__ ) . '/components/widgets/errors.php';
+					require_once dirname( __DIR__ ) . '/components/widgets/menu.php';
 					require_once dirname( __DIR__ ) . '/components/widgets/options.php';
 					require_once dirname( __DIR__ ) . '/components/widgets/regenerate.php';
 					?>
 				</li>
-				<li class="webpPage__column webpPage__column--small">
+				<li class="webpcPage__column webpcPage__column--small">
 					<?php
+					require_once dirname( __DIR__ ) . '/components/widgets/options-sidebar.php';
 					require_once dirname( __DIR__ ) . '/components/widgets/about.php';
 					require_once dirname( __DIR__ ) . '/components/widgets/support.php';
-					require_once dirname( __DIR__ ) . '/components/widgets/donate.php';
 					?>
 				</li>
 			</ul>
 		</div>
-	</form>
+		<div class="webpcPage__footer">
+			<div class="webpcPage__footerLogo"></div>
+			<div class="webpcPage__footerContent">
+				<?php
+				echo wp_kses_post(
+					sprintf(
+					/* translators: %1$s: br tag, %2$s: icon heart */
+						__( 'Created with %1$s by %2$s - if you like our plugin, please %3$srate one%4$s%5$s', 'webp-converter-for-media' ),
+						'<span class="webpcPage__footerIcon webpcPage__footerIcon--heart"></span>',
+						'<a href="https://mattplugins.com/?utm_source=webp-converter-for-media&utm_campaign=website-check&utm_medium=plugin-settings-footer" target="_blank">matt plugins</a>',
+						'<a href="https://wordpress.org/support/plugin/webp-converter-for-media/reviews/?rate=5#new-post" target="_blank">',
+						' <span class="webpcPage__footerIcon webpcPage__footerIcon--stars"></span>',
+						'</a>'
+					)
+				);
+				?>
+			</div>
+		</div>
+	</div>
 </div>

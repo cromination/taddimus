@@ -13,6 +13,11 @@ abstract class OptionAbstract implements OptionInterface {
 	const OPTION_TYPE_INPUT      = 'input';
 	const OPTION_TYPE_TOKEN      = 'token';
 	const OPTION_TYPE_IMAGE_SIZE = 'image_size';
+	const OPTION_TYPE_TOGGLE     = 'toggle';
+	const FORM_TYPE_BASIC        = 'basic';
+	const FORM_TYPE_ADVANCED     = 'settings_advanced';
+	const FORM_TYPE_CLOUDFLARE   = 'settings_cloudflare';
+	const FORM_TYPE_SIDEBAR      = 'settings_sidebar';
 
 	/**
 	 * {@inheritdoc}
@@ -38,16 +43,14 @@ abstract class OptionAbstract implements OptionInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_disabled_values( array $settings ) {
-		return null;
+	public function get_public_value( $current_value = null ) {
+		return $current_value;
 	}
 
 	/**
-	 * @param string|string[] $current_value .
-	 *
-	 * @return string|string[]
+	 * {@inheritdoc}
 	 */
-	public function parse_value( $current_value ) {
-		return $current_value;
+	public function get_disabled_values( array $settings ) {
+		return null;
 	}
 }

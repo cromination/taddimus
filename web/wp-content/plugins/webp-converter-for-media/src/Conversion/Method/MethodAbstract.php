@@ -2,6 +2,8 @@
 
 namespace WebpConverter\Conversion\Method;
 
+use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\OutputPath;
 use WebpConverter\Exception;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
@@ -57,6 +59,14 @@ abstract class MethodAbstract implements MethodInterface {
 	protected $files_converted = 0;
 
 	/**
+	 * @var int[]
+	 */
+	protected $output_files_converted = [
+		WebpFormat::FORMAT_EXTENSION => 0,
+		AvifFormat::FORMAT_EXTENSION => 0,
+	];
+
+	/**
 	 * @return bool
 	 */
 	public static function is_pro_feature(): bool {
@@ -96,6 +106,13 @@ abstract class MethodAbstract implements MethodInterface {
 	 */
 	public function get_files_converted(): int {
 		return $this->files_converted;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_files_converted_to_format( string $output_format ): int {
+		return $this->output_files_converted[ $output_format ];
 	}
 
 	/**
@@ -142,18 +159,20 @@ abstract class MethodAbstract implements MethodInterface {
 	}
 
 	/**
-	 * @param string $source_path Server path of source image.
-	 * @param string $output_path Server path of output image.
+	 * @param string $source_path   Server path of source image.
+	 * @param string $output_path   Server path of output image.
+	 * @param string $output_format .
 	 *
 	 * @return void
 	 */
-	protected function update_conversion_stats( string $source_path, string $output_path ) {
+	protected function update_conversion_stats( string $source_path, string $output_path, string $output_format ) {
 		$output_exist = file_exists( $output_path );
 		$size_before  = filesize( $source_path );
 		$size_after   = ( $output_exist ) ? filesize( $output_path ) : $size_before;
 
 		$this->size_before += $size_before ?: 0;
 		$this->size_after  += $size_after ?: 0;
+
 		if ( $output_exist ) {
 			$this->files_converted++;
 		}

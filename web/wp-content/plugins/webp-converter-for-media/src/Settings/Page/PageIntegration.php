@@ -6,6 +6,7 @@ use WebpConverter\HookableInterface;
 use WebpConverter\Notice\NoticeIntegration;
 use WebpConverter\Notice\WelcomeNotice;
 use WebpConverter\PluginInfo;
+use WebpConverter\Service\ViewLoader;
 use WebpConverter\Settings\AdminAssets;
 
 /**
@@ -20,8 +21,14 @@ class PageIntegration implements HookableInterface {
 	 */
 	private $plugin_info;
 
-	public function __construct( PluginInfo $plugin_info ) {
+	/**
+	 * @var ViewLoader
+	 */
+	private $view_loader;
+
+	public function __construct( PluginInfo $plugin_info, ViewLoader $view_loader = null ) {
 		$this->plugin_info = $plugin_info;
+		$this->view_loader = $view_loader ?: new ViewLoader( $plugin_info );
 	}
 
 	/**
@@ -121,24 +128,29 @@ class PageIntegration implements HookableInterface {
 	 * @internal
 	 */
 	public function load_settings_page() {
+		$current_tab_name = $_GET['action'] ?? null; // phpcs:ignore WordPress.Security
 		foreach ( $this->pages as $page ) {
-			$this->init_page_is_active( $page );
+			if ( $page->get_slug() === $current_tab_name ) {
+				$this->view_loader->load_view(
+					$page->get_template_path(),
+					array_merge(
+						$page->get_template_vars(),
+						[
+							'menu_items' => array_map(
+								function ( PageInterface $settings_page ) use ( $current_tab_name ) {
+									return [
+										'url'       => self::get_settings_page_url( $settings_page->get_slug() ),
+										'title'     => $settings_page->get_label(),
+										'is_active' => ( $settings_page->get_slug() === $current_tab_name ),
+									];
+								},
+								$this->pages
+							),
+						]
+					)
+				);
+			}
 		}
-	}
-
-	/**
-	 * Initializes page loading if is active.
-	 *
-	 * @param PageInterface $page .
-	 *
-	 * @return void
-	 */
-	private function init_page_is_active( PageInterface $page ) {
-		if ( ! $page->is_page_active() ) {
-			return;
-		}
-
-		$page->show_page_view();
 	}
 
 	/**
