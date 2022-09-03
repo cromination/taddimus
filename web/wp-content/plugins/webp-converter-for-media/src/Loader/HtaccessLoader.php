@@ -158,21 +158,9 @@ class HtaccessLoader extends LoaderAbstract {
 			return $content;
 		}
 
-		$root_document      = preg_replace( '/(\/|\\\\)/', '/', rtrim( $_SERVER['DOCUMENT_ROOT'], '\/' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$root_document_real = preg_replace( '/(\/|\\\\)/', '/', rtrim( realpath( $_SERVER['DOCUMENT_ROOT'] ) ?: '', '\/' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$root_wordpress     = preg_replace( '/(\/|\\\\)/', '/', rtrim( PathsGenerator::get_wordpress_root_path(), '\/' ) );
-
-		$root_path     = trim( str_replace( $root_document_real ?: '', '', $root_wordpress ?: '' ), '\/' );
-		$root_suffix   = apply_filters(
-			'webpc_htaccess_rewrite_path',
-			apply_filters( 'webpc_uploads_prefix', str_replace( '//', '/', sprintf( '/%s/', $root_path ) ) )
-		);
-		$document_root = apply_filters(
-			'webpc_htaccess_rewrite_root',
-			( $root_document !== $root_document_real ) ? ( $root_wordpress . '/' ) : ( '%{DOCUMENT_ROOT}' . $root_suffix )
-		);
-
-		$output_path = apply_filters( 'webpc_dir_name', '', 'webp' );
+		$document_root = PathsGenerator::get_rewrite_root();
+		$root_suffix   = PathsGenerator::get_rewrite_path();
+		$output_path   = apply_filters( 'webpc_dir_name', '', 'webp' );
 		if ( $output_path_suffix !== null ) {
 			$output_path .= '/' . $output_path_suffix;
 		}

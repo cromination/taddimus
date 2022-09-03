@@ -36,11 +36,11 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 			$cdn_server = '';
 		}
 
-		if ( ( strpos( $cdn_server, 'cloudflare' ) !== false ) || is_plugin_active( 'cloudflare/cloudflare.php' ) ) {
-			return ( isset( $_GET['page'] ) && ( $_GET['page'] === PageIntegration::ADMIN_MENU_PAGE ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		if ( ( strpos( $cdn_server, 'cloudflare' ) === false ) && ! is_plugin_active( 'cloudflare/cloudflare.php' ) ) {
+			return false;
 		}
 
-		return false;
+		return ( ( $_GET['page'] ?? '' ) === PageIntegration::SETTINGS_MENU_PAGE ); // phpcs:ignore WordPress.Security
 	}
 
 	/**

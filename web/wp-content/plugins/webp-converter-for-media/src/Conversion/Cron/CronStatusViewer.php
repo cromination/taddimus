@@ -3,19 +3,12 @@
 namespace WebpConverter\Conversion\Cron;
 
 use WebpConverter\HookableInterface;
-use WebpConverter\PluginInfo;
-use WebpConverter\Settings\AdminAssets;
 use WebpConverter\Settings\Page\PageIntegration;
 
 /**
  * Displays converting status on top menu bar in the WordPress Dashboard.
  */
 class CronStatusViewer implements HookableInterface {
-
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
 
 	/**
 	 * @var CronStatusManager
@@ -27,8 +20,7 @@ class CronStatusViewer implements HookableInterface {
 	 */
 	private $paths_preview_count = 0;
 
-	public function __construct( PluginInfo $plugin_info, CronStatusManager $cron_status_manager = null ) {
-		$this->plugin_info         = $plugin_info;
+	public function __construct( CronStatusManager $cron_status_manager = null ) {
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
 	}
 
@@ -54,7 +46,6 @@ class CronStatusViewer implements HookableInterface {
 		}
 
 		add_action( 'admin_bar_menu', [ $this, 'add_menu_to_top_bar' ], 1000 );
-		( new AdminAssets( $this->plugin_info ) )->init_hooks();
 	}
 
 	/**

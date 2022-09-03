@@ -7,14 +7,14 @@ use WebpConverter\Notice\NoticeIntegration;
 use WebpConverter\Notice\WelcomeNotice;
 use WebpConverter\PluginInfo;
 use WebpConverter\Service\ViewLoader;
-use WebpConverter\Settings\AdminAssets;
 
 /**
  * Adds plugin settings page in admin panel.
  */
 class PageIntegration implements HookableInterface {
 
-	const ADMIN_MENU_PAGE = 'webpc_admin_page';
+	const SETTINGS_MENU_PAGE = 'webpc_admin_page';
+	const UPLOAD_MENU_PAGE   = 'webpc_optimization_page';
 
 	/**
 	 * @var PluginInfo
@@ -68,9 +68,9 @@ class PageIntegration implements HookableInterface {
 	 */
 	public static function get_settings_page_url( string $action = null ): string {
 		if ( ! is_multisite() ) {
-			$page_url = menu_page_url( self::ADMIN_MENU_PAGE, false );
+			$page_url = admin_url( 'options-general.php?page=' . self::SETTINGS_MENU_PAGE );
 		} else {
-			$page_url = network_admin_url( 'settings.php?page=' . self::ADMIN_MENU_PAGE );
+			$page_url = network_admin_url( 'settings.php?page=' . self::SETTINGS_MENU_PAGE );
 		}
 
 		if ( $action !== null ) {
@@ -89,7 +89,8 @@ class PageIntegration implements HookableInterface {
 		if ( is_multisite() ) {
 			return;
 		}
-		$this->add_settings_page( 'options-general.php' );
+		$this->add_settings_page( 'options-general.php', self::SETTINGS_MENU_PAGE );
+		$this->add_settings_page( 'upload.php', self::UPLOAD_MENU_PAGE );
 	}
 
 	/**
@@ -99,57 +100,60 @@ class PageIntegration implements HookableInterface {
 	 * @internal
 	 */
 	public function add_settings_page_for_network() {
-		$this->add_settings_page( 'settings.php' );
+		$this->add_settings_page( 'settings.php', self::SETTINGS_MENU_PAGE );
 	}
 
 	/**
 	 * Creates plugin settings page in WordPress Admin Dashboard.
 	 *
-	 * @param string $menu_page Parent menu page.
+	 * @param string $parent_page Parent menu page.
+	 * @param string $menu_page   .
 	 *
 	 * @return void
 	 */
-	private function add_settings_page( string $menu_page ) {
+	private function add_settings_page( string $parent_page, string $menu_page ) {
 		$page = add_submenu_page(
-			$menu_page,
+			$parent_page,
 			'Converter for Media',
 			'Converter for Media',
 			'manage_options',
-			self::ADMIN_MENU_PAGE,
-			[ $this, 'load_settings_page' ]
+			$menu_page,
+			[ $this, 'load_plugin_page' ]
 		);
 		add_action( 'load-' . $page, [ $this, 'load_scripts_for_page' ] );
 	}
 
 	/**
-	 * Loads selected view on plugin settings page.
-	 *
 	 * @return void
 	 * @internal
 	 */
-	public function load_settings_page() {
-		$current_tab_name = $_GET['action'] ?? null; // phpcs:ignore WordPress.Security
+	public function load_plugin_page() {
+		$page_name = $_GET['page'] ?? null; // phpcs:ignore WordPress.Security
+		$tab_name  = $_GET['action'] ?? null; // phpcs:ignore WordPress.Security
+
 		foreach ( $this->pages as $page ) {
-			if ( $page->get_slug() === $current_tab_name ) {
-				$this->view_loader->load_view(
-					$page->get_template_path(),
-					array_merge(
-						$page->get_template_vars(),
-						[
-							'menu_items' => array_map(
-								function ( PageInterface $settings_page ) use ( $current_tab_name ) {
-									return [
-										'url'       => self::get_settings_page_url( $settings_page->get_slug() ),
-										'title'     => $settings_page->get_label(),
-										'is_active' => ( $settings_page->get_slug() === $current_tab_name ),
-									];
-								},
-								$this->pages
-							),
-						]
-					)
-				);
+			if ( ( $page->get_menu_parent() !== $page_name ) || ( $page->get_slug() !== $tab_name ) ) {
+				continue;
 			}
+
+			$this->view_loader->load_view(
+				$page->get_template_path(),
+				array_merge(
+					$page->get_template_vars(),
+					[
+						'menu_items' => array_map(
+							function ( PageInterface $settings_page ) use ( $page ) {
+								return [
+									'url'       => $settings_page->get_menu_url(),
+									'title'     => $settings_page->get_label(),
+									'is_active' => ( $settings_page === $page ),
+								];
+							},
+							$this->pages
+						),
+					]
+				)
+			);
 		}
 	}
 
@@ -161,6 +165,5 @@ class PageIntegration implements HookableInterface {
 	 */
 	public function load_scripts_for_page() {
 		( new NoticeIntegration( $this->plugin_info, new WelcomeNotice() ) )->set_disable_value();
-		( new AdminAssets( $this->plugin_info ) )->init_hooks();
 	}
 }

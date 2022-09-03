@@ -65,11 +65,21 @@ class Promotions extends Abstract_Module {
 			return;
 		}
 
+		if ( ! $this->is_writeable() || ! current_user_can( 'install_plugins' ) ) {
+			return;
+		}
+
 		$this->product = $product;
 
-		if ( in_array( 'otter', $this->promotions_to_load ) && false === apply_filters( 'themeisle_sdk_load_promotions_otter', false ) && ! ( defined( 'OTTER_BLOCKS_VERSION' ) || $this->is_otter_installed() ) && version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
+		add_action( 'init', array( $this, 'register_settings' ), 99 );
+		add_action( 'admin_init', array( $this, 'register_reference' ), 99 );
+
+		if ( in_array( 'otter', $this->promotions_to_load )
+			 && false === apply_filters( 'themeisle_sdk_load_promotions_otter', false )
+			 && ! ( defined( 'OTTER_BLOCKS_VERSION' )
+					|| $this->is_plugin_installed( 'otter-blocks' ) )
+			 && version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
 			add_filter( 'themeisle_sdk_load_promotions_otter', '__return_true' );
-			add_action( 'init', array( $this, 'register_settings' ), 99 );
 
 			if ( false !== $this->show_otter_promotion() ) {
 				add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
@@ -77,6 +87,23 @@ class Promotions extends Abstract_Module {
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Register plugin reference.
+	 *
+	 * @return void
+	 */
+	public function register_reference() {
+
+		$reference_key = ! isset( $_GET['reference_key'] ) ? '' : sanitize_key( $_GET['reference_key'] );
+		if ( empty( $reference_key ) ) {
+			return;
+		}
+		if ( get_option( 'otter_reference_key', false ) !== false ) {
+			return;
+		}
+		update_option( 'otter_reference_key', $reference_key );
 	}
 
 	/**
@@ -96,21 +123,36 @@ class Promotions extends Abstract_Module {
 				'default'           => '{}',
 			)
 		);
+
+		register_setting(
+			'themeisle_sdk_settings',
+			'themeisle_sdk_promotions_otter_installed',
+			array(
+				'type'              => 'boolean',
+				'sanitize_callback' => 'rest_sanitize_boolean',
+				'show_in_rest'      => true,
+				'default'           => false,
+			)
+		);
 	}
 
 	/**
 	 * Get the Otter Blocks plugin status.
 	 *
+	 * @param string $plugin Plugin slug.
+	 *
 	 * @return string
 	 */
-	private function is_otter_installed() {
-		$status = false;
-
-		if ( file_exists( ABSPATH . 'wp-content/plugins/otter-blocks/otter-blocks.php' ) ) {
+	private function is_plugin_installed( $plugin ) {
+		static $allowed_keys = [ 'otter-blocks' => 'otter-blocks/otter-blocks.php' ];
+		if ( ! isset( $allowed_keys[ $plugin ] ) ) {
+			return false;
+		}
+		if ( file_exists( WP_CONTENT_DIR . '/plugins/' . $allowed_keys[ $plugin ] ) ) {
 			return true;
 		}
 
-		return $status;
+		return false;
 	}
 
 	/**
@@ -143,9 +185,28 @@ class Promotions extends Abstract_Module {
 	}
 
 	/**
+	 * Check if the path is writable.
+	 *
+	 * @return boolean
+	 * @access  public
+	 */
+	public function is_writeable() {
+		global $wp_filesystem;
+		include_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			return false;
+		}
+
+		$writable = WP_Filesystem( false, ABSPATH . 'wp-content' );
+
+		return $writable && 'direct' === $wp_filesystem->method;
+	}
+
+	/**
 	 * Load Gutenberg editor assets.
 	 *
-	 * @since   1.0.0
 	 * @access  public
 	 */
 	public function enqueue_editor_assets() {
@@ -180,11 +241,12 @@ class Promotions extends Abstract_Module {
 							'plugin_status' => 'all',
 							'paged'         => '1',
 							'action'        => 'activate',
+							'reference_key' => $this->product->get_key(),
 							'plugin'        => rawurlencode( 'otter-blocks/otter-blocks.php' ),
 							'_wpnonce'      => wp_create_nonce( 'activate-plugin_otter-blocks/otter-blocks.php' ),
 						),
-						admin_url( 'plugins.php' ) 
-					) 
+						admin_url( 'plugins.php' )
+					)
 				),
 			)
 		);

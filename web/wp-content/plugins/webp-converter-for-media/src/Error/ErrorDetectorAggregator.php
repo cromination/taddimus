@@ -13,7 +13,6 @@ use WebpConverter\Error\Detector\SettingsIncorrectDetector;
 use WebpConverter\Error\Detector\TokenStatusDetector;
 use WebpConverter\Error\Detector\WebpFormatActivatedDetector;
 use WebpConverter\Error\Notice\ErrorNotice;
-use WebpConverter\Error\Notice\LibsWithoutWebpSupportNotice;
 use WebpConverter\Error\Notice\RewritesCachedNotice;
 use WebpConverter\HookableInterface;
 use WebpConverter\PluginData;

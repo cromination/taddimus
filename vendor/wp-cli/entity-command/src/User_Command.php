@@ -162,7 +162,17 @@ class User_Command extends CommandWithDBObject {
 
 		$assoc_args['count_total'] = false;
 		$assoc_args                = self::process_csv_arguments_to_arrays( $assoc_args );
-		$users                     = get_users( $assoc_args );
+
+		if ( ! empty( $assoc_args['role'] ) && 'none' === $assoc_args['role'] ) {
+			$norole_user_ids = wp_get_users_with_no_role();
+
+			if ( ! empty( $norole_user_ids ) ) {
+				$assoc_args['include'] = $norole_user_ids;
+				unset( $assoc_args['role'] );
+			}
+		}
+
+		$users = get_users( $assoc_args );
 
 		if ( 'ids' === $formatter->format ) {
 			echo implode( ' ', $users );
@@ -260,6 +270,9 @@ class User_Command extends CommandWithDBObject {
 	 *     $ wp user delete $(wp user list --role=contributor --field=ID) --reassign=2
 	 *     Success: Removed user 813 from http://example.com
 	 *     Success: Removed user 578 from http://example.com
+	 *
+	 *     # Delete all contributors in batches of 100 (avoid error: argument list too long: wp)
+	 *     $ wp user delete $(wp user list --role=contributor --field=ID | head -n 100)
 	 */
 	public function delete( $args, $assoc_args ) {
 		$network  = Utils\get_flag_value( $assoc_args, 'network' ) && is_multisite();

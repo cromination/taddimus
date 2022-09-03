@@ -1,3 +1,8 @@
+##### [Version 3.2.28](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.27...v3.2.28) (2022-08-30)
+
+* Adds utm handler
+* Improve promotions
+
 ##### [Version 3.2.27](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.26...v3.2.27) (2022-08-23)
 
 - Add Promotion Module

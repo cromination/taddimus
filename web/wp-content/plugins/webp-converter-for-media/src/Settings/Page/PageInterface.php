@@ -15,6 +15,16 @@ interface PageInterface {
 	/**
 	 * @return string
 	 */
+	public function get_menu_parent(): string;
+
+	/**
+	 * @return string|null
+	 */
+	public function get_menu_url();
+
+	/**
+	 * @return string
+	 */
 	public function get_label(): string;
 
 	/**

@@ -37,7 +37,6 @@
 				<li class="webpcPage__column webpcPage__column--small">
 					<?php
 					require_once dirname( __DIR__ ) . '/components/widgets/about.php';
-					require_once dirname( __DIR__ ) . '/components/widgets/support.php';
 					?>
 				</li>
 			</ul>

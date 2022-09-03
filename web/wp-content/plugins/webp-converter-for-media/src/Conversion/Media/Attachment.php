@@ -18,7 +18,7 @@ class Attachment {
 	/**
 	 * Current upload directory path and URL.
 	 *
-	 * @var string[]
+	 * @var mixed[]
 	 */
 	private $upload_dir;
 
@@ -58,13 +58,12 @@ class Attachment {
 	private function get_paths_by_attachment( int $post_id, array $settings ): array {
 		$list     = [];
 		$metadata = wp_get_attachment_metadata( $post_id );
-		if ( ! $metadata ) {
+		if ( ! $metadata || ! isset( $metadata['file'] ) ) {
 			return $list;
 		}
 
 		$extension = strtolower( pathinfo( $metadata['file'], PATHINFO_EXTENSION ) );
-		if ( ! isset( $metadata['file'] )
-			|| ! in_array( $extension, $settings[ SupportedExtensionsOption::OPTION_NAME ] ) ) {
+		if ( ! in_array( $extension, $settings[ SupportedExtensionsOption::OPTION_NAME ] ) ) {
 			return $list;
 		}
 
@@ -82,7 +81,7 @@ class Attachment {
 	 */
 	private function get_paths_by_sizes( int $post_id, string $path ): array {
 		$list   = [];
-		$list[] = str_replace( '\\', '/', implode( '/', [ $this->upload_dir['basedir'], $path ] ) );
+		$list[] = str_replace( '\\', '/', ( $this->upload_dir['basedir'] . '/' . $path ) );
 
 		foreach ( $this->image_sizes as $size ) {
 			$src = wp_get_attachment_image_src( $post_id, $size );

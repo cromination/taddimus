@@ -31,7 +31,7 @@ class WelcomeNotice extends NoticeAbstract implements NoticeInterface {
 	 * {@inheritdoc}
 	 */
 	public function is_available(): bool {
-		return ( ! isset( $_GET['page'] ) || ( $_GET['page'] !== PageIntegration::ADMIN_MENU_PAGE ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return ( ! isset( $_GET['page'] ) || ( $_GET['page'] !== PageIntegration::SETTINGS_MENU_PAGE ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**

@@ -32,6 +32,7 @@ class OptionsAggregator {
 		$this->set_option( $conversion_method );
 		$this->set_option( new LoaderTypeOption() );
 		$this->set_option( new ExtraFeaturesOption() );
+		$this->set_option( new MediaStatsOption() );
 	}
 
 	/**

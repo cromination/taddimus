@@ -28,10 +28,10 @@ class PluginSettings {
 		OptionsAccessManager::delete_option( WelcomeNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( ThanksNotice::NOTICE_OLD_OPTION );
 		OptionsAccessManager::delete_option( ThanksNotice::NOTICE_OPTION );
-		OptionsAccessManager::delete_option( 'webpc_notice_avif_support' );
-		OptionsAccessManager::delete_option( 'webpc_notice_cloudways' );
 		OptionsAccessManager::delete_option( CloudflareNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( LitespeedNotice::NOTICE_OPTION );
+		OptionsAccessManager::delete_option( 'webpc_notice_avif_support' );
+		OptionsAccessManager::delete_option( 'webpc_notice_cloudways' );
 
 		OptionsAccessManager::delete_option( ErrorDetectorAggregator::ERRORS_CACHE_OPTION );
 		OptionsAccessManager::delete_option( SettingsSave::SETTINGS_OPTION );
@@ -41,7 +41,11 @@ class PluginSettings {
 		OptionsAccessManager::delete_option( StatsManager::STATS_INSTALLATION_DATE_OPTION );
 		OptionsAccessManager::delete_option( StatsManager::STATS_FIRST_VERSION_OPTION );
 		OptionsAccessManager::delete_option( StatsManager::STATS_REGENERATION_IMAGES_OPTION );
-		OptionsAccessManager::delete_option( StatsManager::STATS_CALCULATION_IMAGES_OPTION );
+		OptionsAccessManager::delete_option( StatsManager::STATS_IMAGES_WEBP_ALL_OPTION );
+		OptionsAccessManager::delete_option( StatsManager::STATS_IMAGES_WEBP_UNCONVERTED_OPTION );
+		OptionsAccessManager::delete_option( StatsManager::STATS_IMAGES_AVIF_ALL_OPTION );
+		OptionsAccessManager::delete_option( StatsManager::STATS_IMAGES_AVIF_UNCONVERTED_OPTION );
+		OptionsAccessManager::delete_option( 'webpc_stats_calculation_images' );
 
 		delete_site_transient( CronStatusManager::CRON_PATHS_TRANSIENT );
 		delete_site_transient( CronStatusManager::CRON_PATHS_SKIPPED_TRANSIENT );

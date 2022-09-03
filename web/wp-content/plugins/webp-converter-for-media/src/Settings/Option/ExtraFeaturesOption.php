@@ -83,7 +83,7 @@ class ExtraFeaturesOption extends OptionAbstract {
 	 */
 	public function get_disabled_values( array $settings ): array {
 		$values = [];
-		if ( ( $settings[ ConversionMethodOption::OPTION_NAME ] ?? '' ) === GdMethod::METHOD_NAME ) {
+		if ( ( $settings[ ConversionMethodOption::OPTION_NAME ] ?? GdMethod::METHOD_NAME ) === GdMethod::METHOD_NAME ) {
 			$values[] = self::OPTION_VALUE_KEEP_METADATA;
 		}
 		return $values;
@@ -112,7 +112,6 @@ class ExtraFeaturesOption extends OptionAbstract {
 	public function get_default_value( array $settings = null ): array {
 		return [
 			self::OPTION_VALUE_ONLY_SMALLER,
-			self::OPTION_VALUE_DEBUG_ENABLED,
 		];
 	}
 }

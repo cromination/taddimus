@@ -31,11 +31,13 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 	 * {@inheritdoc}
 	 */
 	public function is_available(): bool {
-		if ( is_plugin_active( 'litespeed-cache/litespeed-cache.php' ) ) {
-			return ( isset( $_GET['page'] ) && ( $_GET['page'] === PageIntegration::ADMIN_MENU_PAGE ) ); // phpcs:ignore WordPress.Security.NonceVerification
+		$server_name = strtolower( $_SERVER['SERVER_SOFTWARE'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+
+		if ( ( strpos( $server_name, 'litespeed' ) === false ) && ! is_plugin_active( 'litespeed-cache/litespeed-cache.php' ) ) {
+			return false;
 		}
 
-		return false;
+		return ( ( $_GET['page'] ?? '' ) === PageIntegration::SETTINGS_MENU_PAGE ); // phpcs:ignore WordPress.Security
 	}
 
 	/**
@@ -64,22 +66,32 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_vars_for_view(): array {
+		$steps = [];
+		if ( is_plugin_active( 'litespeed-cache/litespeed-cache.php' ) ) {
+			$steps[] = sprintf(
+			/* translators: %1$s: button label */
+				__( 'Look for the %1$s icon in the admin bar.', 'webp-converter-for-media' ),
+				'<strong>"LiteSpeed Cache Purge All - LSCache"</strong>'
+			);
+			$steps[] = sprintf(
+			/* translators: %1$s: button label */
+				__( 'Click %1$s.', 'webp-converter-for-media' ),
+				'<strong>"Purge All"</strong>'
+			);
+		} else {
+			$steps[] = __( 'Log in to the management panel of your server.', 'webp-converter-for-media' );
+			$steps[] = sprintf(
+			/* translators: %1$s: option name */
+				__( 'Find the %1$s section and clear all cache.', 'webp-converter-for-media' ),
+				'<strong>"LiteSpeed Cache"</strong>'
+			);
+		}
+
 		return [
 			'ajax_url'     => admin_url( 'admin-ajax.php' ),
 			'close_action' => self::NOTICE_OPTION,
 			'service_name' => 'LiteSpeed Cache',
-			'steps'        => [
-				sprintf(
-				/* translators: %1$s: button label */
-					__( 'Look for the %1$s icon in the admin bar.', 'webp-converter-for-media' ),
-					'<strong>"LiteSpeed Cache Purge All - LSCache"</strong>'
-				),
-				sprintf(
-				/* translators: %1$s: button label */
-					__( 'Click %1$s.', 'webp-converter-for-media' ),
-					'<strong>"Purge All"</strong>'
-				),
-			],
+			'steps'        => $steps,
 		];
 	}
 

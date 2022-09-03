@@ -2518,6 +2518,30 @@ wp post meta add <id> <key> [<value>] [--format=<format>]
 
 
 
+### wp post meta clean-duplicates
+
+Cleans up duplicate post meta values on a post.
+
+~~~
+wp post meta clean-duplicates <id> <key>
+~~~
+
+**OPTIONS**
+
+	<id>
+		ID of the post to clean.
+
+	<key>
+		Meta key to clean up.
+
+**EXAMPLES**
+
+    # Delete duplicate post meta.
+    wp post meta clean-duplicates 1234 enclosure
+    Success: Cleaned up duplicate 'enclosure' meta values.
+
+
+
 ### wp post meta delete
 
 Delete a meta field.
@@ -4605,6 +4629,9 @@ make sure to reassign their posts prior to deleting the user.
     Success: Removed user 813 from http://example.com
     Success: Removed user 578 from http://example.com
 
+    # Delete all contributors in batches of 100 (avoid error: argument list too long: wp)
+    $ wp user delete $(wp user list --role=contributor --field=ID | head -n 100)
+
 
 
 ### wp user generate
@@ -4982,6 +5009,10 @@ wp user meta get <user> <key> [--format=<format>]
     # Get user meta
     $ wp user meta get 123 bio
     Mary is an WordPress developer.
+
+    # Get the primary site of a user (for multisite)
+    $ wp user meta get 2 primary_blog
+    3
 
 
 

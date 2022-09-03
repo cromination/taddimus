@@ -5,6 +5,8 @@
  * @package Converter for Media
  */
 
+use WebpConverter\Service\PathsGenerator;
+
 ?>
 <h4>Filters</h4>
 <table>
@@ -12,7 +14,7 @@
 	<tr>
 		<td class="e">webpc_site_root</td>
 		<td class="v">
-			<?php echo esc_html( apply_filters( 'webpc_site_root', '' ) ?: '-' ); ?>
+			<?php echo esc_html( PathsGenerator::get_wordpress_root_path() ); ?>
 		</td>
 	</tr>
 	<tr>
@@ -48,19 +50,13 @@
 	<tr>
 		<td class="e">webpc_htaccess_rewrite_root</td>
 		<td class="v">
-			<?php echo esc_html( apply_filters( 'webpc_htaccess_rewrite_root', '' ) ?: '-' ); ?>
+			<?php echo esc_html( PathsGenerator::get_rewrite_root() ); ?>
 		</td>
 	</tr>
 	<tr>
 		<td class="e">webpc_htaccess_rewrite_path</td>
 		<td class="v">
-			<?php echo esc_html( apply_filters( 'webpc_htaccess_rewrite_path', '' ) ?: '-' ); ?>
-		</td>
-	</tr>
-	<tr>
-		<td class="e">webpc_uploads_prefix</td>
-		<td class="v">
-			<?php echo esc_html( apply_filters( 'webpc_uploads_prefix', '' ) ?: '-' ); ?>
+			<?php echo esc_html( PathsGenerator::get_rewrite_path() ); ?>
 		</td>
 	</tr>
 	</tbody>

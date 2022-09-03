@@ -2,6 +2,8 @@
 
 namespace WebpConverter\Conversion;
 
+use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\Method\RemoteMethod;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
@@ -68,7 +70,8 @@ class PathsFinder {
 		$paths       = $this->get_paths( $skip_converted, $allowed_output_formats );
 		$paths_count = count( $paths );
 
-		$this->stats_manager->set_regeneration_images_count( $paths_count );
+		$this->stats_manager->set_regeneration_images( $paths_count );
+
 		return array_chunk( $paths, $this->get_paths_chunk_size( $paths_count ) );
 	}
 
@@ -114,7 +117,11 @@ class PathsFinder {
 			}
 		}
 
-		$this->stats_manager->set_calculation_images_count( count( $paths ) );
+		$this->stats_manager->set_images_webp_all( $values[ 'all_' . WebpFormat::FORMAT_EXTENSION ] ?? 0 );
+		$this->stats_manager->set_images_webp_unconverted( $values[ WebpFormat::FORMAT_EXTENSION ] ?? 0 );
+		$this->stats_manager->set_images_avif_all( $values[ 'all_' . AvifFormat::FORMAT_EXTENSION ] ?? 0 );
+		$this->stats_manager->set_images_avif_unconverted( $values[ AvifFormat::FORMAT_EXTENSION ] ?? 0 );
+
 		return $values;
 	}
 

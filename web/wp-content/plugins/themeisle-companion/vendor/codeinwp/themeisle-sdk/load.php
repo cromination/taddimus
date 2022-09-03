@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 // Current SDK version and path.
-$themeisle_sdk_version = '3.2.27';
+$themeisle_sdk_version = '3.2.28';
 $themeisle_sdk_path    = dirname( __FILE__ );
 
 global $themeisle_sdk_max_version;
@@ -71,3 +71,38 @@ if ( ! function_exists( 'themeisle_sdk_load_latest' ) ) :
 	}
 endif;
 add_action( 'init', 'themeisle_sdk_load_latest' );
+
+if ( ! function_exists( 'tsdk_utmify' ) ) {
+	/**
+	 * Utmify a link.
+	 *
+	 * @param string $url URL to add utms.
+	 * @param string $area Area in page where this is used ( CTA, image, section name).
+	 * @param string $location Location, such as customizer, about page.
+	 *
+	 * @return string
+	 */
+	function tsdk_utmify( $url, $area, $location = null ) {
+		static $current_page = null;
+		if ( $location === null && $current_page === null ) {
+			global $pagenow;
+			$screen       = function_exists( 'get_current_screen' ) ? get_current_screen() : $pagenow;
+			$current_page = isset( $screen->id ) ? $screen->id : ( ( $screen === null ) ? 'non-admin' : $screen );
+			$current_page = sanitize_key( str_replace( '.php', '', $current_page ) );
+		}
+		$location = $location === null ? $current_page : $location;
+
+		return esc_url_raw(
+			add_query_arg(
+				[
+					'utm_source'   => 'wpadmin',
+					'utm_medium'   => $location,
+					'utm_campaign' => $area,
+				],
+				$url 
+			) 
+		);
+	}
+
+	add_filter( 'tsdk_utmify', 'tsdk_utmify', 10, 3 );
+}

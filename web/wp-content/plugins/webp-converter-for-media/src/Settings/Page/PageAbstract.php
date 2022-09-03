@@ -8,11 +8,16 @@ namespace WebpConverter\Settings\Page;
 abstract class PageAbstract implements PageInterface {
 
 	/**
-	 * Returns status if view is active.
-	 *
-	 * @return bool Is view active?
+	 * {@inheritdoc}
 	 */
-	public function is_page_active(): bool {
-		return false;
+	public function get_menu_parent(): string {
+		return PageIntegration::SETTINGS_MENU_PAGE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_menu_url() {
+		return PageIntegration::get_settings_page_url( $this->get_slug() );
 	}
 }

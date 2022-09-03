@@ -6,7 +6,6 @@ use WebpConverter\HookableInterface;
 use WebpConverter\PluginInfo;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\ViewLoader;
-use WebpConverter\Settings\AdminAssets;
 
 /**
  * Supports ability to display notice and its management.
@@ -50,7 +49,6 @@ class NoticeIntegration implements HookableInterface {
 			return;
 		}
 
-		( new AdminAssets( $this->plugin_info ) )->init_hooks();
 		if ( ! is_multisite() ) {
 			add_action( 'admin_notices', [ $this, 'load_notice' ], 0 );
 		} else {

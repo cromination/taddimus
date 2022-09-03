@@ -49,19 +49,18 @@ class WpCliManager implements HookableInterface {
 	 */
 	public function calculate_images() {
 		\WP_Cli::log(
-			__( 'How many maximum images for conversion are left on my website?', 'webp-converter-for-media' )
+			__( 'How many images to convert are remaining on my website?', 'webp-converter-for-media' )
 		);
 
-		$images_count = count(
-			( new PathsFinder( $this->plugin_data, $this->token_repository ) )
-				->get_paths( true, [ AvifFormat::FORMAT_EXTENSION, WebpFormat::FORMAT_EXTENSION ] )
-		);
+		$images_count = ( new PathsFinder( $this->plugin_data, $this->token_repository ) )
+			->get_paths_count( [ AvifFormat::FORMAT_EXTENSION, WebpFormat::FORMAT_EXTENSION ] );
 
 		\WP_CLI::success(
 			sprintf(
 			/* translators: %1$s: images count */
-				__( '%1$s for AVIF and %1$s for WebP', 'webp-converter-for-media' ),
-				number_format( $images_count, 0, '', ' ' )
+				__( '%1$s for AVIF and %2$s for WebP', 'webp-converter-for-media' ),
+				number_format( $images_count[ AvifFormat::FORMAT_EXTENSION ] ?? 0, 0, '', ' ' ),
+				number_format( $images_count[ WebpFormat::FORMAT_EXTENSION ] ?? 0, 0, '', ' ' )
 			)
 		);
 	}
@@ -78,7 +77,7 @@ class WpCliManager implements HookableInterface {
 		$conversion_method = ( new MethodIntegrator( $this->plugin_data ) );
 
 		$progress        = \WP_CLI\Utils\make_progress_bar(
-			__( 'Regenerate images', 'webp-converter-for-media' ),
+			__( 'Bulk Optimization', 'webp-converter-for-media' ),
 			count( $paths_chunks )
 		);
 		$size_before     = 0;

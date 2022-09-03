@@ -132,12 +132,11 @@ abstract class MethodAbstract implements MethodInterface {
 	 * @throws Exception\SourcePathException
 	 */
 	protected function get_image_source_path( string $source_path ): string {
-		$path = urldecode( $source_path );
-		if ( ! is_readable( $path ) ) {
-			throw new Exception\SourcePathException( $path );
+		if ( ! is_readable( $source_path ) ) {
+			throw new Exception\SourcePathException( $source_path );
 		}
 
-		return $path;
+		return $source_path;
 	}
 
 	/**

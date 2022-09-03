@@ -42,7 +42,6 @@ foreach ( $files_to_load as $file ) {
 		require_once $file;
 	}
 }
-
 Loader::init();
 
 foreach ( $products as $product ) {

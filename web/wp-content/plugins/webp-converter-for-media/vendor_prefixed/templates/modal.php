@@ -42,6 +42,7 @@ echo wp_kses_post($form_template->get_form_desc());
 			<ul class="mattDeactivationModal__options">
 				<?php 
 foreach ($form_options->get_options() as $option) {
+    $option_id = \sprintf('option-%1$s-%2$s', $plugin_slug, $option->get_key());
     ?>
 					<li class="mattDeactivationModal__option">
 						<input type="radio"
@@ -51,17 +52,13 @@ foreach ($form_options->get_options() as $option) {
 							value="<?php 
     echo esc_attr($option->get_key());
     ?>"
-							id="option-<?php 
-    echo esc_attr($plugin_slug);
-    ?>-<?php 
-    echo esc_attr($option->get_key());
+							id="<?php 
+    echo esc_attr($option_id);
     ?>"
 							class="mattDeactivationModal__optionInput">
 						<label
-							for="option-<?php 
-    echo esc_attr($plugin_slug);
-    ?>-<?php 
-    echo esc_attr($option->get_key());
+							for="<?php 
+    echo esc_attr($option_id);
     ?>"
 							class="mattDeactivationModal__optionLabel">
 							<?php 
@@ -84,14 +81,26 @@ foreach ($form_options->get_options() as $option) {
 							<?php 
     if ($option->get_question() !== null) {
         ?>
-								<textarea class="mattDeactivationModal__optionTextarea"
-									name="<?php 
+								<div class="mattDeactivationModal__optionBox">
+									<label
+										for="<?php 
+        echo esc_attr($option_id);
+        ?>-message"
+										class="mattDeactivationModal__optionBoxLabel">
+										<?php 
+        echo esc_html($option->get_question());
+        ?>
+									</label>
+									<textarea class="mattDeactivationModal__optionBoxTextarea"
+										name="<?php 
         echo esc_attr(\sprintf($form_template->get_field_name_comment(), $option->get_key()));
         ?>"
-									placeholder="<?php 
-        echo esc_attr($option->get_question());
-        ?>"
-									rows="2"></textarea>
+										id="<?php 
+        echo esc_attr($option_id);
+        ?>-message"
+										placeholder=". . ."
+										rows="2"></textarea>
+								</div>
 							<?php 
     }
     ?>

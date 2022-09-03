@@ -26,7 +26,8 @@
         "process-timeout": 7200,
         "sort-packages": true,
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "johnpbloch/wordpress-core-installer": true
         }
     },
     "extra": {
@@ -101,6 +102,7 @@
             "post list",
             "post meta",
             "post meta add",
+            "post meta clean-duplicates",
             "post meta delete",
             "post meta get",
             "post meta list",

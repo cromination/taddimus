@@ -155,8 +155,11 @@ class DeactivationModalGenerator {
 							$stats_data = [
 								'usage_time'          => $this->stats_manager->get_plugin_usage_time(),
 								'first_version'       => $this->stats_manager->get_plugin_first_version(),
-								'regeneration_images' => $this->stats_manager->get_regeneration_images_count(),
-								'calculation_images'  => $this->stats_manager->get_calculation_images_count(),
+								'regeneration_images' => $this->stats_manager->get_regeneration_images(),
+								'webp_all'            => $this->stats_manager->get_images_webp_all(),
+								'webp_unconverted'    => $this->stats_manager->get_images_webp_unconverted(),
+								'avif_all'            => $this->stats_manager->get_images_avif_all(),
+								'avif_unconverted'    => $this->stats_manager->get_images_avif_unconverted(),
 							];
 
 							$stats_json = json_encode( $stats_data );

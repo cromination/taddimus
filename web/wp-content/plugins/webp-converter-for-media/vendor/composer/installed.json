@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "matt-plugins/deactivation-modal",
-            "version": "1.0.0",
-            "version_normalized": "1.0.0.0",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:matt-plugins/deactivation-modal.git",
-                "reference": "e4382cd530992d7fb4b6e0938eda06230e18e3b5"
+                "reference": "1198bcf4c5f076aa5bf140e4a9281f92c7e292e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/matt-plugins%2Fdeactivation-modal/repository/archive.zip?sha=e4382cd530992d7fb4b6e0938eda06230e18e3b5",
-                "reference": "e4382cd530992d7fb4b6e0938eda06230e18e3b5",
+                "url": "https://gitlab.com/api/v4/projects/matt-plugins%2Fdeactivation-modal/repository/archive.zip?sha=1198bcf4c5f076aa5bf140e4a9281f92c7e292e5",
+                "reference": "1198bcf4c5f076aa5bf140e4a9281f92c7e292e5",
                 "shasum": ""
             },
             "require-dev": {
@@ -21,7 +21,7 @@
                 "phpunit/phpunit": "<7",
                 "wp-coding-standards/wpcs": "^2.3"
             },
-            "time": "2022-01-04T19:46:13+01:00",
+            "time": "2022-08-24T12:17:33+00:00",
             "type": "library",
             "extra": {
                 "assets-values": {
@@ -65,7 +65,7 @@
                 }
             ],
             "support": {
-                "source": "https://gitlab.com/matt-plugins/deactivation-modal/-/tree/1.0.0",
+                "source": "https://gitlab.com/matt-plugins/deactivation-modal/-/tree/1.0.1",
                 "issues": "https://gitlab.com/matt-plugins/deactivation-modal/-/issues"
             },
             "install-path": "../matt-plugins/deactivation-modal"
