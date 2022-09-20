@@ -5,7 +5,7 @@ Donate link: http://blog.futtta.be/2013/10/21/do-not-donate-to-me/
 Requires at least: 4.9
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 3.1.1.1
+Stable tag: 3.1.2
 
 Autoptimize speeds up your website by optimizing JS, CSS, images (incl. lazy-load), HTML and Google Fonts, asyncing JS, removing emoji cruft and more.
 
@@ -298,6 +298,7 @@ The following great open source projects are used in Autoptimize in some form or
 * [jQuery unslider](https://github.com/idiot/unslider/) for the mini-slider in the top right corner on the main settings page (repo gone)
 * [JavaScript-md5](https://github.com/blueimp/JavaScript-MD5) for critical CSS rules editing
 * [Speed Booster Pack](https://wordpress.org/plugins/speed-booster-pack/) for advanced JS deferring
+* [Disable Remove Google Fonts](https://wordpress.org/plugins/disable-remove-google-fonts/) for additional Google Font removal
 
 = Where can I get help? =
 
@@ -314,6 +315,11 @@ You can get help on the [wordpress.org support forum](http://wordpress.org/suppo
 Just [fork Autoptimize on Github](https://github.com/futtta/autoptimize) and code away!
 
 == Changelog ==
+
+= 3.1.2 =
+* Google Fonts: some more removal logic
+* fix for 404 fallback bug (hat tip to Asif for finding & reporting)
+* Some other minor changes/ improvements/ filters, see the [GitHub commit log](https://github.com/futtta/autoptimize/commits/beta).
 
 = 3.1.1.1 =
 * Quick workaround for an autoload conflict with JetFormBuilder (and maybe other Crocoblock plugins?) that causes a critical error on the AO settings page.

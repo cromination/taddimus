@@ -26,7 +26,7 @@ class PathWebpNotWritableNotice implements ErrorNotice {
 				__( 'The path for saving converted WebP files does not exist and cannot be created (function is_writable() returns false). Use filter %1$s to set the correct path. The current using path is: %2$s. Please read %3$sthe plugin FAQ%4$s to learn more.', 'webp-converter-for-media' ),
 				'<strong>webpc_dir_path</strong>',
 				'<strong>' . apply_filters( 'webpc_dir_path', '', 'webp' ) . '</strong>',
-				'<a href="https://wordpress.org/plugins/webp-converter-for-media/#faq" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-error-path-webp-not-writable-faq" target="_blank">',
 				'</a>'
 			),
 		];

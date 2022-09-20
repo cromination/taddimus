@@ -56,6 +56,7 @@ final class Loader {
 		'recommendation',
 		'notification',
 		'promotions',
+		'compatibilities',
 	];
 
 	/**

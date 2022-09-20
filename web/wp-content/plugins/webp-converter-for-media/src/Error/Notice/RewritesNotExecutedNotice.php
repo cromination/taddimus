@@ -29,7 +29,7 @@ class RewritesNotExecutedNotice implements ErrorNotice {
 				$server_name ?: 'Nginx',
 				'<br><strong>',
 				get_home_url(),
-				'<a href="https://wordpress.org/plugins/webp-converter-for-media/faq/" target="_blank">https://wordpress.org/plugins/webp-converter-for-media/faq/</a>',
+				'<a href="https://url.mattplugins.com/converter-error-rewrites-not-executed-faq" target="_blank">https://wordpress.org/plugins/webp-converter-for-media/faq/</a>',
 				'Configuration for Nginx',
 				'</strong>'
 			),

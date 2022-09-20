@@ -83,7 +83,7 @@ class DirectoryIntegration implements HookableInterface {
 	/**
 	 * Returns server path of directory relative to WordPress root directory.
 	 *
-	 * @param mixed  $value          Default value.
+	 * @param string $value          Default value.
 	 * @param string $directory_type Type of directory.
 	 *
 	 * @return string Relative server path of directory.
@@ -99,7 +99,7 @@ class DirectoryIntegration implements HookableInterface {
 	/**
 	 * Returns server path of directory.
 	 *
-	 * @param mixed  $value          Default value.
+	 * @param string $value          Default value.
 	 * @param string $directory_type Type of directory.
 	 *
 	 * @return string Server path of directory.
@@ -125,7 +125,7 @@ class DirectoryIntegration implements HookableInterface {
 	/**
 	 * Returns URL of directory.
 	 *
-	 * @param mixed  $value          Default value.
+	 * @param string $value          Default value.
 	 * @param string $directory_type Type of directory.
 	 *
 	 * @return string URL of directory.

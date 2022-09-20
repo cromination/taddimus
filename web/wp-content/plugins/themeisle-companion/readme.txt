@@ -107,6 +107,28 @@ Activating the Orbit Fox plugin is just like any other plugin. If you've uploade
 
 == Changelog ==
 
+##### [Version 2.10.19](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.18...v2.10.19) (2022-09-15)
+
+* Fix for Bedrock installs.
+
+
+
+
+##### [Version 2.10.18](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.17...v2.10.18) (2022-09-13)
+
+* Update depencies
+* Fix usage of outdated php-http/discovery package may break some sites running PHP 7.4 or higher
+
+
+
+
+##### [Version 2.10.17](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.16...v2.10.17) (2022-09-05)
+
+* Remove deprecated Gutenberg blocks module
+
+
+
+
 ##### [Version 2.10.16](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.15...v2.10.16) (2022-09-02)
 
 * Fix fatal error due to late function registering.

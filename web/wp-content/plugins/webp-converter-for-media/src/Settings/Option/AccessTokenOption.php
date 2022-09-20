@@ -3,7 +3,6 @@
 namespace WebpConverter\Settings\Option;
 
 use WebpConverter\Repository\TokenRepository;
-use WebpConverter\WebpConverterConstants;
 
 /**
  * {@inheritdoc}
@@ -57,7 +56,7 @@ class AccessTokenOption extends OptionAbstract {
 			return sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( 'To manage your subscriptions, please visit %1$sour website%2$s.', 'webp-converter-for-media' ),
-				'<a href="' . esc_url( WebpConverterConstants::SUBSCRIPTION_MANAGEMENT_URL ) . '" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-field-access-token-management" target="_blank">',
 				'</a>'
 			);
 		}
@@ -65,9 +64,9 @@ class AccessTokenOption extends OptionAbstract {
 		return sprintf(
 		/* translators: %1$s: open anchor tag, %2$s: close anchor tag, %3$s: open anchor tag, %4$s: close anchor tag */
 			__( 'Provide a valid token to access %1$sthe PRO functionalities%2$s. You can find out more about it %3$shere%4$s.', 'webp-converter-for-media' ),
-			'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-access-token-pro-features' ) ) . '" target="_blank">',
+			'<a href="https://url.mattplugins.com/converter-field-access-token-pro-features" target="_blank">',
 			'</a>',
-			'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-access-token-upgrade' ) ) . '" target="_blank">',
+			'<a href="https://url.mattplugins.com/converter-field-access-token-find-more" target="_blank">',
 			'</a>'
 		);
 	}

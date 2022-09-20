@@ -41,6 +41,13 @@ class ImagesCounterEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_http_methods(): string {
+		return \WP_REST_Server::READABLE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_route_response( \WP_REST_Request $request ) {
 		$images_count = ( new PathsFinder( $this->plugin_data, $this->token_repository ) )
 			->get_paths_count( [ AvifFormat::FORMAT_EXTENSION, WebpFormat::FORMAT_EXTENSION ] );

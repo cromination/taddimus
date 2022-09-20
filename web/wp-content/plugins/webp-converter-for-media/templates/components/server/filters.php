@@ -48,6 +48,12 @@ use WebpConverter\Service\PathsGenerator;
 		</td>
 	</tr>
 	<tr>
+		<td class="e">webpc_source_directories</td>
+		<td class="v">
+			<?php echo esc_html( json_encode( apply_filters( 'webpc_source_directories', [] ) ) ?: '-' ); ?>
+		</td>
+	</tr>
+	<tr>
 		<td class="e">webpc_htaccess_rewrite_root</td>
 		<td class="v">
 			<?php echo esc_html( PathsGenerator::get_rewrite_root() ); ?>

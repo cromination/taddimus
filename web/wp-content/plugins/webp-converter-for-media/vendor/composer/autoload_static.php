@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a
+class ComposerStaticInitba256ecdc5bb5675566d3dd845f3570f
 {
     public static $prefixLengthsPsr4 = array (
         'W' => 
@@ -49,10 +49,7 @@ class ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a
         'WebpConverter\\Conversion\\Directory\\DirectoryFactory' => __DIR__ . '/../..' . '/src/Conversion/Directory/DirectoryFactory.php',
         'WebpConverter\\Conversion\\Directory\\DirectoryIntegration' => __DIR__ . '/../..' . '/src/Conversion/Directory/DirectoryIntegration.php',
         'WebpConverter\\Conversion\\Directory\\DirectoryInterface' => __DIR__ . '/../..' . '/src/Conversion/Directory/DirectoryInterface.php',
-        'WebpConverter\\Conversion\\Directory\\GalleryDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/GalleryDirectory.php',
-        'WebpConverter\\Conversion\\Directory\\PluginsDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/PluginsDirectory.php',
-        'WebpConverter\\Conversion\\Directory\\ThemesDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/ThemesDirectory.php',
-        'WebpConverter\\Conversion\\Directory\\UploadsDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/UploadsDirectory.php',
+        'WebpConverter\\Conversion\\Directory\\SourceDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/SourceDirectory.php',
         'WebpConverter\\Conversion\\Directory\\UploadsWebpcDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/UploadsWebpcDirectory.php',
         'WebpConverter\\Conversion\\Endpoint\\CronConversionEndpoint' => __DIR__ . '/../..' . '/src/Conversion/Endpoint/CronConversionEndpoint.php',
         'WebpConverter\\Conversion\\Endpoint\\EndpointAbstract' => __DIR__ . '/../..' . '/src/Conversion/Endpoint/EndpointAbstract.php',
@@ -142,6 +139,7 @@ class ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a
         'WebpConverter\\Notice\\NoticeIntegration' => __DIR__ . '/../..' . '/src/Notice/NoticeIntegration.php',
         'WebpConverter\\Notice\\NoticeInterface' => __DIR__ . '/../..' . '/src/Notice/NoticeInterface.php',
         'WebpConverter\\Notice\\ThanksNotice' => __DIR__ . '/../..' . '/src/Notice/ThanksNotice.php',
+        'WebpConverter\\Notice\\UpgradeNotice' => __DIR__ . '/../..' . '/src/Notice/UpgradeNotice.php',
         'WebpConverter\\Notice\\WelcomeNotice' => __DIR__ . '/../..' . '/src/Notice/WelcomeNotice.php',
         'WebpConverter\\PluginData' => __DIR__ . '/../..' . '/src/PluginData.php',
         'WebpConverter\\PluginInfo' => __DIR__ . '/../..' . '/src/PluginInfo.php',
@@ -156,7 +154,6 @@ class ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a
         'WebpConverter\\Plugin\\Links' => __DIR__ . '/../..' . '/src/Plugin/Links.php',
         'WebpConverter\\Plugin\\Uninstall' => __DIR__ . '/../..' . '/src/Plugin/Uninstall.php',
         'WebpConverter\\Plugin\\Uninstall\\DebugFiles' => __DIR__ . '/../..' . '/src/Plugin/Uninstall/DebugFiles.php',
-        'WebpConverter\\Plugin\\Uninstall\\HtaccessFile' => __DIR__ . '/../..' . '/src/Plugin/Uninstall/HtaccessFile.php',
         'WebpConverter\\Plugin\\Uninstall\\PluginSettings' => __DIR__ . '/../..' . '/src/Plugin/Uninstall/PluginSettings.php',
         'WebpConverter\\Plugin\\Uninstall\\WebpFiles' => __DIR__ . '/../..' . '/src/Plugin/Uninstall/WebpFiles.php',
         'WebpConverter\\Plugin\\Update' => __DIR__ . '/../..' . '/src/Plugin/Update.php',
@@ -205,9 +202,9 @@ class ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit5dda79ecb8a6ed3558675f4c77c86e5a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitba256ecdc5bb5675566d3dd845f3570f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitba256ecdc5bb5675566d3dd845f3570f::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitba256ecdc5bb5675566d3dd845f3570f::$classMap;
 
         }, null, ClassLoader::class);
     }

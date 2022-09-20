@@ -4,7 +4,6 @@ namespace WebpConverter\Conversion\Format;
 
 use WebpConverter\Conversion\Method\RemoteMethod;
 use WebpConverter\Repository\TokenRepository;
-use WebpConverter\WebpConverterConstants;
 
 /**
  * Supports AVIF as output format for images.
@@ -50,7 +49,7 @@ class AvifFormat extends FormatAbstract {
 			sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),
-				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-output-formats-avif-upgrade' ) ) . '" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-field-output-format-avif-upgrade" target="_blank">',
 				'</a>'
 			)
 		);

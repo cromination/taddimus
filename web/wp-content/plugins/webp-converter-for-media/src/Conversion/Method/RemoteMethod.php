@@ -82,7 +82,7 @@ class RemoteMethod extends MethodAbstract {
 			sprintf(
 			/* translators: %%1$s: open anchor tag, %2$s: close anchor tag */
 				__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),
-				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-conversion-method-remote-upgrade' ) ) . '" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-field-conversion-method-remote-upgrade" target="_blank">',
 				'</a>'
 			)
 		);

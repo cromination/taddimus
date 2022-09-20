@@ -7,6 +7,7 @@ use WebpConverter\Error\ErrorDetectorAggregator;
 use WebpConverter\Notice\CloudflareNotice;
 use WebpConverter\Notice\LitespeedNotice;
 use WebpConverter\Notice\ThanksNotice;
+use WebpConverter\Notice\UpgradeNotice;
 use WebpConverter\Notice\WelcomeNotice;
 use WebpConverter\Plugin\Update;
 use WebpConverter\Repository\TokenRepository;
@@ -30,6 +31,7 @@ class PluginSettings {
 		OptionsAccessManager::delete_option( ThanksNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( CloudflareNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( LitespeedNotice::NOTICE_OPTION );
+		OptionsAccessManager::delete_option( UpgradeNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( 'webpc_notice_avif_support' );
 		OptionsAccessManager::delete_option( 'webpc_notice_cloudways' );
 

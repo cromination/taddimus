@@ -50,8 +50,8 @@
 					/* translators: %1$s: br tag, %2$s: icon heart */
 						__( 'Created with %1$s by %2$s - if you like our plugin, please %3$srate one%4$s%5$s', 'webp-converter-for-media' ),
 						'<span class="webpcPage__footerIcon webpcPage__footerIcon--heart"></span>',
-						'<a href="https://mattplugins.com/?utm_source=webp-converter-for-media&utm_campaign=website-check&utm_medium=plugin-settings-footer" target="_blank">matt plugins</a>',
-						'<a href="https://wordpress.org/support/plugin/webp-converter-for-media/reviews/?rate=5#new-post" target="_blank">',
+						'<a href="https://url.mattplugins.com/converter-settings-footer-author-website" target="_blank">matt plugins</a>',
+						'<a href="https://url.mattplugins.com/converter-settings-footer-plugin-review" target="_blank">',
 						' <span class="webpcPage__footerIcon webpcPage__footerIcon--stars"></span>',
 						'</a>'
 					)

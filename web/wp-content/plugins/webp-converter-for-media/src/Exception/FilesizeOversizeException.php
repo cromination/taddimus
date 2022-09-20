@@ -14,9 +14,10 @@ class FilesizeOversizeException extends ExceptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_error_message( array $values ): string {
+		$number = (int) $values[0];
 		return sprintf(
 			self::ERROR_MESSAGE,
-			round( $values[0] / 1024 / 1024 ),
+			round( $number / 1024 / 1024 ),
 			$values[1]
 		);
 	}

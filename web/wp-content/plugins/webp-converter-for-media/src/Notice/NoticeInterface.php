@@ -19,7 +19,7 @@ interface NoticeInterface {
 	 *
 	 * @return string Default value.
 	 */
-	public function get_default_value(): string;
+	public static function get_default_value(): string;
 
 	/**
 	 * Returns status if notice is available.

@@ -3,7 +3,6 @@
 namespace WebpConverter\Settings\Option;
 
 use WebpConverter\Repository\TokenRepository;
-use WebpConverter\WebpConverterConstants;
 
 /**
  * {@inheritdoc}
@@ -62,7 +61,7 @@ class ImageResizeOption extends OptionAbstract {
 				sprintf(
 				/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 					__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),
-					'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-image-resize-upgrade' ) ) . '" target="_blank">',
+					'<a href="https://url.mattplugins.com/converter-field-image-resize-upgrade" target="_blank">',
 					'</a>'
 				)
 			);
@@ -88,7 +87,7 @@ class ImageResizeOption extends OptionAbstract {
 			$notice[] = sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
-				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-image-resize-info' ) ) . '" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-field-image-resize-info" target="_blank">',
 				' <span class="dashicons dashicons-arrow-right-alt"></span></a>'
 			);
 		}

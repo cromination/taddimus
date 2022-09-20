@@ -23,8 +23,8 @@ class ThanksNotice extends NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value(): string {
-		return (string) strtotime( '+ 1 week' );
+	public static function get_default_value(): string {
+		return (string) strtotime( '+ 2 weeks' );
 	}
 
 	/**

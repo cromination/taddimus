@@ -6,7 +6,6 @@ use WebpConverter\HookableInterface;
 use WebpConverter\PluginInfo;
 use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Settings\Page\PageIntegration;
-use WebpConverter\WebpConverterConstants;
 
 /**
  * Adds links to plugin in list of plugins in panel.
@@ -95,11 +94,10 @@ class Links implements HookableInterface {
 			return $links;
 		}
 
-		$upgrade_url = sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'plugin-links-upgrade' );
-		$links[]     = sprintf(
+		$links[] = sprintf(
 		/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 			esc_html( __( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ) ),
-			'<a href="' . esc_url( $upgrade_url ) . '" target="_blank" style="font-weight: bold;">',
+			'<a href="https://url.mattplugins.com/converter-plugin-links-upgrade" target="_blank" style="font-weight: bold;">',
 			'</a>'
 		);
 		return $links;

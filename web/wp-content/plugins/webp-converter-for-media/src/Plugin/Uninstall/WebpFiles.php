@@ -2,7 +2,8 @@
 
 namespace WebpConverter\Plugin\Uninstall;
 
-use WebpConverter\Conversion\Format\FormatFactory;
+use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\SkipCrashed;
 use WebpConverter\Conversion\SkipLarger;
 
@@ -22,6 +23,7 @@ class WebpFiles {
 		$path  = ( $output_path !== null ) ? $output_path : apply_filters( 'webpc_dir_path', '', 'webp' );
 		$paths = self::get_paths_from_location( $path );
 		if ( $output_path === null ) {
+			$paths[] = $path . '/.htaccess';
 			$paths[] = $path;
 		}
 		self::remove_files( $paths );
@@ -62,17 +64,18 @@ class WebpFiles {
 			return;
 		}
 
-		$extensions   = ( new FormatFactory() )->get_format_extensions();
-		$extensions[] = SkipLarger::DELETED_FILE_EXTENSION;
-		$extensions[] = SkipCrashed::CRASHED_FILE_EXTENSION;
+		$regex = sprintf(
+			'/((jpe?g|png|gif)\.(%1$s)(\.(%2$s))?|\.htaccess)?$/i',
+			implode( '|', [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ] ),
+			implode( '|', [ SkipLarger::DELETED_FILE_EXTENSION, SkipCrashed::CRASHED_FILE_EXTENSION ] )
+		);
 
 		foreach ( $paths as $path ) {
 			if ( ! is_writable( $path ) || ! is_writable( dirname( $path ) ) ) {
 				continue;
 			}
 
-			$extension = pathinfo( $path, PATHINFO_EXTENSION );
-			if ( is_file( $path ) && in_array( $extension, $extensions ) ) {
+			if ( is_file( $path ) && ( preg_match( $regex, basename( $path ) ) ) ) {
 				unlink( $path );
 			} elseif ( is_dir( $path ) ) {
 				rmdir( $path );

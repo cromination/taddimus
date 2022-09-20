@@ -47,6 +47,13 @@ class PathsEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function get_http_methods(): string {
+		return \WP_REST_Server::CREATABLE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_route_args(): array {
 		return array_merge(
 			parent::get_route_args(),
@@ -68,6 +75,8 @@ class PathsEndpoint extends EndpointAbstract {
 	 */
 	public function get_route_response( \WP_REST_Request $request ) {
 		$this->cron_status_manager->set_conversion_status_locked( true, true );
+		$this->cron_status_manager->set_paths_to_conversion( [] );
+		$this->cron_status_manager->set_paths_skipped( [] );
 
 		$params         = $request->get_params();
 		$skip_converted = ( $params['regenerate_force'] !== true );

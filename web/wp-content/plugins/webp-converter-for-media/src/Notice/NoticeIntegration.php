@@ -72,14 +72,17 @@ class NoticeIntegration implements HookableInterface {
 	/**
 	 * Sets value for option that specifies whether to display notice.
 	 *
+	 * @param string $notice_name   .
+	 * @param string $default_value .
+	 *
 	 * @return void
 	 */
-	public function set_default_value() {
-		if ( OptionsAccessManager::get_option( $this->notice->get_option_name() ) !== null ) {
+	public static function set_default_value( string $notice_name, string $default_value ) {
+		if ( OptionsAccessManager::get_option( $notice_name ) !== null ) {
 			return;
 		}
 
-		OptionsAccessManager::update_option( $this->notice->get_option_name(), $this->notice->get_default_value() );
+		OptionsAccessManager::update_option( $notice_name, $default_value );
 	}
 
 	/**

@@ -26,7 +26,7 @@ class PathUploadsUnavailableNotice implements ErrorNotice {
 				__( 'The path for /uploads files does not exist (function is_dir() returns false). Use filter %1$s to set the correct path. The current using path is: %2$s. Please read %3$sthe plugin FAQ%4$s to learn more.', 'webp-converter-for-media' ),
 				'<strong>webpc_dir_path</strong>',
 				'<strong>' . apply_filters( 'webpc_dir_path', '', 'uploads' ) . '</strong>',
-				'<a href="https://wordpress.org/plugins/webp-converter-for-media/#faq" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-error-path-uploads-unavailable-faq" target="_blank">',
 				'</a>'
 			),
 		];

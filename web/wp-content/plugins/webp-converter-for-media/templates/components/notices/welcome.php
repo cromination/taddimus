@@ -2,14 +2,18 @@
 /**
  * Notice displayed in admin panel.
  *
+ * @var string $ajax_url     URL of admin-ajax.
+ * @var string $close_action Action using in WP Ajax.
  * @var string $settings_url URL of plugin settings page (default view).
  *
  * @package Converter for Media
  */
 
 ?>
-<div class="notice notice-success"
+<div class="notice notice-success is-dismissible"
 	data-notice="webp-converter-for-media"
+	data-notice-action="<?php echo esc_attr( $close_action ); ?>"
+	data-notice-url="<?php echo esc_url( $ajax_url ); ?>"
 >
 	<div class="webpcContent webpcContent--notice">
 		<h4>
@@ -33,5 +37,6 @@
 				<?php echo esc_html( __( 'Speed up my website', 'webp-converter-for-media' ) ); ?>
 			</a>
 		</div>
+		<img src="https://mattplugins.com/images/matt-plugins-logo.png" alt="">
 	</div>
 </div>

@@ -28,11 +28,27 @@ echo esc_url($form_template->get_api_url());
 				class="mattDeactivationModal__close dashicons dashicons-no"
 				data-matt-deactivation-modal-button-close></button>
 
-			<div class="mattDeactivationModal__headline">
-				<?php 
-echo wp_kses_post($form_template->get_form_title());
+			<?php 
+if ($form_template->get_logo_url() === null) {
+    ?>
+				<div class="mattDeactivationModal__headline">
+					<?php 
+    echo wp_kses_post($form_template->get_form_title());
+    ?>
+				</div>
+			<?php 
+} else {
+    ?>
+				<div class="mattDeactivationModal__headline" style="background-image: url(<?php 
+    echo esc_attr($form_template->get_logo_url());
+    ?>);">
+					<?php 
+    echo wp_kses_post($form_template->get_form_title());
+    ?>
+				</div>
+			<?php 
+}
 ?>
-			</div>
 			<div class="mattDeactivationModal__desc">
 				<?php 
 echo wp_kses_post($form_template->get_form_desc());

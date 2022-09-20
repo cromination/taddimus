@@ -4,7 +4,6 @@ namespace WebpConverter\Settings\Option;
 
 use WebpConverter\Conversion\Method\MethodFactory;
 use WebpConverter\Repository\TokenRepository;
-use WebpConverter\WebpConverterConstants;
 
 /**
  * {@inheritdoc}
@@ -70,7 +69,7 @@ class ConversionMethodOption extends OptionAbstract {
 			$notice[] = sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
-				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-conversion-method-info' ) ) . '" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-field-conversion-method-info" target="_blank">',
 				' <span class="dashicons dashicons-arrow-right-alt"></span></a>'
 			);
 		}

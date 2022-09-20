@@ -23,7 +23,7 @@ class WelcomeNotice extends NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value(): string {
+	public static function get_default_value(): string {
 		return '1';
 	}
 
@@ -60,7 +60,16 @@ class WelcomeNotice extends NoticeAbstract implements NoticeInterface {
 	 */
 	public function get_vars_for_view(): array {
 		return [
+			'ajax_url'     => admin_url( 'admin-ajax.php' ),
+			'close_action' => self::NOTICE_OPTION,
 			'settings_url' => PageIntegration::get_settings_page_url(),
 		];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_ajax_action_to_disable(): string {
+		return self::NOTICE_OPTION;
 	}
 }

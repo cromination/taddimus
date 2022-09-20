@@ -26,7 +26,7 @@
 			?>
 		</p>
 		<div class="webpcContent__buttons">
-			<a href="https://wordpress.org/support/plugin/webp-converter-for-media/reviews/?rate=5#new-post"
+			<a href="https://url.mattplugins.com/converter-notice-thanks-button-review"
 				target="_blank"
 				class="webpcContent__button webpcButton webpcButton--blue webpcButton--bg"
 			>

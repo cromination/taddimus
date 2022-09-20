@@ -1,3 +1,13 @@
+##### [Version 3.2.30](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.29...v3.2.30) (2022-09-15)
+
+- fix filesystem wrong use - ref [#138](https://github.com/Codeinwp/themeisle-sdk/issues/138), props [@ethanclevenger91](https://github.com/ethanclevenger91) for reporting
+
+##### [Version 3.2.29](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.28...v3.2.29) (2022-09-08)
+
+* Adds compatibility mechanism
+* Adds content utms
+* Adds usage time on uninstall feedback
+
 ##### [Version 3.2.28](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.27...v3.2.28) (2022-08-30)
 
 * Adds utm handler

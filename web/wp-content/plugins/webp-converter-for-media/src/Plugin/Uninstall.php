@@ -38,7 +38,6 @@ class Uninstall implements HookableInterface {
 	 */
 	public static function load_uninstall_actions() {
 		PluginSettings::remove_plugin_settings();
-		HtaccessFile::remove_htaccess_file();
 		WebpFiles::remove_webp_files();
 		DebugFiles::remove_debug_files();
 	}

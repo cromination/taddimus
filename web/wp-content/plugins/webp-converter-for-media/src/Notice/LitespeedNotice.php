@@ -23,7 +23,7 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value(): string {
+	public static function get_default_value(): string {
 		return '';
 	}
 

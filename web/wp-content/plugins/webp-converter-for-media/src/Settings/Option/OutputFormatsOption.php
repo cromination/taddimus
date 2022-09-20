@@ -6,7 +6,6 @@ use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Repository\TokenRepository;
-use WebpConverter\WebpConverterConstants;
 
 /**
  * {@inheritdoc}
@@ -78,7 +77,7 @@ class OutputFormatsOption extends OptionAbstract {
 			$notice[] = sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
-				'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'field-output-formats-info' ) ) . '" target="_blank">',
+				'<a href="https://url.mattplugins.com/converter-field-output-formats-info" target="_blank">',
 				' <span class="dashicons dashicons-arrow-right-alt"></span></a>'
 			);
 		}

@@ -57,6 +57,14 @@ class MediaStatusViewer implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
+		add_action( 'init', [ $this, 'init_hooks_after_setup' ] );
+	}
+
+	/**
+	 * @return void
+	 * @internal
+	 */
+	public function init_hooks_after_setup() {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		if ( ! $plugin_settings[ MediaStatsOption::OPTION_NAME ] ) {
 			return;
@@ -65,6 +73,7 @@ class MediaStatusViewer implements HookableInterface {
 		add_filter( 'manage_media_columns', [ $this, 'add_custom_table_column' ] );
 		add_action( 'manage_media_custom_column', [ $this, 'print_table_column_value' ], 10, 2 );
 		add_action( 'attachment_submitbox_misc_actions', [ $this, 'print_attachment_sidebar_value' ], 20 );
+		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'add_status_for_attachment_data' ], 10, 2 );
 	}
 
 	/**
@@ -113,11 +122,7 @@ class MediaStatusViewer implements HookableInterface {
 		$conversion_status[] = sprintf(
 		/* translators: %s: plugin name */
 			'<small>' . __( 'Optimized by: %s', 'webp-converter-for-media' ) . '</small>',
-			sprintf(
-				'<a href="%1$s">%2$s</a>',
-				esc_attr( PageIntegration::get_settings_page_url() ),
-				__( 'Converter for Media', 'webp-converter-for-media' )
-			)
+			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegration::get_settings_page_url() ), 'Converter for Media' )
 		);
 
 		?>
@@ -125,6 +130,37 @@ class MediaStatusViewer implements HookableInterface {
 			<?php echo wp_kses_post( implode( '<br>', $conversion_status ) ); ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * @param mixed[]  $response   .
+	 * @param \WP_Post $attachment .
+	 *
+	 * @return mixed[]
+	 * @internal
+	 */
+	public function add_status_for_attachment_data( array $response, \WP_Post $attachment ): array {
+		$source_post_id = (string) ( $_REQUEST['post_id'] ?? '' ); // phpcs:ignore WordPress.Security
+		if ( $source_post_id !== '0' ) {
+			return $response;
+		}
+
+		$conversion_status = $this->get_conversion_status( $attachment->ID );
+		if ( $conversion_status === null ) {
+			return $response;
+		}
+
+		$conversion_status[] = sprintf(
+		/* translators: %s: plugin name */
+			'<small>' . __( 'Optimized by: %s', 'webp-converter-for-media' ) . '</small>',
+			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegration::get_settings_page_url() ), 'Converter for Media' )
+		);
+
+		$response['compat']         = $response['compat'] ?? [];
+		$response['compat']['meta'] = $response['compat']['meta'] ?? '';
+
+		$response['compat']['meta'] .= '<br>' . wp_kses_post( implode( '<br>', $conversion_status ) );
+		return $response;
 	}
 
 	/**
@@ -178,22 +214,36 @@ class MediaStatusViewer implements HookableInterface {
 			/* translators: %s: file size */
 				__( 'Optimized file size: %s', 'webp-converter-for-media' ),
 				( $size_optimized )
-					? sprintf( '<strong>%1$s (%2$s)</strong>', size_format( $size_optimized ), $this->get_percent_value( $size_original, $size_optimized ) )
+					?
+					sprintf(
+						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
+						size_format( $size_optimized ),
+						esc_attr( __( 'File size reduction of the uploaded image compared to the original one.', 'webp-converter-for-media' ) ),
+						$this->get_percent_value( $size_original, $size_optimized )
+					)
 					: '<strong>-</strong>'
 			),
 			sprintf(
-			/* translators: %s: number of images */
-				__( 'WebP generated: %s', 'webp-converter-for-media' ),
+			/* translators: %1$s: output format, %2$s: number of images */
+				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
+				'WebP',
 				( count( $webp_source_size ) > 0 )
-					? sprintf( '<strong>%1$s (%2$s)</strong>', count( $webp_source_size ), $this->get_percent_value( $webp_source_size, $webp_output_size ) )
+					?
+					sprintf(
+						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
+						count( $webp_source_size ),
+						esc_attr( __( 'File size reduction of all thumbnails compared to the original ones.', 'webp-converter-for-media' ) ),
+						$this->get_percent_value( $webp_source_size, $webp_output_size )
+					)
 					: '<strong>0</strong>'
 			),
 		];
 
 		if ( ! $this->token->get_valid_status() ) {
 			$rows[] = sprintf(
-			/* translators: %s: number of images */
-				__( 'AVIF generated: %s', 'webp-converter-for-media' ),
+			/* translators: %1$s: output format, %2$s: number of images */
+				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
+				'AVIF',
 				sprintf(
 					'<strong>%1$s</strong> <small>(<a href="%2$s">%3$s</a>)</small>',
 					count( $avif_source_size ),
@@ -203,10 +253,17 @@ class MediaStatusViewer implements HookableInterface {
 			);
 		} else {
 			$rows[] = sprintf(
-			/* translators: %s: number of images */
-				__( 'AVIF generated: %s', 'webp-converter-for-media' ),
+			/* translators: %1$s: output format, %2$s: number of images */
+				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
+				'AVIF',
 				( count( $avif_source_size ) > 0 )
-					? sprintf( '<strong>%1$s (%2$s)</strong>', count( $avif_source_size ), $this->get_percent_value( $avif_source_size, $avif_output_size ) )
+					?
+					sprintf(
+						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
+						count( $avif_source_size ),
+						esc_attr( __( 'File size reduction of all thumbnails compared to the original ones.', 'webp-converter-for-media' ) ),
+						$this->get_percent_value( $avif_source_size, $avif_output_size )
+					)
 					: '<strong>0</strong>'
 			);
 		}

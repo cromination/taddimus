@@ -67,13 +67,14 @@ class CronInitiator {
 	}
 
 	/**
-	 * @param string[] $new_paths .
+	 * @param string[] $new_paths              .
+	 * @param bool     $force_convert_modified .
 	 *
 	 * @return void
 	 */
-	public function add_paths_to_conversion( array $new_paths ) {
+	public function add_paths_to_conversion( array $new_paths, bool $force_convert_modified = false ) {
 		$paths           = $this->cron_status_manager->get_paths_to_conversion();
-		$valid_new_paths = $this->paths_finder->skip_converted_paths( $new_paths );
+		$valid_new_paths = $this->paths_finder->skip_converted_paths( $new_paths, null, $force_convert_modified );
 
 		$this->cron_status_manager->set_paths_to_conversion( array_merge( $valid_new_paths, $paths ) );
 	}
@@ -106,12 +107,18 @@ class CronInitiator {
 	 * @return void
 	 */
 	public function init_async_conversion() {
+		$headers = [];
+		if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
+			$headers['Authorization'] = 'Basic ' . base64_encode( $_SERVER['PHP_AUTH_USER'] . ':' . $_SERVER['PHP_AUTH_PW'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		}
+
 		wp_remote_post(
 			( new CronConversionEndpoint( $this->plugin_data, $this->token_repository ) )->get_route_url(),
 			[
 				'timeout'   => 0.01,
 				'blocking'  => false,
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+				'headers'   => $headers,
 			]
 		);
 	}

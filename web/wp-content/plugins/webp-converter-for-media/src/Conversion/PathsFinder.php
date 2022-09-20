@@ -18,10 +18,9 @@ use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 class PathsFinder {
 
 	const PATHS_PER_REQUEST_LOCAL         = 10;
-	const PATHS_PER_REQUEST_REMOTE_SMALL  = 1;
-	const PATHS_PER_REQUEST_REMOTE_MEDIUM = 2;
-	const PATHS_PER_REQUEST_REMOTE_LARGE  = 3;
-	const PATHS_PER_REQUEST_REMOTE_MAX    = 5;
+	const PATHS_PER_REQUEST_REMOTE_SMALL  = 3;
+	const PATHS_PER_REQUEST_REMOTE_MEDIUM = 5;
+	const PATHS_PER_REQUEST_REMOTE_LARGE  = 10;
 
 	/**
 	 * @var PluginData
@@ -99,19 +98,19 @@ class PathsFinder {
 	 * @return int[] Number of images to be converted to given output formats.
 	 */
 	public function get_paths_count( array $allowed_output_formats ): array {
-		$paths  = $this->find_source_paths( true );
-		$values = [];
+		$source_paths = $this->find_source_paths( true );
+		$values       = [];
 		foreach ( $allowed_output_formats as $output_format ) {
 			$values[ $output_format ]          = 0;
 			$values[ 'all_' . $output_format ] = 0;
-			foreach ( $paths as $path ) {
-				$output_path = $this->output_path->get_path( $path, false, $output_format );
+			foreach ( $source_paths as $source_path ) {
+				$output_path = $this->output_path->get_path( $source_path, false, $output_format );
 				if ( $output_path === null ) {
 					continue;
 				}
 
 				$values[ 'all_' . $output_format ]++;
-				if ( ! $this->is_converted_file( $output_path ) ) {
+				if ( ! $this->is_converted_file( $source_path, $output_path ) ) {
 					$values[ $output_format ]++;
 				}
 			}
@@ -128,19 +127,20 @@ class PathsFinder {
 	/**
 	 * @param string[]      $source_paths           Server paths of source images.
 	 * @param string[]|null $allowed_output_formats List of extensions or use selected in plugin settings.
+	 * @param bool          $force_convert_modified Force re-conversion of images modified after previous conversion.
 	 *
 	 * @return string[] Server paths of source images.
 	 */
-	public function skip_converted_paths( array $source_paths, array $allowed_output_formats = null ): array {
+	public function skip_converted_paths( array $source_paths, array $allowed_output_formats = null, bool $force_convert_modified = false ): array {
 		$allowed_output_formats = $allowed_output_formats
 			?: $this->plugin_data->get_plugin_settings()[ OutputFormatsOption::OPTION_NAME ];
 
-		foreach ( $source_paths as $path_index => $path ) {
+		foreach ( $source_paths as $path_index => $source_path ) {
 			$is_converted = true;
 			foreach ( $allowed_output_formats as $output_format ) {
-				$output_path = $this->output_path->get_path( $path, false, $output_format );
+				$output_path = $this->output_path->get_path( $source_path, false, $output_format );
 
-				if ( $output_path && ! $this->is_converted_file( $output_path ) ) {
+				if ( $output_path && ! $this->is_converted_file( $source_path, $output_path, $force_convert_modified ) ) {
 					$is_converted = false;
 					break;
 				}
@@ -181,13 +181,20 @@ class PathsFinder {
 		return $list;
 	}
 
-	private function is_converted_file( string $output_path ): bool {
-		return ( file_exists( $output_path )
-			|| file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION )
-			|| file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION )
-		);
+	private function is_converted_file( string $source_path, string $output_path, bool $force_convert_modified = false ): bool {
+		if ( file_exists( $output_path ) ) {
+			return ( $force_convert_modified ) ? ( filemtime( $source_path ) <= filemtime( $output_path ) ) : true;
+		}
+
+		return ( file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION )
+			|| file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION ) );
 	}
 
+	/**
+	 * @param int $paths_count .
+	 *
+	 * @return int<1, max>
+	 */
 	private function get_paths_chunk_size( int $paths_count ): int {
 		$settings = $this->plugin_data->get_plugin_settings();
 		if ( $settings[ ConversionMethodOption::OPTION_NAME ] !== RemoteMethod::METHOD_NAME ) {
@@ -201,12 +208,10 @@ class PathsFinder {
 
 		if ( $images_to_conversion <= 10000 ) {
 			return self::PATHS_PER_REQUEST_REMOTE_SMALL;
-		} elseif ( $images_to_conversion <= 25000 ) {
-			return self::PATHS_PER_REQUEST_REMOTE_MEDIUM;
 		} elseif ( $images_to_conversion <= 120000 ) {
-			return self::PATHS_PER_REQUEST_REMOTE_LARGE;
+			return self::PATHS_PER_REQUEST_REMOTE_MEDIUM;
 		} else {
-			return self::PATHS_PER_REQUEST_REMOTE_MAX;
+			return self::PATHS_PER_REQUEST_REMOTE_LARGE;
 		}
 	}
 }

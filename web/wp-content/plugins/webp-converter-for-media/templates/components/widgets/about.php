@@ -26,7 +26,7 @@
 			?>
 		</p>
 		<p class="center">
-			<a href="https://wordpress.org/support/topic/how-can-i-check-if-the-plugin-is-working-properly/"
+			<a href="https://url.mattplugins.com/converter-widget-about-button-instruction"
 				target="_blank"
 				class="webpcButton webpcButton--blue"
 			>

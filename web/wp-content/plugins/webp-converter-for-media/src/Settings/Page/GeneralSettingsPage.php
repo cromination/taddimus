@@ -14,7 +14,6 @@ use WebpConverter\Service\NonceManager;
 use WebpConverter\Settings\Option\OptionAbstract;
 use WebpConverter\Settings\PluginOptions;
 use WebpConverter\Settings\SettingsSave;
-use WebpConverter\WebpConverterConstants;
 
 /**
  * {@inheritdoc}
@@ -105,7 +104,7 @@ class GeneralSettingsPage extends PageAbstract {
 						? sprintf(
 						/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 							__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),
-							'<a href="' . esc_url( sprintf( WebpConverterConstants::UPGRADE_PRO_PREFIX_URL, 'regeneration-widget-avif-upgrade' ) ) . '" target="_blank">',
+							'<a href="https://url.mattplugins.com/converter-regeneration-widget-avif-upgrade" target="_blank">',
 							'</a>'
 						)
 						: null,

@@ -18,10 +18,13 @@ class DirectoryFactory implements HookableInterface {
 	private $directories_integration;
 
 	public function __construct() {
-		$this->set_integration( new GalleryDirectory() );
-		$this->set_integration( new PluginsDirectory() );
-		$this->set_integration( new ThemesDirectory() );
-		$this->set_integration( new UploadsDirectory() );
+		$this->set_integration( new SourceDirectory( 'gallery' ) );
+		$this->set_integration( new SourceDirectory( 'plugins' ) );
+		$this->set_integration( new SourceDirectory( 'themes' ) );
+		$this->set_integration( new SourceDirectory( 'uploads', true ) );
+		foreach ( apply_filters( 'webpc_source_directories', [] ) as $directory_name ) {
+			$this->set_integration( new SourceDirectory( $directory_name ) );
+		}
 		$this->set_integration( new UploadsWebpcDirectory() );
 	}
 
@@ -43,6 +46,18 @@ class DirectoryFactory implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
+		$this->directories_integration->init_hooks();
+		add_action( 'init', [ $this, 'init_hooks_after_setup' ] );
+	}
+
+	/**
+	 * @return void
+	 * @internal
+	 */
+	public function init_hooks_after_setup() {
+		foreach ( apply_filters( 'webpc_source_directories', [] ) as $directory_name ) {
+			$this->set_integration( new SourceDirectory( $directory_name ) );
+		}
 		$this->directories_integration->init_hooks();
 	}
 

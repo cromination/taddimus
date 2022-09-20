@@ -42,7 +42,7 @@ class EndpointIntegration implements HookableInterface {
 			self::ROUTE_NAMESPACE,
 			$this->endpoint_object->get_route_name() . '-(?P<nonce_token>[a-zA-Z0-9.]+)',
 			[
-				'methods'             => \WP_REST_Server::ALLMETHODS,
+				'methods'             => $this->endpoint_object->get_http_methods(),
 				'permission_callback' => function ( \WP_REST_Request $request ) {
 					return $this->endpoint_object->is_valid_request( $request );
 				},

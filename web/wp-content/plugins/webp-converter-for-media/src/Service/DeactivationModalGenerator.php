@@ -54,7 +54,8 @@ class DeactivationModalGenerator {
 				__( 'We are sorry that you are leaving our plugin Converter for Media', 'webp-converter-for-media' ),
 				__( 'Can you please take a moment to tell us why you are deactivating this plugin (anonymous answer)?', 'webp-converter-for-media' ),
 				__( 'Submit and Deactivate', 'webp-converter-for-media' ),
-				__( 'Skip and Deactivate', 'webp-converter-for-media' )
+				__( 'Skip and Deactivate', 'webp-converter-for-media' ),
+				'https://mattplugins.com/images/matt-plugins-gray.png'
 			),
 			( new DeactivationModal\Model\FormOptions() )
 				->set_option(
@@ -87,7 +88,7 @@ class DeactivationModalGenerator {
 							return sprintf(
 							/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 								__( 'Check out %1$sour instructions%2$s and see how to check if the plugin is working properly.', 'webp-converter-for-media' ),
-								'<a href="https://wordpress.org/support/topic/how-can-i-check-if-the-plugin-is-working-properly/" target="_blank">',
+								'<a href="https://url.mattplugins.com/converter-deactivation-misunderstanding-instruction" target="_blank">',
 								'</a>'
 							);
 						},

@@ -42,6 +42,7 @@ class WebpConverter {
 		( new Notice\NoticeIntegration( $plugin_info, new Notice\ThanksNotice() ) )->init_hooks();
 		( new Notice\NoticeIntegration( $plugin_info, new Notice\CloudflareNotice() ) )->init_hooks();
 		( new Notice\NoticeIntegration( $plugin_info, new Notice\LitespeedNotice() ) )->init_hooks();
+		( new Notice\NoticeIntegration( $plugin_info, new Notice\UpgradeNotice( $plugin_data ) ) )->init_hooks();
 		( new Loader\LoaderIntegration( new Loader\HtaccessLoader( $plugin_info, $plugin_data ) ) )->init_hooks();
 		( new Loader\LoaderIntegration( new Loader\PassthruLoader( $plugin_info, $plugin_data ) ) )->init_hooks();
 		( new Media\Delete() )->init_hooks();

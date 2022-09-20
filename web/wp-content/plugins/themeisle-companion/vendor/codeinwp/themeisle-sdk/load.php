@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 // Current SDK version and path.
-$themeisle_sdk_version = '3.2.28';
+$themeisle_sdk_version = '3.2.30';
 $themeisle_sdk_path    = dirname( __FILE__ );
 
 global $themeisle_sdk_max_version;
@@ -91,13 +91,29 @@ if ( ! function_exists( 'tsdk_utmify' ) ) {
 			$current_page = sanitize_key( str_replace( '.php', '', $current_page ) );
 		}
 		$location = $location === null ? $current_page : $location;
-
+		$content  = sanitize_key(
+			trim(
+				str_replace(
+					[
+						'https://',
+						'themeisle.com',
+						'/themes/',
+						'/plugins/',
+						'/upgrade',
+					],
+					'',
+					$url 
+				),
+				'/' 
+			) 
+		);
 		return esc_url_raw(
 			add_query_arg(
 				[
 					'utm_source'   => 'wpadmin',
 					'utm_medium'   => $location,
 					'utm_campaign' => $area,
+					'utm_content'  => $content,
 				],
 				$url 
 			) 
@@ -105,4 +121,55 @@ if ( ! function_exists( 'tsdk_utmify' ) ) {
 	}
 
 	add_filter( 'tsdk_utmify', 'tsdk_utmify', 10, 3 );
+}
+
+
+if ( ! function_exists( 'tsdk_lstatus' ) ) {
+	/**
+	 * Check license status.
+	 *
+	 * @param string $file Product basefile.
+	 *
+	 * @return string Status.
+	 */
+	function tsdk_lstatus( $file ) {
+		return \ThemeisleSDK\Modules\Licenser::status( $file );
+	}
+}
+if ( ! function_exists( 'tsdk_lis_valid' ) ) {
+	/**
+	 * Check if license is valid.
+	 *
+	 * @param string $file Product basefile.
+	 *
+	 * @return bool Validness.
+	 */
+	function tsdk_lis_valid( $file ) {
+		return \ThemeisleSDK\Modules\Licenser::is_valid( $file );
+	}
+}
+if ( ! function_exists( 'tsdk_lplan' ) ) {
+	/**
+	 * Get license plan.
+	 *
+	 * @param string $file Product basefile.
+	 *
+	 * @return string Plan.
+	 */
+	function tsdk_lplan( $file ) {
+		return \ThemeisleSDK\Modules\Licenser::plan( $file );
+	}
+}
+
+if ( ! function_exists( 'tsdk_lkey' ) ) {
+	/**
+	 * Get license key.
+	 *
+	 * @param string $file Product basefile.
+	 *
+	 * @return string Key.
+	 */
+	function tsdk_lkey( $file ) {
+		return \ThemeisleSDK\Modules\Licenser::key( $file );
+	}
 }

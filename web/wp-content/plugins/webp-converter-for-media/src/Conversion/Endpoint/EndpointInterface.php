@@ -15,6 +15,13 @@ interface EndpointInterface {
 	public function get_route_name(): string;
 
 	/**
+	 * Returns methods separated by space.
+	 *
+	 * @return string
+	 */
+	public function get_http_methods(): string;
+
+	/**
 	 * Returns expiration time in seconds of endpoint URL.
 	 *
 	 * @return int
