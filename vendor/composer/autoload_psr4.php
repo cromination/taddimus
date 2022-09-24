@@ -29,7 +29,7 @@ return array(
     'Seld\\PharUtils\\' => array($vendorDir . '/seld/phar-utils/src'),
     'Seld\\JsonLint\\' => array($vendorDir . '/seld/jsonlint/src/Seld/JsonLint'),
     'React\\Promise\\' => array($vendorDir . '/react/promise/src'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Peast\\test\\' => array($vendorDir . '/mck89/peast/test/Peast'),
     'Peast\\' => array($vendorDir . '/mck89/peast/lib/Peast'),
