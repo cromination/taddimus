@@ -128,8 +128,8 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 	public function bottom_footer_content() {
 		$hestia_general_credits = sprintf(
 		/* translators: %1$s is Theme Name, %2$s is WordPress */
-			esc_html__( '%1$s  ', '' ),
-			esc_html__( '', '' ),
+			esc_html__( '%1$s | Developed by %2$s', 'hestia' ),
+			esc_html__( 'Hestia', 'hestia' ),
 			/* translators: %1$s is URL, %2$s is WordPress */
 			sprintf(
 				'<a href="%1$s" rel="nofollow">%2$s</a>',

@@ -266,7 +266,7 @@ body.widgets_access .widget-position table tr:nth-child(3) {display: none;}
 .range-slider__range {
 	background-color: rgba(0,0,0,.1);
 	height: 5px;
-	width: 67%;
+	width: 67% !important;
 	padding: 0;
 	cursor: pointer;
 	outline: none;
@@ -1070,7 +1070,7 @@ body.widgets_access .widget-position table tr:nth-child(3) {display: none;}
 .range-slider__range {
 	background-color: rgba(0,0,0,.1);
 	height: 5px;
-	width: 67%;
+	width: 67% !important;
 	padding: 0;
 	cursor: pointer;
 	outline: none;
@@ -1699,6 +1699,27 @@ button.customizer-repeater-new-field:before {
 
 .themeisle-boxed-section {
   margin: 12px;
+}
+
+.alpha-color-locked {
+  margin-top: 3px;
+  color: #A3A3A3;
+}
+
+.pro-alpha-color {
+  opacity: 0.4;
+}
+
+.pro-alpha-color button.button {
+  pointer-events: none;
+}
+
+#customize-control-color_upsell_notice {
+  margin-bottom: 25px;
+}
+
+#customize-control-color_upsell_notice .description {
+  margin-bottom: 12px;
 }
 
 #customize-controls #accordion-section-hestia_upsell_main_section.control-section .accordion-section-title:hover {

@@ -78,8 +78,8 @@ class Hestia_Buttons extends Hestia_Abstract_Main {
 	 * Add inline style for buttons.
 	 */
 	public function add_inline_buttons_styles() {
-		wp_add_inline_style( apply_filters( 'hestia_custom_button_padding_handle', 'hestia_style' ), $this->buttons_padding_inline_style() );
-		wp_add_inline_style( apply_filters( 'hestia_custom_button_radius_handle', 'hestia_style' ), $this->buttons_radius_inline_style() );
+		wp_add_inline_style( apply_filters( 'hestia_custom_button_padding_handle', 'hestia_style' ), hestia_minimize_css( $this->buttons_padding_inline_style() ) );
+		wp_add_inline_style( apply_filters( 'hestia_custom_button_radius_handle', 'hestia_style' ), hestia_minimize_css( $this->buttons_radius_inline_style() ) );
 	}
 
 	/**

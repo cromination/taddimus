@@ -114,6 +114,9 @@ jQuery( document ).ready(
 					// Store the control instance.
 					$control = $( this );
 
+					// Readonly control.
+					var isReadOnly = $control.attr( 'readonly' );
+
 					// Get a clean starting value for the option.
 					startingColor = $control.val().replace( /\s+/g, '' );
 
@@ -164,6 +167,10 @@ jQuery( document ).ready(
 					$control.wpColorPicker( colorPickerOptions );
 
 					$container = $control.parents( '.wp-picker-container:first' );
+
+					if ( isReadOnly ) {
+						$container.addClass( 'pro-alpha-color' );
+					}
 
 					// Insert our opacity slider.
 					$(

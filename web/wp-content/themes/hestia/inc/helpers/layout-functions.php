@@ -184,7 +184,14 @@ if ( ! function_exists( 'hestia_comments_list' ) ) {
 						?>
 					</small>
 				</h4>
-				<?php comment_text(); ?>
+				<?php
+				comment_text();
+				if ( '0' === $comment->comment_approved ) {
+					?>
+					<p class="comment-awaiting-moderation"><?php esc_html_e( 'Your comment is awaiting moderation.', 'hestia' ); ?></p>
+					<?php
+				}
+				?>
 				<div class="media-footer">
 					<?php
 					echo get_comment_reply_link(

@@ -180,10 +180,26 @@ abstract class MethodAbstract implements MethodInterface {
 	/**
 	 * @param string  $error_message   .
 	 * @param mixed[] $plugin_settings .
+	 * @param bool    $is_fatal_error  .
 	 *
 	 * @return void
 	 */
-	protected function log_conversion_error( string $error_message, array $plugin_settings ) {
+	protected function save_conversion_error( string $error_message, array $plugin_settings, bool $is_fatal_error = false ) {
+		if ( $is_fatal_error ) {
+			$this->is_fatal_error = true;
+		}
+
+		$this->errors[] = $error_message;
+		$this->log_conversion_error( $error_message, $plugin_settings );
+	}
+
+	/**
+	 * @param string  $error_message   .
+	 * @param mixed[] $plugin_settings .
+	 *
+	 * @return void
+	 */
+	private function log_conversion_error( string $error_message, array $plugin_settings ) {
 		$features = $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ];
 		if ( in_array( ExtraFeaturesOption::OPTION_VALUE_DEBUG_ENABLED, $features ) ) {
 			error_log( sprintf( 'Converter for Media: %s', $error_message ) ); // phpcs:ignore

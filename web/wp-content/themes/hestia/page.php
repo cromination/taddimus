@@ -32,4 +32,5 @@ do_action( 'hestia_before_single_page_wrapper' );
 				?>
 		</div>
 	</div>
+</div>
 	<?php get_footer(); ?>

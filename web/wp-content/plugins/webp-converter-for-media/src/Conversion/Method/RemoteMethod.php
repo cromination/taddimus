@@ -4,7 +4,13 @@ namespace WebpConverter\Conversion\Method;
 
 use WebpConverter\Conversion\SkipCrashed;
 use WebpConverter\Conversion\SkipLarger;
-use WebpConverter\Exception;
+use WebpConverter\Exception\ExceptionInterface;
+use WebpConverter\Exception\FilesizeOversizeException;
+use WebpConverter\Exception\LargerThanOriginalException;
+use WebpConverter\Exception\OutputPathException;
+use WebpConverter\Exception\RemoteErrorResponseException;
+use WebpConverter\Exception\RemoteRequestException;
+use WebpConverter\Exception\SourcePathException;
 use WebpConverter\Model\Token;
 use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Service\ServerConfigurator;
@@ -111,9 +117,6 @@ class RemoteMethod extends MethodAbstract {
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @throws Exception\SourcePathException
-	 * @throws Exception\OutputPathException
 	 */
 	public function convert_paths( array $paths, array $plugin_settings, bool $regenerate_force ) {
 		$this->server_configurator->set_memory_limit();
@@ -135,7 +138,7 @@ class RemoteMethod extends MethodAbstract {
 
 				$output_paths[ $output_format ] = $this->get_output_paths( $file_paths, $output_format );
 				$source_paths[ $output_format ] = $file_paths;
-			} catch ( \Exception $e ) {
+			} catch ( ExceptionInterface $e ) {
 				$this->save_conversion_error( $e->getMessage(), $plugin_settings );
 			}
 		}
@@ -167,32 +170,15 @@ class RemoteMethod extends MethodAbstract {
 					try {
 						$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
 						$this->update_conversion_stats( $source_path, $output_path, $output_format );
-					} catch ( Exception\LargerThanOriginalException $e ) {
-						$this->save_conversion_error( $e->getMessage(), $plugin_settings );
+					} catch ( LargerThanOriginalException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement
 					}
 				}
 			}
-		} catch ( Exception\RemoteErrorResponseException $e ) {
+		} catch ( RemoteErrorResponseException $e ) {
 			$this->save_conversion_error( $e->getMessage(), $plugin_settings, true );
 		}
 
 		$this->token_repository->update_token( $this->token );
-	}
-
-	/**
-	 * @param string  $error_message   .
-	 * @param mixed[] $plugin_settings .
-	 * @param bool    $is_fatal_error  .
-	 *
-	 * @return void
-	 */
-	private function save_conversion_error( string $error_message, array $plugin_settings, bool $is_fatal_error = false ) {
-		if ( $is_fatal_error ) {
-			$this->is_fatal_error = true;
-		}
-
-		$this->errors[] = $error_message;
-		$this->log_conversion_error( $error_message, $plugin_settings );
 	}
 
 	/**
@@ -202,7 +188,7 @@ class RemoteMethod extends MethodAbstract {
 	 *
 	 * @return string[]
 	 *
-	 * @throws Exception\SourcePathException
+	 * @throws SourcePathException
 	 */
 	private function get_source_paths( array $paths, array $plugin_settings, string $output_format ): array {
 		$source_paths = [];
@@ -210,7 +196,7 @@ class RemoteMethod extends MethodAbstract {
 			$source_path = $this->get_image_source_path( $path );
 			if ( filesize( $source_path ) > self::MAX_FILESIZE_BYTES ) {
 				$this->save_conversion_error(
-					( new Exception\FilesizeOversizeException( [ self::MAX_FILESIZE_BYTES, $source_path ] ) )->getMessage(),
+					( new FilesizeOversizeException( [ self::MAX_FILESIZE_BYTES, $source_path ] ) )->getMessage(),
 					$plugin_settings
 				);
 				continue;
@@ -233,7 +219,7 @@ class RemoteMethod extends MethodAbstract {
 	 *
 	 * @return string[]
 	 *
-	 * @throws Exception\OutputPathException
+	 * @throws OutputPathException
 	 */
 	private function get_output_paths( array $source_paths, string $output_format ): array {
 		$output_path = [];
@@ -251,7 +237,7 @@ class RemoteMethod extends MethodAbstract {
 	 *
 	 * @return mixed[]
 	 *
-	 * @throws Exception\RemoteErrorResponseException
+	 * @throws RemoteErrorResponseException
 	 */
 	private function init_connections( array $source_paths, array $plugin_settings, array $output_paths ): array {
 		$mh_items = [];
@@ -392,7 +378,7 @@ class RemoteMethod extends MethodAbstract {
 	 *
 	 * @return void
 	 *
-	 * @throws Exception\RemoteErrorResponseException
+	 * @throws RemoteErrorResponseException
 	 */
 	private function handle_request_error(
 		string $source_path,
@@ -407,7 +393,7 @@ class RemoteMethod extends MethodAbstract {
 		$error_fatal_status = $response_value[ WebpConverterConstants::API_RESPONSE_VALUE_ERROR_FATAL_STATUS ] ?? false;
 
 		if ( $error_message && $error_fatal_status ) {
-			throw new Exception\RemoteErrorResponseException( $error_message );
+			throw new RemoteErrorResponseException( $error_message );
 		} elseif ( $error_message ) {
 			$this->save_conversion_error( $error_message, $plugin_settings );
 		} elseif ( $http_code === 200 ) {
@@ -415,7 +401,7 @@ class RemoteMethod extends MethodAbstract {
 			$this->output_files_converted[ $output_format ]++;
 		} else {
 			$this->save_conversion_error(
-				( new Exception\RemoteRequestException( [ $http_code, $source_path ] ) )->getMessage(),
+				( new RemoteRequestException( [ $http_code, $source_path ] ) )->getMessage(),
 				$plugin_settings
 			);
 		}

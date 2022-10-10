@@ -27,5 +27,11 @@
 			<?php echo esc_html( ini_get( 'max_execution_time' ) ?: '-' ); ?>
 		</td>
 	</tr>
+	<tr>
+		<td class="e">disable_functions</td>
+		<td class="v">
+			<?php echo esc_html( ini_get( 'disable_functions' ) ?: '-' ); ?>
+		</td>
+	</tr>
 	</tbody>
 </table>

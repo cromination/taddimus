@@ -18,6 +18,19 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 == Changelog ==
 
+##### [Version 3.0.24](https://github.com/Codeinwp/hestia-pro/compare/v3.0.23...v3.0.24) (2022-09-28)
+
+- [Fix] Fix broken range slider style 
+- [Fix] Add comment awaiting moderation notice
+- [Fix] Fix font awesome loading issue on WooCommerce search page
+- [Fix] Improve inline CSS block
+- [Fix] Compatibility with Elementor Pros widgets
+- [Fix] Move the footer to outside the <main> element
+- [Fix] Remove srcset from images in the Clients bar section
+
+
+
+
 ##### [Version 3.0.23](https://github.com/Codeinwp/hestia-pro/compare/v3.0.22...v3.0.23) (2022-07-01)
 
 - [Fix] Field placeholder over text in the comments box

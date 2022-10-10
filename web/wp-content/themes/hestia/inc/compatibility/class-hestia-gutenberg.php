@@ -89,7 +89,7 @@ class Hestia_Gutenberg extends Hestia_Abstract_Main {
 	 */
 	public function enqueue() {
 		wp_enqueue_style( 'hestia-gutenberg-css', get_template_directory_uri() . '/assets/css/gutenberg-editor-style' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.css', array(), HESTIA_VERSION );
-		wp_add_inline_style( 'hestia-gutenberg-css', $this->get_inline_style() );
+		wp_add_inline_style( 'hestia-gutenberg-css', hestia_minimize_css( $this->get_inline_style() ) );
 	}
 
 	/**

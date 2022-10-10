@@ -54,4 +54,5 @@ do_action( 'hestia_before_search_wrapper' );
 			</div>
 		</div>
 	</div>
+</div>
 	<?php get_footer(); ?>

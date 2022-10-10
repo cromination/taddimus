@@ -15,7 +15,7 @@
 .range-slider__range {
 	background-color: rgba(0,0,0,.1);
 	height: 5px;
-	width: 67%;
+	width: 67% !important;
 	padding: 0;
 	cursor: pointer;
 	outline: none;

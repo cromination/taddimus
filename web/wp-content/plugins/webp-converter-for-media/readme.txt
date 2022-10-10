@@ -1,4 +1,4 @@
-=== Converter for Media - One-click image optimization | Convert WebP and AVIF & Optimize Images ===
+=== Converter for Media - Optimize images | Convert WebP & AVIF ===
 Contributors: mateuszgbiorczyk
 Donate link: https://url.mattplugins.com/converter-readme-donate-link
 Tags: convert webp, webp, optimize images, image optimization, compress images
@@ -9,11 +9,13 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Speed up your website by using our WebP & AVIF Converter. Serve WebP and AVIF images instead of standard formats JPEG, PNG and GIF just now!
+Speed up your website by using our WebP & AVIF Converter. Optimize images and serve WebP and AVIF images instead of standard formats!
 
 == Description ==
 
 **Speed up your website using our ease image optimizer by serving WebP and AVIF images.** By replacing files in standard JPEG, PNG and GIF formats with WebP and AVIF formats, you can save over a half of the page weight without losing quality.
+
+[youtube https://www.youtube.com/watch?v=Ls2h38avpRw]
 
 After installing the plugin you do not have to do anything more. Your current images will be converted into a new format. When image optimization by our image optimizer is finished, users will automatically receive new, much lighter images than the original ones.
 
@@ -339,6 +341,13 @@ In case of problems, please contact us in [the support forum](https://url.mattpl
 4. Optimization statistics of Media Library
 
 == Changelog ==
+
+= 5.2.4 (2022-09-27) =
+* `[Changed]` Messages displayed during bulk optimization of images
+* `[Added]` Debug information about registered image sub-sizes
+
+= 5.2.3 (2022-09-23) =
+* `[Added]` Debug information about disabled functions
 
 = 5.2.2 (2022-09-15) =
 * `[Fixed]` Closing of admin notice

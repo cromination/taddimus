@@ -207,18 +207,6 @@ class Hestia_Admin {
 			),
 		);
 
-		if ( $this->show_branding_notice() ) {
-			$config['branding_notice'] = array(
-				'text' => sprintf(
-				// translators: s - Discount Code
-					__( 'From 3.0.23 we decided to remove the copyright control from the free version. You can continue using it if you rollback to 3.0.22 or you can upgrade to pro, using a one time 50%% discount: %s', 'hestia' ),
-					wp_kses_post( '<code>HESTIABRANDING50</code>' )
-				),
-				'url'  => 'https://themeisle.com/themes/hestia-pro/upgrade/?utm_medium=abouthestia&utm_source=copyrightnotice&utm_campaign=hestia',
-				'cta'  => __( 'Upgrade', 'hestia' ),
-			);
-		}
-
 		if ( class_exists( 'Themeisle_Onboarding', false ) ) {
 			$config['welcome_notice']
 				= array(
@@ -233,34 +221,6 @@ class Hestia_Admin {
 		}
 	}
 
-	/**
-	 * Decide if we should show the branding notice or not
-	 *
-	 * @return bool
-	 */
-	private function show_branding_notice() {
-		$install_time = get_option( 'hestia_install' );
-		if ( empty( $install_time ) ) {
-			return false;
-		}
-
-		if ( class_exists( 'Hestia_Addon_Manager' ) ) {
-			return false;
-		}
-
-		$current_time = get_option( 'ti_branding_notice_time' );
-		if ( empty( $current_time ) ) {
-			$current_time = time();
-			update_option( 'ti_branding_notice_time', $current_time );
-		}
-		$difference = $current_time - (int) $install_time;
-		// 86400 is the duration of a day so an old user is one that has the theme activated for more than one day
-		if ( $difference > 86400 && $current_time < strtotime( '2022-07-09' ) ) {
-			return true;
-		}
-
-		return false;
-	}
 
 	/**
 	 * Free vs Pro tab content
@@ -269,7 +229,7 @@ class Hestia_Admin {
 		$free_pro = array(
 			'free_theme_name'     => 'Hestia',
 			'pro_theme_name'      => 'Hestia Pro',
-			'pro_theme_link'      => apply_filters( 'hestia_upgrade_link_from_child_theme_filter', 'https://themeisle.com/themes/hestia-pro/upgrade/?utm_medium=abouthestia&utm_source=button&utm_campaign=freevspro' ),
+			'pro_theme_link'      => apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'freevspro', 'abouthestia' ) ),
 			/* translators: s - theme name */
 			'get_pro_theme_label' => sprintf( __( 'Get %s now!', 'hestia' ), 'Hestia Pro' ),
 			'banner_link'         => 'http://docs.themeisle.com/article/647-what-is-the-difference-between-hestia-and-hestia-pro',

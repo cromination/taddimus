@@ -51,7 +51,11 @@ class DeactivationModalGenerator {
 			$this->plugin_info->get_plugin_slug(),
 			new DeactivationModal\Model\FormTemplate(
 				sprintf( self::API_URL, $this->plugin_info->get_plugin_slug() ),
-				__( 'We are sorry that you are leaving our plugin Converter for Media', 'webp-converter-for-media' ),
+				sprintf(
+				/* translators: %s: plugin name */
+					__( 'We are sorry that you are leaving our plugin %s', 'webp-converter-for-media' ),
+					'Converter for Media'
+				),
 				__( 'Can you please take a moment to tell us why you are deactivating this plugin (anonymous answer)?', 'webp-converter-for-media' ),
 				__( 'Submit and Deactivate', 'webp-converter-for-media' ),
 				__( 'Skip and Deactivate', 'webp-converter-for-media' ),

@@ -8,6 +8,9 @@
 use WebpConverter\Conversion\Cron\CronStatusManager;
 use WebpConverter\Notice\CloudflareNotice;
 use WebpConverter\Notice\LitespeedNotice;
+use WebpConverter\Notice\ThanksNotice;
+use WebpConverter\Notice\UpgradeNotice;
+use WebpConverter\Notice\WelcomeNotice;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\StatsManager;
 
@@ -16,15 +19,33 @@ use WebpConverter\Service\StatsManager;
 <table>
 	<tbody>
 	<tr>
+		<td class="e"><?php echo esc_html( WelcomeNotice::NOTICE_OPTION ); ?></td>
+		<td class="v">
+			<?php echo esc_html( OptionsAccessManager::get_option( WelcomeNotice::NOTICE_OPTION, '-' ) ); ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="e"><?php echo esc_html( ThanksNotice::NOTICE_OPTION ); ?></td>
+		<td class="v">
+			<?php echo esc_html( OptionsAccessManager::get_option( ThanksNotice::NOTICE_OPTION, '-' ) ); ?>
+		</td>
+	</tr>
+	<tr>
 		<td class="e"><?php echo esc_html( CloudflareNotice::NOTICE_OPTION ); ?></td>
 		<td class="v">
-			<?php echo esc_html( OptionsAccessManager::get_option( CloudflareNotice::NOTICE_OPTION ) ?: '-' ); ?>
+			<?php echo esc_html( OptionsAccessManager::get_option( CloudflareNotice::NOTICE_OPTION, '-' ) ); ?>
 		</td>
 	</tr>
 	<tr>
 		<td class="e"><?php echo esc_html( LitespeedNotice::NOTICE_OPTION ); ?></td>
 		<td class="v">
-			<?php echo esc_html( OptionsAccessManager::get_option( LitespeedNotice::NOTICE_OPTION ) ?: '-' ); ?>
+			<?php echo esc_html( OptionsAccessManager::get_option( LitespeedNotice::NOTICE_OPTION, '-' ) ); ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="e"><?php echo esc_html( UpgradeNotice::NOTICE_OPTION ); ?></td>
+		<td class="v">
+			<?php echo esc_html( OptionsAccessManager::get_option( UpgradeNotice::NOTICE_OPTION, '-' ) ); ?>
 		</td>
 	</tr>
 	<tr>

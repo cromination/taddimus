@@ -498,3 +498,14 @@ function hestia_view_cart_notice() {
 	}
 }
 add_action( 'after_setup_theme', 'hestia_view_cart_notice', 15 );
+
+/**
+ * Load font awesome icons for WooCommerce search page.
+ */
+function hestia_woocommerce_load_fa() {
+	global $hestia_load_fa;
+	if ( $hestia_load_fa ) {
+		return;
+	}
+	hestia_load_fa();
+}

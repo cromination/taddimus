@@ -47,6 +47,12 @@ class Hestia_Customize_Alpha_Color_Control extends WP_Customize_Control {
 	 * @var array
 	 */
 	public $show_opacity;
+	/**
+	 * Readonly control.
+	 *
+	 * @var bool
+	 */
+	public $readonly = false;
 
 	/**
 	 * Render the control.
@@ -61,6 +67,11 @@ class Hestia_Customize_Alpha_Color_Control extends WP_Customize_Control {
 		}
 		// Support passing show_opacity as string or boolean. Default to true.
 		$show_opacity = ( false === $this->show_opacity || 'false' === $this->show_opacity ) ? 'false' : 'true';
+
+		if ( 'color_upsell_notice' === $this->id ) {
+			echo '<hr>';
+		}
+
 		// Output the label and description if they were passed in.
 		if ( isset( $this->label ) && '' !== $this->label ) {
 			echo '<span class="customize-control-title">' . sanitize_text_field( $this->label ) . '</span>';
@@ -68,10 +79,17 @@ class Hestia_Customize_Alpha_Color_Control extends WP_Customize_Control {
 		if ( isset( $this->description ) && '' !== $this->description ) {
 			echo '<span class="description customize-control-description">' . sanitize_text_field( $this->description ) . '</span>';
 		}
+		if ( 'color_upsell_notice' === $this->id ) {
+			echo '<a href="' . ( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'colornotices' ) ) . '" class="button-primary button" target="_blank">' . esc_html__( 'Upgrade to Unlock', 'hestia' ) . '</a>';
+			return;
+		}
 		?>
 		<label>
-			<input class="alpha-color-control" type="text" data-show-opacity="<?php echo esc_attr( $show_opacity ); ?>" data-palette="<?php echo esc_attr( $palette ); ?>" data-default-color="<?php echo esc_attr( $this->settings['default']->default ); ?>" <?php esc_attr( $this->link() ); ?>  />
+			<input class="alpha-color-control" type="text" data-show-opacity="<?php echo esc_attr( $show_opacity ); ?>" data-palette="<?php echo esc_attr( $palette ); ?>" data-default-color="<?php echo esc_attr( $this->settings['default']->default ); ?>" <?php esc_attr( $this->link() ); ?> <?php echo $this->readonly ? esc_attr( 'readonly' ) : ''; ?>/>
 		</label>
+		<?php if ( $this->readonly ) : ?>
+			<span class="dashicons dashicons-lock alpha-color-locked"></span>
+		<?php endif; ?>
 		<?php
 	}
 }

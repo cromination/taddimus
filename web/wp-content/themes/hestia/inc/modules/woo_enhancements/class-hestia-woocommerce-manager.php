@@ -50,6 +50,12 @@ class Hestia_Woocommerce_Manager extends Hestia_Abstract_Module {
 		if ( ! class_exists( '\ElementorPro\Plugin', false ) ) {
 			return false;
 		}
+
+		$page_id = function_exists( 'get_the_ID' ) ? get_the_ID() : 0;
+		if ( $page_id && \Elementor\Plugin::$instance->documents->get( $page_id )->is_built_with_elementor() ) {
+			return true;
+		}
+
 		$conditions_manager = \ElementorPro\Plugin::instance()->modules_manager->get_modules( 'theme-builder' )->get_conditions_manager();
 		$documents          = $conditions_manager->get_documents_for_location( $location );
 		foreach ( $documents as $document ) {
@@ -93,7 +99,7 @@ class Hestia_Woocommerce_Manager extends Hestia_Abstract_Module {
 			)
 		);
 
-		wp_add_inline_style( 'hestia_woocommerce_style', $this->woo_colors_inline_style() );
+		wp_add_inline_style( 'hestia_woocommerce_style', hestia_minimize_css( $this->woo_colors_inline_style() ) );
 	}
 
 	/**

@@ -36,6 +36,11 @@
 			>
 				<?php echo esc_html( __( 'Speed up my website', 'webp-converter-for-media' ) ); ?>
 			</a>
+			<a href="https://url.mattplugins.com/converter-notice-welcome-button-video" target="_blank"
+				class="webpcContent__button webpcButton webpcButton--blue"
+			>
+				<?php echo esc_html( __( 'Meet the plugin', 'webp-converter-for-media' ) ); ?>
+			</a>
 		</div>
 		<img src="https://mattplugins.com/images/matt-plugins-logo.png" alt="">
 	</div>

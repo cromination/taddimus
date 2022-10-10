@@ -21,8 +21,8 @@ class Hestia_Public_Typography extends Hestia_Inline_Style_Manager {
 	 * Add top bar style.
 	 */
 	public function add_inline_font_styles() {
-		wp_add_inline_style( 'hestia_style', $this->fonts_inline_style() );
-		wp_add_inline_style( 'hestia_style', $this->typography_inline_style() );
+		wp_add_inline_style( 'hestia_style', hestia_minimize_css( $this->fonts_inline_style() ) );
+		wp_add_inline_style( 'hestia_style', hestia_minimize_css( $this->typography_inline_style() ) );
 	}
 
 	/**

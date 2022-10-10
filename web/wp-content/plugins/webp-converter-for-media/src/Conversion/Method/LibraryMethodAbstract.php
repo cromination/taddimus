@@ -4,7 +4,8 @@ namespace WebpConverter\Conversion\Method;
 
 use WebpConverter\Conversion\SkipCrashed;
 use WebpConverter\Conversion\SkipLarger;
-use WebpConverter\Exception;
+use WebpConverter\Exception\ExceptionInterface;
+use WebpConverter\Exception\LargerThanOriginalException;
 use WebpConverter\Service\ServerConfigurator;
 use WebpConverter\Settings\Option\OutputFormatsOption;
 
@@ -46,12 +47,8 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 		$output_formats = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
 		foreach ( $output_formats as $output_format ) {
 			foreach ( $paths as $path ) {
-				try {
-					$this->files_to_conversion++;
-					$this->convert_path( $path, $output_format, $plugin_settings );
-				} catch ( \Exception $e ) {
-					$this->errors[] = $e->getMessage();
-				}
+				$this->files_to_conversion++;
+				$this->convert_path( $path, $output_format, $plugin_settings );
 			}
 		}
 	}
@@ -64,10 +61,6 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 	 * @param mixed[] $plugin_settings .
 	 *
 	 * @return void
-	 *
-	 * @throws Exception\OutputPathException
-	 * @throws Exception\SourcePathException
-	 * @throws Exception\LargerThanOriginalException
 	 */
 	private function convert_path( string $path, string $format, array $plugin_settings ) {
 		$this->server_configurator->set_memory_limit();
@@ -87,9 +80,9 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 			$this->skip_crashed->delete_crashed_file( $output_path );
 			$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
 			$this->update_conversion_stats( $source_path, $output_path, $format );
-		} catch ( \Exception $e ) {
-			$this->log_conversion_error( $e->getMessage(), $plugin_settings );
-			throw $e;
+		} catch ( LargerThanOriginalException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement
+		} catch ( ExceptionInterface $e ) {
+			$this->save_conversion_error( $e->getMessage(), $plugin_settings );
 		}
 	}
 }

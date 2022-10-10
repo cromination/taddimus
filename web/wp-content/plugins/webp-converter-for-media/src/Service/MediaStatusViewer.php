@@ -6,6 +6,7 @@ use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\Media\Attachment;
 use WebpConverter\Conversion\OutputPath;
+use WebpConverter\Conversion\SkipLarger;
 use WebpConverter\HookableInterface;
 use WebpConverter\Model\Token;
 use WebpConverter\PluginData;
@@ -188,6 +189,8 @@ class MediaStatusViewer implements HookableInterface {
 		$webp_output_size = [];
 		$avif_source_size = [];
 		$avif_output_size = [];
+		$webp_files_count = 0;
+		$avif_files_count = 0;
 
 		foreach ( $images_stats as $images_stat ) {
 			if ( $images_stat['original_size'] === null ) {
@@ -201,6 +204,12 @@ class MediaStatusViewer implements HookableInterface {
 			if ( $images_stat['avif_size'] !== null ) {
 				$avif_source_size[] = (int) $images_stat['original_size'];
 				$avif_output_size[] = $images_stat['avif_size'];
+			}
+			if ( $images_stat['webp_status'] ) {
+				$webp_files_count++;
+			}
+			if ( $images_stat['avif_status'] ) {
+				$avif_files_count++;
 			}
 		}
 
@@ -231,11 +240,11 @@ class MediaStatusViewer implements HookableInterface {
 					?
 					sprintf(
 						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
-						count( $webp_source_size ),
+						$webp_files_count,
 						esc_attr( __( 'File size reduction of all thumbnails compared to the original ones.', 'webp-converter-for-media' ) ),
 						$this->get_percent_value( $webp_source_size, $webp_output_size )
 					)
-					: '<strong>0</strong>'
+					: '<strong>' . $webp_files_count . '</strong>'
 			),
 		];
 
@@ -246,7 +255,7 @@ class MediaStatusViewer implements HookableInterface {
 				'AVIF',
 				sprintf(
 					'<strong>%1$s</strong> <small>(<a href="%2$s">%3$s</a>)</small>',
-					count( $avif_source_size ),
+					$avif_files_count,
 					esc_attr( PageIntegration::get_settings_page_url() ),
 					__( 'in the PRO', 'webp-converter-for-media' )
 				)
@@ -260,11 +269,11 @@ class MediaStatusViewer implements HookableInterface {
 					?
 					sprintf(
 						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
-						count( $avif_source_size ),
+						$avif_files_count,
 						esc_attr( __( 'File size reduction of all thumbnails compared to the original ones.', 'webp-converter-for-media' ) ),
 						$this->get_percent_value( $avif_source_size, $avif_output_size )
 					)
-					: '<strong>0</strong>'
+					: '<strong>' . $avif_files_count . '</strong>'
 			);
 		}
 
@@ -277,7 +286,9 @@ class MediaStatusViewer implements HookableInterface {
 	 * @return mixed[] {
 	 * @type int|null  $original_size .
 	 * @type int|null  $webp_size     .
+	 * @type bool      $webp_status   .
 	 * @type int|null  $avif_size     .
+	 * @type bool      $avif_status   .
 	 * }
 	 */
 	private function get_images_stats( array $source_paths ): array {
@@ -297,7 +308,9 @@ class MediaStatusViewer implements HookableInterface {
 			$items[] = [
 				'original_size' => $filesize_original,
 				'webp_size'     => $filesize_webp,
+				'webp_status'   => ( ( $filesize_webp !== null ) || file_exists( $output_path_webp . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ),
 				'avif_size'     => $filesize_avif,
+				'avif_status'   => ( ( $filesize_avif !== null ) || file_exists( $output_path_avif . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ),
 			];
 		}
 

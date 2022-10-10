@@ -49,28 +49,28 @@ class Hestia_Child extends Hestia_Abstract_Main {
 	 * Add inline styles for Orfeo
 	 */
 	public function add_orfeo_inline_styles() {
-		wp_add_inline_style( apply_filters( 'hestia_orfeo_inline_style_handle', 'hestia_style' ), $this->orfeo_inline_style() );
+		wp_add_inline_style( apply_filters( 'hestia_orfeo_inline_style_handle', 'hestia_style' ), hestia_minimize_css( $this->orfeo_inline_style() ) );
 	}
 
 	/**
 	 * Add inline styles for Orfeo Pro
 	 */
 	public function add_orfeo_pro_inline_styles() {
-		wp_add_inline_style( apply_filters( 'hestia_orfeo_inline_style_handle', 'hestia_style' ), $this->orfeo_pro_inline_style() );
+		wp_add_inline_style( apply_filters( 'hestia_orfeo_inline_style_handle', 'hestia_style' ), hestia_minimize_css( $this->orfeo_pro_inline_style() ) );
 	}
 
 	/**
 	 * Add inline styles for Fagri
 	 */
 	public function add_fagri_inline_styles() {
-		wp_add_inline_style( apply_filters( 'hestia_fagri_inline_style_handle', 'hestia_style' ), $this->fagri_inline_style() );
+		wp_add_inline_style( apply_filters( 'hestia_fagri_inline_style_handle', 'hestia_style' ), hestia_minimize_css( $this->fagri_inline_style() ) );
 	}
 
 	/**
 	 * Add inline styles for Fagri Pro
 	 */
 	public function add_fagri_pro_inline_styles() {
-		wp_add_inline_style( apply_filters( 'hestia_fagri_inline_style_handle', 'hestia_style' ), $this->fagri_pro_inline_style() );
+		wp_add_inline_style( apply_filters( 'hestia_fagri_inline_style_handle', 'hestia_style' ), hestia_minimize_css( $this->fagri_pro_inline_style() ) );
 	}
 
 	/**

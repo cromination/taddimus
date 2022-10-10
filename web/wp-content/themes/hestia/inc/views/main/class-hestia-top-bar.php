@@ -215,6 +215,6 @@ class Hestia_Top_Bar extends Hestia_Abstract_Main {
 	 * Add top bar style.
 	 */
 	public function top_bar_style() {
-		wp_add_inline_style( 'hestia_style', $this->top_bar_css() );
+		wp_add_inline_style( 'hestia_style', hestia_minimize_css( $this->top_bar_css() ) );
 	}
 }

@@ -21,7 +21,7 @@ class Hestia_Colors extends Hestia_Abstract_Main {
 	 * Add inline style for colors.
 	 */
 	public function add_inline_color_styles() {
-		wp_add_inline_style( apply_filters( 'hestia_custom_color_handle', 'hestia_style' ), $this->colors_inline_style() );
+		wp_add_inline_style( apply_filters( 'hestia_custom_color_handle', 'hestia_style' ), hestia_minimize_css( $this->colors_inline_style() ) );
 	}
 
 	/**

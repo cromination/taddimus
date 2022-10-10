@@ -57,5 +57,6 @@ do_action( 'hestia_before_archive_content' );
 			</div>
 		</div>
 	</div>
+</div>
 	<?php
 	get_footer(); ?>

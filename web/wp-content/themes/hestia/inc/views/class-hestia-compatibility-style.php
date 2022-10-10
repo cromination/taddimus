@@ -43,7 +43,7 @@ class Hestia_Compatibility_Style {
 		if ( empty( self::$css ) ) {
 			return false;
 		}
-		wp_add_inline_style( 'hestia_style', self::$css );
+		wp_add_inline_style( 'hestia_style', hestia_minimize_css( self::$css ) );
 		return true;
 	}
 

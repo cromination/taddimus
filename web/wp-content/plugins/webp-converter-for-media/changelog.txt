@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 5.2.4 (2022-09-27) =
+* `[Changed]` Messages displayed during bulk optimization of images
+* `[Added]` Debug information about registered image sub-sizes
+
+= 5.2.3 (2022-09-23) =
+* `[Added]` Debug information about disabled functions
+
 = 5.2.2 (2022-09-15) =
 * `[Fixed]` Closing of admin notice
 

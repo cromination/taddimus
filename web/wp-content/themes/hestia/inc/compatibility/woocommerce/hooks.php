@@ -53,3 +53,8 @@ add_filter( 'woocommerce_add_to_cart_fragments', 'hestia_cart_link_fragment' );
  */
 add_action( 'woocommerce_before_cart_totals', 'hestia_woocommerce_before_cart_totals', 1 );
 add_action( 'woocommerce_after_cart_totals', 'hestia_woocommerce_after_cart_totals', 1 );
+
+/**
+ * Load font awesome icons for WooCommerce search page.
+ */
+add_action( 'woocommerce_no_products_found', 'hestia_woocommerce_load_fa' );

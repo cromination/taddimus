@@ -23,7 +23,18 @@
 	>
 		<div class="webpcPage__widgetRow">
 			<p>
-				<?php echo wp_kses_post( __( 'Optimize all your images with just one click!', 'webp-converter-for-media' ) ); ?>
+				<?php
+				echo wp_kses_post( __( 'Optimize all your images with just one click!', 'webp-converter-for-media' ) );
+				echo ' ';
+				echo wp_kses_post(
+					sprintf(
+					/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+						__( '%1$sClick here%2$s to learn more about how our plugin works.', 'webp-converter-for-media' ),
+						'<a href="https://url.mattplugins.com/converter-regeneration-widget-tutorial-link" target="_blank">',
+						'</a>'
+					)
+				);
+				?>
 			</p>
 		</div>
 		<div class="webpcPage__widgetRow">

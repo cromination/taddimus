@@ -1,4 +1,4 @@
-# Hestia Pro #
+# Hestia #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle)  
 **Tags:** blog, custom-logo, portfolio, e-commerce, rtl-language-support, post-formats, grid-layout, one-column, two-columns, custom-background, custom-colors, custom-header, custom-menu, featured-image-header, featured-images, flexible-header, full-width-template, sticky-post, theme-options, threaded-comments, translation-ready, editor-style, footer-widgets, left-sidebar, right-sidebar, wide-blocks  
 **Requires at least:** 4.0  
@@ -7,7 +7,7 @@
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
-Hestia Pro fits all business, startups, corporate businesses, online companies, portfolios, e-commerce (WooCommerce), and freelancers.
+Hestia fits all business, startups, corporate businesses, online companies, portfolios, e-commerce (WooCommerce), and freelancers.
 
 ## Description ##
 Hestia is a modern WordPress theme for professionals. It fits creative business, small businesses (restaurants, wedding planners, sport/medical shops), startups, corporate businesses, online agencies and firms, portfolios, ecommerce (WooCommerce), and freelancers. It has a multipurpose one-page design, widgetized footer, blog/news page and a clean look, is compatible with: Flat Parallax Slider, Photo Gallery, Travel Map and Elementor Page Builder . The theme is responsive, WPML, Retina ready, SEO friendly, and uses Material Kit for design.
@@ -18,7 +18,20 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 ## Changelog ##
 
-##### [Version 3.0.23](https://github.com/Codeinwp/hestia-pro/compare/v3.0.22...v3.0.23) (2022-07-01)
+##### [Version 3.0.24](https://github.com/Codeinwp/hestia/compare/v3.0.23...v3.0.24) (2022-09-28)
+
+- [Fix] Fix broken range slider style 
+- [Fix] Add comment awaiting moderation notice
+- [Fix] Fix font awesome loading issue on WooCommerce search page
+- [Fix] Improve inline CSS block
+- [Fix] Compatibility with Elementor Pros widgets
+- [Fix] Move the footer to outside the <main> element
+- [Fix] Remove srcset from images in the Clients bar section
+
+
+
+
+##### [Version 3.0.23](https://github.com/Codeinwp/hestia/compare/v3.0.22...v3.0.23) (2022-07-01)
 
 - [Fix] Field placeholder over text in the comments box
 - [Fix] Add the missing srcset attributes for images on the front page
@@ -28,7 +41,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.22](https://github.com/Codeinwp/hestia-pro/compare/v3.0.21...v3.0.22) (2022-05-05)
+##### [Version 3.0.22](https://github.com/Codeinwp/hestia/compare/v3.0.21...v3.0.22) (2022-05-05)
 
 - [Fix] Error when trying to create a new custom layout
 - [Fix] Layout issue for the ribbon section
@@ -39,7 +52,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.21](https://github.com/Codeinwp/hestia-pro/compare/v3.0.20...v3.0.21) (2022-02-03)
+##### [Version 3.0.21](https://github.com/Codeinwp/hestia/compare/v3.0.20...v3.0.21) (2022-02-03)
 
 - [Fix] Show hooks button is missing from the admin bar
 - [Fix] Error with Licenser.php that appear in some cases
@@ -47,7 +60,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.20](https://github.com/Codeinwp/hestia-pro/compare/v3.0.19...v3.0.20) (2021-12-14)
+##### [Version 3.0.20](https://github.com/Codeinwp/hestia/compare/v3.0.19...v3.0.20) (2021-12-14)
 
 - [Fix] Undefined error in customizer for button controls
 - [Fix] Hide edit button in About section until a frontpage is set
@@ -57,18 +70,18 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.19](https://github.com/Codeinwp/hestia-pro/compare/v3.0.18...v3.0.19) (2021-09-21)
+##### [Version 3.0.19](https://github.com/Codeinwp/hestia/compare/v3.0.18...v3.0.19) (2021-09-21)
 
 - [Fix] Multiple textdomains appear in Hestia's code
 
 
 
 
-##### [Version 3.0.18](https://github.com/Codeinwp/hestia-pro/compare/v3.0.17...v3.0.18) (2021-09-07)
+##### [Version 3.0.18](https://github.com/Codeinwp/hestia/compare/v3.0.17...v3.0.18) (2021-09-07)
 
 - [Fix] The Show
 
-##### [Version 3.0.17](https://github.com/Codeinwp/hestia-pro/compare/v3.0.16...v3.0.17) (2021-07-21)
+##### [Version 3.0.17](https://github.com/Codeinwp/hestia/compare/v3.0.16...v3.0.17) (2021-07-21)
 
 - Check if is a fresh site for transparent header
 - Fix customizer issue in WP 5.8
@@ -77,7 +90,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.16](https://github.com/Codeinwp/hestia-pro/compare/v3.0.15...v3.0.16) (2021-04-19)
+##### [Version 3.0.16](https://github.com/Codeinwp/hestia/compare/v3.0.15...v3.0.16) (2021-04-19)
 
 - [Fix] Page template on the front page not appearing
 - [Fix] Starter content issue
@@ -85,7 +98,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.15](https://github.com/Codeinwp/hestia-pro/compare/v3.0.14...v3.0.15) (2021-04-19)
+##### [Version 3.0.15](https://github.com/Codeinwp/hestia/compare/v3.0.14...v3.0.15) (2021-04-19)
 
 - [Fix] Embed block alignment
 - [Fix] WooCommerce shortcodes displaying products that don't have proper spacing and font size
@@ -94,7 +107,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.14](https://github.com/Codeinwp/hestia-pro/compare/v3.0.13...v3.0.14) (2021-03-15)
+##### [Version 3.0.14](https://github.com/Codeinwp/hestia/compare/v3.0.13...v3.0.14) (2021-03-15)
 
 - [Fix] PHP 8 Error
 - [Fix] Navbar error that appears in some cases
@@ -102,34 +115,34 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.13](https://github.com/Codeinwp/hestia-pro/compare/v3.0.12...v3.0.13) (2021-03-03)
+##### [Version 3.0.13](https://github.com/Codeinwp/hestia/compare/v3.0.12...v3.0.13) (2021-03-03)
 
 - [Fix] starter content error
 
 
 
 
-##### [Version 3.0.12](https://github.com/Codeinwp/hestia-pro/compare/v3.0.11...v3.0.12) (2021-03-03)
+##### [Version 3.0.12](https://github.com/Codeinwp/hestia/compare/v3.0.11...v3.0.12) (2021-03-03)
 
 - [Fix] Starter content
 
 
 
 
-##### [Version 3.0.11](https://github.com/Codeinwp/hestia-pro/compare/v3.0.10...v3.0.11) (2021-03-03)
+##### [Version 3.0.11](https://github.com/Codeinwp/hestia/compare/v3.0.10...v3.0.11) (2021-03-03)
 
 - [Fix] Fix blockquote position in the editor. Add a border on the right when the block is aligned to right.
 - [Fix] Fix the team section alignment on mobile when the title of one member has more characters.
 - [Fix] Fix transparent logo appears on the blog page when the front page is set as latest
 
-##### [Version 3.0.10](https://github.com/Codeinwp/hestia-pro/compare/v3.0.9...v3.0.10) (2021-02-18)
+##### [Version 3.0.10](https://github.com/Codeinwp/hestia/compare/v3.0.9...v3.0.10) (2021-02-18)
 
 - [Fix] Starter content
 
 
 
 
-##### [Version 3.0.9](https://github.com/Codeinwp/hestia-pro/compare/v3.0.8...v3.0.9) (2021-02-18)
+##### [Version 3.0.9](https://github.com/Codeinwp/hestia/compare/v3.0.8...v3.0.9) (2021-02-18)
 
 - [Feat] Improve the starter content
 - [Fix] jQuery .load() function is deprecated
@@ -144,7 +157,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.8](https://github.com/Codeinwp/hestia-pro/compare/v3.0.7...v3.0.8) (2020-12-10)
+##### [Version 3.0.8](https://github.com/Codeinwp/hestia/compare/v3.0.7...v3.0.8) (2020-12-10)
 
 [Fix] Compatibility with WP 5.6
 [Fix] jQuery .load() function is deprecated
@@ -152,7 +165,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.7](https://github.com/Codeinwp/hestia-pro/compare/v3.0.6...v3.0.7) (2020-12-10)
+##### [Version 3.0.7](https://github.com/Codeinwp/hestia/compare/v3.0.6...v3.0.7) (2020-12-10)
 
 - [Fix] Compatibility with WP 5.6
 - [Fix] jQuery .load() function is deprecated
@@ -160,7 +173,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.6](https://github.com/Codeinwp/hestia-pro/compare/v3.0.5...v3.0.6) (2020-11-03)
+##### [Version 3.0.6](https://github.com/Codeinwp/hestia/compare/v3.0.5...v3.0.6) (2020-11-03)
 
 - [Fix] Customizer not accessible when Sendinblue plugin was installed
 - [Fix] Make logo option translatable with Polylang
@@ -169,7 +182,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.5](https://github.com/Codeinwp/hestia-pro/compare/v3.0.4...v3.0.5) (2020-09-29)
+##### [Version 3.0.5](https://github.com/Codeinwp/hestia/compare/v3.0.4...v3.0.5) (2020-09-29)
 
 - [Fix] Responsive slider controls in Customizer
 - [Fix][Pro] Seamless add to cart mechanism
@@ -180,21 +193,21 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.4](https://github.com/Codeinwp/hestia-pro/compare/v3.0.3...v3.0.4) (2020-08-03)
+##### [Version 3.0.4](https://github.com/Codeinwp/hestia/compare/v3.0.3...v3.0.4) (2020-08-03)
 
 - [Fix] Compatibility with WP 5.5
 
 
 
 
-##### [Version 3.0.3](https://github.com/Codeinwp/hestia-pro/compare/v3.0.2...v3.0.3) (2020-07-09)
+##### [Version 3.0.3](https://github.com/Codeinwp/hestia/compare/v3.0.2...v3.0.3) (2020-07-09)
 
 - Removed onboarding from the free version
 
 
 
 
-##### [Version 3.0.2](https://github.com/Codeinwp/hestia-pro/compare/v3.0.1...v3.0.2) (2020-06-25)
+##### [Version 3.0.2](https://github.com/Codeinwp/hestia/compare/v3.0.1...v3.0.2) (2020-06-25)
 
 - [Fix] Compatibility issues with PHP 7.4
 - [Fix] Layout of the attribute archive page
@@ -208,7 +221,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-##### [Version 3.0.1](https://github.com/Codeinwp/hestia-pro/compare/v3.0.0...v3.0.1) (2020-05-11)
+##### [Version 3.0.1](https://github.com/Codeinwp/hestia/compare/v3.0.0...v3.0.1) (2020-05-11)
 
 [Fix] Missing Font Awesome icons
 [Fix] Fatal error when using Yoast
@@ -220,7 +233,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 
 
-#### [Version 3.0.0](https://github.com/Codeinwp/hestia-pro/compare/v2.5.7...v3.0.0) (2020-04-28)
+#### [Version 3.0.0](https://github.com/Codeinwp/hestia/compare/v2.5.7...v3.0.0) (2020-04-28)
 
 - [Feat] [PRO] New Custom Layouts module
 - [Feat] [PRO] New options for Single Products ( Exclusive Products, Seamless Add to Cart )
@@ -269,9 +282,9 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 * [Fix] Blog page Infinite Scroll compatibility with the Alternative layout
 * [Fix] Cover block text color not updating
-* [Fix][Hestia Pro] Shop page Infinite Scroll compatibility with widgets filtering
-* [Fix][Hestia Pro] Header layout selection for the Shop page
-* [Fix][Hestia Pro] Slider arrows position on RTL
+* [Fix][Hestia] Shop page Infinite Scroll compatibility with widgets filtering
+* [Fix][Hestia] Header layout selection for the Shop page
+* [Fix][Hestia] Slider arrows position on RTL
 
 
 ### 2.5.3 - 2019-09-13  ###
@@ -382,7 +395,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 ### 2.4.0 - 2019-03-21  ###
 
-* [Hestia Pro] New White Label module
+* [Hestia] New White Label module
 * Fixed issue with Big Title buttons shadow color
 * Fixed issue with Portfolio pop-up not opening in Microsoft Edge
 * Fixed issue with Blog options taking control over the custom post types archives pages
@@ -585,7 +598,7 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 * Fixed layout issues for WooCommerce products and categories cards
 * Fixed layout issues for the Shop page on Internet Explorer 11
 * Redone the way sections can be overridden in child themes using this documentation:
-* https://docs.themeisle.com/article/918-how-to-override-sections-in-hestia-pro
+* https://docs.themeisle.com/article/918-how-to-override-sections-in-hestia
 
 ### v1.1.83 ###
 *Release Date - 2018-07-06*

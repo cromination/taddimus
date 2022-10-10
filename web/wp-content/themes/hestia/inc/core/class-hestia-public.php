@@ -391,6 +391,9 @@ class Hestia_Public {
 			add_theme_support( 'starter-content', ( new Hestia_Starter_Content() )->get() );
 		}
 
+		add_theme_support( 'style' );
+		add_theme_support( 'script' );
+
 		/**
 		 * Add support for wide alignments.
 		 *
@@ -572,7 +575,7 @@ class Hestia_Public {
 					),
 				),
 			),
-			'pro_link'    => 'https://themeisle.com/themes/hestia-pro/upgrade/',
+			'pro_link'    => tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'startersites' ),
 		);
 
 		return apply_filters( 'hestia_filter_onboarding_data', $onboarding_sites );
