@@ -92,7 +92,7 @@ versions, how versions relate to each other, and on version constraints.
 To initially install the defined dependencies for your project, you should run the
 [`update`](03-cli.md#update-u) command.
 
-```shell
+```sh
 php composer.phar update
 ```
 
@@ -148,7 +148,7 @@ So after fetching new changes from your VCS repository it is recommended to run
 a Composer `install` to make sure the vendor directory is up in sync with your
 `composer.lock` file.
 
-```shell
+```sh
 php composer.phar install
 ```
 
@@ -160,7 +160,7 @@ the latest versions of your dependencies. To update to the latest versions, use 
 versions (according to your `composer.json` file) and update the lock file
 with the new versions.
 
-```shell
+```sh
 php composer.phar update
 ```
 
@@ -170,7 +170,7 @@ php composer.phar update
 
 If you only want to install, upgrade or remove one dependency, you can explicitly list it as an argument:
 
-```shell
+```sh
 php composer.phar update monolog/monolog [...]
 ```
 
@@ -249,7 +249,7 @@ filename would be `src/Foo.php` containing an `Acme\Foo` class.
 After adding the [`autoload`](04-schema.md#autoload) field, you have to re-run
 this command:
 
-```shell
+```sh
 php composer.phar dump-autoload
 ```
 

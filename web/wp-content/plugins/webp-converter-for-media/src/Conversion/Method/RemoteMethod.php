@@ -127,14 +127,14 @@ class RemoteMethod extends MethodAbstract {
 		$output_paths   = [];
 		$this->token    = $this->token_repository->get_token();
 
-		$this->files_to_conversion += ( count( $paths ) * count( $output_formats ) );
-
 		foreach ( $output_formats as $output_format ) {
 			try {
 				$file_paths = $this->get_source_paths( $paths, $plugin_settings, $output_format );
 				if ( ! $file_paths ) {
 					continue;
 				}
+
+				$this->files_available[ $output_format ] += count( $file_paths );
 
 				$output_paths[ $output_format ] = $this->get_output_paths( $file_paths, $output_format );
 				$source_paths[ $output_format ] = $file_paths;
@@ -150,7 +150,8 @@ class RemoteMethod extends MethodAbstract {
 						|| file_exists( $output_paths[ $output_format ][ $path_index ] . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ) {
 						unset( $source_paths[ $output_format ][ $path_index ] );
 						unset( $output_paths[ $output_format ][ $path_index ] );
-						$this->files_to_conversion -= 1;
+
+						$this->files_available[ $output_format ]--;
 					}
 				}
 			}
@@ -170,7 +171,8 @@ class RemoteMethod extends MethodAbstract {
 					try {
 						$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
 						$this->update_conversion_stats( $source_path, $output_path, $output_format );
-					} catch ( LargerThanOriginalException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement
+					} catch ( LargerThanOriginalException $e ) {
+						$this->files_converted[ $output_format ]--;
 					}
 				}
 			}
@@ -189,6 +191,7 @@ class RemoteMethod extends MethodAbstract {
 	 * @return string[]
 	 *
 	 * @throws SourcePathException
+	 * @throws OutputPathException
 	 */
 	private function get_source_paths( array $paths, array $plugin_settings, string $output_format ): array {
 		$source_paths = [];
@@ -199,6 +202,7 @@ class RemoteMethod extends MethodAbstract {
 					( new FilesizeOversizeException( [ self::MAX_FILESIZE_BYTES, $source_path ] ) )->getMessage(),
 					$plugin_settings
 				);
+				$this->skip_crashed->create_crashed_file( $this->get_image_output_path( $source_path, $output_format ) );
 				continue;
 			}
 
@@ -275,7 +279,8 @@ class RemoteMethod extends MethodAbstract {
 				if ( ( $http_code === 200 ) && $response ) {
 					$values[ $output_format ]                 = $values[ $output_format ] ?? [];
 					$values[ $output_format ][ $resource_id ] = $response;
-					$this->output_files_converted[ $output_format ]++;
+
+					$this->files_converted[ $output_format ]++;
 				} else {
 					$this->handle_request_error(
 						$source_paths[ $output_format ][ $resource_id ],
@@ -398,7 +403,7 @@ class RemoteMethod extends MethodAbstract {
 			$this->save_conversion_error( $error_message, $plugin_settings );
 		} elseif ( $http_code === 200 ) {
 			$this->skip_crashed->create_crashed_file( $output_path );
-			$this->output_files_converted[ $output_format ]++;
+			$this->files_converted[ $output_format ]++;
 		} else {
 			$this->save_conversion_error(
 				( new RemoteRequestException( [ $http_code, $source_path ] ) )->getMessage(),

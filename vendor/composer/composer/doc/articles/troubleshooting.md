@@ -94,7 +94,7 @@ indirectly) back on the root package itself, issues can occur in two cases:
 ## I have a dependency which contains a "repositories" definition in its composer.json, but it seems to be ignored.
 
 The [`repositories`](../04-schema.md#repositories) configuration property is defined as [root-only](../04-schema.md#root-package). It is not inherited. You can read more about the reasons behind this in the "[why can't
-Composer load repositories recursively?](../faqs/why-cant-composer-load-repositories-recursively.md)" article.
+Composer load repositories recursively?](../faqs/why-can't-composer-load-repositories-recursively.md)" article.
 The simplest work-around to this limitation, is moving or duplicating the `repositories` definition into your root
 composer.json.
 
@@ -157,7 +157,7 @@ In this case, the PHP `memory_limit` should be increased.
 
 To get the current `memory_limit` value, run:
 
-```shell
+```sh
 php -r "echo ini_get('memory_limit').PHP_EOL;"
 ```
 
@@ -171,13 +171,13 @@ memory_limit = -1
 
 Composer also respects a memory limit defined by the `COMPOSER_MEMORY_LIMIT` environment variable:
 
-```shell
+```sh
 COMPOSER_MEMORY_LIMIT=-1 composer.phar <...>
 ```
 
 Or, you can increase the limit with a command-line argument:
 
-```shell
+```sh
 php -d memory_limit=-1 composer.phar <...>
 ```
 
@@ -222,10 +222,9 @@ If Composer shows proc_open() fork failed on some commands:
 
 This could be happening because the VPS runs out of memory and has no Swap space enabled.
 
-```shell
+```sh
 free -m
-```
-```text
+
 total used free shared buffers cached
 Mem: 2048 357 1690 0 0 237
 -/+ buffers/cache: 119 1928
@@ -234,7 +233,7 @@ Swap: 0 0 0
 
 To enable the swap you can use for example:
 
-```shell
+```sh
 /bin/dd if=/dev/zero of=/var/swap.1 bs=1M count=1024
 /sbin/mkswap /var/swap.1
 /bin/chmod 0600 /var/swap.1
@@ -283,7 +282,7 @@ If you have been pointed to this page, you want to check a few things:
 
 You may run into errors if IPv6 is not configured correctly. A common error is:
 
-```text
+```
 The "https://getcomposer.org/version" file could not be downloaded: failed to
 open stream: Operation timed out
 ```
@@ -296,7 +295,7 @@ following workarounds:
 On linux, it seems that running this command helps to make ipv4 traffic have a
 higher priority than ipv6, which is a better alternative than disabling ipv6 entirely:
 
-```shell
+```bash
 sudo sh -c "echo 'precedence ::ffff:0:0/96 100' >> /etc/gai.conf"
 ```
 
@@ -308,13 +307,13 @@ On windows the only way is to disable ipv6 entirely I am afraid (either in windo
 
 Get name of your network device:
 
-```shell
+```bash
 networksetup -listallnetworkservices
 ```
 
 Disable IPv6 on that device (in this case "Wi-Fi"):
 
-```shell
+```bash
 networksetup -setv6off Wi-Fi
 ```
 
@@ -322,7 +321,7 @@ Run Composer ...
 
 You can enable IPv6 again with:
 
-```shell
+```bash
 networksetup -setv6automatic Wi-Fi
 ```
 
@@ -341,7 +340,7 @@ The reason for this is a SSH Bug: https://bugzilla.mindrot.org/show_bug.cgi?id=1
 
 As a workaround, open a SSH connection to your Git host before running Composer:
 
-```shell
+```bash
 ssh -t git@mygitserver.tld
 php composer.phar update
 ```
@@ -369,7 +368,7 @@ an unexpected result such as an unresolvable set of dependencies or conflicts wh
 think Composer is wrong, you might want to disable the optimizer by using the environment
 variable `COMPOSER_POOL_OPTIMIZER` and run the update again like so:
 
-```shell
+```bash
 COMPOSER_POOL_OPTIMIZER=0 php composer.phar update
 ```
 

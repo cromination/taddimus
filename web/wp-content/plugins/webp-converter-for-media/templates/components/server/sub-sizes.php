@@ -5,6 +5,10 @@
  * @package Converter for Media
  */
 
+$image_sizes = ( function_exists( 'wp_get_registered_image_subsizes' ) )
+	? wp_get_registered_image_subsizes()
+	: wp_get_additional_image_sizes();
+
 ?>
 <h4>
 	<?php
@@ -15,7 +19,7 @@
 </h4>
 <table>
 	<tbody>
-	<?php foreach ( wp_get_registered_image_subsizes() as $size_name => $size_data ) : ?>
+	<?php foreach ( $image_sizes as $size_name => $size_data ) : ?>
 		<tr>
 			<td class="e"><?php echo esc_html( $size_name ); ?></td>
 			<td class="v">

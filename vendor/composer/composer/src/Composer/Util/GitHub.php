@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -40,7 +40,7 @@ class GitHub
      * @param ProcessExecutor $process        Process instance, injectable for mocking
      * @param HttpDownloader  $httpDownloader Remote Filesystem, injectable for mocking
      */
-    public function __construct(IOInterface $io, Config $config, ?ProcessExecutor $process = null, ?HttpDownloader $httpDownloader = null)
+    public function __construct(IOInterface $io, Config $config, ProcessExecutor $process = null, HttpDownloader $httpDownloader = null)
     {
         $this->io = $io;
         $this->config = $config;
@@ -54,7 +54,7 @@ class GitHub
      * @param  string $originUrl The host this GitHub instance is located at
      * @return bool   true on success
      */
-    public function authorizeOAuth(string $originUrl): bool
+    public function authorizeOAuth($originUrl)
     {
         if (!in_array($originUrl, $this->config->get('github-domains'))) {
             return false;
@@ -79,7 +79,7 @@ class GitHub
      * @throws TransportException|\Exception
      * @return bool                          true on success
      */
-    public function authorizeOAuthInteractively(string $originUrl, ?string $message = null): bool
+    public function authorizeOAuthInteractively($originUrl, $message = null)
     {
         if ($message) {
             $this->io->writeError($message);
@@ -115,11 +115,11 @@ class GitHub
         try {
             $apiUrl = ('github.com' === $originUrl) ? 'api.github.com/' : $originUrl . '/api/v3/';
 
-            $this->httpDownloader->get('https://'. $apiUrl, [
+            $this->httpDownloader->get('https://'. $apiUrl, array(
                 'retry-auth-failure' => false,
-            ]);
+            ));
         } catch (TransportException $e) {
-            if (in_array($e->getCode(), [403, 401])) {
+            if (in_array($e->getCode(), array(403, 401))) {
                 $this->io->writeError('<error>Invalid token provided.</error>');
                 $this->io->writeError('You can also add it manually later by using "composer config --global --auth github-oauth.github.com <token>"');
 
@@ -145,19 +145,19 @@ class GitHub
      *
      * @return array{limit: int|'?', reset: string}
      */
-    public function getRateLimit(array $headers): array
+    public function getRateLimit(array $headers)
     {
-        $rateLimit = [
+        $rateLimit = array(
             'limit' => '?',
             'reset' => '?',
-        ];
+        );
 
         foreach ($headers as $header) {
             $header = trim($header);
             if (false === strpos($header, 'X-RateLimit-')) {
                 continue;
             }
-            [$type, $value] = explode(':', $header, 2);
+            list($type, $value) = explode(':', $header, 2);
             switch ($type) {
                 case 'X-RateLimit-Limit':
                     $rateLimit['limit'] = (int) trim($value);
@@ -175,8 +175,10 @@ class GitHub
      * Extract SSO URL from response.
      *
      * @param string[] $headers Headers from Composer\Downloader\TransportException.
+     *
+     * @return string|null
      */
-    public function getSsoUrl(array $headers): ?string
+    public function getSsoUrl(array $headers)
     {
         foreach ($headers as $header) {
             $header = trim($header);
@@ -195,8 +197,10 @@ class GitHub
      * Finds whether a request failed due to rate limiting
      *
      * @param string[] $headers Headers from Composer\Downloader\TransportException.
+     *
+     * @return bool
      */
-    public function isRateLimited(array $headers): bool
+    public function isRateLimited(array $headers)
     {
         foreach ($headers as $header) {
             if (Preg::isMatch('{^X-RateLimit-Remaining: *0$}i', trim($header))) {
@@ -213,8 +217,10 @@ class GitHub
      * @see https://docs.github.com/en/rest/overview/other-authentication-methods#authenticating-for-saml-sso
      *
      * @param string[] $headers Headers from Composer\Downloader\TransportException.
+     *
+     * @return bool
      */
-    public function requiresSso(array $headers): bool
+    public function requiresSso(array $headers)
     {
         foreach ($headers as $header) {
             if (Preg::isMatch('{^X-GitHub-SSO: required}i', trim($header))) {

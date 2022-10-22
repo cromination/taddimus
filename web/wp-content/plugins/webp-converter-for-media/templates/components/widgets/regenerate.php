@@ -2,9 +2,9 @@
 /**
  * Widget displayed on plugin settings page.
  *
- * @var string     $api_calculate_url  URL of REST API endpoint.
  * @var string     $api_paths_url      URL of REST API endpoint.
  * @var string     $api_regenerate_url URL of REST API endpoint.
+ * @var string     $api_stats_url      URL of REST API endpoint.
  * @var string[][] $output_formats     Data about output formats for regeneration.
  *
  * @package Converter for Media
@@ -16,7 +16,6 @@
 		<?php echo esc_html( __( 'Bulk Optimization of Images', 'webp-converter-for-media' ) ); ?>
 	</h3>
 	<div class="webpcLoader webpcContent"
-		data-api-calculate="<?php echo esc_url( $api_calculate_url ); ?>"
 		data-api-paths="<?php echo esc_url( $api_paths_url ); ?>"
 		data-api-regenerate="<?php echo esc_url( $api_regenerate_url ); ?>"
 		data-api-error-message="<?php echo esc_html( __( 'An error occurred while connecting to REST API. Please try again.', 'webp-converter-for-media' ) ); ?>"
@@ -36,6 +35,19 @@
 				);
 				?>
 			</p>
+		</div>
+		<div class="webpcPage__widgetRow">
+			<div class="webpcTree">
+				<p class="webpcTree__headline">
+					<?php echo wp_kses_post( __( 'List of files that can be optimized:', 'webp-converter-for-media' ) ); ?>
+				</p>
+				<div class="webpcTree__output" data-tree>
+					<p class="webpcContent__loader">
+						<?php echo wp_kses_post( sprintf( __( 'Loading, please wait', 'webp-converter-for-media' ) ) ); ?>
+					</p>
+					<div class="webpcTree__error" data-api-stats-error hidden></div>
+				</div>
+			</div>
 		</div>
 		<div class="webpcPage__widgetRow">
 			<div class="webpcPage__widgetNotice">

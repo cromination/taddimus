@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -32,11 +32,7 @@ use Composer\XdebugHandler\XdebugHandler;
  */
 class PlatformRepository extends ArrayRepository
 {
-    /**
-     * @deprecated use PlatformRepository::isPlatformPackage(string $name) instead
-     * @private
-     */
-    public const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[a-z0-9](?:[_.-]?[a-z0-9]+)*|composer(?:-(?:plugin|runtime)-api)?)$}iD';
+    const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[a-z0-9](?:[_.-]?[a-z0-9]+)*|composer(?:-(?:plugin|runtime)-api)?)$}iD';
 
     /**
      * @var ?string
@@ -55,14 +51,14 @@ class PlatformRepository extends ArrayRepository
      *
      * @var array<string, array{name: string, version: string|false}>
      */
-    private $overrides = [];
+    private $overrides = array();
 
     /**
      * Stores which packages have been disabled and their actual version
      *
      * @var array<string, CompletePackageInterface>
      */
-    private $disabledPackages = [];
+    private $disabledPackages = array();
 
     /** @var Runtime */
     private $runtime;
@@ -72,7 +68,7 @@ class PlatformRepository extends ArrayRepository
     /**
      * @param array<string, string|false> $overrides
      */
-    public function __construct(array $packages = [], array $overrides = [], ?Runtime $runtime = null, ?HhvmDetector $hhvmDetector = null)
+    public function __construct(array $packages = array(), array $overrides = array(), Runtime $runtime = null, HhvmDetector $hhvmDetector = null)
     {
         $this->runtime = $runtime ?: new Runtime();
         $this->hhvmDetector = $hhvmDetector ?: new HhvmDetector();
@@ -83,17 +79,21 @@ class PlatformRepository extends ArrayRepository
             if ($name === 'php' && $version === false) {
                 throw new \UnexpectedValueException('config.platform.'.$name.' cannot be set to false as you cannot disable php entirely.');
             }
-            $this->overrides[strtolower($name)] = ['name' => $name, 'version' => $version];
+            $this->overrides[strtolower($name)] = array('name' => $name, 'version' => $version);
         }
         parent::__construct($packages);
     }
 
-    public function getRepoName(): string
+    public function getRepoName()
     {
         return 'platform repo';
     }
 
-    public function isPlatformPackageDisabled(string $name): bool
+    /**
+     * @param  string  $name
+     * @return boolean
+     */
+    public function isPlatformPackageDisabled($name)
     {
         return isset($this->disabledPackages[$name]);
     }
@@ -101,12 +101,12 @@ class PlatformRepository extends ArrayRepository
     /**
      * @return array<string, CompletePackageInterface>
      */
-    public function getDisabledPackages(): array
+    public function getDisabledPackages()
     {
         return $this->disabledPackages;
     }
 
-    protected function initialize(): void
+    protected function initialize()
     {
         parent::initialize();
 
@@ -175,7 +175,7 @@ class PlatformRepository extends ArrayRepository
 
         // The AF_INET6 constant is only defined if ext-sockets is available but
         // IPv6 support might still be available.
-        if ($this->runtime->hasConstant('AF_INET6') || Silencer::call([$this->runtime, 'invoke'], 'inet_pton', ['::']) !== false) {
+        if ($this->runtime->hasConstant('AF_INET6') || Silencer::call(array($this->runtime, 'invoke'), 'inet_pton', array('::')) !== false) {
             $phpIpv6 = new CompletePackage('php-ipv6', $version, $prettyVersion);
             $phpIpv6->setDescription('The PHP interpreter, with IPv6 support');
             $this->addPackage($phpIpv6);
@@ -185,7 +185,7 @@ class PlatformRepository extends ArrayRepository
 
         // Extensions scanning
         foreach ($loadedExtensions as $name) {
-            if (in_array($name, ['standard', 'Core'])) {
+            if (in_array($name, array('standard', 'Core'))) {
                 continue;
             }
 
@@ -236,9 +236,9 @@ class PlatformRepository extends ArrayRepository
                         $library = strtolower($sslMatches['library']);
                         if ($library === 'openssl') {
                             $parsedVersion = Version::parseOpenssl($sslMatches['version'], $isFips);
-                            $this->addLibrary($name.'-openssl'.($isFips ? '-fips' : ''), $parsedVersion, 'curl OpenSSL version ('.$parsedVersion.')', [], $isFips ? ['curl-openssl'] : []);
+                            $this->addLibrary($name.'-openssl'.($isFips ? '-fips' : ''), $parsedVersion, 'curl OpenSSL version ('.$parsedVersion.')', array(), $isFips ? array('curl-openssl') : array());
                         } else {
-                            $this->addLibrary($name.'-'.$library, $sslMatches['version'], 'curl '.$library.' version ('.$sslMatches['version'].')', ['curl-openssl']);
+                            $this->addLibrary($name.'-'.$library, $sslMatches['version'], 'curl '.$library.' version ('.$sslMatches['version'].')', array('curl-openssl'));
                         }
                     }
 
@@ -267,7 +267,7 @@ class PlatformRepository extends ArrayRepository
                         if (Preg::isMatch('/^"Olson" Timezone Database Version => (?<version>.+?)(\.system)?$/im', $info, $zoneinfoMatches)) {
                             // If the timezonedb is provided by ext/timezonedb, register that version as a replacement
                             if ($external && in_array('timezonedb', $loadedExtensions, true)) {
-                                $this->addLibrary('timezonedb-zoneinfo', $zoneinfoMatches['version'], 'zoneinfo ("Olson") database for date (replaced by timezonedb)', [$name.'-zoneinfo']);
+                                $this->addLibrary('timezonedb-zoneinfo', $zoneinfoMatches['version'], 'zoneinfo ("Olson") database for date (replaced by timezonedb)', array($name.'-zoneinfo'));
                             } else {
                                 $this->addLibrary($name.'-zoneinfo', $zoneinfoMatches['version'], 'zoneinfo ("Olson") database for date');
                             }
@@ -302,7 +302,7 @@ class PlatformRepository extends ArrayRepository
                     }
 
                     if (Preg::isMatch('/^libXpm Version => (?<versionId>\d+)$/im', $info, $libxpmMatches)) {
-                        $this->addLibrary($name.'-libxpm', Version::convertLibxpmVersionId((int) $libxpmMatches['versionId']), 'libxpm version for gd');
+                        $this->addLibrary($name.'-libxpm', Version::convertLibxpmVersionId($libxpmMatches['versionId']), 'libxpm version for gd');
                     }
 
                     break;
@@ -327,18 +327,18 @@ class PlatformRepository extends ArrayRepository
                     }
 
                     // ICU TZData version => 2019c
-                    if (Preg::isMatch('/^ICU TZData version => (?<version>.*)$/im', $info, $zoneinfoMatches) && null !== ($version = Version::parseZoneinfoVersion($zoneinfoMatches['version']))) {
-                        $this->addLibrary('icu-zoneinfo', $version, 'zoneinfo ("Olson") database for icu');
+                    if (Preg::isMatch('/^ICU TZData version => (?<version>.*)$/im', $info, $zoneinfoMatches)) {
+                        $this->addLibrary('icu-zoneinfo', Version::parseZoneinfoVersion($zoneinfoMatches['version']), 'zoneinfo ("Olson") database for icu');
                     }
 
                     // Add a separate version for the CLDR library version
                     if ($this->runtime->hasClass('ResourceBundle')) {
-                        $cldrVersion = $this->runtime->invoke(['ResourceBundle', 'create'], ['root', 'ICUDATA', false])->get('Version');
+                        $cldrVersion = $this->runtime->invoke(array('ResourceBundle', 'create'), array('root', 'ICUDATA', false))->get('Version');
                         $this->addLibrary('icu-cldr', $cldrVersion, 'ICU CLDR project version');
                     }
 
                     if ($this->runtime->hasClass('IntlChar')) {
-                        $this->addLibrary('icu-unicode', implode('.', array_slice($this->runtime->invoke(['IntlChar', 'getUnicodeVersion']), 0, 3)), 'ICU unicode version');
+                        $this->addLibrary('icu-unicode', implode('.', array_slice($this->runtime->invoke(array('IntlChar', 'getUnicodeVersion')), 0, 3)), 'ICU unicode version');
                     }
                     break;
 
@@ -352,23 +352,23 @@ class PlatformRepository extends ArrayRepository
                         $version .= '.'.$matches['patch'];
                     }
 
-                    $this->addLibrary($name.'-imagemagick', $version, null, ['imagick']);
+                    $this->addLibrary($name.'-imagemagick', $version, null, array('imagick'));
                     break;
 
                 case 'ldap':
                     $info = $this->runtime->getExtensionInfo($name);
 
                     if (Preg::isMatch('/^Vendor Version => (?<versionId>\d+)$/im', $info, $matches) && Preg::isMatch('/^Vendor Name => (?<vendor>.+)$/im', $info, $vendorMatches)) {
-                        $this->addLibrary($name.'-'.strtolower($vendorMatches['vendor']), Version::convertOpenldapVersionId((int) $matches['versionId']), $vendorMatches['vendor'].' version of ldap');
+                        $this->addLibrary($name.'-'.strtolower($vendorMatches['vendor']), Version::convertOpenldapVersionId($matches['versionId']), $vendorMatches['vendor'].' version of ldap');
                     }
                     break;
 
                 case 'libxml':
                     // ext/dom, ext/simplexml, ext/xmlreader and ext/xmlwriter use the same libxml as the ext/libxml
-                    $libxmlProvides = array_map(static function ($extension): string {
+                    $libxmlProvides = array_map(function ($extension) {
                         return $extension . '-libxml';
-                    }, array_intersect($loadedExtensions, ['dom', 'simplexml', 'xml', 'xmlreader', 'xmlwriter']));
-                    $this->addLibrary($name, $this->runtime->getConstant('LIBXML_DOTTED_VERSION'), 'libxml library version', [], $libxmlProvides);
+                    }, array_intersect($loadedExtensions, array('dom', 'simplexml', 'xml', 'xmlreader', 'xmlwriter')));
+                    $this->addLibrary($name, $this->runtime->getConstant('LIBXML_DOTTED_VERSION'), 'libxml library version', array(), $libxmlProvides);
 
                     break;
 
@@ -404,7 +404,7 @@ class PlatformRepository extends ArrayRepository
                     // OpenSSL 1.1.1g  21 Apr 2020
                     if (Preg::isMatch('{^(?:OpenSSL|LibreSSL)?\s*(?<version>\S+)}i', $this->runtime->getConstant('OPENSSL_VERSION_TEXT'), $matches)) {
                         $parsedVersion = Version::parseOpenssl($matches['version'], $isFips);
-                        $this->addLibrary($name.($isFips ? '-fips' : ''), $parsedVersion, $this->runtime->getConstant('OPENSSL_VERSION_TEXT'), [], $isFips ? [$name] : []);
+                        $this->addLibrary($name.($isFips ? '-fips' : ''), $parsedVersion, $this->runtime->getConstant('OPENSSL_VERSION_TEXT'), array(), $isFips ? array($name) : array());
                     }
                     break;
 
@@ -475,7 +475,7 @@ class PlatformRepository extends ArrayRepository
                     break;
 
                 case 'xsl':
-                    $this->addLibrary('libxslt', $this->runtime->getConstant('LIBXSLT_DOTTED_VERSION'), null, ['xsl']);
+                    $this->addLibrary('libxslt', $this->runtime->getConstant('LIBXSLT_DOTTED_VERSION'), null, array('xsl'));
 
                     $info = $this->runtime->getExtensionInfo('xsl');
                     if (Preg::isMatch('/^libxslt compiled against libxml Version => (?<version>.+)$/im', $info, $matches)) {
@@ -493,7 +493,7 @@ class PlatformRepository extends ArrayRepository
 
                 case 'zip':
                     if ($this->runtime->hasConstant('LIBZIP_VERSION', 'ZipArchive')) {
-                        $this->addLibrary($name.'-libzip', $this->runtime->getConstant('LIBZIP_VERSION', 'ZipArchive'), null, ['zip']);
+                        $this->addLibrary($name.'-libzip', $this->runtime->getConstant('LIBZIP_VERSION', 'ZipArchive'), null, array('zip'));
                     }
                     break;
 
@@ -531,7 +531,7 @@ class PlatformRepository extends ArrayRepository
     /**
      * @inheritDoc
      */
-    public function addPackage(PackageInterface $package): void
+    public function addPackage(PackageInterface $package)
     {
         if (!$package instanceof CompletePackage) {
             throw new \UnexpectedValueException('Expected CompletePackage but got '.get_class($package));
@@ -541,7 +541,6 @@ class PlatformRepository extends ArrayRepository
         if (isset($this->overrides[$package->getName()])) {
             if ($this->overrides[$package->getName()]['version'] === false) {
                 $this->addDisabledPackage($package);
-
                 return;
             }
 
@@ -560,6 +559,11 @@ class PlatformRepository extends ArrayRepository
 
         // Skip if PHP is overridden and we are adding a php-* package
         if (isset($this->overrides['php']) && 0 === strpos($package->getName(), 'php-')) {
+            if (isset($this->overrides[$package->getName()]) && $this->overrides[$package->getName()]['version'] === false) {
+                $this->addDisabledPackage($package);
+                return;
+            }
+
             $overrider = $this->addOverriddenPackage($this->overrides['php'], $package->getPrettyName());
             if ($package->getVersion() === $overrider->getVersion()) {
                 $actualText = 'same as actual';
@@ -576,13 +580,16 @@ class PlatformRepository extends ArrayRepository
 
     /**
      * @param array{version: string, name: string} $override
+     * @param string|null $name
+     *
+     * @return CompletePackage
      */
-    private function addOverriddenPackage(array $override, ?string $name = null): CompletePackage
+    private function addOverriddenPackage(array $override, $name = null)
     {
         $version = $this->versionParser->normalize($override['version']);
         $package = new CompletePackage($name ?: $override['name'], $version, $override['version']);
         $package->setDescription('Package overridden via config.platform');
-        $package->setExtra(['config.platform' => true]);
+        $package->setExtra(array('config.platform' => true));
         parent::addPackage($package);
 
         if ($package->getName() === 'php') {
@@ -592,18 +599,26 @@ class PlatformRepository extends ArrayRepository
         return $package;
     }
 
-    private function addDisabledPackage(CompletePackage $package): void
+    /**
+     * @return void
+     */
+    private function addDisabledPackage(CompletePackage $package)
     {
         $package->setDescription($package->getDescription().'. <warning>Package disabled via config.platform</warning>');
-        $package->setExtra(['config.platform' => true]);
+        $package->setExtra(array('config.platform' => true));
 
         $this->disabledPackages[$package->getName()] = $package;
     }
 
     /**
      * Parses the version and adds a new package to the repository
+     *
+     * @param string      $name
+     * @param null|string $prettyVersion
+     *
+     * @return void
      */
-    private function addExtension(string $name, string $prettyVersion): void
+    private function addExtension($name, $prettyVersion)
     {
         $extraDescription = null;
 
@@ -624,28 +639,34 @@ class PlatformRepository extends ArrayRepository
         $ext->setDescription('The '.$name.' PHP extension'.$extraDescription);
 
         if ($name === 'uuid') {
-            $ext->setReplaces([
+            $ext->setReplaces(array(
                 'lib-uuid' => new Link('ext-uuid', 'lib-uuid', new Constraint('=', $version), Link::TYPE_REPLACE, $ext->getPrettyVersion()),
-            ]);
+            ));
         }
 
         $this->addPackage($ext);
     }
 
-    private function buildPackageName(string $name): string
+    /**
+     * @param  string $name
+     * @return string
+     */
+    private function buildPackageName($name)
     {
         return 'ext-' . str_replace(' ', '-', strtolower($name));
     }
 
     /**
+     * @param string      $name
+     * @param string      $prettyVersion
+     * @param string|null $description
      * @param string[]    $replaces
      * @param string[]    $provides
+     *
+     * @return void
      */
-    private function addLibrary(string $name, ?string $prettyVersion, ?string $description = null, array $replaces = [], array $provides = []): void
+    private function addLibrary($name, $prettyVersion, $description = null, array $replaces = array(), array $provides = array())
     {
-        if (null === $prettyVersion) {
-            return;
-        }
         try {
             $version = $this->versionParser->normalize($prettyVersion);
         } catch (\UnexpectedValueException $e) {
@@ -659,12 +680,12 @@ class PlatformRepository extends ArrayRepository
         $lib = new CompletePackage('lib-'.$name, $version, $prettyVersion);
         $lib->setDescription($description);
 
-        $replaceLinks = [];
+        $replaceLinks = array();
         foreach ($replaces as $replace) {
             $replace = strtolower($replace);
             $replaceLinks[$replace] = new Link('lib-'.$name, 'lib-'.$replace, new Constraint('=', $version), Link::TYPE_REPLACE, $lib->getPrettyVersion());
         }
-        $provideLinks = [];
+        $provideLinks = array();
         foreach ($provides as $provide) {
             $provide = strtolower($provide);
             $provideLinks[$provide] = new Link('lib-'.$name, 'lib-'.$provide, new Constraint('=', $version), Link::TYPE_PROVIDE, $lib->getPrettyVersion());
@@ -677,10 +698,13 @@ class PlatformRepository extends ArrayRepository
 
     /**
      * Check if a package name is a platform package.
+     *
+     * @param  string $name
+     * @return bool
      */
-    public static function isPlatformPackage(string $name): bool
+    public static function isPlatformPackage($name)
     {
-        static $cache = [];
+        static $cache = array();
 
         if (isset($cache[$name])) {
             return $cache[$name];
@@ -697,17 +721,18 @@ class PlatformRepository extends ArrayRepository
      * be correct.
      *
      * @internal
+     * @return string|null
      */
-    public static function getPlatformPhpVersion(): ?string
+    public static function getPlatformPhpVersion()
     {
         return self::$lastSeenPlatformPhp;
     }
 
-    public function search(string $query, int $mode = 0, ?string $type = null): array
+    public function search($query, $mode = 0, $type = null)
     {
         // suppress vendor search as there are no vendors to match in platform packages
         if ($mode === self::SEARCH_VENDOR) {
-            return [];
+            return array();
         }
 
         return parent::search($query, $mode, $type);

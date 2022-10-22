@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -50,15 +50,18 @@ class PreFileDownloadEvent extends Event
     /**
      * @var mixed[]
      */
-    private $transportOptions = [];
+    private $transportOptions = array();
 
     /**
      * Constructor.
      *
      * @param string         $name           The event name
+     * @param HttpDownloader $httpDownloader
+     * @param string         $processedUrl
+     * @param string         $type
      * @param mixed          $context
      */
-    public function __construct(string $name, HttpDownloader $httpDownloader, string $processedUrl, string $type, $context = null)
+    public function __construct($name, HttpDownloader $httpDownloader, $processedUrl, $type, $context = null)
     {
         parent::__construct($name);
         $this->httpDownloader = $httpDownloader;
@@ -67,15 +70,20 @@ class PreFileDownloadEvent extends Event
         $this->context = $context;
     }
 
-    public function getHttpDownloader(): HttpDownloader
+    /**
+     * @return HttpDownloader
+     */
+    public function getHttpDownloader()
     {
         return $this->httpDownloader;
     }
 
     /**
      * Retrieves the processed URL that will be downloaded.
+     *
+     * @return string
      */
-    public function getProcessedUrl(): string
+    public function getProcessedUrl()
     {
         return $this->processedUrl;
     }
@@ -84,16 +92,20 @@ class PreFileDownloadEvent extends Event
      * Sets the processed URL that will be downloaded.
      *
      * @param string $processedUrl New processed URL
+     *
+     * @return void
      */
-    public function setProcessedUrl(string $processedUrl): void
+    public function setProcessedUrl($processedUrl)
     {
         $this->processedUrl = $processedUrl;
     }
 
     /**
      * Retrieves a custom package cache key for this download.
+     *
+     * @return string|null
      */
-    public function getCustomCacheKey(): ?string
+    public function getCustomCacheKey()
     {
         return $this->customCacheKey;
     }
@@ -102,16 +114,20 @@ class PreFileDownloadEvent extends Event
      * Sets a custom package cache key for this download.
      *
      * @param string|null $customCacheKey New cache key
+     *
+     * @return void
      */
-    public function setCustomCacheKey(?string $customCacheKey): void
+    public function setCustomCacheKey($customCacheKey)
     {
         $this->customCacheKey = $customCacheKey;
     }
 
     /**
      * Returns the type of this download (package, metadata).
+     *
+     * @return string
      */
-    public function getType(): string
+    public function getType()
     {
         return $this->type;
     }
@@ -136,7 +152,7 @@ class PreFileDownloadEvent extends Event
      *
      * @return mixed[]
      */
-    public function getTransportOptions(): array
+    public function getTransportOptions()
     {
         return $this->transportOptions;
     }
@@ -147,8 +163,10 @@ class PreFileDownloadEvent extends Event
      * Only available for events with type metadata, for packages set the transport options on the package itself.
      *
      * @param mixed[] $options
+     *
+     * @return void
      */
-    public function setTransportOptions(array $options): void
+    public function setTransportOptions(array $options)
     {
         $this->transportOptions = $options;
     }

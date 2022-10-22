@@ -4,6 +4,8 @@ namespace WebpConverter\Repository;
 
 use WebpConverter\Model\Token;
 use WebpConverter\Service\OptionsAccessManager;
+use WebpConverter\Settings\Option\AccessTokenOption;
+use WebpConverter\Settings\SettingsSave;
 
 /**
  * Manages the token for the PRO version.
@@ -16,9 +18,10 @@ class TokenRepository {
 	const TOKEN_VALUE_IMAGES_USAGE = 'images_usage';
 	const TOKEN_VALUE_IMAGES_LIMIT = 'images_limit';
 
-	public function get_token(): Token {
-		$values = OptionsAccessManager::get_option( self::TOKEN_OPTION, null );
-		if ( $values === null ) {
+	public function get_token( string $token_value = null ): Token {
+		$values   = OptionsAccessManager::get_option( self::TOKEN_OPTION, null );
+		$settings = OptionsAccessManager::get_option( SettingsSave::SETTINGS_OPTION, [] );
+		if ( ( $values === null ) || ( ! $token_value && ! ( $settings[ AccessTokenOption::OPTION_NAME ] ?? null ) ) ) {
 			return new Token();
 		}
 

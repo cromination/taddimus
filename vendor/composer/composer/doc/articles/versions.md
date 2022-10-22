@@ -27,20 +27,14 @@ in `composer.json`).
 *For the following discussion, let's assume the following sample library
 repository:*
 
-```shell
+```sh
 ~/my-library$ git branch
-```
-```text
 v1
 v2
 my-feature
 another-feature
-```
 
-```shell
 ~/my-library$ git tag
-```
-```text
 v1.0
 v1.0.1
 v1.0.2
@@ -187,7 +181,7 @@ The `^` operator behaves very similarly, but it sticks closer to semantic
 versioning, and will always allow non-breaking updates. For example `^1.2.3`
 is equivalent to `>=1.2.3 <2.0.0` as none of the releases until 2.0 should
 break backwards compatibility. For pre-1.0 versions it also acts with safety
-in mind and treats `^0.3` as `>=0.3.0 <0.4.0` and `^0.0.3` as `>=0.0.3 <0.0.4`.
+in mind and treats `^0.3` as `>=0.3.0 <0.4.0`.
 
 This is the recommended operator for maximum interoperability when writing
 library code.
@@ -248,7 +242,7 @@ section of the [schema page](../04-schema.md#minimum-stability).
 
 ## Testing Version Constraints
 
-You can test version constraints using [semver.madewithlove.com](https://semver.madewithlove.com).
+You can test version constraints using [semver.mwl.be](https://semver.mwl.be).
 Fill in a package name and it will autofill the default version constraint
 which Composer would add to your `composer.json` file. You can adjust the
 version constraint and the tool will highlight all releases that match.

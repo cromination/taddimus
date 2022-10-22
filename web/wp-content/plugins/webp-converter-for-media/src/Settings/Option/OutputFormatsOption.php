@@ -114,6 +114,10 @@ class OutputFormatsOption extends OptionAbstract {
 	 */
 	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
 		$valid_values = [];
+		if ( ! $current_value ) {
+			return $valid_values;
+		}
+
 		foreach ( $current_value as $option_value ) {
 			if ( array_key_exists( $option_value, $available_values ?: [] )
 				&& ! in_array( $option_value, $disabled_values ?: [] ) ) {

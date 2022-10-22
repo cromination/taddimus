@@ -42,5 +42,7 @@ class Activation implements HookableInterface {
 		$default_settings = new DefaultSettings( $this->plugin_info );
 		$default_settings->add_default_notices_values();
 		$default_settings->add_default_stats_values();
+
+		wp_cache_delete( 'alloptions', 'options' );
 	}
 }

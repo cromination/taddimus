@@ -8,7 +8,6 @@
  * @var string  $nonce_input_name         Name of hidden field with WordPress Nonce value.
  * @var string  $nonce_input_value        WordPress Nonce value.
  * @var bool    $token_valid_status       Status of PRO version.
- * @var string  $api_calculate_url        URL of REST API endpoint.
  *
  * @package Converter for Media
  */

@@ -2,10 +2,10 @@
 /**
  * Field displayed in plugin settings form.
  *
- * @var bool    $token_valid_status Status of PRO version.
- * @var string  $api_calculate_url  URL of REST API endpoint.
- * @var mixed[] $option             Data of field.
- * @var string  $index              Index of field.
+ * @var bool    $token_valid_status  Status of access token.
+ * @var bool    $token_active_status Status of PRO version.
+ * @var mixed[] $option              Data of field.
+ * @var string  $index               Index of field.
  *
  * @package Converter for Media
  */
@@ -23,21 +23,16 @@
 		<?php echo ( $token_valid_status ) ? 'readonly' : ''; ?>
 	>
 </div>
-<p data-calculate-widget data-calculate-widget-api="<?php echo esc_url( $api_calculate_url ); ?>">
-	<?php
-	echo esc_html( __( 'How many images to convert are remaining on my website?', 'webp-converter-for-media' ) );
-	echo ' ';
-	echo wp_kses_post(
-		sprintf(
-		/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
-			__( '%1$sCalculate%2$s', 'webp-converter-for-media' ),
-			'<a href="#" data-calculate-widget-button>',
-			'</a>'
-		)
-	);
-	?>
-	<strong data-calculate-widget-loading hidden>
-		<?php echo esc_html( __( 'Please wait...', 'webp-converter-for-media' ) ); ?>
-	</strong>
-	<strong style="display: block;" data-calculate-widget-output hidden></strong>
-</p>
+<?php if ( ! $token_active_status ) : ?>
+	<p data-plans>
+		<strong><?php echo esc_html( __( 'Which plan would be the best choice for me?', 'webp-converter-for-media' ) ); ?></strong>
+		<br>
+		<a href="https://url.mattplugins.com/converter-field-access-token-plans?webp=0&avif=0" target="_blank"
+			data-plans-button hidden>
+			<?php echo esc_html( __( 'Check the plans for you', 'webp-converter-for-media' ) ); ?>
+		</a>
+		<span class="webpcContent__loader" data-plans-loader>
+			<?php echo esc_html( __( 'Loading, please wait', 'webp-converter-for-media' ) ); ?>
+		</span>
+	</p>
+<?php endif; ?>

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -14,31 +14,30 @@ namespace Composer\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Composer\Console\Input\InputArgument;
-use Composer\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * @author Niels Keurentjes <niels.keurentjes@omines.com>
  */
 class DependsCommand extends BaseDependencyCommand
 {
-    use CompletionTrait;
-
     /**
      * Configure command metadata.
+     *
+     * @return void
      */
-    protected function configure(): void
+    protected function configure()
     {
         $this
             ->setName('depends')
-            ->setAliases(['why'])
-            ->setDescription('Shows which packages cause the given package to be installed')
-            ->setDefinition([
-                new InputArgument(self::ARGUMENT_PACKAGE, InputArgument::REQUIRED, 'Package to inspect', null, $this->suggestInstalledPackage(true, true)),
+            ->setAliases(array('why'))
+            ->setDescription('Shows which packages cause the given package to be installed.')
+            ->setDefinition(array(
+                new InputArgument(self::ARGUMENT_PACKAGE, InputArgument::REQUIRED, 'Package to inspect'),
                 new InputOption(self::OPTION_RECURSIVE, 'r', InputOption::VALUE_NONE, 'Recursively resolves up to the root package'),
                 new InputOption(self::OPTION_TREE, 't', InputOption::VALUE_NONE, 'Prints the results as a nested tree'),
-                new InputOption('locked', null, InputOption::VALUE_NONE, 'Read dependency information from composer.lock'),
-            ])
+            ))
             ->setHelp(
                 <<<EOT
 Displays detailed information about where a package is referenced.
@@ -51,7 +50,12 @@ EOT
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    /**
+     * Execute the function.
+     *
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         return parent::doExecute($input, $output);
     }

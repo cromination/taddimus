@@ -28,7 +28,7 @@ class TokenValidator {
 	}
 
 	public function validate_token( string $token_value = null ): Token {
-		$this->token = $this->token_repository->get_token();
+		$this->token = $this->token_repository->get_token( $token_value );
 		$status      = ( $token_value && $this->check_access_token( $token_value ) );
 
 		if ( $status ) {
@@ -41,7 +41,7 @@ class TokenValidator {
 			$this->token_repository->reset_token();
 		}
 
-		return $this->token_repository->get_token();
+		return $this->token_repository->get_token( $token_value );
 	}
 
 	private function check_access_token( string $token_value ): bool {

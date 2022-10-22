@@ -49,19 +49,17 @@ abstract class MethodAbstract implements MethodInterface {
 	protected $size_after = 0;
 
 	/**
-	 * @var int
+	 * @var int[]
 	 */
-	protected $files_to_conversion = 0;
-
-	/**
-	 * @var int
-	 */
-	protected $files_converted = 0;
+	protected $files_available = [
+		WebpFormat::FORMAT_EXTENSION => 0,
+		AvifFormat::FORMAT_EXTENSION => 0,
+	];
 
 	/**
 	 * @var int[]
 	 */
-	protected $output_files_converted = [
+	protected $files_converted = [
 		WebpFormat::FORMAT_EXTENSION => 0,
 		AvifFormat::FORMAT_EXTENSION => 0,
 	];
@@ -97,22 +95,15 @@ abstract class MethodAbstract implements MethodInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_files_to_conversion(): int {
-		return $this->files_to_conversion;
+	public function get_files_available( string $output_format ): int {
+		return $this->files_available[ $output_format ];
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_files_converted(): int {
-		return $this->files_converted;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_files_converted_to_format( string $output_format ): int {
-		return $this->output_files_converted[ $output_format ];
+	public function get_files_converted( string $output_format ): int {
+		return $this->files_converted[ $output_format ];
 	}
 
 	/**
@@ -171,10 +162,6 @@ abstract class MethodAbstract implements MethodInterface {
 
 		$this->size_before += $size_before ?: 0;
 		$this->size_after  += $size_after ?: 0;
-
-		if ( $output_exist ) {
-			$this->files_converted++;
-		}
 	}
 
 	/**

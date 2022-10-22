@@ -77,4 +77,8 @@ class Token {
 	public function get_images_limit(): int {
 		return $this->images_limit;
 	}
+
+	public function is_active(): bool {
+		return ( $this->get_valid_status() && ( $this->get_images_usage() < $this->get_images_limit() ) );
+	}
 }

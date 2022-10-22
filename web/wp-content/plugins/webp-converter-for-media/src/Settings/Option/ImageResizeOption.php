@@ -147,7 +147,10 @@ class ImageResizeOption extends OptionAbstract {
 	 * @return int[]
 	 */
 	private function get_max_image_size(): array {
-		$sizes         = wp_get_registered_image_subsizes();
+		$sizes = ( function_exists( 'wp_get_registered_image_subsizes' ) )
+			? wp_get_registered_image_subsizes()
+			: wp_get_additional_image_sizes();
+
 		$column_width  = array_column( $sizes, 'width' );
 		$column_height = array_column( $sizes, 'height' );
 

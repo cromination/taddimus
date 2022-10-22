@@ -3,7 +3,7 @@
 
 namespace WebpConverter\Settings\Page;
 
-use WebpConverter\Conversion\Endpoint\ImagesCounterEndpoint;
+use WebpConverter\Conversion\Endpoint\FilesStatsEndpoint;
 use WebpConverter\Conversion\Endpoint\PathsEndpoint;
 use WebpConverter\Conversion\Endpoint\RegenerateEndpoint;
 use WebpConverter\Loader\LoaderAbstract;
@@ -74,8 +74,8 @@ class GeneralSettingsPage extends PageAbstract {
 	public function get_template_vars(): array {
 		( new SettingsSave( $this->plugin_data ) )->save_settings();
 
-		$token_status = $this->token_repository->get_token()->get_valid_status();
-		$data         = [
+		$token = $this->token_repository->get_token();
+		$data  = [
 			'logo_url'                 => $this->plugin_info->get_plugin_directory_url() . 'assets/img/logo-headline.png',
 			'errors_messages'          => apply_filters( 'webpc_server_errors_messages', [] ),
 			'errors_codes'             => apply_filters( 'webpc_server_errors', [] ),
@@ -86,21 +86,22 @@ class GeneralSettingsPage extends PageAbstract {
 			'form_sidebar_input_value' => OptionAbstract::FORM_TYPE_SIDEBAR,
 			'nonce_input_name'         => SettingsSave::NONCE_PARAM_KEY,
 			'nonce_input_value'        => ( new NonceManager() )->generate_nonce( SettingsSave::NONCE_PARAM_VALUE ),
-			'token_valid_status'       => $token_status,
-			'api_calculate_url'        => ( new ImagesCounterEndpoint( $this->plugin_data, $this->token_repository ) )->get_route_url(),
+			'token_valid_status'       => $token->get_valid_status(),
+			'token_active_status'      => $token->is_active(),
 			'api_paths_url'            => ( new PathsEndpoint( $this->plugin_data, $this->token_repository ) )->get_route_url(),
 			'api_regenerate_url'       => ( new RegenerateEndpoint( $this->plugin_data ) )->get_route_url(),
+			'api_stats_url'            => ( new FilesStatsEndpoint( $this->plugin_data ) )->get_route_url(),
 			'url_debug_page'           => PageIntegration::get_settings_page_url( DebugPage::PAGE_SLUG ),
 			'output_formats'           => [
 				'webp' => [
 					'label' => 'WebP',
-					'desc'  => ( ! $token_status )
+					'desc'  => ( ! $token->get_valid_status() )
 						? __( 'available in the free version', 'webp-converter-for-media' )
 						: null,
 				],
 				'avif' => [
 					'label' => 'AVIF',
-					'desc'  => ( ! $token_status )
+					'desc'  => ( ! $token->get_valid_status() )
 						? sprintf(
 						/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 							__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),

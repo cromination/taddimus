@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -35,7 +35,7 @@ class Bitbucket
     /** @var int|null */
     private $time;
 
-    public const OAUTH2_ACCESS_TOKEN_URL = 'https://bitbucket.org/site/oauth2/access_token';
+    const OAUTH2_ACCESS_TOKEN_URL = 'https://bitbucket.org/site/oauth2/access_token';
 
     /**
      * Constructor.
@@ -46,7 +46,7 @@ class Bitbucket
      * @param HttpDownloader  $httpDownloader Remote Filesystem, injectable for mocking
      * @param int             $time           Timestamp, injectable for mocking
      */
-    public function __construct(IOInterface $io, Config $config, ?ProcessExecutor $process = null, ?HttpDownloader $httpDownloader = null, ?int $time = null)
+    public function __construct(IOInterface $io, Config $config, ProcessExecutor $process = null, HttpDownloader $httpDownloader = null, $time = null)
     {
         $this->io = $io;
         $this->config = $config;
@@ -55,7 +55,10 @@ class Bitbucket
         $this->time = $time;
     }
 
-    public function getToken(): string
+    /**
+     * @return string
+     */
+    public function getToken()
     {
         if (!isset($this->token['access_token'])) {
             return '';
@@ -70,7 +73,7 @@ class Bitbucket
      * @param  string $originUrl The host this Bitbucket instance is located at
      * @return bool   true on success
      */
-    public function authorizeOAuth(string $originUrl): bool
+    public function authorizeOAuth($originUrl)
     {
         if ($originUrl !== 'bitbucket.org') {
             return false;
@@ -86,16 +89,19 @@ class Bitbucket
         return false;
     }
 
-    private function requestAccessToken(): bool
+    /**
+     * @return bool
+     */
+    private function requestAccessToken()
     {
         try {
-            $response = $this->httpDownloader->get(self::OAUTH2_ACCESS_TOKEN_URL, [
+            $response = $this->httpDownloader->get(self::OAUTH2_ACCESS_TOKEN_URL, array(
                 'retry-auth-failure' => false,
-                'http' => [
+                'http' => array(
                     'method' => 'POST',
                     'content' => 'grant_type=client_credentials',
-                ],
-            ]);
+                ),
+            ));
 
             $token = $response->decodeJson();
             if (!isset($token['expires_in']) || !isset($token['access_token'])) {
@@ -106,14 +112,13 @@ class Bitbucket
         } catch (TransportException $e) {
             if ($e->getCode() === 400) {
                 $this->io->writeError('<error>Invalid OAuth consumer provided.</error>');
-                $this->io->writeError('This can have three reasons:');
+                $this->io->writeError('This can have two reasons:');
                 $this->io->writeError('1. You are authenticating with a bitbucket username/password combination');
                 $this->io->writeError('2. You are using an OAuth consumer, but didn\'t configure a (dummy) callback url');
-                $this->io->writeError('3. You are using an OAuth consumer, but didn\'t configure it as private consumer');
 
                 return false;
             }
-            if (in_array($e->getCode(), [403, 401])) {
+            if (in_array($e->getCode(), array(403, 401))) {
                 $this->io->writeError('<error>Invalid OAuth consumer provided.</error>');
                 $this->io->writeError('You can also add it manually later by using "composer config --global --auth bitbucket-oauth.bitbucket.org <consumer-key> <consumer-secret>"');
 
@@ -135,7 +140,7 @@ class Bitbucket
      * @throws TransportException|\Exception
      * @return bool                          true on success
      */
-    public function authorizeOAuthInteractively(string $originUrl, ?string $message = null): bool
+    public function authorizeOAuthInteractively($originUrl, $message = null)
     {
         if ($message) {
             $this->io->writeError($message);
@@ -183,8 +188,13 @@ class Bitbucket
 
     /**
      * Retrieves an access token from Bitbucket.
+     *
+     * @param  string $originUrl
+     * @param  string $consumerKey
+     * @param  string $consumerSecret
+     * @return string
      */
-    public function requestToken(string $originUrl, string $consumerKey, string $consumerSecret): string
+    public function requestToken($originUrl, $consumerKey, $consumerSecret)
     {
         if ($this->token !== null || $this->getTokenFromConfig($originUrl)) {
             return $this->token['access_token'];
@@ -206,8 +216,14 @@ class Bitbucket
 
     /**
      * Store the new/updated credentials to the configuration
+     *
+     * @param string $originUrl
+     * @param string $consumerKey
+     * @param string $consumerSecret
+     *
+     * @return void
      */
-    private function storeInAuthConfig(string $originUrl, string $consumerKey, string $consumerSecret): void
+    private function storeInAuthConfig($originUrl, $consumerKey, $consumerSecret)
     {
         $this->config->getConfigSource()->removeConfigSetting('bitbucket-oauth.'.$originUrl);
 
@@ -216,17 +232,21 @@ class Bitbucket
         }
 
         $time = null === $this->time ? time() : $this->time;
-        $consumer = [
+        $consumer = array(
             "consumer-key" => $consumerKey,
             "consumer-secret" => $consumerSecret,
             "access-token" => $this->token['access_token'],
             "access-token-expiration" => $time + $this->token['expires_in'],
-        ];
+        );
 
         $this->config->getAuthConfigSource()->addConfigSetting('bitbucket-oauth.'.$originUrl, $consumer);
     }
 
-    private function getTokenFromConfig(string $originUrl): bool
+    /**
+     * @param  string $originUrl
+     * @return bool
+     */
+    private function getTokenFromConfig($originUrl)
     {
         $authConfig = $this->config->get('bitbucket-oauth');
 
@@ -237,9 +257,9 @@ class Bitbucket
             return false;
         }
 
-        $this->token = [
+        $this->token = array(
             'access_token' => $authConfig[$originUrl]['access-token'],
-        ];
+        );
 
         return true;
     }

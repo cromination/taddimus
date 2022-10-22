@@ -24,15 +24,13 @@ class WebpConverter {
 		$token_repository = new TokenRepository();
 
 		( new Action\ConvertAttachment( $plugin_data ) )->init_hooks();
-		( new Action\ConvertDir() )->init_hooks();
 		( new Action\ConvertPaths( $plugin_data ) )->init_hooks();
 		( new Action\DeletePaths() )->init_hooks();
 		( new Conversion\Directory\DirectoryFactory() )->init_hooks();
-		( new Conversion\DirectoryFiles( $plugin_data ) )->init_hooks();
-		( new Endpoint\EndpointIntegration( new Endpoint\ImagesCounterEndpoint( $plugin_data, $token_repository ) ) )->init_hooks();
+		( new Endpoint\EndpointIntegration( new Endpoint\CronConversionEndpoint( $plugin_data, $token_repository ) ) )->init_hooks();
+		( new Endpoint\EndpointIntegration( new Endpoint\FilesStatsEndpoint( $plugin_data ) ) )->init_hooks();
 		( new Endpoint\EndpointIntegration( new Endpoint\PathsEndpoint( $plugin_data, $token_repository ) ) )->init_hooks();
 		( new Endpoint\EndpointIntegration( new Endpoint\RegenerateEndpoint( $plugin_data ) ) )->init_hooks();
-		( new Endpoint\EndpointIntegration( new Endpoint\CronConversionEndpoint( $plugin_data, $token_repository ) ) )->init_hooks();
 		( new Conversion\SkipExcludedPaths() )->init_hooks();
 		( new Cron\CronEventGenerator( $plugin_data, $token_repository ) )->init_hooks();
 		( new Cron\CronSchedulesGenerator() )->init_hooks();

@@ -3,7 +3,12 @@
 namespace WebpConverter\Conversion\Method;
 
 use WebpConverter\Conversion\Format\WebpFormat;
-use WebpConverter\Exception;
+use WebpConverter\Exception\ConversionErrorException;
+use WebpConverter\Exception\ExtensionUnsupportedException;
+use WebpConverter\Exception\ImageAnimatedException;
+use WebpConverter\Exception\ImageInvalidException;
+use WebpConverter\Exception\ImagickNotSupportWebpException;
+use WebpConverter\Exception\ImagickUnavailableException;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
 use WebpConverter\Settings\Option\ImagesQualityOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
@@ -73,36 +78,36 @@ class ImagickMethod extends LibraryMethodAbstract {
 	 * {@inheritdoc}
 	 *
 	 * @return \Imagick .
-	 * @throws Exception\ExtensionUnsupportedException
-	 * @throws Exception\ImagickUnavailableException
-	 * @throws Exception\ImageInvalidException
-	 * @throws Exception\ImageAnimatedException
+	 * @throws ExtensionUnsupportedException
+	 * @throws ImagickUnavailableException
+	 * @throws ImageInvalidException
+	 * @throws ImageAnimatedException
 	 */
 	public function create_image_by_path( string $source_path, array $plugin_settings ) {
 		$extension = strtolower( pathinfo( $source_path, PATHINFO_EXTENSION ) );
 
 		if ( ! extension_loaded( 'imagick' ) || ! class_exists( 'Imagick' ) ) {
-			throw new Exception\ImagickUnavailableException();
+			throw new ImagickUnavailableException();
 		} elseif ( ! in_array( $extension, $plugin_settings[ SupportedExtensionsOption::OPTION_NAME ] ) ) {
-			throw new Exception\ExtensionUnsupportedException( [ $extension, $source_path ] );
+			throw new ExtensionUnsupportedException( [ $extension, $source_path ] );
 		}
 
 		try {
 			$imagick = new \Imagick( $source_path );
 			if ( ( $extension === 'gif' ) && ( $imagick->identifyFormat( '%n' ) > 1 ) ) {
-				throw new Exception\ImageAnimatedException( $source_path );
+				throw new ImageAnimatedException( $source_path );
 			}
 			return $imagick;
 		} catch ( \ImagickException $e ) {
-			throw new Exception\ImageInvalidException( $source_path );
+			throw new ImageInvalidException( $source_path );
 		}
 	}
 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @throws Exception\ConversionErrorException
-	 * @throws Exception\ImagickNotSupportWebpException
+	 * @throws ConversionErrorException
+	 * @throws ImagickNotSupportWebpException
 	 */
 	public function convert_image_to_output( $image, string $source_path, string $output_path, string $format, array $plugin_settings ) {
 		$extension      = self::get_format_extension( $format );
@@ -110,7 +115,7 @@ class ImagickMethod extends LibraryMethodAbstract {
 		$output_quality = min( $plugin_settings[ ImagesQualityOption::OPTION_NAME ], self::MAX_METHOD_QUALITY );
 
 		if ( ! in_array( $extension, $image->queryFormats() ) ) {
-			throw new Exception\ImagickNotSupportWebpException();
+			throw new ImagickNotSupportWebpException();
 		}
 
 		$image->setImageFormat( $extension );
@@ -118,7 +123,10 @@ class ImagickMethod extends LibraryMethodAbstract {
 			$image_profiles = $image->getImageProfiles( '*', true );
 			foreach ( $image_profiles as $profile_name => $image_profile ) {
 				if ( ! in_array( $profile_name, self::PROTECTED_IMAGE_PROFILES ) ) {
-					$image->removeImageProfile( $profile_name );
+					try {
+						$image->removeImageProfile( $profile_name );
+					} catch ( \ImagickException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+					}
 				}
 			}
 		}
@@ -126,7 +134,7 @@ class ImagickMethod extends LibraryMethodAbstract {
 		$blob = $image->getImageBlob();
 
 		if ( ! file_put_contents( $output_path, $blob ) ) {
-			throw new Exception\ConversionErrorException( $source_path );
+			throw new ConversionErrorException( $source_path );
 		}
 	}
 }

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -34,12 +34,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Niels Keurentjes <niels.keurentjes@omines.com>
  */
-abstract class BaseDependencyCommand extends BaseCommand
+class BaseDependencyCommand extends BaseCommand
 {
-    protected const ARGUMENT_PACKAGE = 'package';
-    protected const ARGUMENT_CONSTRAINT = 'version';
-    protected const OPTION_RECURSIVE = 'recursive';
-    protected const OPTION_TREE = 'tree';
+    const ARGUMENT_PACKAGE = 'package';
+    const ARGUMENT_CONSTRAINT = 'version';
+    const OPTION_RECURSIVE = 'recursive';
+    const OPTION_TREE = 'tree';
 
     /** @var ?string[] */
     protected $colors;
@@ -50,46 +50,22 @@ abstract class BaseDependencyCommand extends BaseCommand
      * @param  bool            $inverted Whether to invert matching process (why-not vs why behaviour)
      * @return int             Exit code of the operation.
      */
-    protected function doExecute(InputInterface $input, OutputInterface $output, bool $inverted = false): int
+    protected function doExecute(InputInterface $input, OutputInterface $output, $inverted = false)
     {
         // Emit command event on startup
-        $composer = $this->requireComposer();
+        $composer = $this->getComposer();
         $commandEvent = new CommandEvent(PluginEvents::COMMAND, $this->getName(), $input, $output);
         $composer->getEventDispatcher()->dispatch($commandEvent->getName(), $commandEvent);
 
-        $repos = [];
-
-        $repos[] = new RootPackageRepository(clone $composer->getPackage());
-
-        if ($input->getOption('locked')) {
-            $locker = $composer->getLocker();
-
-            if (!$locker->isLocked()) {
-                throw new \UnexpectedValueException('A valid composer.lock file is required to run this command with --locked');
-            }
-
-            $repos[] = $locker->getLockedRepository(true);
-            $repos[] = new PlatformRepository([], $locker->getPlatformOverrides());
-        } else {
-            $localRepo = $composer->getRepositoryManager()->getLocalRepository();
-            $rootPkg = $composer->getPackage();
-
-            if (count($localRepo->getPackages()) === 0 && (count($rootPkg->getRequires()) > 0 || count($rootPkg->getDevRequires()) > 0)) {
-                $output->writeln('<warning>No dependencies installed. Try running composer install or update, or use --locked.</warning>');
-
-                return 1;
-            }
-
-            $repos[] = $localRepo;
-
-            $platformOverrides = $composer->getConfig()->get('platform') ?: [];
-            $repos[] = new PlatformRepository([], $platformOverrides);
-        }
-
-        $installedRepo = new InstalledRepository($repos);
+        $platformOverrides = $composer->getConfig()->get('platform') ?: array();
+        $installedRepo = new InstalledRepository(array(
+            new RootPackageRepository(clone $composer->getPackage()),
+            $composer->getRepositoryManager()->getLocalRepository(),
+            new PlatformRepository(array(), $platformOverrides),
+        ));
 
         // Parse package name and constraint
-        [$needle, $textConstraint] = array_pad(
+        list($needle, $textConstraint) = array_pad(
             explode(':', $input->getArgument(self::ARGUMENT_PACKAGE)),
             2,
             $input->hasArgument(self::ARGUMENT_CONSTRAINT) ? $input->getArgument(self::ARGUMENT_CONSTRAINT) : '*'
@@ -104,17 +80,17 @@ abstract class BaseDependencyCommand extends BaseCommand
         // If the version we ask for is not installed then we need to locate it in remote repos and add it.
         // This is needed for why-not to resolve conflicts from an uninstalled version against installed packages.
         if (!$installedRepo->findPackage($needle, $textConstraint)) {
-            $defaultRepos = new CompositeRepository(RepositoryFactory::defaultRepos($this->getIO(), $composer->getConfig(), $composer->getRepositoryManager()));
+            $defaultRepos = new CompositeRepository(RepositoryFactory::defaultRepos($this->getIO()));
             if ($match = $defaultRepos->findPackage($needle, $textConstraint)) {
-                $installedRepo->addRepository(new InstalledArrayRepository([clone $match]));
+                $installedRepo->addRepository(new InstalledArrayRepository(array(clone $match)));
             }
         }
 
         // Include replaced packages for inverted lookups as they are then the actual starting point to consider
-        $needles = [$needle];
+        $needles = array($needle);
         if ($inverted) {
             foreach ($packages as $package) {
-                $needles = array_merge($needles, array_map(static function (Link $link): string {
+                $needles = array_merge($needles, array_map(function (Link $link) {
                     return $link->getTarget();
                 }, $package->getReplaces()));
             }
@@ -150,10 +126,6 @@ abstract class BaseDependencyCommand extends BaseCommand
             $this->printTable($output, $results);
         }
 
-        if ($inverted && $input->hasArgument(self::ARGUMENT_CONSTRAINT)) {
-            $this->getIO()->writeError('Not finding what you were looking for? Try calling `composer update "'.$input->getArgument(self::ARGUMENT_PACKAGE).':'.$input->getArgument(self::ARGUMENT_CONSTRAINT).'" --dry-run` to get another view on the problem.');
-        }
-
         return 0;
     }
 
@@ -161,27 +133,29 @@ abstract class BaseDependencyCommand extends BaseCommand
      * Assembles and prints a bottom-up table of the dependencies.
      *
      * @param array{PackageInterface, Link, mixed}[] $results
+     *
+     * @return void
      */
-    protected function printTable(OutputInterface $output, $results): void
+    protected function printTable(OutputInterface $output, $results)
     {
-        $table = [];
-        $doubles = [];
+        $table = array();
+        $doubles = array();
         do {
-            $queue = [];
-            $rows = [];
+            $queue = array();
+            $rows = array();
             foreach ($results as $result) {
                 /**
                  * @var PackageInterface $package
                  * @var Link             $link
                  */
-                [$package, $link, $children] = $result;
+                list($package, $link, $children) = $result;
                 $unique = (string) $link;
                 if (isset($doubles[$unique])) {
                     continue;
                 }
                 $doubles[$unique] = true;
                 $version = $package->getPrettyVersion() === RootPackage::DEFAULT_PRETTY_VERSION ? '-' : $package->getPrettyVersion();
-                $rows[] = [$package->getPrettyName(), $version, $link->getDescription(), sprintf('%s (%s)', $link->getTarget(), $link->getPrettyConstraint())];
+                $rows[] = array($package->getPrettyName(), $version, $link->getDescription(), sprintf('%s (%s)', $link->getTarget(), $link->getPrettyConstraint()));
                 if ($children) {
                     $queue = array_merge($queue, $children);
                 }
@@ -195,16 +169,18 @@ abstract class BaseDependencyCommand extends BaseCommand
 
     /**
      * Init styles for tree
+     *
+     * @return void
      */
-    protected function initStyles(OutputInterface $output): void
+    protected function initStyles(OutputInterface $output)
     {
-        $this->colors = [
+        $this->colors = array(
             'green',
             'yellow',
             'cyan',
             'magenta',
             'blue',
-        ];
+        );
 
         foreach ($this->colors as $color) {
             $style = new OutputFormatterStyle($color);
@@ -218,17 +194,19 @@ abstract class BaseDependencyCommand extends BaseCommand
      * @param array{PackageInterface, Link, mixed[]|bool}[] $results Results to be printed at this level.
      * @param string  $prefix  Prefix of the current tree level.
      * @param int     $level   Current level of recursion.
+     *
+     * @return void
      */
-    protected function printTree(array $results, string $prefix = '', int $level = 1): void
+    protected function printTree($results, $prefix = '', $level = 1)
     {
         $count = count($results);
         $idx = 0;
         foreach ($results as $result) {
-            [$package, $link, $children] = $result;
+            list($package, $link, $children) = $result;
 
             $color = $this->colors[$level % count($this->colors)];
             $prevColor = $this->colors[($level - 1) % count($this->colors)];
-            $isLast = (++$idx === $count);
+            $isLast = (++$idx == $count);
             $versionText = $package->getPrettyVersion() === RootPackage::DEFAULT_PRETTY_VERSION ? '' : $package->getPrettyVersion();
             $packageText = rtrim(sprintf('<%s>%s</%1$s> %s', $color, $package->getPrettyName(), $versionText));
             $linkText = sprintf('%s <%s>%s</%2$s> %s', $link->getDescription(), $prevColor, $link->getTarget(), $link->getPrettyConstraint());
@@ -240,11 +218,16 @@ abstract class BaseDependencyCommand extends BaseCommand
         }
     }
 
-    private function writeTreeLine(string $line): void
+    /**
+     * @param string $line
+     *
+     * @return void
+     */
+    private function writeTreeLine($line)
     {
         $io = $this->getIO();
         if (!$io->isDecorated()) {
-            $line = str_replace(['└', '├', '──', '│'], ['`-', '|-', '-', '|'], $line);
+            $line = str_replace(array('└', '├', '──', '│'), array('`-', '|-', '-', '|'), $line);
         }
 
         $io->write($line);

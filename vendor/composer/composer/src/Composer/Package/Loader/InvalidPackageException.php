@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -40,7 +40,7 @@ class InvalidPackageException extends \Exception
     /**
      * @return mixed[]
      */
-    public function getData(): array
+    public function getData()
     {
         return $this->data;
     }
@@ -48,7 +48,7 @@ class InvalidPackageException extends \Exception
     /**
      * @return string[]
      */
-    public function getErrors(): array
+    public function getErrors()
     {
         return $this->errors;
     }
@@ -56,7 +56,7 @@ class InvalidPackageException extends \Exception
     /**
      * @return string[]
      */
-    public function getWarnings(): array
+    public function getWarnings()
     {
         return $this->warnings;
     }

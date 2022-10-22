@@ -978,6 +978,10 @@ function get_home_dir() {
  * @return string String with trailing slash added.
  */
 function trailingslashit( $string ) {
+	if ( ! is_string( $string ) ) {
+		return '/';
+	}
+
 	return rtrim( $string, '/\\' ) . '/';
 }
 
@@ -1055,7 +1059,7 @@ function get_temp_dir() {
  * @return mixed
  */
 function parse_ssh_url( $url, $component = -1 ) {
-	preg_match( '#^((docker|docker\-compose|ssh|vagrant):)?(([^@:]+)@)?([^:/~]+)(:([\d]*))?((/|~)(.+))?$#', $url, $matches );
+	preg_match( '#^((docker|docker\-compose|docker\-compose\-run|ssh|vagrant):)?(([^@:]+)@)?([^:/~]+)(:([\d]*))?((/|~)(.+))?$#', $url, $matches );
 	$bits = [];
 	foreach ( [
 		2 => 'scheme',
@@ -1491,6 +1495,11 @@ function past_tense_verb( $verb ) {
  * @return string
  */
 function get_php_binary() {
+	// PHAR installs always use PHP_BINARY.
+	if ( inside_phar() ) {
+		return PHP_BINARY;
+	}
+
 	$wp_cli_php_used = getenv( 'WP_CLI_PHP_USED' );
 	if ( false !== $wp_cli_php_used ) {
 		return $wp_cli_php_used;
@@ -1775,4 +1784,14 @@ function get_sql_modes() {
 	}
 
 	return $sql_modes;
+}
+
+/**
+ * Get the WP-CLI cache directory.
+ *
+ * @return string
+ */
+function get_cache_dir() {
+	$home = get_home_dir();
+	return getenv( 'WP_CLI_CACHE_DIR' ) ? : "$home/.wp-cli/cache";
 }

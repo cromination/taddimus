@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": ">=5.6",
-        "composer/composer": "^1.10.23 || ^2.2.3",
+        "composer/composer": "^1.10.23 || ~2.2.17",
         "wp-cli/cache-command": "^2",
         "wp-cli/checksum-command": "^2.1",
         "wp-cli/config-command": "^2.1",
@@ -35,7 +35,7 @@
         "wp-cli/shell-command": "^2",
         "wp-cli/super-admin-command": "^2",
         "wp-cli/widget-command": "^2",
-        "wp-cli/wp-cli": "^2.6"
+        "wp-cli/wp-cli": "^2.7.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
@@ -46,7 +46,8 @@
     },
     "config": {
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "johnpbloch/wordpress-core-installer": true
         },
         "platform": {
             "php": "5.6"

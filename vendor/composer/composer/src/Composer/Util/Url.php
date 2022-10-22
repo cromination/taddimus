@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -21,9 +21,12 @@ use Composer\Pcre\Preg;
 class Url
 {
     /**
+     * @param  Config $config
+     * @param  string $url
+     * @param  string $ref
      * @return string the updated URL
      */
-    public static function updateDistReference(Config $config, string $url, string $ref): string
+    public static function updateDistReference(Config $config, $url, $ref)
     {
         $host = parse_url($url, PHP_URL_HOST);
 
@@ -57,7 +60,11 @@ class Url
         return $url;
     }
 
-    public static function getOrigin(Config $config, string $url): string
+    /**
+     * @param  string $url
+     * @return string
+     */
+    public static function getOrigin(Config $config, $url)
     {
         if (0 === strpos($url, 'file://')) {
             return $url;
@@ -83,8 +90,9 @@ class Url
         // Gitlab can be installed in a non-root context (i.e. gitlab.com/foo). When downloading archives the originUrl
         // is the host without the path, so we look for the registered gitlab-domains matching the host here
         if (
-            false === strpos($origin, '/')
-            && !in_array($origin, $config->get('gitlab-domains'), true)
+            is_array($config->get('gitlab-domains'))
+            && false === strpos($origin, '/')
+            && !in_array($origin, $config->get('gitlab-domains'))
         ) {
             foreach ($config->get('gitlab-domains') as $gitlabDomain) {
                 if (0 === strpos($gitlabDomain, $origin)) {
@@ -96,13 +104,17 @@ class Url
         return $origin;
     }
 
-    public static function sanitize(string $url): string
+    /**
+     * @param  string $url
+     * @return string
+     */
+    public static function sanitize($url)
     {
         // GitHub repository rename result in redirect locations containing the access_token as GET parameter
         // e.g. https://api.github.com/repositories/9999999999?access_token=github_token
         $url = Preg::replace('{([&?]access_token=)[^&]+}', '$1***', $url);
 
-        $url = Preg::replaceCallback('{^(?P<prefix>[a-z0-9]+://)?(?P<user>[^:/\s@]+):(?P<password>[^@\s/]+)@}i', static function ($m): string {
+        $url = Preg::replaceCallback('{^(?P<prefix>[a-z0-9]+://)?(?P<user>[^:/\s@]+):(?P<password>[^@\s/]+)@}i', function ($m) {
             // if the username looks like a long (12char+) hex string, or a modern github token (e.g. ghp_xxx) we obfuscate that
             if (Preg::isMatch('{^([a-f0-9]{12,}|gh[a-z]_[a-zA-Z0-9_]+)$}', $m['user'])) {
                 return $m['prefix'].'***:***@';

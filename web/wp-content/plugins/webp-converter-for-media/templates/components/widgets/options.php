@@ -2,13 +2,13 @@
 /**
  * Widget displayed in main container on plugin settings page.
  *
- * @var mixed[] $form_options       Settings options in main container.
- * @var string  $form_input_name    Name of hidden field with form ID.
- * @var string  $form_input_value   ID of settings form in main container.
- * @var string  $nonce_input_name   Name of hidden field with WordPress Nonce value.
- * @var string  $nonce_input_value  WordPress Nonce value.
- * @var bool    $token_valid_status Status of PRO version.
- * @var string  $api_calculate_url  URL of REST API endpoint.
+ * @var mixed[] $form_options        Settings options in main container.
+ * @var string  $form_input_name     Name of hidden field with form ID.
+ * @var string  $form_input_value    ID of settings form in main container.
+ * @var string  $nonce_input_name    Name of hidden field with WordPress Nonce value.
+ * @var string  $nonce_input_value   WordPress Nonce value.
+ * @var bool    $token_valid_status  Status of access token.
+ * @var bool    $token_active_status Status of PRO version.
  *
  * @package Converter for Media
  */

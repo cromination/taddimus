@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -18,7 +18,6 @@ use Composer\Util\IniHelper;
 use Composer\Util\Platform;
 use Composer\Util\ProcessExecutor;
 use Symfony\Component\Process\ExecutableFinder;
-use Symfony\Component\Process\Process;
 use React\Promise\PromiseInterface;
 use ZipArchive;
 
@@ -40,28 +39,28 @@ class ZipDownloader extends ArchiveDownloader
     /**
      * @inheritDoc
      */
-    public function download(PackageInterface $package, string $path, ?PackageInterface $prevPackage = null, bool $output = true): PromiseInterface
+    public function download(PackageInterface $package, $path, PackageInterface $prevPackage = null, $output = true)
     {
         if (null === self::$unzipCommands) {
-            self::$unzipCommands = [];
+            self::$unzipCommands = array();
             $finder = new ExecutableFinder;
-            if (Platform::isWindows() && ($cmd = $finder->find('7z', null, ['C:\Program Files\7-Zip']))) {
-                self::$unzipCommands[] = ['7z', ProcessExecutor::escape($cmd).' x -bb0 -y %s -o%s'];
+            if (Platform::isWindows() && ($cmd = $finder->find('7z', null, array('C:\Program Files\7-Zip')))) {
+                self::$unzipCommands[] = array('7z', ProcessExecutor::escape($cmd).' x -bb0 -y %s -o%s');
             }
             if ($cmd = $finder->find('unzip')) {
-                self::$unzipCommands[] = ['unzip', ProcessExecutor::escape($cmd).' -qq %s -d %s'];
+                self::$unzipCommands[] = array('unzip', ProcessExecutor::escape($cmd).' -qq %s -d %s');
             }
             if (!Platform::isWindows() && ($cmd = $finder->find('7z'))) { // 7z linux/macOS support is only used if unzip is not present
-                self::$unzipCommands[] = ['7z', ProcessExecutor::escape($cmd).' x -bb0 -y %s -o%s'];
+                self::$unzipCommands[] = array('7z', ProcessExecutor::escape($cmd).' x -bb0 -y %s -o%s');
             }
             if (!Platform::isWindows() && ($cmd = $finder->find('7zz'))) { // 7zz linux/macOS support is only used if unzip is not present
-                self::$unzipCommands[] = ['7zz', ProcessExecutor::escape($cmd).' x -bb0 -y %s -o%s'];
+                self::$unzipCommands[] = array('7zz', ProcessExecutor::escape($cmd).' x -bb0 -y %s -o%s');
             }
         }
 
         $procOpenMissing = false;
         if (!function_exists('proc_open')) {
-            self::$unzipCommands = [];
+            self::$unzipCommands = array();
             $procOpenMissing = true;
         }
 
@@ -105,8 +104,9 @@ class ZipDownloader extends ArchiveDownloader
      *
      * @param  string           $file File to extract
      * @param  string           $path Path where to extract file
+     * @return PromiseInterface
      */
-    private function extractWithSystemUnzip(PackageInterface $package, string $file, string $path): PromiseInterface
+    private function extractWithSystemUnzip(PackageInterface $package, $file, $path)
     {
         static $warned7ZipLinux = false;
 
@@ -128,7 +128,7 @@ class ZipDownloader extends ArchiveDownloader
         }
 
         $executable = $commandSpec[0];
-        if (!$warned7ZipLinux && !Platform::isWindows() && in_array($executable, ['7z', '7zz'], true)) {
+        if (!$warned7ZipLinux && !Platform::isWindows() && in_array($executable, array('7z', '7zz'), true)) {
             $warned7ZipLinux = true;
             if (0 === $this->process->execute($executable, $output)) {
                 if (Preg::isMatch('{^\s*7-Zip(?: \[64\])? ([0-9.]+)}', $output, $match) && version_compare($match[1], '21.01', '<')) {
@@ -137,8 +137,9 @@ class ZipDownloader extends ArchiveDownloader
             }
         }
 
+        $self = $this;
         $io = $this->io;
-        $tryFallback = function (\Throwable $processError) use ($isLastChance, $io, $file, $path, $package, $executable): \React\Promise\PromiseInterface {
+        $tryFallback = function ($processError) use ($isLastChance, $io, $self, $file, $path, $package, $executable) {
             if ($isLastChance) {
                 throw $processError;
             }
@@ -153,15 +154,15 @@ class ZipDownloader extends ArchiveDownloader
                 $io->writeError('    Unzip with '.$executable.' command failed, falling back to ZipArchive class');
             }
 
-            return $this->extractWithZipArchive($package, $file, $path);
+            return $self->extractWithZipArchive($package, $file, $path);
         };
 
         try {
             $promise = $this->process->executeAsync($command);
 
-            return $promise->then(function (Process $process) use ($tryFallback, $command, $package, $file) {
+            return $promise->then(function ($process) use ($tryFallback, $command, $package, $file, $self) {
                 if (!$process->isSuccessful()) {
-                    if (isset($this->cleanupExecuted[$package->getName()])) {
+                    if (isset($self->cleanupExecuted[$package->getName()])) {
                         throw new \RuntimeException('Failed to extract '.$package->getName().' as the installation was aborted by another package operation.');
                     }
 
@@ -171,6 +172,8 @@ class ZipDownloader extends ArchiveDownloader
                     return $tryFallback(new \RuntimeException('Failed to extract '.$package->getName().': ('.$process->getExitCode().') '.$command."\n\n".$output));
                 }
             });
+        } catch (\Exception $e) {
+            return $tryFallback($e);
         } catch (\Throwable $e) {
             return $tryFallback($e);
         }
@@ -181,8 +184,12 @@ class ZipDownloader extends ArchiveDownloader
      *
      * @param  string           $file File to extract
      * @param  string           $path Path where to extract file
+     * @return PromiseInterface
+     *
+     * TODO v3 should make this private once we can drop PHP 5.3 support
+     * @protected
      */
-    private function extractWithZipArchive(PackageInterface $package, string $file, string $path): PromiseInterface
+    public function extractWithZipArchive(PackageInterface $package, $file, $path)
     {
         $processError = null;
         $zipArchive = $this->zipArchiveObject ?: new ZipArchive();
@@ -199,7 +206,7 @@ class ZipDownloader extends ArchiveDownloader
                 if (true === $extractResult) {
                     $zipArchive->close();
 
-                    return \React\Promise\resolve(null);
+                    return \React\Promise\resolve();
                 }
 
                 $processError = new \RuntimeException(rtrim("There was an error extracting the ZIP file, it is either corrupted or using an invalid format.\n"));
@@ -208,6 +215,8 @@ class ZipDownloader extends ArchiveDownloader
             }
         } catch (\ErrorException $e) {
             $processError = new \RuntimeException('The archive may contain identical file names with different capitalization (which fails on case insensitive filesystems): '.$e->getMessage(), 0, $e);
+        } catch (\Exception $e) {
+            $processError = $e;
         } catch (\Throwable $e) {
             $processError = $e;
         }
@@ -220,16 +229,24 @@ class ZipDownloader extends ArchiveDownloader
      *
      * @param  string                $file File to extract
      * @param  string                $path Path where to extract file
+     * @return PromiseInterface|null
+     *
+     * TODO v3 should make this private once we can drop PHP 5.3 support
+     * @protected
      */
-    protected function extract(PackageInterface $package, string $file, string $path): PromiseInterface
+    public function extract(PackageInterface $package, $file, $path)
     {
         return $this->extractWithSystemUnzip($package, $file, $path);
     }
 
     /**
      * Give a meaningful error message to the user.
+     *
+     * @param  int    $retval
+     * @param  string $file
+     * @return string
      */
-    protected function getErrorMessage(int $retval, string $file): string
+    protected function getErrorMessage($retval, $file)
     {
         switch ($retval) {
             case ZipArchive::ER_EXISTS:

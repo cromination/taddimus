@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Orbit Fox Companion 2.10.19\n"
+"Project-Id-Version: Orbit Fox Companion 2.10.20\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/Codeinwp/themeisle-companion/issues\n"
-"POT-Creation-Date: 2022-09-15 20:08:37+00:00\n"
+"POT-Creation-Date: 2022-10-17 13:04:10+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -245,7 +245,7 @@ msgstr ""
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:147
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:361
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:836
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:184
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:186
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/registration_admin.php:121
 msgid "Left"
 msgstr ""
@@ -276,7 +276,7 @@ msgstr ""
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:155
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:369
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:844
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:192
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:194
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/registration_admin.php:129
 msgid "Right"
 msgstr ""
@@ -644,7 +644,7 @@ msgstr ""
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:151
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:365
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:840
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:188
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:190
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/registration_admin.php:125
 msgid "Center"
 msgstr ""
@@ -1262,7 +1262,7 @@ msgstr ""
 #: vendor/codeinwp/elementor-extra-widgets/widgets/elementor/pricing-table.php:362
 #: vendor/codeinwp/elementor-extra-widgets/widgets/elementor/services.php:106
 #: vendor/codeinwp/elementor-extra-widgets/widgets/elementor/services.php:139
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:130
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:132
 msgid "Icon"
 msgstr ""
 
@@ -1322,7 +1322,7 @@ msgstr ""
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:617
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:141
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:830
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:178
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:180
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/registration_admin.php:115
 msgid "Alignment"
 msgstr ""
@@ -2660,7 +2660,7 @@ msgstr ""
 
 #: vendor/codeinwp/elementor-extra-widgets/widgets/elementor/pricing-table.php:387
 #: vendor/codeinwp/elementor-extra-widgets/widgets/elementor/pricing-table.php:780
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:159
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:161
 msgid "Icon Spacing"
 msgstr ""
 
@@ -2730,7 +2730,7 @@ msgstr ""
 
 #: vendor/codeinwp/elementor-extra-widgets/widgets/elementor/pricing-table.php:760
 #: vendor/codeinwp/elementor-extra-widgets/widgets/elementor/pricing-table.php:857
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:139
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:141
 msgid "Icon Size"
 msgstr ""
 
@@ -3148,7 +3148,7 @@ msgstr ""
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:133
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:134
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:956
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:122
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:124
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/registration_admin.php:107
 msgid "Submit"
 msgstr ""
@@ -3189,9 +3189,9 @@ msgid "The %s setting is required!"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:724
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:108
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:111
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:993
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:221
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:223
 msgid "Access Key"
 msgstr ""
 
@@ -3213,32 +3213,32 @@ msgid "Send to Email Address"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:849
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:255
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:259
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:257
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:261
 msgid "Address Line 2"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:850
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:269
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:273
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:271
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:275
 msgid "City"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:851
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:283
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:287
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:285
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:289
 msgid "State/Province/Region"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:852
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:297
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:301
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:299
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:303
 msgid "Postal / Zip Code"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:853
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:311
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:315
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:313
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:317
 msgid "Country"
 msgstr ""
 
@@ -3293,16 +3293,16 @@ msgid ""
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-contact.php:122
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:116
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:119
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:105
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:103
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:105
 msgid "Success message"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-contact.php:127
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:121
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:124
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/contact_admin.php:114
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:112
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:114
 msgid "Error message"
 msgstr ""
 
@@ -3332,19 +3332,19 @@ msgid "Newsletter Form"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:54
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:123
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:125
 msgid "Join Newsletter"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:55
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:104
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:80
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:106
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:78
 msgid "Welcome to our newsletter!"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:56
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:113
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:79
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:115
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:77
 msgid "Action failed!"
 msgstr ""
 
@@ -3358,33 +3358,33 @@ msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:83
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-registration.php:102
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:244
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:246
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/registration_admin.php:164
 msgid "Map field to"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:99
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:88
-msgid "Subscribe to"
-msgstr ""
-
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:101
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:90
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:97
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:84
 msgid "MailChimp"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:102
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:91
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:98
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:85
 msgid "Sendinblue "
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:103
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:92
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:101
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:88
 msgid "MailerLite"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:112
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:229
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:106
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:94
+msgid "Subscribe to"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:115
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:231
 msgid "List ID"
 msgstr ""
 
@@ -3473,73 +3473,73 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:213
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:215
 msgid "Provider Settings"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:247
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:249
 msgid ""
 "If you're using SendInBlue or MailerLite and you map the field to address, "
 "please ignore the additional settings."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:254
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:256
 msgid "Line 2 Label"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:258
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:260
 msgid "Line 2 Placeholder"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:262
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:264
 msgid "Line 2 Width"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:268
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:270
 msgid "City Label"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:272
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:274
 msgid "City Placeholder"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:276
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:278
 msgid "City Width"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:282
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:284
 msgid "State Label"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:286
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:288
 msgid "State Placeholder"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:290
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:292
 msgid "State Width"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:296
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:298
 msgid "Zip Code Label"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:300
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:302
 msgid "Zip Code Placeholder"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:304
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:306
 msgid "Zip Code Width"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:310
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:312
 msgid "Country Label"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:314
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:316
 msgid " Country Placeholder"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:318
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-admin/elementor/newsletter_admin.php:320
 msgid "Country Width"
 msgstr ""
 
@@ -3548,7 +3548,7 @@ msgid "We failed to send your message!"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/contact_public.php:54
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:61
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:59
 msgid "Wrong email configuration! Please contact administration!"
 msgstr ""
 
@@ -3557,7 +3557,7 @@ msgid "Missing %s"
 msgstr ""
 
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/contact_public.php:74
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:52
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:50
 #: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/registration_public.php:36
 msgid "Invalid email."
 msgstr ""
@@ -3576,7 +3576,7 @@ msgid ""
 "form settings on "
 msgstr ""
 
-#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:47
+#: vendor/codeinwp/themeisle-content-forms/includes/widgets-public/newsletter_public.php:45
 msgid "The email field cannot be empty."
 msgstr ""
 

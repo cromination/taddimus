@@ -340,7 +340,7 @@ Feature: Download WordPress
     """
     And the return code should be 1
 
-  Scenario: Core download without the wp-content dir
+  Scenario: Core download without the wp-content/plugins dir
     Given an empty directory
 
     When I run `wp core download --skip-content`
@@ -349,9 +349,22 @@ Feature: Download WordPress
       Success: WordPress downloaded.
       """
     And the wp-includes directory should exist
-    And the wp-content directory should not exist
+    And the wp-content/plugins directory should not exist
+    And the wp-includes/js/tinymce/plugins directory should exist
 
-  Scenario: Core download without the wp-content dir should work non US locale
+  Scenario: Core download without the wp-content/themes dir
+    Given an empty directory
+
+    When I run `wp core download --skip-content`
+    Then STDOUT should contain:
+      """
+      Success: WordPress downloaded.
+      """
+    And the wp-includes directory should exist
+    And the wp-content/themes directory should not exist
+    And the wp-includes/js/tinymce/themes directory should exist
+
+  Scenario: Core download without the wp-content/plugins dir should work non US locale
     Given an empty directory
 
     When I run `wp core download --skip-content --version=4.9.11 --locale=nl_NL`
@@ -360,9 +373,22 @@ Feature: Download WordPress
       Success: WordPress downloaded.
       """
     And the wp-includes directory should exist
-    And the wp-content directory should not exist
+    And the wp-content/plugins directory should not exist
+    And the wp-includes/js/tinymce/plugins directory should exist
 
-  Scenario: Core download without the wp-content dir should work if a version is set
+  Scenario: Core download without the wp-content/themes dir should work non US locale
+    Given an empty directory
+
+    When I run `wp core download --skip-content --version=4.9.11 --locale=nl_NL`
+    Then STDOUT should contain:
+      """
+      Success: WordPress downloaded.
+      """
+    And the wp-includes directory should exist
+    And the wp-content/themes directory should not exist
+    And the wp-includes/js/tinymce/themes directory should exist
+
+  Scenario: Core download without the wp-content/plugins dir should work if a version is set
     Given an empty directory
 
     When I try `wp core download --skip-content --version=4.7`
@@ -371,16 +397,56 @@ Feature: Download WordPress
       Success: WordPress downloaded.
       """
     And the wp-includes directory should exist
-    And the wp-content directory should not exist
+    And the wp-content/plugins directory should not exist
+    And the wp-content/themes directory should not exist
+    And the wp-includes/js/tinymce/themes directory should exist
+    And the wp-includes/js/tinymce/plugins directory should exist
+
+  Scenario: Core download without extract parameter should unzip the download file
+    Given an empty directory
+
+    When I run `wp core download --version=4.5 --locale=de_DE`
+    Then the wp-content directory should exist
+    And the wordpress-4.5-de_DE.tar.gz file should not exist
 
   Scenario: Core download with extract parameter should unzip the download file
     Given an empty directory
 
-    When I run `wp core download --extract`
+    When I run `wp core download --version=4.5 --locale=de_DE --extract`
     Then the wp-content directory should exist
+    And the wordpress-4.5-de_DE.tar.gz file should not exist
+
+  Scenario: Core download with extract parameter should unzip the download file (already cached)
+    Given an empty directory
+
+    When I run `wp core download --version=4.5 --locale=de_DE --extract`
+    And I run `rm -rf *`
+    And I run `wp core download --version=4.5 --locale=de_DE --extract`
+    Then the wp-content directory should exist
+    And the wordpress-4.5-de_DE.tar.gz file should not exist
 
   Scenario: Core download with no-extract should not unzip the download file
     Given an empty directory
 
-    When I run `wp core download --no-extract`
+    When I run `wp core download --version=4.5 --locale=de_DE --no-extract`
     Then the wp-content directory should not exist
+    And the wordpress-4.5-de_DE.tar.gz file should exist
+
+  Scenario: Core download with no-extract should not unzip the download file (already cached)
+    Given an empty directory
+
+    When I run `wp core download --version=4.5 --locale=de_DE --no-extract`
+    And I run `rm -rf wordpress-4.5-de_DE.tar.gz`
+    And I run `wp core download --version=4.5 --locale=de_DE --no-extract`
+    Then the wp-content directory should not exist
+    And the wordpress-4.5-de_DE.tar.gz file should exist
+
+  Scenario: Error when using both --skip-content and --no-extract
+    Given an empty directory
+
+    When I try `wp core download --skip-content --no-extract`
+    Then STDERR should contain:
+      """
+      Error: Cannot use both --skip-content and --no-extract at the same time.
+      """
+    And the return code should be 1

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 /*
  * This file is part of Composer.
@@ -13,8 +13,8 @@
 namespace Composer\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
-use Composer\Console\Input\InputOption;
-use Composer\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,24 +27,31 @@ class ScriptAliasCommand extends BaseCommand
     /** @var string */
     private $description;
 
-    public function __construct(string $script, ?string $description)
+    /**
+     * @param string $script
+     * @param string $description
+     */
+    public function __construct($script, $description)
     {
         $this->script = $script;
-        $this->description = $description ?? 'Runs the '.$script.' script as defined in composer.json';
+        $this->description = empty($description) ? 'Runs the '.$script.' script as defined in composer.json.' : $description;
 
         parent::__construct();
     }
 
-    protected function configure(): void
+    /**
+     * @return void
+     */
+    protected function configure()
     {
         $this
             ->setName($this->script)
             ->setDescription($this->description)
-            ->setDefinition([
+            ->setDefinition(array(
                 new InputOption('dev', null, InputOption::VALUE_NONE, 'Sets the dev mode.'),
                 new InputOption('no-dev', null, InputOption::VALUE_NONE, 'Disables the dev mode.'),
                 new InputArgument('args', InputArgument::IS_ARRAY | InputArgument::OPTIONAL, ''),
-            ])
+            ))
             ->setHelp(
                 <<<EOT
 The <info>run-script</info> command runs scripts defined in composer.json:
@@ -57,9 +64,12 @@ EOT
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    /**
+     * @return int
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $composer = $this->requireComposer();
+        $composer = $this->getComposer();
 
         $args = $input->getArguments();
 

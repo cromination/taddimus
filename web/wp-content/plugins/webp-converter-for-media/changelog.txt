@@ -1,5 +1,15 @@
 == Changelog ==
 
+= 5.3.1 (2022-10-12) =
+* `[Added]` Error handling while connecting to REST API
+
+= 5.3.0 (2022-10-11) =
+* `[Removed]` Action `webpc_convert_dir`
+* `[Removed]` Filter `webpc_dir_files`
+* `[Fixed]` Support for WordPress older than version 5.3
+* `[Added]` List of files for optimization in tree form
+* `[Added]` Handling unknown errors while converting with Imagick method
+
 = 5.2.4 (2022-09-27) =
 * `[Changed]` Messages displayed during bulk optimization of images
 * `[Added]` Debug information about registered image sub-sizes

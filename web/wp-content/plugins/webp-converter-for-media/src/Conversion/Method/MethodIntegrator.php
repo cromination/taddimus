@@ -39,10 +39,10 @@ class MethodIntegrator {
 			'is_fatal_error' => $method->is_fatal_error(),
 			'errors'         => apply_filters( 'webpc_convert_errors', $method->get_errors() ),
 			'files'          => [
-				'all'            => $method->get_files_to_conversion(),
-				'converted'      => $method->get_files_converted(),
-				'converted_webp' => $method->get_files_converted_to_format( WebpFormat::FORMAT_EXTENSION ),
-				'converted_avif' => $method->get_files_converted_to_format( AvifFormat::FORMAT_EXTENSION ),
+				'webp_available' => $method->get_files_available( WebpFormat::FORMAT_EXTENSION ),
+				'webp_converted' => $method->get_files_converted( WebpFormat::FORMAT_EXTENSION ),
+				'avif_available' => $method->get_files_available( AvifFormat::FORMAT_EXTENSION ),
+				'avif_converted' => $method->get_files_converted( AvifFormat::FORMAT_EXTENSION ),
 			],
 			'size'           => [
 				'before' => $method->get_size_before(),
