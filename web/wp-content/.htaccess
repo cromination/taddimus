@@ -46,6 +46,10 @@
     Header always set Cache-Control "private"
     Header append Vary "Accept"
   </FilesMatch>
+  # Add Security Headers for CSP policies
+  Header set Content-Security-Policy "default-src 'self'; img-src 'self' data: http: https: *.gravatar.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' http: https: fonts.googleapis.com; font-src 'self' data: http: https: fonts.googleapis.com themes.googleusercontent.com;"
 </IfModule>
+
+
 # ! --- DO NOT EDIT NEXT LINE --- !
 # END Converter for Media
