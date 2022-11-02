@@ -26,7 +26,6 @@
         "wpackagist-plugin/wp-cloudflare-page-cache": "^4.6",
         "wpackagist-plugin/wordpress-seo": "^19",
         "wpackagist-plugin/varnish-http-purge": "^5.0",
-        "wpackagist-plugin/http-security": "^2.5",
         "wpackagist-plugin/themeisle-companion": "^2.10",
         "wpackagist-theme/twentyseventeen": "^3.0",
         "wpackagist-theme/twentynineteen": "^2.2",

@@ -469,6 +469,8 @@ class autoptimizeImages
 
         if ( array_key_exists( 'host', $url_parsed ) && $url_parsed['host'] !== $site_host && empty( $cdn_url ) ) {
             return false;
+        } elseif ( autoptimizeUtils::is_local_server() ) {
+            return false;
         } elseif ( ! empty( $cdn_url ) && strpos( $url, $cdn_url ) === false && array_key_exists( 'host', $url_parsed ) && $url_parsed['host'] !== $site_host ) {
             return false;
         } elseif ( strpos( $url, '.php' ) !== false ) {
@@ -588,8 +590,9 @@ class autoptimizeImages
             );
         }
 
-        // get img preloads as set in post metabox.
-        $metabox_preloads = array_filter( array_map( 'trim', explode( ',', wp_strip_all_tags( autoptimizeConfig::get_post_meta_ao_settings( 'ao_post_preload' ) ) ) ) );
+        // get img preloads as set in post metabox, exploding ", " instead of "," because LCP preload 
+        // could be a shortpixel URL, which has comma's and results in way too many preloads.
+        $metabox_preloads = array_filter( array_map( 'trim', explode( ', ', wp_strip_all_tags( autoptimizeConfig::get_post_meta_ao_settings( 'ao_post_preload' ) ) ) ) );
 
         // extract img tags.
         if ( preg_match_all( '#<img[^>]*src[^>]*>#Usmi', $in, $matches ) ) {
@@ -639,6 +642,11 @@ class autoptimizeImages
                     }
                 }
 
+                // check if the image needs to be prelaoded.
+                if ( ! empty( $metabox_preloads ) && is_array( $metabox_preloads ) && str_replace( $metabox_preloads, '', $tag ) !== $tag ) {
+                    $to_preload .= $this->create_img_preload_tag( $tag );
+                }
+
                 // do lazyload stuff.
                 if ( $this->should_lazyload( $in ) && ! empty( $url ) ) {
                     // first do lpiq placeholder logic.
@@ -678,11 +686,6 @@ class autoptimizeImages
                 // and add tag to array for later replacement.
                 if ( $tag !== $orig_tag ) {
                     $to_replace[ $orig_tag ] = $tag;
-                }
-
-                // and check if image needs to be prelaoded.
-                if ( ! empty( $metabox_preloads ) && is_array( $metabox_preloads ) && str_replace( $metabox_preloads, '', $tag ) !== $tag ) {
-                    $to_preload .= $this->create_img_preload_tag( $tag );
                 }
             }
         }
@@ -842,13 +845,14 @@ class autoptimizeImages
         // extract img tags and add lazyload attribs/ add preloads.
         if ( preg_match_all( '#<img[^>]*src[^>]*>#Usmi', $out, $matches ) ) {
             foreach ( $matches[0] as $tag ) {
-                if ( $this->should_lazyload( $out ) ) {
-                    $to_replace[ $tag ] = $this->add_lazyload( $tag );
-                }
-
-                // and check if image needs to be prelaoded.
+                // check if image needs to be preloaded.
                 if ( ! empty( $metabox_preloads ) && is_array( $metabox_preloads ) && str_replace( $metabox_preloads, '', $tag ) !== $tag ) {
                     $to_preload .= $this->create_img_preload_tag( $tag );
+                }
+
+                // and lazyloaded.
+                if ( $this->should_lazyload( $out ) ) {
+                    $to_replace[ $tag ] = $this->add_lazyload( $tag );
                 }
             }
             $out = str_replace( array_keys( $to_replace ), array_values( $to_replace ), $out );
@@ -977,6 +981,11 @@ class autoptimizeImages
 
         // clean up; remove tabs/ linebreaks/ spaces.
         $tag = preg_replace( '/\s+/', ' ', $tag );
+        
+        // remove noscript.
+        if ( false !== strpos( $tag, '<noscript' ) ) {
+            $tag = preg_replace( '/<noscript.*<\/noscript>/mU', '', $tag );
+        }
 
         // rewrite img tag to link preload img.
         $_from = array( '<img ', ' src=', ' sizes=', ' srcset=' );
@@ -984,10 +993,10 @@ class autoptimizeImages
         $tag   = str_replace( $_from, $_to, $tag );
 
         // and remove title, alt, class and id.
-        $tag = preg_replace( '/ ((?:title|alt|class|id|loading)=".*")/Um', '', $tag );
-        if ( str_replace( array( ' title=', ' class=', ' alt=', ' id=' ), '', $tag ) !== $tag ) {
+        $tag = preg_replace( '/ ((?:title|alt|class|id|loading|fetchpriority|decoding|data-no-lazy)=".*")/Um', '', $tag );
+        if ( str_replace( array( ' title=', ' class=', ' alt=', ' id=', ' fetchpriority=', ' decoding=', ' data-no-lazy=' ), '', $tag ) !== $tag ) {
             // 2nd regex pass if still title/ class/ alt in case single quotes were used iso doubles.
-            $tag = preg_replace( '/ ((?:title|alt|class|id|loading)=\'.*\')/Um', '', $tag );
+            $tag = preg_replace( '/ ((?:title|alt|class|id|loading|fetchpriority|decoding|data-no-lazy)=\'.*\')/Um', '', $tag );
         }
 
         return $tag;
@@ -1194,6 +1203,13 @@ class autoptimizeImages
     <div class="wrap">
     <h1><?php apply_filters( 'autoptimize_filter_settings_is_pro', false ) ? _e( 'Autoptimize Pro Settings', 'autoptimize' ) : _e( 'Autoptimize Settings', 'autoptimize' ); ?></h1>
         <?php echo autoptimizeConfig::ao_admin_tabs(); ?>
+        <?php if ( autoptimizeUtils::is_local_server() ) { ?>
+            <div class="notice-warning notice"><p>
+            <?php
+            echo __( 'The image optimization service does not work on locally hosted sites or when the server is on a private network.', 'autoptimize' );
+            ?>
+            </p></div>
+        <?php } ?>
         <?php if ( 'down' === $options['availabilities']['extra_imgopt']['status'] ) { ?>
             <div class="notice-warning notice"><p>
             <?php
@@ -1220,7 +1236,7 @@ class autoptimizeImages
     <form id='ao_settings_form' action='<?php echo admin_url( 'options.php' ); ?>' method='post'>
         <?php settings_fields( 'autoptimize_imgopt_settings' ); ?>
         <h2><?php _e( 'Image optimization', 'autoptimize' ); ?></h2>
-        <span id='autoptimize_imgopt_descr'><?php echo apply_filters( 'autoptimize_filter_imgopt_intro_copy', __( 'Make your site significantly faster by just ticking a couple of checkboxes to optimize and lazy load your images, modern image format support included!', 'autoptimize' ) ); ?></span>
+        <span id='autoptimize_imgopt_descr'><?php echo apply_filters( 'autoptimize_filter_imgopt_intro_copy', __( 'Make your site significantly faster by just ticking a couple of checkboxes to optimize and lazy load your images, modern image format support included! No additional plugins or services needed.', 'autoptimize' ) ); ?></span>
         <table class="form-table">
             <tr>
                 <th scope="row"><?php _e( 'Optimize Images', 'autoptimize' ); ?></th>

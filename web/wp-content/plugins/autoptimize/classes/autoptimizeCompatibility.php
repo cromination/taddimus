@@ -36,7 +36,7 @@ class autoptimizeCompatibility
                 'autoptimize_filter_js_exclude',
                 function( $js_excl = '', $html = '' ) {
                     $revslider_excl = 'revslider, setREVStartSize, window.RSIW, window.RS_MODULES, jquery.min.js';
-                    if ( ! empty( $html ) && false !== strpos( $html, '<rs-slides>' ) ) {
+                    if ( ! empty( $html ) && false !== strpos( $html, '<rs-slides' ) ) {
                         if ( is_array( $js_excl ) ) {
                             $js_excl = implode( ',', $js_excl );
                         }
@@ -55,7 +55,7 @@ class autoptimizeCompatibility
             add_filter(
                 'autoptimize_filter_js_removables',
                 function( $to_remove = '', $html = '' ) {
-                    if ( ! empty( $html ) && false === strpos( $html, '<rs-slides>' ) ) {
+                    if ( ! empty( $html ) && false === strpos( $html, '<rs-slides' ) ) {
                         $to_remove .= 'plugins/revslider, setREVStartSize, window.RSIW, window.RS_MODULES';
                     }
 
