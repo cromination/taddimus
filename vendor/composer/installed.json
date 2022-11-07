@@ -5252,16 +5252,16 @@
         },
         {
             "name": "wpackagist-theme/twentytwenty",
-            "version": "1.9",
-            "version_normalized": "1.9.0.0",
+            "version": "2.1",
+            "version_normalized": "2.1.0.0",
             "source": {
                 "type": "svn",
                 "url": "https://themes.svn.wordpress.org/twentytwenty/",
-                "reference": "1.9"
+                "reference": "2.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/theme/twentytwenty.1.9.zip"
+                "url": "https://downloads.wordpress.org/theme/twentytwenty.2.1.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
@@ -5270,6 +5270,27 @@
             "installation-source": "dist",
             "homepage": "https://wordpress.org/themes/twentytwenty/",
             "install-path": "../../web/wp-content/themes/twentytwenty"
+        },
+        {
+            "name": "wpackagist-theme/twentytwentyone",
+            "version": "1.7",
+            "version_normalized": "1.7.0.0",
+            "source": {
+                "type": "svn",
+                "url": "https://themes.svn.wordpress.org/twentytwentyone/",
+                "reference": "1.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/theme/twentytwentyone.1.7.zip"
+            },
+            "require": {
+                "composer/installers": "^1.0 || ^2.0"
+            },
+            "type": "wordpress-theme",
+            "installation-source": "dist",
+            "homepage": "https://wordpress.org/themes/twentytwentyone/",
+            "install-path": "../../web/wp-content/themes/twentytwentyone"
         }
     ],
     "dev": true,
