@@ -27,11 +27,11 @@
  *
  * @since Twenty Twenty 1.0
  *
- * @param array $args    Arguments for displaying the site logo either as an image or text.
- * @param bool  $display Display or return the HTML.
+ * @param array $args Arguments for displaying the site logo either as an image or text.
+ * @param bool  $echo Echo or return the HTML.
  * @return string Compiled HTML based on our arguments.
  */
-function twentytwenty_site_logo( $args = array(), $display = true ) {
+function twentytwenty_site_logo( $args = array(), $echo = true ) {
 	$logo       = get_custom_logo();
 	$site_title = get_bloginfo( 'name' );
 	$contents   = '';
@@ -83,7 +83,7 @@ function twentytwenty_site_logo( $args = array(), $display = true ) {
 	 */
 	$html = apply_filters( 'twentytwenty_site_logo', $html, $args, $classname, $contents );
 
-	if ( ! $display ) {
+	if ( ! $echo ) {
 		return $html;
 	}
 
@@ -96,10 +96,10 @@ function twentytwenty_site_logo( $args = array(), $display = true ) {
  *
  * @since Twenty Twenty 1.0
  *
- * @param bool $display Display or return the HTML.
+ * @param bool $echo Echo or return the html.
  * @return string The HTML to display.
  */
-function twentytwenty_site_description( $display = true ) {
+function twentytwenty_site_description( $echo = true ) {
 	$description = get_bloginfo( 'description' );
 
 	if ( ! $description ) {
@@ -121,7 +121,7 @@ function twentytwenty_site_description( $display = true ) {
 	 */
 	$html = apply_filters( 'twentytwenty_site_description', $html, $description, $wrapper );
 
-	if ( ! $display ) {
+	if ( ! $echo ) {
 		return $html;
 	}
 

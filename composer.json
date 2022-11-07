@@ -20,7 +20,7 @@
     "require": {
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6",
-        "johnpbloch/wordpress": "^6.0",
+        "johnpbloch/wordpress": "^6.1",
         "wpackagist-plugin/autoptimize": "^3.0",
         "wpackagist-plugin/w3-total-cache": "^2.2",
         "wpackagist-plugin/wp-cloudflare-page-cache": "^4.6",
