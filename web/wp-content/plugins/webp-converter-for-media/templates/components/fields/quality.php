@@ -32,7 +32,7 @@
 			<?php
 			echo wp_kses_post(
 				sprintf(
-				/* translators: %1$s: Level name */
+				/* translators: %s: level name */
 					__( '%s - maximum reduction of image size with quality loss', 'webp-converter-for-media' ),
 					'<strong>' . __( 'Lossy', 'webp-converter-for-media' ) . '</strong>'
 				)
@@ -44,7 +44,7 @@
 			<?php
 			echo wp_kses_post(
 				sprintf(
-				/* translators: %1$s: Level name */
+				/* translators: %s: level name */
 					__( '%s - reduction of image size without quality loss visible to the eye', 'webp-converter-for-media' ),
 					'<strong>' . __( 'Optimal', 'webp-converter-for-media' ) . '</strong>'
 				)
@@ -56,7 +56,7 @@
 			<?php
 			echo wp_kses_post(
 				sprintf(
-				/* translators: %1$s: Level name */
+				/* translators: %s: level name */
 					__( '%s - minimal reduction of image size without quality loss', 'webp-converter-for-media' ),
 					'<strong>' . __( 'Lossless', 'webp-converter-for-media' ) . '</strong>'
 				)

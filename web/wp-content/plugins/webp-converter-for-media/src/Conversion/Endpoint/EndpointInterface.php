@@ -12,7 +12,7 @@ interface EndpointInterface {
 	 *
 	 * @return string
 	 */
-	public function get_route_name(): string;
+	public static function get_route_name(): string;
 
 	/**
 	 * Returns methods separated by space.
@@ -22,20 +22,13 @@ interface EndpointInterface {
 	public function get_http_methods(): string;
 
 	/**
-	 * Returns expiration time in seconds of endpoint URL.
-	 *
-	 * @return int
-	 */
-	public function get_url_lifetime(): int;
-
-	/**
 	 * Returns whether request can be executed.
 	 *
-	 * @param \WP_REST_Request $request .
+	 * @param string $request_nonce .
 	 *
 	 * @return bool
 	 */
-	public function is_valid_request( \WP_REST_Request $request ): bool;
+	public function is_valid_request( string $request_nonce ): bool;
 
 	/**
 	 * Returns list of params for endpoint.
@@ -49,7 +42,21 @@ interface EndpointInterface {
 	 *
 	 * @return string
 	 */
-	public function get_route_url(): string;
+	public static function get_route_url(): string;
+
+	/**
+	 * Returns authorization code of endpoint.
+	 *
+	 * @return string
+	 */
+	public static function get_route_nonce(): string;
+
+	/**
+	 * Returns header name with nonce value.
+	 *
+	 * @return string
+	 */
+	public function get_route_nonce_header(): string;
 
 	/**
 	 * Returns response to endpoint.

@@ -54,6 +54,11 @@ class RemoteMethod extends MethodAbstract {
 	 */
 	private $server_configurator;
 
+	/**
+	 * @var mixed[]
+	 */
+	private $failed_converted_source_files = [];
+
 	public function __construct(
 		SkipCrashed $skip_crashed,
 		SkipLarger $skip_larger,
@@ -122,10 +127,12 @@ class RemoteMethod extends MethodAbstract {
 		$this->server_configurator->set_memory_limit();
 		$this->server_configurator->set_execution_time();
 
-		$output_formats = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
-		$source_paths   = [];
-		$output_paths   = [];
-		$this->token    = $this->token_repository->get_token();
+		$output_formats        = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
+		$force_convert_deleted = ( ! in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
+
+		$source_paths = [];
+		$output_paths = [];
+		$this->token  = $this->token_repository->get_token();
 
 		foreach ( $output_formats as $output_format ) {
 			try {
@@ -147,7 +154,7 @@ class RemoteMethod extends MethodAbstract {
 			foreach ( $source_paths as $output_format => $extensions_paths ) {
 				foreach ( $extensions_paths as $path_index => $extensions_path ) {
 					if ( file_exists( $output_paths[ $output_format ][ $path_index ] )
-						|| file_exists( $output_paths[ $output_format ][ $path_index ] . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ) {
+						|| ( ! $force_convert_deleted && file_exists( $output_paths[ $output_format ][ $path_index ] . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ) ) {
 						unset( $source_paths[ $output_format ][ $path_index ] );
 						unset( $output_paths[ $output_format ][ $path_index ] );
 
@@ -159,28 +166,45 @@ class RemoteMethod extends MethodAbstract {
 
 		try {
 			$converted_files = $this->init_connections( $source_paths, $plugin_settings, $output_paths );
+			$this->save_converted_files( $converted_files, $source_paths, $output_paths, $plugin_settings );
 
-			foreach ( $converted_files as $output_format => $format_converted_files ) {
-				foreach ( $format_converted_files as $path_index => $converted_file ) {
-					$source_path = $source_paths[ $output_format ][ $path_index ];
-					$output_path = $output_paths[ $output_format ][ $path_index ];
-
-					file_put_contents( $output_path, $converted_file );
-					do_action( 'webpc_after_conversion', $output_path, $source_path );
-
-					try {
-						$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
-						$this->update_conversion_stats( $source_path, $output_path, $output_format );
-					} catch ( LargerThanOriginalException $e ) {
-						$this->files_converted[ $output_format ]--;
-					}
-				}
+			if ( $this->failed_converted_source_files ) {
+				$converted_files = $this->init_connections( $this->failed_converted_source_files, $plugin_settings, $output_paths );
+				$this->save_converted_files( $converted_files, $source_paths, $output_paths, $plugin_settings );
 			}
 		} catch ( RemoteErrorResponseException $e ) {
 			$this->save_conversion_error( $e->getMessage(), $plugin_settings, true );
 		}
 
 		$this->token_repository->update_token( $this->token );
+	}
+
+	/**
+	 * @param mixed[] $converted_files .
+	 * @param mixed[] $source_paths    .
+	 * @param mixed[] $output_paths    .
+	 * @param mixed[] $plugin_settings .
+	 *
+	 * @return void
+	 */
+	private function save_converted_files( array $converted_files, array $source_paths, array $output_paths, array $plugin_settings ) {
+		foreach ( $converted_files as $output_format => $format_converted_files ) {
+			foreach ( $format_converted_files as $path_index => $converted_file ) {
+				$source_path = $source_paths[ $output_format ][ $path_index ];
+				$output_path = $output_paths[ $output_format ][ $path_index ];
+
+				file_put_contents( $output_path, $converted_file );
+				do_action( 'webpc_after_conversion', $output_path, $source_path );
+
+				try {
+					$this->skip_crashed->delete_crashed_file( $output_path );
+					$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
+					$this->update_conversion_stats( $source_path, $output_path, $output_format );
+				} catch ( LargerThanOriginalException $e ) {
+					$this->files_converted[ $output_format ]--;
+				}
+			}
+		}
 	}
 
 	/**
@@ -286,6 +310,7 @@ class RemoteMethod extends MethodAbstract {
 						$source_paths[ $output_format ][ $resource_id ],
 						$output_paths[ $output_format ][ $resource_id ],
 						$output_format,
+						(int) $resource_id,
 						$plugin_settings,
 						$http_code,
 						$response
@@ -377,6 +402,7 @@ class RemoteMethod extends MethodAbstract {
 	 * @param string      $source_path     .
 	 * @param string      $output_path     .
 	 * @param string      $output_format   .
+	 * @param int         $resource_id     .
 	 * @param mixed[]     $plugin_settings .
 	 * @param int         $http_code       .
 	 * @param string|null $response        .
@@ -389,6 +415,7 @@ class RemoteMethod extends MethodAbstract {
 		string $source_path,
 		string $output_path,
 		string $output_format,
+		int $resource_id,
 		array $plugin_settings,
 		int $http_code,
 		string $response = null
@@ -403,7 +430,11 @@ class RemoteMethod extends MethodAbstract {
 			$this->save_conversion_error( $error_message, $plugin_settings );
 		} elseif ( $http_code === 200 ) {
 			$this->skip_crashed->create_crashed_file( $output_path );
-			$this->files_converted[ $output_format ]++;
+
+			if ( ! isset( $this->failed_converted_source_files[ $output_format ] ) ) {
+				$this->failed_converted_source_files[ $output_format ] = [];
+			}
+			$this->failed_converted_source_files[ $output_format ][ $resource_id ] = $source_path;
 		} else {
 			$this->save_conversion_error(
 				( new RemoteRequestException( [ $http_code, $source_path ] ) )->getMessage(),

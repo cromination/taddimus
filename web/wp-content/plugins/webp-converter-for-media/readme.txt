@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.1
 Requires PHP: 7.0
-Stable tag: trunk
+Stable tag: 5.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -252,16 +252,6 @@ An alternative method is to manually start converting the selected attachment by
 
 `do_action( 'webpc_convert_attachment', $post_id );`
 
-Argument `$paths` is array of absolute server paths and `$skip_exists` means whether to skip converted images.
-
-You can also modify the list of image paths for an attachment, e.g. to exclude one image size. To do this, use the following filter:
-
-`add_filter( 'webpc_attachment_paths', function( $paths, $attachment_id ) {
-	return $paths;
-}, 10, 2 );`
-
-Argument `$paths` is array of absolute server paths and `$attachment_id` is the post ID of attachment, added to the Media Library.
-
 To delete manually converted files, use the following action, providing as an argument an array of absolute server paths to the files *(this will delete manually converted files)*:
 
 `do_action( 'webpc_delete_paths', $paths );`
@@ -292,6 +282,10 @@ If only your images are on another CDN server, unfortunately correct operation i
 
 For Nginx server that does not support .htaccess rules, additional Nginx server configuration is required for the plugin to function properly.
 
+Follow the 4 steps below **(please do all of them)**:
+
+**Step 1**
+
 Find the configuration file in one of the paths *(remember to select configuration file used by your vhost)*:
 - `/etc/nginx/sites-available/` or `/etc/nginx/sites-enabled/`
 - `/etc/nginx/conf.d/`
@@ -319,13 +313,27 @@ and add this code *(add these lines at the beginning of the `server { ... }` blo
 `}`
 `# END Converter for Media`
 
-**Then add support for the required MIME types**, if they are not supported. Edit the configuration file:
+**Step 2**
+
+Look in the configuration file for other rules affecting images, e.g.:
+
+`location ~* ^.+\.(css|js|jpg|jpeg|png|gif|webp|ico|eot|otf|woff|woff2|ttf)$ {`
+`	expires max;`
+`}`
+
+If you find such rules, remove the following formats from them: jpg, jpeg, png, gif and webp.
+
+**Step 3**
+
+Then add support for the required MIME types, if they are not supported. Edit the configuration file:
 - `/etc/nginx/mime.types`
 
 and add this code *(add these lines inside the `types { ... }` block)*:
 
 `image/webp webp;`
 `image/avif avif;`
+
+**Step 4**
 
 After making changes, remember to restart the machine:
 
@@ -342,15 +350,27 @@ In case of problems, please contact us in [the support forum](https://url.mattpl
 
 == Changelog ==
 
-= 5.3.1 (2022-10-12) =
-* `[Added]` Error handling while connecting to REST API
+= 5.6.1 (2022-12-28) =
+* `[Fixed]` No support for .jpeg files in default plugin settings
+* `[Added]` Ability to auto clear Cloudflare CDN cache (beta version)
 
-= 5.3.0 (2022-10-11) =
-* `[Removed]` Action `webpc_convert_dir`
-* `[Removed]` Filter `webpc_dir_files`
-* `[Fixed]` Support for WordPress older than version 5.3
-* `[Added]` List of files for optimization in tree form
-* `[Added]` Handling unknown errors while converting with Imagick method
+= 5.6.0 (2022-12-21) =
+* `[Added]` Ability to convert images from /cache directory
+* `[Added]` Automatic cleaning of LiteSpeed Cache
+* `[Added]` Exception for blocked REST API endpoints by Disable REST API plugin
+* `[Added]` Exception for blocked REST API endpoints by Disable WP REST API plugin
+* `[Added]` Exception for blocked REST API endpoints by WordPress REST API Authentication plugin
+
+= 5.5.1 (2022-11-29) =
+* `[Fixed]` Cache for REST API responses using LiteSpeed Cache plugin
+* `[Changed]` Authorization method for REST API endpoints
+
+= 5.5.0 (2022-11-22) =
+* `[Removed]` Error logging to debug.log file
+* `[Changed]` Content of welcome notice after plugin installation
+* `[Added]` Exclusion of directories from converting images in plugin settings
+* `[Added]` Instruction in "Conversion strategy" field in plugin settings
+* `[Added]` Possibility to disable rewrite inheritance in .htaccess files in plugin settings
 
 See [changelog.txt](https://url.mattplugins.com/converter-readme-changelog) for previous versions.
 

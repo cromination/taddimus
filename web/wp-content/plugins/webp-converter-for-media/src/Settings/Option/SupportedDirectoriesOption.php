@@ -36,7 +36,7 @@ class SupportedDirectoriesOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_label(): string {
-		return __( 'List of supported directories', 'webp-converter-for-media' );
+		return __( 'Supported directories', 'webp-converter-for-media' );
 	}
 
 	/**

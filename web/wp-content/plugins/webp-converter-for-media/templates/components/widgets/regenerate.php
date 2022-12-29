@@ -2,10 +2,11 @@
 /**
  * Widget displayed on plugin settings page.
  *
- * @var string     $api_paths_url      URL of REST API endpoint.
- * @var string     $api_regenerate_url URL of REST API endpoint.
- * @var string     $api_stats_url      URL of REST API endpoint.
- * @var string[][] $output_formats     Data about output formats for regeneration.
+ * @var string     $api_paths_url        URL of REST API endpoint.
+ * @var string     $api_paths_nonce      Authorization code of REST API endpoint.
+ * @var string     $api_regenerate_url   URL of REST API endpoint.
+ * @var string     $api_regenerate_nonce Authorization code of REST API endpoint.
+ * @var string[][] $output_formats       Data about output formats for regeneration.
  *
  * @package Converter for Media
  */
@@ -16,8 +17,8 @@
 		<?php echo esc_html( __( 'Bulk Optimization of Images', 'webp-converter-for-media' ) ); ?>
 	</h3>
 	<div class="webpcLoader webpcContent"
-		data-api-paths="<?php echo esc_url( $api_paths_url ); ?>"
-		data-api-regenerate="<?php echo esc_url( $api_regenerate_url ); ?>"
+		data-api-paths="<?php echo esc_url( $api_paths_url ); ?>|<?php echo esc_attr( $api_paths_nonce ); ?>"
+		data-api-regenerate="<?php echo esc_url( $api_regenerate_url ); ?>|<?php echo esc_attr( $api_regenerate_nonce ); ?>"
 		data-api-error-message="<?php echo esc_html( __( 'An error occurred while connecting to REST API. Please try again.', 'webp-converter-for-media' ) ); ?>"
 	>
 		<div class="webpcPage__widgetRow">
@@ -42,7 +43,7 @@
 					<?php echo wp_kses_post( __( 'List of files that can be optimized:', 'webp-converter-for-media' ) ); ?>
 				</p>
 				<div class="webpcTree__output" data-tree>
-					<p class="webpcContent__loader">
+					<p class="webpcContent__loader" data-tree-loader>
 						<?php echo wp_kses_post( sprintf( __( 'Loading, please wait', 'webp-converter-for-media' ) ) ); ?>
 					</p>
 					<div class="webpcTree__error" data-api-stats-error hidden></div>
@@ -80,35 +81,30 @@
 							<div class="webpcLoader__columnOverlay">
 								<div class="webpcLoader__columnOverlayTitle">
 									<?php
-									echo wp_kses_post(
-										sprintf(
-										/* translators: %1$s: percent value, %2$s: output format */
-											__( '%1$s converted to %2$s', 'webp-converter-for-media' ),
-											'<strong><span data-counter-percent>0</span>%</strong>',
-											esc_html( $format_data['label'] )
-										)
+									echo sprintf(
+									/* translators: %1$s: percent value, %2$s: output format */
+										esc_html( __( '%1$s converted to %2$s', 'webp-converter-for-media' ) ),
+										'<strong><span data-counter-percent>0</span>%</strong>',
+										esc_html( $format_data['label'] )
 									);
 									?>
 								</div>
 								<div class="webpcLoader__columnOverlayDesc webpcLoader__columnOverlayDesc--active">
 									<?php
-									echo wp_kses_post(
-										sprintf(
-										/* translators: %s: images count */
-											__( '%s images remaining', 'webp-converter-for-media' ),
-											'<span data-counter-left>0</span>'
-										)
+									echo sprintf(
+									/* translators: %s: images count */
+										esc_html( __( '%s images remaining', 'webp-converter-for-media' ) ),
+										'<span data-counter-left>0</span>'
 									);
 									?>
 								</div>
-								<div class="webpcLoader__columnOverlayDesc webpcLoader__columnOverlayDesc--loading">
+								<div class="webpcLoader__columnOverlayDesc webpcLoader__columnOverlayDesc--loading"
+									data-counter-loader>
 									<?php
-									echo wp_kses_post(
-										sprintf(
-										/* translators: %s: break line tag */
-											__( 'Calculating, %splease wait', 'webp-converter-for-media' ),
-											'<br>'
-										)
+									echo sprintf(
+									/* translators: %s: break line tag */
+										esc_html( __( 'Calculating, %splease wait', 'webp-converter-for-media' ) ),
+										'<br>'
 									);
 									?>
 								</div>

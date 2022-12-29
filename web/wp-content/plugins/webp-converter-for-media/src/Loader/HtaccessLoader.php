@@ -2,7 +2,10 @@
 
 namespace WebpConverter\Loader;
 
+use WebpConverter\Service\CloudflareConfigurator;
+use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\PathsGenerator;
+use WebpConverter\Settings\Option\ExtraFeaturesOption;
 use WebpConverter\Settings\Option\LoaderTypeOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
 
@@ -158,6 +161,8 @@ class HtaccessLoader extends LoaderAbstract {
 			return $content;
 		}
 
+		$inheritance_active = ! ( in_array( ExtraFeaturesOption::OPTION_VALUE_REWRITE_INHERIT, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
+
 		$document_root = PathsGenerator::get_rewrite_root();
 		$root_suffix   = PathsGenerator::get_rewrite_path();
 		$output_path   = apply_filters( 'webpc_dir_name', '', 'webp' );
@@ -168,13 +173,15 @@ class HtaccessLoader extends LoaderAbstract {
 		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
 			$content .= '<IfModule mod_rewrite.c>' . PHP_EOL;
 			$content .= '  RewriteEngine On' . PHP_EOL;
-			if ( apply_filters( 'webpc_htaccess_mod_rewrite_inherit', true ) === true ) {
+			if ( apply_filters( 'webpc_htaccess_mod_rewrite_inherit', $inheritance_active ) === true ) {
 				$content .= '  RewriteOptions Inherit' . PHP_EOL;
 			}
 
 			foreach ( $settings[ SupportedExtensionsOption::OPTION_NAME ] as $ext ) {
 				$content .= "  RewriteCond %{HTTP_ACCEPT} ${mime_type}" . PHP_EOL;
-				$content .= "  RewriteCond %{REQUEST_FILENAME} -f" . PHP_EOL;
+				if ( in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
+					$content .= "  RewriteCond %{REQUEST_FILENAME} -f" . PHP_EOL;
+				}
 				if ( strpos( $document_root, '%{DOCUMENT_ROOT}' ) !== false ) {
 					$content .= "  RewriteCond ${document_root}${output_path}/$1.${ext}.${format} -f" . PHP_EOL;
 				} else {
@@ -200,18 +207,19 @@ class HtaccessLoader extends LoaderAbstract {
 	 * @return string Rules for .htaccess file.
 	 */
 	private function get_mod_headers_rules( array $settings ): string {
-		$content       = '';
-		$extensions    = implode( '|', $settings[ SupportedExtensionsOption::OPTION_NAME ] );
-		$cache_control = apply_filters(
-			'webpc_htaccess_cache_control_private',
-			( ( ( $_SERVER['X-LSCACHE'] ?? '' ) !== 'on' ) || isset( $_SERVER['HTTP_CDN_LOOP'] ) ) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		);
+		$content    = '';
+		$extensions = implode( '|', $settings[ SupportedExtensionsOption::OPTION_NAME ] );
+
+		$cache_control = ( ( ( $_SERVER['X-LSCACHE'] ?? '' ) !== 'on' ) || isset( $_SERVER['HTTP_CDN_LOOP'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		if ( OptionsAccessManager::get_option( CloudflareConfigurator::REQUEST_CACHE_CONFIG_OPTION ) === 'yes' ) {
+			$cache_control = false;
+		}
 
 		$content .= '<IfModule mod_headers.c>' . PHP_EOL;
 		if ( $extensions ) {
 			$content .= '  <FilesMatch "(?i)\.(' . $extensions . ')(\.(webp|avif))?$">' . PHP_EOL;
 		}
-		if ( $cache_control ) {
+		if ( apply_filters( 'webpc_htaccess_cache_control_private', $cache_control ) ) {
 			$content .= '    Header always set Cache-Control "private"' . PHP_EOL;
 		}
 		$content .= '    Header append Vary "Accept"' . PHP_EOL;

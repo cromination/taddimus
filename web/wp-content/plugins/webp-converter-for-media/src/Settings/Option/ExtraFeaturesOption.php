@@ -9,11 +9,12 @@ use WebpConverter\Conversion\Method\GdMethod;
  */
 class ExtraFeaturesOption extends OptionAbstract {
 
-	const OPTION_NAME                = 'features';
-	const OPTION_VALUE_ONLY_SMALLER  = 'only_smaller';
-	const OPTION_VALUE_KEEP_METADATA = 'keep_metadata';
-	const OPTION_VALUE_CRON_ENABLED  = 'cron_enabled';
-	const OPTION_VALUE_DEBUG_ENABLED = 'debug_enabled';
+	const OPTION_NAME                  = 'features';
+	const OPTION_VALUE_ONLY_SMALLER    = 'only_smaller';
+	const OPTION_VALUE_KEEP_METADATA   = 'keep_metadata';
+	const OPTION_VALUE_CRON_ENABLED    = 'cron_enabled';
+	const OPTION_VALUE_REWRITE_INHERIT = 'rewrite_inherit_disabled';
+	const OPTION_VALUE_SERVICE_MODE    = 'service_mode';
 
 	/**
 	 * {@inheritdoc}
@@ -57,20 +58,24 @@ class ExtraFeaturesOption extends OptionAbstract {
 	 */
 	public function get_available_values( array $settings ): array {
 		return [
-			self::OPTION_VALUE_ONLY_SMALLER  => __(
+			self::OPTION_VALUE_ONLY_SMALLER    => __(
 				'Automatic removal of files in output formats larger than original',
 				'webp-converter-for-media'
 			),
-			self::OPTION_VALUE_KEEP_METADATA => __(
+			self::OPTION_VALUE_KEEP_METADATA   => __(
 				'Keep images metadata stored in EXIF or XMP formats (unavailable for GD conversion method)',
 				'webp-converter-for-media'
 			),
-			self::OPTION_VALUE_CRON_ENABLED  => __(
+			self::OPTION_VALUE_CRON_ENABLED    => __(
 				'Enable cron to automatically convert images from outside Media Library (images from Media Library are converted immediately after upload)',
 				'webp-converter-for-media'
 			),
-			self::OPTION_VALUE_DEBUG_ENABLED => __(
-				'Log errors while converting to debug.log file (when debugging in WordPress is active)',
+			self::OPTION_VALUE_REWRITE_INHERIT => __(
+				'Disable rewrite inheritance in .htaccess files (when you have a problem e.g. with loading CSS or JS files)',
+				'webp-converter-for-media'
+			),
+			self::OPTION_VALUE_SERVICE_MODE    => __(
+				'Enable the service mode (only upon request from technical support of plugin)',
 				'webp-converter-for-media'
 			),
 		];

@@ -62,7 +62,7 @@ class OutputFormatsOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_label(): string {
-		return __( 'List of supported output formats', 'webp-converter-for-media' );
+		return __( 'Supported output formats', 'webp-converter-for-media' );
 	}
 
 	/**

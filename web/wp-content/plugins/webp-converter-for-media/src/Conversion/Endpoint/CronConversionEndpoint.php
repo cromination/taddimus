@@ -12,6 +12,8 @@ use WebpConverter\Repository\TokenRepository;
  */
 class CronConversionEndpoint extends EndpointAbstract {
 
+	const ROUTE_NONCE_HEADER = 'Webpc-Nonce';
+
 	/**
 	 * @var CronInitiator
 	 */
@@ -35,7 +37,7 @@ class CronConversionEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_route_name(): string {
+	public static function get_route_name(): string {
 		return 'cron-conversion';
 	}
 
@@ -49,28 +51,25 @@ class CronConversionEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function is_valid_request( \WP_REST_Request $request ): bool {
+	public function is_valid_request( string $request_nonce ): bool {
 		$nonce_value = $this->cron_status_manager->get_conversion_request_id();
 		if ( $nonce_value === null ) {
 			return false;
 		}
 
-		return ( $request->get_param( EndpointIntegration::ROUTE_NONCE_PARAM ) === $nonce_value );
+		return ( $request_nonce === $nonce_value );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_route_url(): string {
-		$nonce_value = $this->cron_status_manager->refresh_conversion_request_id();
-
+	public static function get_route_url(): string {
 		return get_rest_url(
 			null,
 			sprintf(
-				'%1$s/%2$s-%3$s',
+				'%1$s/%2$s',
 				EndpointIntegration::ROUTE_NAMESPACE,
-				$this->get_route_name(),
-				$nonce_value
+				self::get_route_name()
 			)
 		);
 	}
@@ -78,8 +77,22 @@ class CronConversionEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
+	public static function get_route_nonce(): string {
+		return ( new CronStatusManager() )->refresh_conversion_request_id();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_route_nonce_header(): string {
+		return self::ROUTE_NONCE_HEADER;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_route_response( \WP_REST_Request $request ) {
-		$request_id = $request->get_param( EndpointIntegration::ROUTE_NONCE_PARAM );
+		$request_id = $request->get_header( $this->get_route_nonce_header() ) ?: '';
 		$this->cron_initiator->init_conversion( $request_id );
 
 		return new \WP_REST_Response( null, 200 );

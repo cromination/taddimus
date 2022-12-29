@@ -6,7 +6,6 @@ use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\OutputPath;
 use WebpConverter\Exception;
-use WebpConverter\Settings\Option\ExtraFeaturesOption;
 
 /**
  * Abstract class for class that converts images.
@@ -177,19 +176,5 @@ abstract class MethodAbstract implements MethodInterface {
 		}
 
 		$this->errors[] = $error_message;
-		$this->log_conversion_error( $error_message, $plugin_settings );
-	}
-
-	/**
-	 * @param string  $error_message   .
-	 * @param mixed[] $plugin_settings .
-	 *
-	 * @return void
-	 */
-	private function log_conversion_error( string $error_message, array $plugin_settings ) {
-		$features = $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ];
-		if ( in_array( ExtraFeaturesOption::OPTION_VALUE_DEBUG_ENABLED, $features ) ) {
-			error_log( sprintf( 'Converter for Media: %s', $error_message ) ); // phpcs:ignore
-		}
 	}
 }

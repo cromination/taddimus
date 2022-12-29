@@ -27,6 +27,15 @@ $wrap_class     = apply_filters( 'hestia_filter_page_content_classes', 'col-md-8
 
 				the_content();
 
+				hestia_wp_link_pages(
+					array(
+						'before'      => '<div class="text-center"> <ul class="nav pagination pagination-primary">',
+						'after'       => '</ul> </div>',
+						'link_before' => '<li>',
+						'link_after'  => '</li>',
+					)
+				);
+
 				echo apply_filters( 'hestia_filter_blog_social_icons', '' );
 
 				if ( comments_open() || get_comments_number() ) :

@@ -777,6 +777,11 @@ button.customizer-repeater-new-field:before {
 	text-decoration: none;
 	font-weight: 600;
 	color: #333;
+	display: flex;
+    align-items: center;
+    font-size: inherit;
+    line-height: 1;
+    justify-content: center;
 }
 
 .hestia-tabs-control .hestia-customizer-tab label i {
@@ -801,6 +806,59 @@ button.customizer-repeater-new-field:before {
 
 .hestia-tabs-control input[type="radio"] {
 	display: none !important;
+}
+
+.hestia-tabs-control span.dashicons-lock {
+    font-size: 12px;
+    color: #a3a3a3;
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+}
+.hestia-customizer-tab label span:last-child {
+    margin-left: 5px;
+}
+
+.hestia-customizer-tab label span:first-child {
+    margin-right: 3px;
+}
+
+#customize-control-hestia_pricing_upsell_notice ~ li {
+    opacity: .4;
+    pointer-events: none;
+}
+.customize-control.customize-control-checkbox .dashicons-lock,
+.customize-control.customize-control-text .dashicons-lock,
+.customize-control.customize-control-media .dashicons-lock,
+.customize-control.customize-control-textarea .dashicons-lock,
+.customize-control.customize-control-radio-image .dashicons-lock {
+	font-size: 16px;
+	color: #A3A3A3;
+	margin-top: 3px;
+}
+select + span.dashicons-lock:not(.is-pro-option) {
+	opacity: 0;
+}
+select.is-pro-option + span.dashicons-lock {
+	position: absolute;
+    bottom: -5px;
+    left: 50px;
+    font-size: 16px;
+    color: #A3A3A3;
+    opacity: 1;
+}
+#customize-control-hestia_slider_type label {
+	position: relative;
+}
+#sub-accordion-section-hestia_big_title:not(.hestia-locked-icon) span.dashicons-lock {
+	display: none;
+}
+#sub-accordion-section-hestia_big_title.hestia-locked-icon li#customize-control-hestia_slider_type ~ li {
+	opacity: .4;
+    pointer-events: none;
+}
+#sub-accordion-section-hestia_big_title.hestia-locked-icon #customize-control-hestia_big_title_upsell_notice {
+    display: block !important;
 }
 /**
  * Alpha Color Picker CSS
@@ -1581,6 +1639,11 @@ button.customizer-repeater-new-field:before {
 	text-decoration: none;
 	font-weight: 600;
 	color: #333;
+	display: flex;
+    align-items: center;
+    font-size: inherit;
+    line-height: 1;
+    justify-content: center;
 }
 
 .hestia-tabs-control .hestia-customizer-tab label i {
@@ -1605,6 +1668,59 @@ button.customizer-repeater-new-field:before {
 
 .hestia-tabs-control input[type="radio"] {
 	display: none !important;
+}
+
+.hestia-tabs-control span.dashicons-lock {
+    font-size: 12px;
+    color: #a3a3a3;
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+}
+.hestia-customizer-tab label span:last-child {
+    margin-left: 5px;
+}
+
+.hestia-customizer-tab label span:first-child {
+    margin-right: 3px;
+}
+
+#customize-control-hestia_pricing_upsell_notice ~ li {
+    opacity: .4;
+    pointer-events: none;
+}
+.customize-control.customize-control-checkbox .dashicons-lock,
+.customize-control.customize-control-text .dashicons-lock,
+.customize-control.customize-control-media .dashicons-lock,
+.customize-control.customize-control-textarea .dashicons-lock,
+.customize-control.customize-control-radio-image .dashicons-lock {
+	font-size: 16px;
+	color: #A3A3A3;
+	margin-top: 3px;
+}
+select + span.dashicons-lock:not(.is-pro-option) {
+	opacity: 0;
+}
+select.is-pro-option + span.dashicons-lock {
+	position: absolute;
+    bottom: -5px;
+    left: 50px;
+    font-size: 16px;
+    color: #A3A3A3;
+    opacity: 1;
+}
+#customize-control-hestia_slider_type label {
+	position: relative;
+}
+#sub-accordion-section-hestia_big_title:not(.hestia-locked-icon) span.dashicons-lock {
+	display: none;
+}
+#sub-accordion-section-hestia_big_title.hestia-locked-icon li#customize-control-hestia_slider_type ~ li {
+	opacity: .4;
+    pointer-events: none;
+}
+#sub-accordion-section-hestia_big_title.hestia-locked-icon #customize-control-hestia_big_title_upsell_notice {
+    display: block !important;
 }
 .accordion-section-title .button {
   font-weight: 400;
@@ -1750,4 +1866,13 @@ button.customizer-repeater-new-field:before {
   margin-right: 5px;
   width: auto;
   height: auto;
+}
+
+.hestia-section-hidden .hestia-toggle-section.hestia-section-locked {
+  color: #A3A3A3;
+}
+
+.hestia-section-hidden .hestia-toggle-section.hestia-section-locked + a {
+  float: right;
+  margin-top: 2px;
 }

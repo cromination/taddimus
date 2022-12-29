@@ -34,7 +34,7 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_label(): string {
-		return __( 'List of supported files extensions', 'webp-converter-for-media' );
+		return __( 'Supported files extensions', 'webp-converter-for-media' );
 	}
 
 	/**
@@ -90,7 +90,7 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 * @return string[]
 	 */
 	public function get_default_value( array $settings = null ): array {
-		return [ 'jpg', 'png', 'webp' ];
+		return [ 'jpg', 'jpeg', 'png', 'webp' ];
 	}
 
 	/**

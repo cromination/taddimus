@@ -6,7 +6,7 @@ Author URI:     https://themeisle.com
 Tested up to:   5.8.2
 Requires PHP:   5.4.0
 Description:    Hestia is a modern WordPress theme for professionals. It fits creative business, small businesses (restaurants, wedding planners, sport/medical shops), startups, corporate businesses, online agencies and firms, portfolios, ecommerce (WooCommerce), and freelancers. It has a multipurpose one-page design, widgetized footer, blog/news page and a clean look, is compatible with: Flat Parallax Slider, Photo Gallery, Travel Map and Elementor Page Builder . The theme is responsive, WPML, Retina ready, SEO friendly, and uses Material Kit for design.
-Version:        3.0.24
+Version:        3.0.25
 License:        GNU General Public License v2 or later
 License URI:    http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:    hestia
@@ -1220,6 +1220,60 @@ blockquote cite {
   color: #777;
   font-style: normal;
   font-weight: 400;
+}
+
+#wp-admin-bar-hestia_preview_hook span.dashicons-lock {
+  font-family: dashicons;
+  display: inline-block;
+  line-height: 1;
+  font-weight: 400;
+  font-style: normal;
+  speak: never;
+  text-decoration: inherit;
+  text-transform: none;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  vertical-align: middle;
+  text-align: center;
+  transition: color .1s ease-in;
+  color: inherit;
+}
+
+.hestia-hook-upsell {
+  display: none;
+}
+
+.hestia-hook-upsell a {
+  font-style: italic;
+  font-weight: 700;
+}
+
+.hestia-hook-upsell-wrapper .hestia-hook-placeholder:hover .hestia-hook-label {
+  display: none;
+}
+
+.hestia-hook-upsell-wrapper .hestia-hook-placeholder:hover .hestia-hook-upsell {
+  display: block;
+}
+
+.hestia-hook-wrapper + nav.navbar {
+  position: inherit;
+}
+
+.hestia-hook-wrapper + .main-raised {
+  margin-top: 0;
+}
+
+.hestia-hook-wrapper + .carousel .page-header {
+  min-height: inherit !important;
+}
+
+.hestia-hook-wrapper + .carousel .item .container {
+  display: block;
 }
 
 /*--------------------------------------------------------------
@@ -5216,6 +5270,7 @@ img.alignright, .wp-caption.alignright {
 
 .media .media-body {
   padding-right: 10px;
+  word-break: break-all;
 }
 
 .media .media-body .media .media-body {

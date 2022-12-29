@@ -139,8 +139,7 @@ class ImageResizeOption extends OptionAbstract {
 	 * @return mixed[]
 	 */
 	public function get_default_value( array $settings = null ): array {
-		$size = $this->get_max_image_size();
-		return [ '', $size['width'], $size['height'] ];
+		return [ '', '', '' ];
 	}
 
 	/**

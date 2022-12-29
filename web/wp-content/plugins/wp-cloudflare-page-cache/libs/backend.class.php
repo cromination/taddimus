@@ -945,6 +945,13 @@ class SWCFPC_Backend
                 $this->main_instance->set_single_config('cf_wp_rocket_purge_on_ccss_generation_complete', 0);
             }
 
+            if( isset($_POST['swcfpc_cf_wp_rocket_purge_on_rucss_job_complete']) ) {
+                $this->main_instance->set_single_config('cf_wp_rocket_purge_on_rucss_job_complete', (int) $_POST['swcfpc_cf_wp_rocket_purge_on_rucss_job_complete']);
+            }
+            else {
+                $this->main_instance->set_single_config('cf_wp_rocket_purge_on_rucss_job_complete', 0);
+            }
+
             if( isset($_POST['swcfpc_cf_wp_rocket_disable_cache']) ) {
                 $this->main_instance->set_single_config('cf_wp_rocket_disable_cache', (int) $_POST['swcfpc_cf_wp_rocket_disable_cache']);
             }
@@ -1063,6 +1070,11 @@ class SWCFPC_Backend
             // Prefetch URLs on mouse hover
             if( isset($_POST['swcfpc_cf_prefetch_urls_on_hover']) ) {
                 $this->main_instance->set_single_config('cf_prefetch_urls_on_hover', (int) $_POST['swcfpc_cf_prefetch_urls_on_hover']);
+            }
+
+            // Remove cache buster
+            if( isset($_POST['swcfpc_cf_remove_cache_buster']) ) {
+                $this->main_instance->set_single_config('cf_remove_cache_buster', (int) $_POST['swcfpc_cf_remove_cache_buster']);
             }
 
             // Keep settings on deactivation

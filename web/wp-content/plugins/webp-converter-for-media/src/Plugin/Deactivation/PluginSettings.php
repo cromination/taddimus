@@ -26,5 +26,6 @@ class PluginSettings {
 		delete_site_transient( CronStatusManager::CRON_PATHS_SKIPPED_TRANSIENT );
 		delete_site_transient( CronStatusManager::CRON_STATUS_LOCKED_TRANSIENT );
 		delete_site_transient( CronStatusManager::CRON_REQUEST_ID_TRANSIENT );
+		delete_site_transient( CronStatusManager::CRON_REQUEST_RESPONSE_TRANSIENT );
 	}
 }

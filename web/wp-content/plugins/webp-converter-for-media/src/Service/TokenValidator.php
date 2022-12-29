@@ -12,6 +12,7 @@ use WebpConverter\WebpConverterConstants;
 class TokenValidator {
 
 	const API_TOKEN_SUCCESS_CODE = 200;
+	const REQUEST_INFO_OPTION    = 'webpc_token_request_info';
 
 	/**
 	 * @var TokenRepository
@@ -62,11 +63,12 @@ class TokenValidator {
 			]
 		);
 
-		$response = curl_exec( $connect );
-		$code     = curl_getinfo( $connect, CURLINFO_HTTP_CODE );
+		$response     = curl_exec( $connect );
+		$request_info = curl_getinfo( $connect );
 		curl_close( $connect );
 
-		if ( $code !== self::API_TOKEN_SUCCESS_CODE ) {
+		if ( $request_info['http_code'] !== self::API_TOKEN_SUCCESS_CODE ) {
+			OptionsAccessManager::update_option( self::REQUEST_INFO_OPTION, $request_info );
 			return false;
 		}
 

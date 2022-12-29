@@ -8,6 +8,7 @@ use WebpConverter\Error\Detector\RewritesErrorsDetector;
 use WebpConverter\PluginData;
 use WebpConverter\Service\ServerConfigurator;
 use WebpConverter\Service\StatsManager;
+use WebpConverter\Settings\Option\ExtraFeaturesOption;
 use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
 
@@ -67,7 +68,7 @@ class FilesTreeFinder {
 	 * @type int[]     $files_converted   .
 	 * @type int[]     $files_unconverted .
 	 * @type mixed[]   $files_tree        .
-	 * }
+	 *                                    }
 	 * @internal
 	 */
 	public function get_tree( array $output_formats ): array {
@@ -79,14 +80,19 @@ class FilesTreeFinder {
 			$this->files_unconverted[ $output_format ] = 0;
 		}
 
-		$settings = $this->plugin_data->get_plugin_settings();
-		$values   = [];
-		foreach ( $settings[ SupportedDirectoriesOption::OPTION_NAME ] as $dir_name ) {
+		$plugin_settings       = $this->plugin_data->get_plugin_settings();
+		$force_convert_deleted = ( ! in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
+		$force_convert_crashed = ( in_array( ExtraFeaturesOption::OPTION_VALUE_SERVICE_MODE, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
+
+		$values = [];
+		foreach ( $plugin_settings[ SupportedDirectoriesOption::OPTION_NAME ] as $dir_name ) {
 			$source_dir = apply_filters( 'webpc_dir_path', '', $dir_name );
 			$values[]   = $this->find_tree_in_directory(
 				$source_dir,
-				$settings[ SupportedExtensionsOption::OPTION_NAME ],
-				$output_formats
+				$plugin_settings[ SupportedExtensionsOption::OPTION_NAME ],
+				$output_formats,
+				$force_convert_deleted,
+				$force_convert_crashed
 			);
 		}
 
@@ -105,14 +111,23 @@ class FilesTreeFinder {
 	/**
 	 * Returns list of source images as tree.
 	 *
-	 * @param string   $dir_path       Server path of source directory.
-	 * @param string[] $source_formats Allowed extensions.
-	 * @param string[] $output_formats Allowed extensions.
-	 * @param int      $nesting_level  .
+	 * @param string   $dir_path              Server path of source directory.
+	 * @param string[] $source_formats        Allowed extensions.
+	 * @param string[] $output_formats        Allowed extensions.
+	 * @param bool     $force_convert_deleted Skip .deleted files.
+	 * @param bool     $force_convert_crashed Skip .crashed files.
+	 * @param int      $nesting_level         .
 	 *
 	 * @return mixed[]
 	 */
-	private function find_tree_in_directory( string $dir_path, array $source_formats, array $output_formats, int $nesting_level = 0 ): array {
+	private function find_tree_in_directory(
+		string $dir_path,
+		array $source_formats,
+		array $output_formats,
+		bool $force_convert_deleted,
+		bool $force_convert_crashed,
+		int $nesting_level = 0
+	): array {
 		$paths = scandir( $dir_path );
 		$list  = [
 			'name'  => basename( $dir_path ),
@@ -134,14 +149,14 @@ class FilesTreeFinder {
 
 			if ( is_dir( $current_path ) ) {
 				if ( apply_filters( 'webpc_supported_source_directory', true, basename( $current_path ), $current_path ) ) {
-					$children = $this->find_tree_in_directory( $current_path, $source_formats, $output_formats, ( $nesting_level + 1 ) );
+					$children = $this->find_tree_in_directory( $current_path, $source_formats, $output_formats, $force_convert_deleted, $force_convert_crashed, ( $nesting_level + 1 ) );
 					if ( $children['items'] || $children['files'] ) {
 						$list['items'][] = $children;
 					}
 				}
 			} elseif ( in_array( strtolower( pathinfo( $current_path, PATHINFO_EXTENSION ) ), $source_formats ) ) {
 				if ( apply_filters( 'webpc_supported_source_file', true, basename( $current_path ), $current_path )
-					&& ! $this->is_converted_file( $current_path, $output_formats ) ) {
+					&& ! $this->is_converted_file( $current_path, $output_formats, $force_convert_deleted, $force_convert_crashed ) ) {
 					$list['files'][] = $path;
 				}
 			}
@@ -152,12 +167,14 @@ class FilesTreeFinder {
 	}
 
 	/**
-	 * @param string   $source_path    .
-	 * @param string[] $output_formats .
+	 * @param string   $source_path           .
+	 * @param string[] $output_formats        .
+	 * @param bool     $force_convert_deleted Skip .deleted files.
+	 * @param bool     $force_convert_crashed Skip .crashed files.
 	 *
 	 * @return bool
 	 */
-	private function is_converted_file( string $source_path, array $output_formats ): bool {
+	private function is_converted_file( string $source_path, array $output_formats, bool $force_convert_deleted, bool $force_convert_crashed ): bool {
 		$is_not_converted = false;
 
 		foreach ( $output_formats as $output_format ) {
@@ -166,9 +183,11 @@ class FilesTreeFinder {
 				continue;
 			}
 
-			if ( file_exists( $output_path )
-				|| file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION )
-				|| file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION ) ) {
+			if ( file_exists( $output_path ) ) {
+				$this->files_converted[ $output_format ]++;
+			} elseif ( ! $force_convert_deleted && file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ) {
+				$this->files_converted[ $output_format ]++;
+			} elseif ( ! $force_convert_crashed && file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION ) ) {
 				$this->files_converted[ $output_format ]++;
 			} else {
 				$this->files_unconverted[ $output_format ]++;

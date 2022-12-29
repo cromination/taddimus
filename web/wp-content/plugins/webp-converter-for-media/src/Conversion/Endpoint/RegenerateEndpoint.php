@@ -29,7 +29,7 @@ class RegenerateEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_route_name(): string {
+	public static function get_route_name(): string {
 		return 'regenerate';
 	}
 
@@ -38,13 +38,6 @@ class RegenerateEndpoint extends EndpointAbstract {
 	 */
 	public function get_http_methods(): string {
 		return \WP_REST_Server::CREATABLE;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_url_lifetime(): int {
-		return ( 7 * 24 * 60 * 60 );
 	}
 
 	/**

@@ -19,11 +19,6 @@ class CronInitiator {
 	private $plugin_data;
 
 	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
-
-	/**
 	 * @var CronStatusManager
 	 */
 	private $cron_status_manager;
@@ -40,7 +35,6 @@ class CronInitiator {
 		PathsFinder $paths_finder = null
 	) {
 		$this->plugin_data         = $plugin_data;
-		$this->token_repository    = $token_repository;
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
 		$this->paths_finder        = $paths_finder ?: new PathsFinder( $plugin_data, $token_repository );
 	}
@@ -104,23 +98,36 @@ class CronInitiator {
 	}
 
 	/**
+	 * @param bool $upload_request .
+	 *
 	 * @return void
 	 */
-	public function init_async_conversion() {
-		$headers = [];
+	public function init_async_conversion( bool $upload_request = false ) {
+		$plugin_settings = $this->plugin_data->get_plugin_settings();
+		$service_mode    = in_array( ExtraFeaturesOption::OPTION_VALUE_SERVICE_MODE, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] );
+
+		$headers = [
+			CronConversionEndpoint::ROUTE_NONCE_HEADER => CronConversionEndpoint::get_route_nonce(),
+		];
 		if ( isset( $_SERVER['PHP_AUTH_USER'] ) && isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 			$headers['Authorization'] = 'Basic ' . base64_encode( $_SERVER['PHP_AUTH_USER'] . ':' . $_SERVER['PHP_AUTH_PW'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 		}
 
-		wp_remote_post(
-			( new CronConversionEndpoint( $this->plugin_data, $this->token_repository ) )->get_route_url(),
-			[
-				'timeout'   => 0.01,
-				'blocking'  => false,
-				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
-				'headers'   => $headers,
-			]
-		);
+		$args = [
+			'timeout'   => 0.01,
+			'blocking'  => false,
+			'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+			'headers'   => $headers,
+		];
+		if ( $service_mode && $upload_request ) {
+			unset( $args['timeout'] );
+			unset( $args['blocking'] );
+		}
+
+		$response = wp_remote_post( CronConversionEndpoint::get_route_url(), $args );
+		if ( $service_mode && $upload_request ) {
+			$this->cron_status_manager->set_conversion_request_response( $response );
+		}
 	}
 
 	/**

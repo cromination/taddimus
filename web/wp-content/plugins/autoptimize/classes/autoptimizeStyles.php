@@ -1003,8 +1003,18 @@ class autoptimizeStyles extends autoptimizeBase
             $type_css = 'type="text/css" ';
         }
 
-        // Inject the new stylesheets.
-        $replace_tag = array( '<title', 'before' );
+        // Inject the new stylesheets, if possible after SEO stuff, but we need to
+        // already restore script to be able to inject before ld+json instead of title
+        // this should be safe here as all has been extracted  already but behind a filter anyway.
+        if ( $this->inline && true === apply_filters( 'autoptimize_filter_css_restore_js_early', true ) ) {
+            $this->content = $this->restore_marked_content( 'SCRIPT', $this->content );
+        }
+        $_strpos_ldjson = strpos( $this->content, '<script type="application/ld+json"' );
+        if ( false !== $_strpos_ldjson && $_strpos_ldjson < strpos( $this->content, '</head' ) ) {
+            $replace_tag = array( '<script type="application/ld+json"', 'before' );            
+        } else {
+            $replace_tag = array( '<title', 'before' );
+        }
         $replace_tag = apply_filters( 'autoptimize_filter_css_replacetag', $replace_tag, $this->content );
 
         if ( $this->inline ) {

@@ -289,7 +289,7 @@ class MediaStatusViewer implements HookableInterface {
 	 * @type bool      $webp_status   .
 	 * @type int|null  $avif_size     .
 	 * @type bool      $avif_status   .
-	 * }
+	 *                                }
 	 */
 	private function get_images_stats( array $source_paths ): array {
 		$items = [];

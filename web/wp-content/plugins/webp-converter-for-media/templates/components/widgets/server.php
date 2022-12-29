@@ -2,13 +2,14 @@
 /**
  * Widget displayed on plugin settings page.
  *
- * @var string  $size_png_path         Size of file.
- * @var string  $size_png2_path        Size of file.
- * @var string  $size_png_url          Size of file.
- * @var string  $size_png2_url         Size of file.
- * @var string  $size_png_as_webp_url  Size of file.
- * @var string  $size_png2_as_webp_url Size of file.
- * @var mixed[] $plugin_settings       Option keys with values.
+ * @var string[] $errors_codes          List of server configuration errors.
+ * @var string   $size_png_path         Size of file.
+ * @var string   $size_png2_path        Size of file.
+ * @var string   $size_png_url          Size of file.
+ * @var string   $size_png2_url         Size of file.
+ * @var string   $size_png_as_webp_url  Size of file.
+ * @var string   $size_png2_as_webp_url Size of file.
+ * @var mixed[]  $plugin_settings       Option keys with values.
  *
  * @package Converter for Media
  */

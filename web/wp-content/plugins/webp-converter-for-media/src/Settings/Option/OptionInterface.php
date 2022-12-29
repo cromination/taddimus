@@ -46,6 +46,11 @@ interface OptionInterface {
 	public function get_info();
 
 	/**
+	 * @return string|null
+	 */
+	public function get_placeholder();
+
+	/**
 	 * @param mixed[] $settings Plugin settings.
 	 *
 	 * @return string[]|null

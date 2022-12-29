@@ -16,7 +16,7 @@ abstract class OptionAbstract implements OptionInterface {
 	const OPTION_TYPE_TOGGLE     = 'toggle';
 	const FORM_TYPE_BASIC        = 'basic';
 	const FORM_TYPE_ADVANCED     = 'settings_advanced';
-	const FORM_TYPE_CLOUDFLARE   = 'settings_cloudflare';
+	const FORM_TYPE_CDN          = 'settings_cdn';
 	const FORM_TYPE_SIDEBAR      = 'settings_sidebar';
 
 	/**
@@ -31,6 +31,13 @@ abstract class OptionAbstract implements OptionInterface {
 	 */
 	public function get_info() {
 		return null;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_placeholder() {
+		return '';
 	}
 
 	/**

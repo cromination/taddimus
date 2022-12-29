@@ -69,7 +69,10 @@ class DeactivationModalGenerator {
 						__( 'I have "Server configuration error" in plugin settings', 'webp-converter-for-media' ),
 						function () {
 							$errors = apply_filters( 'webpc_server_errors', [] );
-							if ( ! in_array( $errors, [ [ LibsWithoutWebpSupportNotice::ERROR_KEY ], [ LibsNotInstalledNotice::ERROR_KEY ] ] ) ) {
+							if ( ! in_array(
+								$errors,
+								[ [ LibsWithoutWebpSupportNotice::ERROR_KEY ], [ LibsNotInstalledNotice::ERROR_KEY ] ]
+							) ) {
 								return null;
 							}
 

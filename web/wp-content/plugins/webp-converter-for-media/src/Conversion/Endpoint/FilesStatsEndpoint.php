@@ -24,7 +24,7 @@ class FilesStatsEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_route_name(): string {
+	public static function get_route_name(): string {
 		return 'images-stats';
 	}
 

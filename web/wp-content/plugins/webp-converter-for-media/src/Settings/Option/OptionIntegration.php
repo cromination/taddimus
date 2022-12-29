@@ -51,6 +51,7 @@ class OptionIntegration {
 			'label'        => $this->option->get_label(),
 			'notice_lines' => $this->option->get_notice_lines(),
 			'info'         => $this->option->get_info(),
+			'placeholder'  => $this->option->get_placeholder(),
 			'values'       => $values,
 			'disabled'     => $disabled_values ?: [],
 			'value'        => $value,

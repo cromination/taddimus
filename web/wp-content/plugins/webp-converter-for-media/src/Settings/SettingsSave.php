@@ -9,7 +9,6 @@ use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\Method\RemoteMethod;
 use WebpConverter\Loader\LoaderAbstract;
 use WebpConverter\PluginData;
-use WebpConverter\Service\NonceManager;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\TokenValidator;
 use WebpConverter\Settings\Option\AccessTokenOption;
@@ -50,7 +49,7 @@ class SettingsSave {
 	public function save_settings() {
 		$post_data = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! isset( $post_data[ self::FORM_TYPE_PARAM_KEY ] )
-			|| ! ( new NonceManager() )->verify_nonce( $post_data[ self::NONCE_PARAM_KEY ] ?? '', self::NONCE_PARAM_VALUE ) ) {
+			|| ! wp_verify_nonce( $post_data[ self::NONCE_PARAM_KEY ] ?? '', self::NONCE_PARAM_VALUE ) ) {
 			return;
 		}
 

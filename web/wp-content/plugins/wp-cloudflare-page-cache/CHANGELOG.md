@@ -1,3 +1,24 @@
+#####   Version 4.7.2 (2022-11-16)
+
+- Loading an old version of the SweetAlert2 library that doesn't have the anti-Russian Malware added. ([Reported here](https://wordpress.org/support/topic/sites-infected-after-update/))
+
+#####   Version 4.7.1 (2022-11-15)
+
+* Fix upgrade routine to the latest version.
+
+####   Version 4.7.0 (2022-11-15)
+
+- New: Added two new filters i.e. `swcfpc_normal_fallback_cache_html` and `swcfpc_curl_fallback_cache_html`, to give users the ability to make changes to the generated fallback cache HTML before it gets saved in the disk. Idea requested [here](https://wordpress.org/support/topic/no-filter-for-cached-content/).
+- Making sure that when a page/post is marked as private or password protected, the cache gets auto purged
+- Added a list of query Parameters that are now ignored by default by both the plugin and worker code.
+- Added support for the YASR premium version
+- Updated sweetalert library to v11.4.26
+- Making sure that when a page/post is marked as private or password protected, the cache gets auto purged
+- Added urls as an argument to swcfpc_purge_urls, swcfpc_cf_purge_cache_by_urls_before, swcfpc_cf_purge_cache_by_urls_after action
+- Making sure for the WP Rocket hook for after_rocket_clean_post, after_rocket_clean_files, rocket_rucss_complete_job_status only the URLs WP Rocket purged - also gets purged from Cloudflare
+- Added option for Removing Cache Buster Option (Super Advanced Use Case)
+- New: Adding filter swcfpc_normal_fallback_cache_html & swcfpc_curl_fallback_cache_html to make changes to the generated fallback cache HTML before it gets saved to the disk.
+
 #####   Version 4.6.1 (2022-05-27)
 
  - Bugfix: Added missing selector in `backend.js`

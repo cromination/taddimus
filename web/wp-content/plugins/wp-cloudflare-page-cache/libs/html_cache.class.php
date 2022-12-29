@@ -114,10 +114,65 @@ class SWCFPC_Html_Cache
 
         }
 
+        /**
+         * Now check if the $current_url has any unwanted query parameters like (v=, ref=, aff=, utm_*=)
+         * If the URL has such things, then don't add them to the html_cache as html_cache should only hold
+         * proper URLs like /example-car/ and not /example-car/?v=123&aff=123&ref=h65
+         */
+        $current_url_parsed = parse_url( $current_url );
+        $current_url_query_params = [];
+
+        if( array_key_exists( 'query', $current_url_parsed ) ) {
+
+            if( $current_url_parsed[ 'query' ] === '' ) {
+
+                if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                    $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "This URL {$current_url} cannot be cached because the URL has no query param but has the question mark at the end of the URL without actually having any query params. It makes no sense to cache this page as the proper version of the URL will be considered for caching." );
+                }
+
+                return;
+
+            } else {
+
+                // First parse the query params to an array to manage it better
+                parse_str( $current_url_parsed[ 'query' ], $current_url_query_params );
+
+                // Get the array of query params that would be ignored
+                $ignored_query_params = $this->main_instance->get_ignored_query_params();
+
+                // Loop though $ignored_query_params
+                foreach( $ignored_query_params as $ignored_query_param ) {
+
+                    // Check if that query param is present in $current_url_query_params
+                    if( array_key_exists( $ignored_query_param, $current_url_query_params ) ) {
+
+                        // The ignored query param is present in the $current_url_query_params. So, unset it from there
+                        unset( $current_url_query_params[ $ignored_query_param ] );
+                    }
+                }
+
+                // Now lets check if we have any query params left in $current_url_query_params
+                if( count( $current_url_query_params ) > 0 ) {
+
+                    $new_current_url_query_params = http_build_query( $current_url_query_params );
+                    $current_url_parsed[ 'query' ] = $new_current_url_query_params;
+
+                } else {
+                    // Remove the query section from parsed URL
+                    unset( $current_url_parsed[ 'query' ] );
+                }
+
+                // Get the new current URL without the marketing query params
+                $current_url = $this->main_instance->get_unparsed_url( $current_url_parsed );
+            }
+        }
+
+        // Time to add the URL to HTML cache
         $filename = $this->add_url_to_cache( $current_url );
 
-        if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
+        if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
             $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "Created the file {$filename} for the URL {$current_url}" );
+        }
 
 
     }

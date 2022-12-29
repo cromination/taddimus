@@ -18,6 +18,7 @@ class DirectoryFactory implements HookableInterface {
 	private $directories_integration;
 
 	public function __construct() {
+		$this->set_integration( new SourceDirectory( 'cache' ) );
 		$this->set_integration( new SourceDirectory( 'gallery' ) );
 		$this->set_integration( new SourceDirectory( 'plugins' ) );
 		$this->set_integration( new SourceDirectory( 'themes' ) );

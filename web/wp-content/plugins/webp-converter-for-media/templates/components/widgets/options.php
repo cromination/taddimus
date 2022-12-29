@@ -21,7 +21,7 @@
 		<input type="hidden" name="<?php echo esc_attr( $nonce_input_name ); ?>"
 			value="<?php echo esc_attr( $nonce_input_value ); ?>">
 		<?php foreach ( $form_options as $index => $option ) : ?>
-			<div class="webpcPage__widgetRow">
+			<div class="webpcPage__widgetRow webpcPage__widgetRow--option">
 				<ul class="webpcPage__widgetColumns">
 					<li class="webpcPage__widgetColumn">
 						<h4><?php echo esc_html( $option['label'] ); ?></h4>

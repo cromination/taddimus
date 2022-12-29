@@ -66,11 +66,45 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_vars_for_view(): array {
+		$ls_api_key            = ( is_plugin_active( 'litespeed-cache/litespeed-cache.php' ) )
+			? ( ( is_multisite() ) ? get_site_option( 'litespeed.conf.api_key', '' ) : get_option( 'litespeed.conf.api_key', '' ) )
+			: '';
+		$ls_image_optimization = ( $ls_api_key !== '' ) && ( ( is_multisite() ) ? get_site_option( 'litespeed.conf.img_optm-ori' ) : get_option( 'litespeed.conf.img_optm-ori' ) );
+		$ls_webp_replacement   = ( $ls_api_key !== '' ) && ( ( is_multisite() ) ? get_site_option( 'litespeed.conf.img_optm-webp' ) : get_option( 'litespeed.conf.img_optm-webp' ) );
+
 		$steps = [];
-		if ( is_plugin_active( 'litespeed-cache/litespeed-cache.php' ) ) {
+
+		if ( $ls_image_optimization || $ls_webp_replacement ) {
+			$steps[] = sprintf(
+			/* translators: %1$s: settings page, %2$s: plugin name */
+				__( 'Find the %1$s settings for the %2$s plugin.', 'webp-converter-for-media' ),
+				'<strong>"Image Optimization"</strong>',
+				'<strong>"LiteSpeed Cache"</strong>'
+			);
+		}
+		if ( $ls_image_optimization ) {
+			$steps[] = sprintf(
+			/* translators: %1$s: option label */
+				__( 'Disable the %1$s option.', 'webp-converter-for-media' ),
+				'<strong>"Optimize Original Images"</strong>'
+			);
+		}
+		if ( $ls_webp_replacement ) {
+			$steps[] = sprintf(
+			/* translators: %1$s: option label */
+				__( 'Disable the %1$s option.', 'webp-converter-for-media' ),
+				'<strong>"Image WebP Replacement"</strong>'
+			);
+		}
+		if ( $ls_image_optimization || $ls_webp_replacement ) {
 			$steps[] = sprintf(
 			/* translators: %1$s: button label */
-				__( 'Look for the %1$s icon in the admin bar.', 'webp-converter-for-media' ),
+				__( 'Click %1$s.', 'webp-converter-for-media' ),
+				'<strong>"Save Changes"</strong>'
+			);
+			$steps[] = sprintf(
+			/* translators: %1$s: button label */
+				__( 'Look for the %1$s icon in the top admin bar.', 'webp-converter-for-media' ),
 				'<strong>"LiteSpeed Cache Purge All - LSCache"</strong>'
 			);
 			$steps[] = sprintf(
@@ -78,12 +112,19 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 				__( 'Click %1$s.', 'webp-converter-for-media' ),
 				'<strong>"Purge All"</strong>'
 			);
-		} else {
-			$steps[] = __( 'Log in to the management panel of your server.', 'webp-converter-for-media' );
+		}
+
+		if ( ! $steps ) {
+			$steps[] = __( 'Log in to the management panel of your hosting.', 'webp-converter-for-media' );
 			$steps[] = sprintf(
 			/* translators: %1$s: option name */
-				__( 'Find the %1$s section and clear all cache.', 'webp-converter-for-media' ),
-				'<strong>"LiteSpeed Cache"</strong>'
+				__( 'Find the %1$s section.', 'webp-converter-for-media' ),
+				'<strong>"LiteSpeed Web Cache Manager"</strong>'
+			);
+			$steps[] = sprintf(
+			/* translators: %1$s: button label */
+				__( 'Click %1$s.', 'webp-converter-for-media' ),
+				'<strong>"Flush All"</strong>'
 			);
 		}
 

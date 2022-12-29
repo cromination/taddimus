@@ -111,17 +111,31 @@ wp.customize.controlConstructor['interface-tabs'] = wp.customize.Control.extend(
 	hideAllControls: function ( section ) {
         var controls = wp.customize.section(section).controls();
         var tabControl = this.id;
+        var excludeControls = [ 'hestia_pricing_upsell_notice' ];
         for( var i in controls ){
 			var controlId = controls[i].id;
-			if( controlId === 'widgets' ){
-                var sectionContainer = wp.customize.section(section).container;
-                jQuery( sectionContainer ).children( 'li[class*="widget"]' ).css( 'display', 'none' );
-			} else {
-				if( controlId !== tabControl ){
-					var selector = wp.customize.control(controlId).selector;
-					jQuery(selector).hide();
-				}
-			}
+            if ( jQuery.inArray( controlId, excludeControls ) !== -1 ) {
+                var selector = wp.customize.control(controlId).selector;
+                var controlFields = jQuery( selector + '~ li:visible' );
+                if ( controlFields.length > 0 ) {
+                    var controlFieldsLabel = controlFields.find( 'label, span.customize-control-title' );
+                    var hasLockedIcon = controlFieldsLabel.find( '.dashicons-lock' );
+                    if ( hasLockedIcon.length === 0 ) {    
+                        controlFieldsLabel.html( controlFieldsLabel.html() + ' <span class="dashicons dashicons-lock"></span>' );
+                    }
+                }
+            }
+            if ( jQuery.inArray( controlId, excludeControls ) === -1 ) {
+    			if( controlId === 'widgets' ){
+                    var sectionContainer = wp.customize.section(section).container;
+                    jQuery( sectionContainer ).children( 'li[class*="widget"]' ).css( 'display', 'none' );
+    			} else {
+    				if( controlId !== tabControl ){
+    					var selector = wp.customize.control(controlId).selector;
+    					jQuery(selector).hide();
+    				}
+    			}
+            }
 		}
     },
 
@@ -163,3 +177,33 @@ wp.customize.controlConstructor['interface-tabs'] = wp.customize.Control.extend(
 		}
     }
 });
+
+wp.customize.control( 'hestia_slider_type', function( control ) {
+    var sectionGroup = jQuery( control.container ).parents( 'ul' );
+    var selectedType = control.setting._value || '';
+    if ( 'video' === selectedType ) {
+        sectionGroup.addClass( 'hestia-locked-icon' );
+    }
+    var sectionControls = sectionGroup.find( 'li:is(#customize-control-header_video,#customize-control-external_header_video,#customize-control-hestia_slider_content,#customize-control-hestia_slider_alignment),#customize-control-hestia_slider_disable_autoplay,#customize-control-hestia_slider_tabs' );
+    jQuery.each( sectionControls, function() {
+        var controlFieldsLabel = jQuery( this ).find( 'label:not(.ui-checkboxradio-radio-label), span.customize-control-title' );
+        jQuery.each( controlFieldsLabel, function() {
+            var hasLockedIcon = jQuery( this ).find( '.dashicons-lock' );
+            if ( hasLockedIcon.length === 0 ) {
+                jQuery( this ).html( jQuery( this ).html() + ' <span class="dashicons dashicons-lock"></span>' );
+            }
+        } );
+    } );
+    control.container.on( 'change', 'select', function( event ) {
+        var isLocked = jQuery( 'option:selected', this ).hasClass( 'hestia-locked-icon' );
+        if ( isLocked ) {
+            jQuery( this )
+            .parents( 'ul' )
+            .addClass( 'hestia-locked-icon' );
+            return;
+        }
+        jQuery( this )
+        .parents( 'ul' )
+        .removeClass( 'hestia-locked-icon' );
+    } );
+} );

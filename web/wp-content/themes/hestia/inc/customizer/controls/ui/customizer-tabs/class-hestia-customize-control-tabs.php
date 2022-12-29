@@ -98,7 +98,12 @@ class Hestia_Customize_Control_Tabs extends WP_Customize_Control {
 					<# if( data.tabs[tab]['icon'] ) { #>
 					<span class="dashicons dashicons-{{data.tabs[tab]['icon']}}"></span>
 					<# } #>
-					{{data.tabs[tab]['label']}}
+					<# if( data.tabs[tab]['locked'] ) { #>
+						{{data.tabs[tab]['label']}}
+					<span class="dashicons dashicons-lock"></span>
+					<# } else { #>
+						{{data.tabs[tab]['label']}}
+					<# } #>
 				</label>
 			</div>
 		<# i++;} #>

@@ -10,7 +10,6 @@ use WebpConverter\Loader\LoaderAbstract;
 use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
 use WebpConverter\Repository\TokenRepository;
-use WebpConverter\Service\NonceManager;
 use WebpConverter\Settings\Option\OptionAbstract;
 use WebpConverter\Settings\PluginOptions;
 use WebpConverter\Settings\SettingsSave;
@@ -77,20 +76,21 @@ class GeneralSettingsPage extends PageAbstract {
 		$token = $this->token_repository->get_token();
 		$data  = [
 			'logo_url'                 => $this->plugin_info->get_plugin_directory_url() . 'assets/img/logo-headline.png',
-			'errors_messages'          => apply_filters( 'webpc_server_errors_messages', [] ),
-			'errors_codes'             => apply_filters( 'webpc_server_errors', [] ),
 			'form_options'             => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_BASIC ),
 			'form_sidebar_options'     => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_SIDEBAR ),
 			'form_input_name'          => SettingsSave::FORM_TYPE_PARAM_KEY,
 			'form_input_value'         => OptionAbstract::FORM_TYPE_BASIC,
 			'form_sidebar_input_value' => OptionAbstract::FORM_TYPE_SIDEBAR,
 			'nonce_input_name'         => SettingsSave::NONCE_PARAM_KEY,
-			'nonce_input_value'        => ( new NonceManager() )->generate_nonce( SettingsSave::NONCE_PARAM_VALUE ),
+			'nonce_input_value'        => wp_create_nonce( SettingsSave::NONCE_PARAM_VALUE ),
 			'token_valid_status'       => $token->get_valid_status(),
 			'token_active_status'      => $token->is_active(),
-			'api_paths_url'            => ( new PathsEndpoint( $this->plugin_data, $this->token_repository ) )->get_route_url(),
-			'api_regenerate_url'       => ( new RegenerateEndpoint( $this->plugin_data ) )->get_route_url(),
-			'api_stats_url'            => ( new FilesStatsEndpoint( $this->plugin_data ) )->get_route_url(),
+			'api_paths_url'            => PathsEndpoint::get_route_url(),
+			'api_paths_nonce'          => PathsEndpoint::get_route_nonce(),
+			'api_regenerate_url'       => RegenerateEndpoint::get_route_url(),
+			'api_regenerate_nonce'     => RegenerateEndpoint::get_route_nonce(),
+			'api_stats_url'            => FilesStatsEndpoint::get_route_url(),
+			'api_stats_nonce'          => FilesStatsEndpoint::get_route_nonce(),
 			'url_debug_page'           => PageIntegration::get_settings_page_url( DebugPage::PAGE_SLUG ),
 			'output_formats'           => [
 				'webp' => [
@@ -111,6 +111,8 @@ class GeneralSettingsPage extends PageAbstract {
 						: null,
 				],
 			],
+			'errors_messages'          => apply_filters( 'webpc_server_errors_messages', [] ),
+			'errors_codes'             => apply_filters( 'webpc_server_errors', [] ),
 		];
 
 		do_action( LoaderAbstract::ACTION_NAME, true );

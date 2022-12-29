@@ -137,16 +137,21 @@ function swcfpc_fallback_cache_end( $html ) {
 
         if (!file_exists($cache_path . $cache_key) || $swcfpc_objects['fallback_cache']->fallback_cache_is_expired_page($cache_key)) {
 
-            if ($sw_cloudflare_pagecache->get_single_config('cf_fallback_cache_ttl', 0) == 0)
+            if ($sw_cloudflare_pagecache->get_single_config('cf_fallback_cache_ttl', 0) == 0) {
                 $ttl = 0;
-            else
+            } else {
                 $ttl = time() + $sw_cloudflare_pagecache->get_single_config('cf_fallback_cache_ttl', 0);
+            }
 
-            if( $ttl > 0 )
+            if( $ttl > 0 ) {
                 $html .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache - page generated @ " . date('Y-m-d H:i:s') . ' - fallback cache expiration @ ' . date('Y-m-d H:i:s', $ttl) . " - cache key {$cache_key} -->";
-            else
+            } else {
                 $html .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache - page generated @ " . date('Y-m-d H:i:s') . " - fallback cache expiration @ never expires - cache key {$cache_key} -->";
+            }
 
+            // Provide a filter to modify the HTML before it is cached
+            $html = apply_filters( 'swcfpc_normal_fallback_cache_html', $html );
+            
             file_put_contents($cache_path . $cache_key, $html);
 
             // Update TTL
@@ -231,33 +236,498 @@ function swcfpc_fallback_cache_get_current_page_cache_key( $url=null ) {
 
 }
 
+function swcfpc_get_unparsed_url( $parsed_url ) {
+    // PHP_URL_SCHEME
+    $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+    $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+    $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+    $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+    $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+    $pass     = ($user || $pass) ? "$pass@" : '';
+    $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+    $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+    $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+    return "{$scheme}{$user}{$pass}{$host}{$port}{$path}{$query}{$fragment}";
+}
 
 function swcfpc_fallback_cache_remove_url_parameters( $url ) {
 
-    $action = false;
+    $url_parsed = parse_url( $url );
+    $url_query_params = [];
 
-    //to remove query strings for cache if Google Click Identifier are set
-    if(preg_match('/gclid\=/i', $url)){
-        $action = true;
+    if( array_key_exists( 'query', $url_parsed ) ) {
+
+        if( $url_parsed[ 'query' ] === '' ) {
+
+            // this means the URL ends with just ? i.e. /example-page/? - so just remove the last character ? from the URL
+            $url = substr( trim( $url ), 0, -1 );
+
+        } else {
+
+            // Set the ignored query param array
+            $ignored_query_params = [
+                'Browser',
+                'C',
+                'GCCON',
+                'MCMP',
+                'MarketPlace',
+                'PD',
+                'Refresh',
+                'Sens',
+                'ServiceVersion',
+                'Source',
+                'Topic',
+                '__WB_REVISION__',
+                '__cf_chl_jschl_tk__',
+                '__d',
+                '__hsfp',
+                '__hssc',
+                '__hstc',
+                '__s',
+                '_branch_match_id',
+                '_bta_c',
+                '_bta_tid',
+                '_com',
+                '_escaped_fragment_',
+                '_ga',
+                '_ga-ft',
+                '_gl',
+                '_hsmi',
+                '_ke',
+                '_kx',
+                '_paged',
+                '_sm_byp',
+                '_sp',
+                '_szp',
+                '3x',
+                'a',
+                'a_k',
+                'ac',
+                'acpage',
+                'action-box',
+                'action_object_map',
+                'action_ref_map',
+                'action_type_map',
+                'activecampaign_id',
+                'ad',
+                'ad_frame_full',
+                'ad_frame_root',
+                'ad_name',
+                'adclida',
+                'adid',
+                'adlt',
+                'adsafe_ip',
+                'adset_name',
+                'advid',
+                'aff_sub2',
+                'afftrack',
+                'afterload',
+                'ak_action',
+                'alt_id',
+                'am',
+                'amazingmurphybeds',
+                'amp;',
+                'amp;amp',
+                'amp;amp;amp',
+                'amp;amp;amp;amp',
+                'amp;utm_campaign',
+                'amp;utm_medium',
+                'amp;utm_source',
+                'ampStoryAutoAnalyticsLinker',
+                'ampstoryautoanalyticslinke',
+                'an',
+                'ap',
+                'ap_id',
+                'apif',
+                'apipage',
+                'as_occt',
+                'as_q',
+                'as_qdr',
+                'askid',
+                'atFileReset',
+                'atfilereset',
+                'aucid',
+                'auct',
+                'audience',
+                'author',
+                'awt_a',
+                'awt_l',
+                'awt_m',
+                'b2w',
+                'back',
+                'bannerID',
+                'blackhole',
+                'blockedAdTracking',
+                'blog-reader-used',
+                'blogger',
+                'br',
+                'bsft_aaid',
+                'bsft_clkid',
+                'bsft_eid',
+                'bsft_ek',
+                'bsft_lx',
+                'bsft_mid',
+                'bsft_mime_type',
+                'bsft_tv',
+                'bsft_uid',
+                'bvMethod',
+                'bvTime',
+                'bvVersion',
+                'bvb64',
+                'bvb64resp',
+                'bvplugname',
+                'bvprms',
+                'bvprmsmac',
+                'bvreqmerge',
+                'cacheburst',
+                'campaign',
+                'campaign_id',
+                'campaign_name',
+                'campid',
+                'catablog-gallery',
+                'channel',
+                'checksum',
+                'ck_subscriber_id',
+                'cmplz_region_redirect',
+                'cmpnid',
+                'cn-reloaded',
+                'code',
+                'comment',
+                'content_ad_widget',
+                'cost',
+                'cr',
+                'crl8_id',
+                'crlt.pid',
+                'crlt_pid',
+                'crrelr',
+                'crtvid',
+                'ct',
+                'cuid',
+                'daksldlkdsadas',
+                'dcc',
+                'dfp',
+                'dm_i',
+                'domain',
+                'dosubmit',
+                'dsp_caid',
+                'dsp_crid',
+                'dsp_insertion_order_id',
+                'dsp_pub_id',
+                'dsp_tracker_token',
+                'dt',
+                'dur',
+                'durs',
+                'e',
+                'ee',
+                'ef_id',
+                'el',
+                'env',
+                'erprint',
+                'et_blog',
+                'exch',
+                'externalid',
+                'fb_action_ids',
+                'fb_action_types',
+                'fb_ad',
+                'fb_source',
+                'fbclid',
+                'fbzunique',
+                'fg-aqp',
+                'fireglass_rsn',
+                'fo',
+                'fp_sid',
+                'fpa',
+                'fref',
+                'fs',
+                'furl',
+                'fwp_lunch_restrictions',
+                'ga_action',
+                'gclid',
+                'gclsrc',
+                'gdffi',
+                'gdfms',
+                'gdftrk',
+                'gf_page',
+                'gidzl',
+                'goal',
+                'gooal',
+                'gpu',
+                'gtVersion',
+                'haibwc',
+                'hash',
+                'hc_location',
+                'hemail',
+                'hid',
+                'highlight',
+                'hl',
+                'home',
+                'hsa_acc',
+                'hsa_ad',
+                'hsa_cam',
+                'hsa_grp',
+                'hsa_kw',
+                'hsa_mt',
+                'hsa_net',
+                'hsa_src',
+                'hsa_tgt',
+                'hsa_ver',
+                'ias_campId',
+                'ias_chanId',
+                'ias_dealId',
+                'ias_dspId',
+                'ias_impId',
+                'ias_placementId',
+                'ias_pubId',
+                'ical',
+                'ict',
+                'ie',
+                'igshid',
+                'im',
+                'ipl',
+                'jw_start',
+                'jwsource',
+                'k',
+                'key1',
+                'key2',
+                'klaviyo',
+                'ksconf',
+                'ksref',
+                'l',
+                'label',
+                'lang',
+                'ldtag_cl',
+                'level1',
+                'level2',
+                'level3',
+                'level4',
+                'limit',
+                'lng',
+                'load_all_comments',
+                'lt',
+                'ltclid',
+                'ltd',
+                'lucky',
+                'm',
+                'm?sales_kw',
+                'matomo_campaign',
+                'matomo_cid',
+                'matomo_content',
+                'matomo_group',
+                'matomo_keyword',
+                'matomo_medium',
+                'matomo_placement',
+                'matomo_source',
+                'max-results',
+                'mc_cid',
+                'mc_eid',
+                'mdrv',
+                'mediaserver',
+                'memset',
+                'mibextid',
+                'mkcid',
+                'mkevt',
+                'mkrid',
+                'mkwid',
+                'ml_subscriber',
+                'ml_subscriber_hash',
+                'mobileOn',
+                'mode',
+                'month',
+                'msID',
+                'msclkid',
+                'msg',
+                'mtm_campaign',
+                'mtm_cid',
+                'mtm_content',
+                'mtm_group',
+                'mtm_keyword',
+                'mtm_medium',
+                'mtm_placement',
+                'mtm_source',
+                'murphybedstoday',
+                'mwprid',
+                'n',
+                'native_client',
+                'navua',
+                'nb',
+                'nb_klid',
+                'o',
+                'okijoouuqnqq',
+                'org',
+                'pa_service_worker',
+                'partnumber',
+                'pcmtid',
+                'pcode',
+                'pcrid',
+                'pfstyle',
+                'phrase',
+                'pid',
+                'piwik_campaign',
+                'piwik_keyword',
+                'piwik_kwd',
+                'pk_campaign',
+                'pk_keyword',
+                'pk_kwd',
+                'placement',
+                'plat',
+                'platform',
+                'playsinline',
+                'pp',
+                'pr',
+                'prid',
+                'print',
+                'q',
+                'q1',
+                'qsrc',
+                'r',
+                'rd',
+                'rdt_cid',
+                'redig',
+                'redir',
+                'ref',
+                'reftok',
+                'relatedposts_hit',
+                'relatedposts_origin',
+                'relatedposts_position',
+                'remodel',
+                'replytocom',
+                'reverse-paginate',
+                'rid',
+                'rnd',
+                'rndnum',
+                'robots_txt',
+                'rq',
+                'rsd',
+                's_kwcid',
+                'sa',
+                'safe',
+                'said',
+                'sales_cat',
+                'sales_kw',
+                'sb_referer_host',
+                'scrape',
+                'script',
+                'scrlybrkr',
+                'search',
+                'sellid',
+                'sersafe',
+                'sfn_data',
+                'sfn_trk',
+                'sfns',
+                'sfw',
+                'sha1',
+                'share',
+                'shared',
+                'showcomment',
+                'si',
+                'sid',
+                'sid1',
+                'sid2',
+                'sidewalkShow',
+                'sig',
+                'site',
+                'site_id',
+                'siteid',
+                'slicer1',
+                'slicer2',
+                'source',
+                'spref',
+                'spvb',
+                'sra',
+                'src',
+                'srk',
+                'srp',
+                'ssp_iabi',
+                'ssts',
+                'stylishmurphybeds',
+                'subId1 ',
+                'subId2 ',
+                'subId3',
+                'subid',
+                'swcfpc',
+                'tail',
+                'teaser',
+                'test',
+                'timezone',
+                'toWww',
+                'triplesource',
+                'trk_contact',
+                'trk_module',
+                'trk_msg',
+                'trk_sid',
+                'tsig',
+                'turl',
+                'u',
+                'up_auto_log',
+                'upage',
+                'updated-max',
+                'uptime',
+                'us_privacy',
+                'usegapi',
+                'usqp',
+                'utm',
+                'utm_campa',
+                'utm_campaign',
+                'utm_content',
+                'utm_expid',
+                'utm_id',
+                'utm_medium',
+                'utm_reader',
+                'utm_referrer',
+                'utm_source',
+                'utm_sq',
+                'utm_ter',
+                'utm_term',
+                'v',
+                'vc',
+                'vf',
+                'vgo_ee',
+                'vp',
+                'vrw',
+                'vz',
+                'wbraid',
+                'webdriver',
+                'wing',
+                'wpdParentID',
+                'wpmp_switcher',
+                'wref',
+                'wswy',
+                'wtime',
+                'x',
+                'zMoatImpID',
+                'zarsrc',
+                'zeffdn'
+            ];
+
+            // First parse the query params to an array to manage it better
+            parse_str( $url_parsed[ 'query' ], $url_query_params );
+
+            // Loop though $ignored_query_params
+            foreach( $ignored_query_params as $ignored_query_param ) {
+
+                // Check if that query param is present in $url_query_params
+                if( array_key_exists( $ignored_query_param, $url_query_params ) ) {
+
+                    // The ignored query param is present in the $url_query_params. So, unset it from there
+                    unset( $url_query_params[ $ignored_query_param ] );
+                }
+            }
+
+            // Now lets check if we have any query params left in $url_query_params
+            if( count( $url_query_params ) > 0 ) {
+
+                $new_url_query_params = http_build_query( $url_query_params );
+                $url_parsed[ 'query' ] = $new_url_query_params;
+
+            } else {
+                // Remove the query section from parsed URL
+                unset( $url_parsed[ 'query' ] );
+            }
+
+            // Get the new current URL without the marketing query params
+            $url = swcfpc_get_unparsed_url( $url_parsed );
+        }
     }
-
-    //to remove query strings for cache if facebook parameters are set
-    if(preg_match('/fbclid\=/i', $url)){
-        $action = true;
-    }
-
-    //to remove query strings for cache if google analytics parameters are set
-    if(preg_match('/utm_(source|medium|campaign|content|term)/i', $url)){
-        $action = true;
-    }
-
-    // to remove unnecessary query strings like ?v=
-    if(preg_match('/v\=/i', $url)){
-        $action = true;
-    }
-
-    if( $action && strlen($_SERVER['REQUEST_URI']) > 1 )
-        return preg_replace('/\/*\?.+/', '', $url);
 
     return $url;
 

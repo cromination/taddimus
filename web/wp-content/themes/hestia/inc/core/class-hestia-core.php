@@ -67,8 +67,6 @@ class Hestia_Core {
 				'buttons',
 				'color-controls',
 				'general-controls',
-				'big-title-section',
-				'big-title-controls',
 				'about-section',
 				'about-controls',
 				'shop-section',
@@ -112,6 +110,18 @@ class Hestia_Core {
 				'woocommerce-manager',
 			)
 		);
+
+		if ( ! class_exists( 'Hestia_Pricing_Controls' ) ) {
+			$this->features_to_load = array_merge(
+				$this->features_to_load,
+				array(
+					'pricing-upsell-controls',
+					'slider-section',
+					'slider-controls',
+					'view-hooks-with-upsell',
+				)
+			);
+		}
 	}
 
 	/**

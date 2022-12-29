@@ -17,7 +17,7 @@
 <div class="webpcInput">
 	<input type="text"
 		name="<?php echo esc_attr( ( $token_valid_status ) ? '' : $option['name'] ); ?>"
-		value="<?php echo esc_attr( $option['value_public'] ); ?>"
+		value="<?php echo esc_attr( ( $token_valid_status ) ? $option['value_public'] : $option['value'] ); ?>"
 		id="<?php echo esc_attr( $option['name'] ); ?>"
 		class="webpcInput__field"
 		<?php echo ( $token_valid_status ) ? 'readonly' : ''; ?>

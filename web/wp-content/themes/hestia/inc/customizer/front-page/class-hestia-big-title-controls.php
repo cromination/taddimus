@@ -122,6 +122,7 @@ class Hestia_Big_Title_Controls extends Hestia_Front_Page_Section_Controls_Abstr
 					'choices'     => array(
 						'image'    => esc_html__( 'Image', 'hestia' ),
 						'parallax' => esc_html__( 'Parallax', 'hestia' ),
+						'video'    => esc_html__( 'Video (PRO)', 'hestia' ),
 					),
 					'subcontrols' => array(
 						'image'    => array(
@@ -139,6 +140,11 @@ class Hestia_Big_Title_Controls extends Hestia_Front_Page_Section_Controls_Abstr
 							'hestia_big_title_button_text',
 							'hestia_big_title_button_link',
 
+						),
+						'video'    => array(
+							'hestia_slider_content',
+							'header_video',
+							'external_header_video',
 						),
 					),
 				),

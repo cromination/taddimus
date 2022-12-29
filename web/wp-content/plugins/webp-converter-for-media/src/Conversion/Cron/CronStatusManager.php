@@ -7,11 +7,12 @@ namespace WebpConverter\Conversion\Cron;
  */
 class CronStatusManager {
 
-	const CRON_PATHS_TRANSIENT         = 'webpc_cron_paths';
-	const CRON_PATHS_SKIPPED_TRANSIENT = 'webpc_cron_paths_skipped';
-	const CRON_STATUS_LOCKED_TRANSIENT = 'webpc_cron_locked';
-	const CRON_REQUEST_ID_TRANSIENT    = 'webpc_cron_request_id';
-	const CRON_PATHS_LIMIT             = 1000;
+	const CRON_PATHS_TRANSIENT            = 'webpc_cron_paths';
+	const CRON_PATHS_SKIPPED_TRANSIENT    = 'webpc_cron_paths_skipped';
+	const CRON_STATUS_LOCKED_TRANSIENT    = 'webpc_cron_locked';
+	const CRON_REQUEST_ID_TRANSIENT       = 'webpc_cron_request_id';
+	const CRON_REQUEST_RESPONSE_TRANSIENT = 'webpc_cron_request_response';
+	const CRON_PATHS_LIMIT                = 1000;
 
 	/**
 	 * @param string[] $paths           .
@@ -91,5 +92,14 @@ class CronStatusManager {
 	public function get_conversion_request_id() {
 		$request_id = get_site_transient( self::CRON_REQUEST_ID_TRANSIENT );
 		return $request_id ?: null;
+	}
+
+	/**
+	 * @param mixed[]|\WP_Error $response .
+	 *
+	 * @return void
+	 */
+	public function set_conversion_request_response( $response ) {
+		set_site_transient( self::CRON_REQUEST_RESPONSE_TRANSIENT, $response );
 	}
 }

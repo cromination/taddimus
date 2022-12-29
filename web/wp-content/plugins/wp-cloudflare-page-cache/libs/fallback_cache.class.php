@@ -43,8 +43,9 @@ class SWCFPC_Fallback_Cache
         // Ajax clear whole fallback cache
         add_action( 'wp_ajax_swcfpc_purge_fallback_page_cache', array($this, 'ajax_purge_whole_fallback_page_cache') );
 
-        if( $this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 && !is_admin() && !$this->main_instance->is_login_page() && $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) > 0 )
+        if( $this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 && !is_admin() && !$this->main_instance->is_login_page() && $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) > 0 ) {
             add_action('shutdown', array($this, 'fallback_cache_add_current_url_to_cache'), PHP_INT_MAX);
+        }
 
     }
 
@@ -373,17 +374,22 @@ class SWCFPC_Fallback_Cache
 
                     if( $response_code == 200 ) {
 
-                        if ($this->main_instance->get_single_config('cf_fallback_cache_ttl', 0) == 0)
+                        if ($this->main_instance->get_single_config('cf_fallback_cache_ttl', 0) == 0) {
                             $ttl = 0;
-                        else
+                        } else {
                             $ttl = time() + $this->main_instance->get_single_config('cf_fallback_cache_ttl', 0);
+                        }
 
                         $body = wp_remote_retrieve_body($response);
 
-                        if( $ttl > 0 )
+                        if( $ttl > 0 ) {
                             $body .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache via cURL - page generated @ " . date('Y-m-d H:i:s') . ' - fallback cache expiration @ ' . date('Y-m-d H:i:s', $ttl) . " - cache key {$cache_key} -->";
-                        else
+                        } else {
                             $body .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache via cURL - page generated @ " . date('Y-m-d H:i:s') . " - fallback cache expiration @ never expires - cache key {$cache_key} -->";
+                        }
+
+                        // Provide a filter to modify the HTML before it is cached
+                        $body = apply_filters('swcfpc_curl_fallback_cache_html', $body);
 
                         file_put_contents($cache_path . $cache_key, $body);
 
@@ -410,30 +416,50 @@ class SWCFPC_Fallback_Cache
 
     function fallback_cache_remove_url_parameters( $url ) {
 
-        $action = false;
+        $url_parsed = parse_url( $url );
+        $url_query_params = [];
 
-        //to remove query strings for cache if Google Click Identifier are set
-        if(preg_match('/gclid\=/i', $url)){
-            $action = true;
+        if( array_key_exists( 'query', $url_parsed ) ) {
+
+            if( $url_parsed[ 'query' ] === '' ) {
+
+                // this means the URL ends with just ? i.e. /example-page/? - so just remove the last character ? from the URL
+                $url = substr( trim( $url ), 0, -1 );
+
+            } else {
+
+                // First parse the query params to an array to manage it better
+                parse_str( $url_parsed[ 'query' ], $url_query_params );
+
+                // Get the array of query params that would be ignored
+                $ignored_query_params = $this->main_instance->get_ignored_query_params();
+
+                // Loop though $ignored_query_params
+                foreach( $ignored_query_params as $ignored_query_param ) {
+
+                    // Check if that query param is present in $url_query_params
+                    if( array_key_exists( $ignored_query_param, $url_query_params ) ) {
+
+                        // The ignored query param is present in the $url_query_params. So, unset it from there
+                        unset( $url_query_params[ $ignored_query_param ] );
+                    }
+                }
+
+                // Now lets check if we have any query params left in $url_query_params
+                if( count( $url_query_params ) > 0 ) {
+
+                    $new_url_query_params = http_build_query( $url_query_params );
+                    $url_parsed[ 'query' ] = $new_url_query_params;
+
+                } else {
+                    // Remove the query section from parsed URL
+                    unset( $url_parsed[ 'query' ] );
+                }
+
+                // Get the new current URL without the marketing query params
+                $url = $this->main_instance->get_unparsed_url( $url_parsed );
+            }
         }
-
-        //to remove query strings for cache if facebook parameters are set
-        if(preg_match('/fbclid\=/i', $url)){
-            $action = true;
-        }
-
-        //to remove query strings for cache if google analytics parameters are set
-        if(preg_match('/utm_(source|medium|campaign|content|term)/i', $url)){
-            $action = true;
-        }
-
-        // to remove unnecessary query strings like ?v=
-        if(preg_match('/v\=/i', $url)){
-            $action = true;
-        }
-
-        if( $action && strlen($_SERVER['REQUEST_URI']) > 1 )
-            return preg_replace('/\/*\?.+/', '', $url);
 
         return $url;
 

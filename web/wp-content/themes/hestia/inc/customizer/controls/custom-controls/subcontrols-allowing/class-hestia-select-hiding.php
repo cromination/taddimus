@@ -34,6 +34,15 @@ class Hestia_Select_Hiding extends WP_Customize_Control {
 	public $parent = '';
 
 	/**
+	 * Flag to display locked icon.
+	 *
+	 * @since  3.0.24
+	 * @access public
+	 * @var bool
+	 */
+	public $locked = false;
+
+	/**
 	 * Hestia_Select_Multiple constructor.
 	 *
 	 * @param WP_Customize_Manager $manager Customize manager object.
@@ -42,6 +51,9 @@ class Hestia_Select_Hiding extends WP_Customize_Control {
 	 */
 	public function __construct( WP_Customize_Manager $manager, $id, array $args = array() ) {
 		parent::__construct( $manager, $id, $args );
+		if ( ! class_exists( 'Hestia_Slider_Controls_Addon' ) && in_array( $id, array( 'hestia_slider_type' ), true ) ) {
+			$this->locked = true;
+		}
 	}
 
 	/**
@@ -68,6 +80,7 @@ class Hestia_Select_Hiding extends WP_Customize_Control {
 		$json['id']          = $this->id;
 		$json['subcontrols'] = $this->subcontrols;
 		$json['parent']      = $this->parent;
+		$json['locked']      = $this->locked;
 
 		return $json;
 	}
@@ -97,17 +110,23 @@ class Hestia_Select_Hiding extends WP_Customize_Control {
 
 							<select {{{ data.link }}}>
 								<# _.each( data.choices, function( label, choice ) {
-
+										var proOptions = [ 'video' ];
 										var selected = '';
 										if ( choice === data.value ) {
 											selected = 'selected="selected"';
 										}
 										#>
-
-									<option value="{{ choice }}" {{selected}}>{{ label }}</option>
+									<# if ( data.locked && _.indexOf( proOptions, choice ) !== -1 ) { #>
+										<option value="{{ choice }}" class="hestia-locked-icon">{{ label }}</option>
+									<# } else { #>
+										<option value="{{ choice }}" {{selected}}>{{ label }}</option>
+									<# } #>
 
 											<# } ) #>
 							</select>
+							<# if ( data.locked ) { #>
+							<span class="dashicons dashicons-lock"></span>
+							<# } #>
 		</label>
 		<?php
 	}

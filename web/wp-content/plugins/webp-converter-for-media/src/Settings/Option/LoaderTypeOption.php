@@ -44,7 +44,18 @@ class LoaderTypeOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_info(): string {
-		return __( 'By changing image loading mode it allows you to bypass some server configuration problems.', 'webp-converter-for-media' );
+		return implode(
+			' ',
+			[
+				__( 'By changing image loading mode it allows you to bypass some server configuration problems.', 'webp-converter-for-media' ),
+				sprintf(
+				/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+					__( 'Check out %1$sour documentation%2$s for more information.', 'webp-converter-for-media' ),
+					'<a href="https://url.mattplugins.com/converter-field-loader-type-info" target="_blank">',
+					'</a>'
+				),
+			]
+		);
 	}
 
 	/**

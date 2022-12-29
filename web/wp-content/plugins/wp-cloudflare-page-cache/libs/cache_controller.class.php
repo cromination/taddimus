@@ -115,7 +115,7 @@ class SWCFPC_Cache_Controller
 
         // WP Rocket actions
         if( $this->main_instance->get_single_config('cf_wp_rocket_purge_on_post_flush', 0) > 0 )
-            add_action( 'after_rocket_clean_post',   array($this, 'wp_rocket_hooks'), PHP_INT_MAX );
+            add_action( 'after_rocket_clean_post',   array($this, 'wp_rocket_after_rocket_clean_post_hook'), PHP_INT_MAX );
 
         if( $this->main_instance->get_single_config('cf_wp_rocket_purge_on_domain_flush', 0) > 0 )
             add_action( 'after_rocket_clean_domain', array($this, 'wp_rocket_hooks'), PHP_INT_MAX );
@@ -124,7 +124,7 @@ class SWCFPC_Cache_Controller
             add_action( 'rocket_after_automatic_cache_purge_dir', array($this, 'wp_rocket_hooks'), PHP_INT_MAX );
 
         if( $this->main_instance->get_single_config('cf_wp_rocket_purge_on_clean_files', 0) > 0 )
-            add_action( 'after_rocket_clean_files', array($this, 'wp_rocket_hooks'), PHP_INT_MAX );
+            add_action( 'after_rocket_clean_files', array($this, 'wp_rocket_selective_url_purge_hooks'), PHP_INT_MAX, 1 );
 
         if( $this->main_instance->get_single_config('cf_wp_rocket_purge_on_clean_cache_busting', 0) > 0 )
             add_action( 'after_rocket_clean_cache_busting', array($this, 'wp_rocket_hooks'), PHP_INT_MAX );
@@ -134,6 +134,9 @@ class SWCFPC_Cache_Controller
 
         if( $this->main_instance->get_single_config('cf_wp_rocket_purge_on_ccss_generation_complete', 0) > 0 )
             add_action( 'rocket_critical_css_generation_process_complete', array($this, 'wp_rocket_hooks'), PHP_INT_MAX );
+
+        if( $this->main_instance->get_single_config('cf_wp_rocket_purge_on_rucss_job_complete', 0) > 0 )
+            add_action( 'rocket_rucss_complete_job_status', array($this, 'wp_rocket_selective_url_purge_hooks'), PHP_INT_MAX, 1 );
 
         if( $this->main_instance->get_single_config('cf_wp_rocket_disable_cache', 0) > 0 )
             add_action( 'admin_init', array($this, 'wp_rocket_disable_page_cache'), PHP_INT_MAX );
@@ -177,7 +180,7 @@ class SWCFPC_Cache_Controller
 
         // Edd actions
         if( $this->main_instance->get_single_config('cf_auto_purge_edd_payment_add', 0) > 0 )
-            add_action( 'edd_insert_payment', array($this, 'edd_purge_cache_on_payment_add', PHP_INT_MAX, 2) );
+            add_action( 'edd_insert_payment', array($this, 'edd_purge_cache_on_payment_add', PHP_INT_MAX ) );
 
         // Nginx Helper actions
         if( $this->main_instance->get_single_config('cf_nginx_helper_purge_on_cache_flush', 0) > 0 ) {
@@ -187,8 +190,9 @@ class SWCFPC_Cache_Controller
 
         // YASR actions
         if( $this->main_instance->get_single_config('cf_yasr_purge_on_rating', 0) > 0 ) {
-            add_action('yasr_action_on_overall_rating', array($this, 'yasr_hooks'), PHP_INT_MAX, 2);
-            add_action('yasr_action_on_visitor_vote', array($this, 'yasr_hooks'), PHP_INT_MAX, 2);
+            add_action('yasr_action_on_overall_rating', array($this, 'yasr_hooks'), PHP_INT_MAX, 1);
+            add_action('yasr_action_on_visitor_vote', array($this, 'yasr_hooks'), PHP_INT_MAX, 1);
+            add_action('yasr_action_on_visitor_multiset_vote', array($this, 'yasr_hooks'), PHP_INT_MAX, 1);
         }
 
         // WP Asset Clean Up actions
@@ -816,7 +820,7 @@ class SWCFPC_Cache_Controller
 
             $this->objects['logs']->add_log('cache_controller::purge_urls', 'Purged specific URLs from Cloudflare cache');
 
-            do_action('swcfpc_purge_urls');
+            do_action('swcfpc_purge_urls', $urls);
 
             // Reset timestamp for Auto prefetch URLs in viewport option
             if( $this->main_instance->get_single_config('cf_prefetch_urls_viewport', 0) > 0 )
@@ -942,7 +946,7 @@ class SWCFPC_Cache_Controller
 
         if( ($this->main_instance->get_single_config('cf_auto_purge', 0) > 0 || $this->main_instance->get_single_config('cf_auto_purge_all', 0) > 0) && $this->is_cache_enabled() ) {
 
-            if ($old_status != 'publish' && $new_status == 'publish') {
+            if ( in_array( $old_status, [ 'future', 'draft', 'pending' ] ) && in_array( $new_status, [ 'publish', 'private' ] ) ) {
 
                 $current_action = function_exists('current_action') ? current_action() : "";
 
@@ -982,7 +986,7 @@ class SWCFPC_Cache_Controller
 
             $error = '';
 
-            $validPostStatus = array('publish', 'trash');
+            $validPostStatus = [ 'publish', 'trash', 'private' ];
             $thisPostStatus = get_post_status($postId);
 
             if (get_permalink($postId) != true || !in_array($thisPostStatus, $validPostStatus)) {
@@ -1243,6 +1247,9 @@ class SWCFPC_Cache_Controller
     function inject_cache_buster_js_code() {
 
         if( !$this->is_cache_enabled() )
+            return;
+
+        if( $this->remove_cache_buster() )
             return;
 
         if( !is_user_logged_in() )
@@ -1741,6 +1748,17 @@ class SWCFPC_Cache_Controller
 
     }
 
+    function remove_cache_buster() {
+        $this->objects = $this->main_instance->get_objects();
+
+        if( $this->main_instance->get_single_config('cf_remove_cache_buster', 0) > 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 
     function w3tc_hooks() {
 
@@ -1803,6 +1821,38 @@ class SWCFPC_Cache_Controller
             $this->purge_all();
 
         $this->objects['logs']->add_log('cache_controller::wp_rocket_hooks', "Purge whole Cloudflare cache (fired action: {$current_action})" );
+
+    }
+
+    function wp_rocket_after_rocket_clean_post_hook( $post ) {
+
+        $current_action = function_exists('current_action') ? current_action() : '';
+        $this->objects = $this->main_instance->get_objects();
+
+        if( is_object( $post ) ) {
+            $purged_post_url = get_permalink( $post->ID );
+
+            $this->purge_urls( array( $purged_post_url ) );
+
+            $this->objects['logs']->add_log('cache_controller::wp_rocket_after_rocket_clean_post_hook', "Purge Cloudflare cache for only URL {$purged_post_url} - Fired action: {$current_action}" );
+        } else {
+            $this->objects['logs']->add_log('cache_controller::wp_rocket_after_rocket_clean_post_hook', "Unable to Purge Cloudflare cache. Valid post object not received  - Fired action: {$current_action}" );
+        }
+        
+    }
+
+    function wp_rocket_selective_url_purge_hooks( $url_to_purge ) {
+
+        $current_action = function_exists('current_action') ? current_action() : '';
+
+        $this->objects = $this->main_instance->get_objects();
+
+        // If we are receiving only 1 URL then wrap it inside an array else if we are receiving an array of URLs then pass that
+        $url_to_purge = is_array( $url_to_purge ) ? $url_to_purge : array( $url_to_purge );
+
+        $this->purge_urls( $url_to_purge );
+
+        $this->objects['logs']->add_log('cache_controller::wp_rocket_selective_url_purge_hooks', "Purge Cloudflare cache for only URL {$url_to_purge} - Fired action: {$current_action}" );
 
     }
 
@@ -1879,13 +1929,16 @@ class SWCFPC_Cache_Controller
     }
 
 
-    function yasr_hooks( $post_id, $rating ) {
+    function yasr_hooks( $post_id ) {
 
         $current_action = function_exists('current_action') ? current_action() : "";
 
         $this->objects = $this->main_instance->get_objects();
 
         $urls = array();
+
+        $post_id = is_array( $post_id ) ? $post_id[ 'post_id' ] : $post_id;
+
         $urls[] = get_permalink( $post_id );
 
         $this->purge_urls( $urls );
@@ -1980,7 +2033,7 @@ class SWCFPC_Cache_Controller
     }
 
 
-    function edd_purge_cache_on_payment_add($payment_id, $payment_data) {
+    function edd_purge_cache_on_payment_add() {
 
         $current_action = function_exists('current_action') ? current_action() : "";
 

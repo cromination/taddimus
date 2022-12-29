@@ -1,3 +1,10 @@
+##### [Version 3.0.25](https://github.com/Codeinwp/hestia-pro/compare/v3.0.24...v3.0.25) (2022-12-20)
+
+- [Fix] Improve TinyMCE editor style
+- [Fix] Page break block not working
+- [Fix] Fixed the word-break issue in the comment section
+- Better showcase the features from the Pro version
+
 ##### [Version 3.0.24](https://github.com/Codeinwp/hestia-pro/compare/v3.0.23...v3.0.24) (2022-09-28)
 
 - [Fix] Fix broken range slider style 

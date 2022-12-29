@@ -33,6 +33,15 @@ class Hestia_Hiding_Section extends WP_Customize_Section {
 	public $visible;
 
 	/**
+	 * Flag to display locked icon.
+	 *
+	 * @since  3.0.24
+	 * @access public
+	 * @var bool
+	 */
+	public $locked = false;
+
+	/**
 	 * Name of customizer hiding control.
 	 *
 	 * @since  1.1.47
@@ -64,6 +73,10 @@ class Hestia_Hiding_Section extends WP_Customize_Section {
 		if ( ! empty( $args['hiding_control'] ) ) {
 			$this->visible = ! get_theme_mod( $args['hiding_control'] );
 		}
+		if ( ! class_exists( 'Hestia_Pricing_Controls' ) && in_array( $id, array( 'hestia_pricing' ), true ) ) {
+			$this->locked  = true;
+			$this->visible = false;
+		}
 	}
 
 	/**
@@ -76,6 +89,7 @@ class Hestia_Hiding_Section extends WP_Customize_Section {
 		$json                   = parent::json();
 		$json['visible']        = $this->visible;
 		$json['hiding_control'] = $this->hiding_control;
+		$json['locked']         = $this->locked;
 		return $json;
 	}
 
@@ -93,6 +107,9 @@ class Hestia_Hiding_Section extends WP_Customize_Section {
 				{{ data.title }}
 				<# if ( data.visible ) { #>
 					<a data-control="{{ data.hiding_control }}" class="hestia-toggle-section" href="#"><span class="dashicons dashicons-visibility"></span></a>
+				<# } else if ( data.locked ) { #>
+					<a class="hestia-toggle-section hestia-section-locked" href="#"><span class="dashicons dashicons-lock"></span></a>
+					<a class="hestia-toggle-section" href="#"><span class="dashicons dashicons-hidden"></span></a>
 				<# } else { #>
 					<a data-control="{{ data.hiding_control }}" class="hestia-toggle-section" href="#"><span class="dashicons dashicons-hidden"></span></a>
 				<# } #>

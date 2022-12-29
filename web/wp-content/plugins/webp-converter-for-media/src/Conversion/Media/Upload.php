@@ -133,6 +133,6 @@ class Upload implements HookableInterface {
 		}
 
 		$this->cron_initiator->add_paths_to_conversion( $paths, true );
-		$this->cron_initiator->init_async_conversion();
+		$this->cron_initiator->init_async_conversion( true );
 	}
 }

@@ -27,7 +27,10 @@ class Uninstall implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		register_uninstall_hook( $this->plugin_info->get_plugin_file(), [ 'WebpConverter\Plugin\Uninstall', 'load_uninstall_actions' ] );
+		register_uninstall_hook(
+			$this->plugin_info->get_plugin_file(),
+			[ 'WebpConverter\Plugin\Uninstall', 'load_uninstall_actions' ]
+		);
 	}
 
 	/**

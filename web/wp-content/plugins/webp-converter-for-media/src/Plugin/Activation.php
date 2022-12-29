@@ -44,5 +44,8 @@ class Activation implements HookableInterface {
 		$default_settings->add_default_stats_values();
 
 		wp_cache_delete( 'alloptions', 'options' );
+		if ( defined( 'LSCWP_V' ) ) {
+			do_action( 'litespeed_purge_all' );
+		}
 	}
 }

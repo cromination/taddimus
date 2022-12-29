@@ -196,6 +196,10 @@ class Hestia_Autoloader {
 			'Hestia_Content_Import'                       => HESTIA_PHP_INCLUDE . 'content-import',
 			'Hestia_Import_Utilities'                     => HESTIA_PHP_INCLUDE . 'content-import',
 			'Hestia_Import_Zerif'                         => HESTIA_PHP_INCLUDE . 'content-import',
+			'Hestia_Pricing_Upsell_Controls'              => HESTIA_PHP_INCLUDE . 'customizer/front-page',
+			'Hestia_Slider_Controls'                      => HESTIA_PHP_INCLUDE . 'customizer/front-page',
+			'Hestia_Slider_Section'                       => HESTIA_PHP_INCLUDE . 'customizer/views/front-page',
+			'Hestia_View_Hooks_With_Upsell'               => HESTIA_PHP_INCLUDE . 'customizer/view-hooks',
 		);
 	}
 

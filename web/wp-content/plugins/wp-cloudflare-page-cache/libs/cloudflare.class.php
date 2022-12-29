@@ -668,7 +668,7 @@ class SWCFPC_Cloudflare
 
         $this->objects = $this->main_instance->get_objects();
 
-        do_action('swcfpc_cf_purge_cache_by_urls_before');
+        do_action('swcfpc_cf_purge_cache_by_urls_before', $urls);
 
         $cf_headers           = $this->get_api_headers();
         $cf_headers['method'] = 'POST';
@@ -771,7 +771,7 @@ class SWCFPC_Cloudflare
 
         }
 
-        do_action('swcfpc_cf_purge_cache_by_urls_after');
+        do_action('swcfpc_cf_purge_cache_by_urls_after', $urls);
 
         return true;
 

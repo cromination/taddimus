@@ -23,8 +23,9 @@
 			<?php
 			echo wp_kses_post(
 				sprintf(
-				/* translators: %s: icon heart */
-					__( 'Go to the plugin settings and optimize all your images with one click! Thank you for being with us! %s', 'webp-converter-for-media' ),
+				/* translators: %1$s: button label, %2$s: icon heart */
+					__( 'Optimize all your images by click the "%1$s" button in the plugin settings. It\'s so easy! %2$s', 'webp-converter-for-media' ),
+					__( 'Start Bulk Optimization', 'webp-converter-for-media' ),
 					'<span class="dashicons dashicons-heart"></span>'
 				)
 			);
@@ -34,7 +35,7 @@
 			<a href="<?php echo esc_url( $settings_url ); ?>"
 				class="webpcContent__button webpcButton webpcButton--blue webpcButton--bg"
 			>
-				<?php echo esc_html( __( 'Speed up my website', 'webp-converter-for-media' ) ); ?>
+				<?php echo esc_html( __( 'Go to the plugin settings', 'webp-converter-for-media' ) ); ?>
 			</a>
 			<a href="https://url.mattplugins.com/converter-notice-welcome-button-video" target="_blank"
 				class="webpcContent__button webpcButton webpcButton--blue"

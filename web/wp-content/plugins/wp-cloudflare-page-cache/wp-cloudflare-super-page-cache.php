@@ -3,7 +3,7 @@
  * Plugin Name:  Super Page Cache for Cloudflare
  * Plugin URI:   https://wordpress.org/plugins/wp-cloudflare-page-cache/
  * Description:  Speed up your website by enabling page caching on a Cloudflare free plans.
- * Version:      4.6.1
+ * Version:      4.7.2
  * Author:       Optimole
  * Author URI:   https://optimole.com/
  * License:      GPLv2 or later
@@ -42,7 +42,444 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         private $config   = false;
         private $objects  = array();
-        private $version  = '4.6.1';
+        private $version  = '4.7.2';
+
+        // Sorting Tool: https://onlinestringtools.com/sort-strings
+        // Duplicate Finder: https://www.mynikko.com/tools/tool_duplicateremover.html
+        // Special Thanks: https://github.com/mpchadwick/tracking-query-params-registry/blob/master/_data/params.csv
+        private $ignored_query_params = [
+            'Browser',
+            'C',
+            'GCCON',
+            'MCMP',
+            'MarketPlace',
+            'PD',
+            'Refresh',
+            'Sens',
+            'ServiceVersion',
+            'Source',
+            'Topic',
+            '__WB_REVISION__',
+            '__cf_chl_jschl_tk__',
+            '__d',
+            '__hsfp',
+            '__hssc',
+            '__hstc',
+            '__s',
+            '_branch_match_id',
+            '_bta_c',
+            '_bta_tid',
+            '_com',
+            '_escaped_fragment_',
+            '_ga',
+            '_ga-ft',
+            '_gl',
+            '_hsmi',
+            '_ke',
+            '_kx',
+            '_paged',
+            '_sm_byp',
+            '_sp',
+            '_szp',
+            '3x',
+            'a',
+            'a_k',
+            'ac',
+            'acpage',
+            'action-box',
+            'action_object_map',
+            'action_ref_map',
+            'action_type_map',
+            'activecampaign_id',
+            'ad',
+            'ad_frame_full',
+            'ad_frame_root',
+            'ad_name',
+            'adclida',
+            'adid',
+            'adlt',
+            'adsafe_ip',
+            'adset_name',
+            'advid',
+            'aff_sub2',
+            'afftrack',
+            'afterload',
+            'ak_action',
+            'alt_id',
+            'am',
+            'amazingmurphybeds',
+            'amp;',
+            'amp;amp',
+            'amp;amp;amp',
+            'amp;amp;amp;amp',
+            'amp;utm_campaign',
+            'amp;utm_medium',
+            'amp;utm_source',
+            'ampStoryAutoAnalyticsLinker',
+            'ampstoryautoanalyticslinke',
+            'an',
+            'ap',
+            'ap_id',
+            'apif',
+            'apipage',
+            'as_occt',
+            'as_q',
+            'as_qdr',
+            'askid',
+            'atFileReset',
+            'atfilereset',
+            'aucid',
+            'auct',
+            'audience',
+            'author',
+            'awt_a',
+            'awt_l',
+            'awt_m',
+            'b2w',
+            'back',
+            'bannerID',
+            'blackhole',
+            'blockedAdTracking',
+            'blog-reader-used',
+            'blogger',
+            'br',
+            'bsft_aaid',
+            'bsft_clkid',
+            'bsft_eid',
+            'bsft_ek',
+            'bsft_lx',
+            'bsft_mid',
+            'bsft_mime_type',
+            'bsft_tv',
+            'bsft_uid',
+            'bvMethod',
+            'bvTime',
+            'bvVersion',
+            'bvb64',
+            'bvb64resp',
+            'bvplugname',
+            'bvprms',
+            'bvprmsmac',
+            'bvreqmerge',
+            'cacheburst',
+            'campaign',
+            'campaign_id',
+            'campaign_name',
+            'campid',
+            'catablog-gallery',
+            'channel',
+            'checksum',
+            'ck_subscriber_id',
+            'cmplz_region_redirect',
+            'cmpnid',
+            'cn-reloaded',
+            'code',
+            'comment',
+            'content_ad_widget',
+            'cost',
+            'cr',
+            'crl8_id',
+            'crlt.pid',
+            'crlt_pid',
+            'crrelr',
+            'crtvid',
+            'ct',
+            'cuid',
+            'daksldlkdsadas',
+            'dcc',
+            'dfp',
+            'dm_i',
+            'domain',
+            'dosubmit',
+            'dsp_caid',
+            'dsp_crid',
+            'dsp_insertion_order_id',
+            'dsp_pub_id',
+            'dsp_tracker_token',
+            'dt',
+            'dur',
+            'durs',
+            'e',
+            'ee',
+            'ef_id',
+            'el',
+            'env',
+            'erprint',
+            'et_blog',
+            'exch',
+            'externalid',
+            'fb_action_ids',
+            'fb_action_types',
+            'fb_ad',
+            'fb_source',
+            'fbclid',
+            'fbzunique',
+            'fg-aqp',
+            'fireglass_rsn',
+            'fo',
+            'fp_sid',
+            'fpa',
+            'fref',
+            'fs',
+            'furl',
+            'fwp_lunch_restrictions',
+            'ga_action',
+            'gclid',
+            'gclsrc',
+            'gdffi',
+            'gdfms',
+            'gdftrk',
+            'gf_page',
+            'gidzl',
+            'goal',
+            'gooal',
+            'gpu',
+            'gtVersion',
+            'haibwc',
+            'hash',
+            'hc_location',
+            'hemail',
+            'hid',
+            'highlight',
+            'hl',
+            'home',
+            'hsa_acc',
+            'hsa_ad',
+            'hsa_cam',
+            'hsa_grp',
+            'hsa_kw',
+            'hsa_mt',
+            'hsa_net',
+            'hsa_src',
+            'hsa_tgt',
+            'hsa_ver',
+            'ias_campId',
+            'ias_chanId',
+            'ias_dealId',
+            'ias_dspId',
+            'ias_impId',
+            'ias_placementId',
+            'ias_pubId',
+            'ical',
+            'ict',
+            'ie',
+            'igshid',
+            'im',
+            'ipl',
+            'jw_start',
+            'jwsource',
+            'k',
+            'key1',
+            'key2',
+            'klaviyo',
+            'ksconf',
+            'ksref',
+            'l',
+            'label',
+            'lang',
+            'ldtag_cl',
+            'level1',
+            'level2',
+            'level3',
+            'level4',
+            'limit',
+            'lng',
+            'load_all_comments',
+            'lt',
+            'ltclid',
+            'ltd',
+            'lucky',
+            'm',
+            'm?sales_kw',
+            'matomo_campaign',
+            'matomo_cid',
+            'matomo_content',
+            'matomo_group',
+            'matomo_keyword',
+            'matomo_medium',
+            'matomo_placement',
+            'matomo_source',
+            'max-results',
+            'mc_cid',
+            'mc_eid',
+            'mdrv',
+            'mediaserver',
+            'memset',
+            'mibextid',
+            'mkcid',
+            'mkevt',
+            'mkrid',
+            'mkwid',
+            'ml_subscriber',
+            'ml_subscriber_hash',
+            'mobileOn',
+            'mode',
+            'month',
+            'msID',
+            'msclkid',
+            'msg',
+            'mtm_campaign',
+            'mtm_cid',
+            'mtm_content',
+            'mtm_group',
+            'mtm_keyword',
+            'mtm_medium',
+            'mtm_placement',
+            'mtm_source',
+            'murphybedstoday',
+            'mwprid',
+            'n',
+            'native_client',
+            'navua',
+            'nb',
+            'nb_klid',
+            'o',
+            'okijoouuqnqq',
+            'org',
+            'pa_service_worker',
+            'partnumber',
+            'pcmtid',
+            'pcode',
+            'pcrid',
+            'pfstyle',
+            'phrase',
+            'pid',
+            'piwik_campaign',
+            'piwik_keyword',
+            'piwik_kwd',
+            'pk_campaign',
+            'pk_keyword',
+            'pk_kwd',
+            'placement',
+            'plat',
+            'platform',
+            'playsinline',
+            'pp',
+            'pr',
+            'prid',
+            'print',
+            'q',
+            'q1',
+            'qsrc',
+            'r',
+            'rd',
+            'rdt_cid',
+            'redig',
+            'redir',
+            'ref',
+            'reftok',
+            'relatedposts_hit',
+            'relatedposts_origin',
+            'relatedposts_position',
+            'remodel',
+            'replytocom',
+            'reverse-paginate',
+            'rid',
+            'rnd',
+            'rndnum',
+            'robots_txt',
+            'rq',
+            'rsd',
+            's_kwcid',
+            'sa',
+            'safe',
+            'said',
+            'sales_cat',
+            'sales_kw',
+            'sb_referer_host',
+            'scrape',
+            'script',
+            'scrlybrkr',
+            'search',
+            'sellid',
+            'sersafe',
+            'sfn_data',
+            'sfn_trk',
+            'sfns',
+            'sfw',
+            'sha1',
+            'share',
+            'shared',
+            'showcomment',
+            'si',
+            'sid',
+            'sid1',
+            'sid2',
+            'sidewalkShow',
+            'sig',
+            'site',
+            'site_id',
+            'siteid',
+            'slicer1',
+            'slicer2',
+            'source',
+            'spref',
+            'spvb',
+            'sra',
+            'src',
+            'srk',
+            'srp',
+            'ssp_iabi',
+            'ssts',
+            'stylishmurphybeds',
+            'subId1 ',
+            'subId2 ',
+            'subId3',
+            'subid',
+            'swcfpc',
+            'tail',
+            'teaser',
+            'test',
+            'timezone',
+            'toWww',
+            'triplesource',
+            'trk_contact',
+            'trk_module',
+            'trk_msg',
+            'trk_sid',
+            'tsig',
+            'turl',
+            'u',
+            'up_auto_log',
+            'upage',
+            'updated-max',
+            'uptime',
+            'us_privacy',
+            'usegapi',
+            'usqp',
+            'utm',
+            'utm_campa',
+            'utm_campaign',
+            'utm_content',
+            'utm_expid',
+            'utm_id',
+            'utm_medium',
+            'utm_reader',
+            'utm_referrer',
+            'utm_source',
+            'utm_sq',
+            'utm_ter',
+            'utm_term',
+            'v',
+            'vc',
+            'vf',
+            'vgo_ee',
+            'vp',
+            'vrw',
+            'vz',
+            'wbraid',
+            'webdriver',
+            'wing',
+            'wpdParentID',
+            'wpmp_switcher',
+            'wref',
+            'wswy',
+            'wtime',
+            'x',
+            'zMoatImpID',
+            'zarsrc',
+            'zeffdn'
+        ];
 
         function __construct() {
 
@@ -185,7 +622,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             $config['cf_fallback_cache_excluded_cookies'] = array('^wordpress_logged_in_', '^wp-', '^comment_', '^woocommerce_', '^wordpressuser_', '^wordpresspass_', '^wordpress_sec_');
             $config['cf_fallback_cache_save_headers']     = 0;
             $config['cf_fallback_cache_prevent_cache_urls_without_trailing_slash'] = 1;
-            $config['cf_preloader']                       = 1;
+            $config['cf_preloader']                       = 0;
             $config['cf_preloader_start_on_purge']        = 1;
             $config['cf_preloader_nav_menus']             = array();
             $config['cf_preload_last_urls']               = 1;
@@ -267,6 +704,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             $config['cf_wp_rocket_purge_on_clean_cache_busting']      = 1;
             $config['cf_wp_rocket_purge_on_clean_minify']             = 1;
             $config['cf_wp_rocket_purge_on_ccss_generation_complete'] = 1;
+            $config['cf_wp_rocket_purge_on_rucss_job_complete']       = 1;
 
             // Litespeed Cache
             $config['cf_litespeed_purge_on_cache_flush']        = 1;
@@ -334,6 +772,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             $config['cf_prefetch_urls_viewport'] = 0;
             $config['cf_prefetch_urls_viewport_timestamp'] = time();
             $config['cf_prefetch_urls_on_hover'] = 0;
+            $config['cf_remove_cache_buster'] = 0;
             $config['keep_settings_on_deactivation'] = 1;
 
             return $config;
@@ -410,468 +849,6 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
                     $installer->start();
                 }
                 else {
-
-                    if( version_compare( $current_version, '4.3.5', '<') ) {
-
-                        $cf_fallback_cache_excluded_cookies = $this->get_single_config('cf_fallback_cache_excluded_cookies', array());
-
-                        if( !is_array($cf_fallback_cache_excluded_cookies) )
-                            $cf_fallback_cache_excluded_cookies = array('^wordpress_logged_in_', '^wp-', '^comment_', '^woocommerce_', '^wordpressuser_', '^wordpresspass_', '^wordpress_sec_');
-                        else
-                            array_push($cf_fallback_cache_excluded_cookies, '^wordpressuser_', '^wordpresspass_', '^wordpress_sec_');
-
-                        $this->set_single_config('cf_fallback_cache_excluded_cookies', $cf_fallback_cache_excluded_cookies);
-                        $this->set_single_config('cf_bypass_edd_checkout_page', 1);
-                        $this->set_single_config('cf_bypass_edd_login_redirect_page', 1);
-                        $this->set_single_config('cf_bypass_edd_purchase_history_page', 1);
-                        $this->set_single_config('cf_bypass_edd_success_page', 0);
-                        $this->set_single_config('cf_bypass_edd_failure_page', 0);
-                        $this->set_single_config('cf_auto_purge_edd_payment_add', 1);
-
-                        $this->update_config();
-
-                        // If fallback cache via advanced-cache.php is active, disable and re-enable the cache
-                        if( defined('SWCFPC_ADVANCED_CACHE') ) {
-
-                            if ( count($this->objects) == 0 )
-                                $this->include_libs();
-
-                            $this->objects['fallback_cache']->fallback_cache_advanced_cache_disable();
-                            $this->objects['fallback_cache']->fallback_cache_advanced_cache_enable(true);
-
-                        }
-
-                    }
-
-                    if( version_compare( $current_version, '4.3.6', '<') ) {
-
-                        $cf_excluded_urls = $this->get_single_config('cf_excluded_urls', array());
-
-                        if( !is_array($cf_excluded_urls) ) {
-                            $cf_excluded_urls = array('/*ao_noptirocket*', '/*jetpack=comms*');
-                            $this->set_single_config('cf_excluded_urls', $cf_excluded_urls);
-                        }
-
-                        $this->update_config();
-
-                    }
-
-                    if( version_compare( $current_version, '4.3.7', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.3.7');
-
-                        $this->set_single_config('cf_worker_bypass_cookies', array());
-                        $this->set_single_config('cf_object_cache_purge_on_flush', 0);
-                        $this->set_single_config('cf_purge_roles', array());
-                        $this->set_single_config('cf_nginx_helper_purge_on_cache_flush', 1);
-                        $this->set_single_config('cf_fallback_cache_prevent_cache_urls_without_trailing_slash', 1);
-
-                        $this->update_config();
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            if( defined('SWCFPC_ADVANCED_CACHE') ) {
-
-                                $objects['fallback_cache']->fallback_cache_advanced_cache_disable();
-                                $objects['fallback_cache']->fallback_cache_advanced_cache_enable(true);
-
-                            }
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.3.7 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-                    if( version_compare( $current_version, '4.3.7.2', '<') ) {
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.3.7.2');
-
-                            if( $sw_cloudflare_pagecache->get_single_config('cf_woker_enabled', 0) > 0 ) {
-
-                                $error_msg_cf = '';
-
-                                $objects['cloudflare']->disable_page_cache($error_msg_cf);
-                                $objects['cloudflare']->enable_page_cache($error_msg_cf);
-
-                            }
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.3.7.2 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-                    if( version_compare( $current_version, '4.3.7.4', '<') ) {
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.3.7.4');
-
-                            if( $sw_cloudflare_pagecache->get_single_config('cf_woker_enabled', 0) > 0 ) {
-
-                                $error_msg_cf = '';
-
-                                if( defined('SWCFPC_ADVANCED_CACHE') ) {
-
-                                    $objects['fallback_cache']->fallback_cache_advanced_cache_disable();
-                                    $objects['fallback_cache']->fallback_cache_advanced_cache_enable(true);
-
-                                }
-
-                                $objects['cloudflare']->disable_page_cache($error_msg_cf);
-                                $objects['cloudflare']->enable_page_cache($error_msg_cf);
-
-                            }
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.3.7.4 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-                    if( version_compare( $current_version, '4.3.8', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.3.8');
-
-                        $cf_excluded_urls = $this->get_single_config('cf_excluded_urls', array());
-
-                        if( is_array($cf_excluded_urls) && !in_array('/*jetpack=comms*', $cf_excluded_urls) ) {
-                            $cf_excluded_urls[] = '/*jetpack=comms*';
-                            $this->set_single_config('cf_excluded_urls', $cf_excluded_urls);
-                        }
-
-                        $this->set_single_config('cf_wpengine_purge_on_flush', 0);
-                        $this->set_single_config('cf_spinupwp_purge_on_flush', 0);
-                        $this->set_single_config('cf_kinsta_purge_on_flush', 0);
-                        $this->set_single_config('cf_siteground_purge_on_flush', 0);
-                        $this->set_single_config('log_verbosity', SWCFPC_LOGS_STANDARD_VERBOSITY);
-
-                        $this->update_config();
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            if( defined('SWCFPC_ADVANCED_CACHE') ) {
-
-                                $objects['fallback_cache']->fallback_cache_advanced_cache_disable();
-                                $objects['fallback_cache']->fallback_cache_advanced_cache_enable(true);
-
-                            }
-
-                            if( $sw_cloudflare_pagecache->get_single_config('cf_woker_enabled', 0) > 0 ) {
-
-                                $error_msg_cf = '';
-
-                                $objects['cloudflare']->disable_page_cache($error_msg_cf);
-                                $objects['cloudflare']->enable_page_cache($error_msg_cf);
-
-                            }
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.3.8 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-                    if( version_compare( $current_version, '4.3.9', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.3.9');
-
-                        $this->set_single_config('cf_wp_performance_purge_on_cache_flush', 1);
-                        $this->set_single_config('cf_wp_rocket_purge_on_cache_dir_flush', 1);
-                        $this->set_single_config('cf_wp_rocket_purge_on_clean_files', 1);
-                        $this->set_single_config('cf_wp_rocket_purge_on_clean_cache_busting', 1);
-                        $this->set_single_config('cf_wp_rocket_purge_on_clean_minify', 1);
-                        $this->set_single_config('cf_wp_rocket_purge_on_ccss_generation_complete', 1);
-                        $this->set_single_config('cf_auto_purge_woo_scheduled_sales', 1);
-                        $this->set_single_config('cf_spl_purge_on_flush_all', 1);
-                        $this->set_single_config('cf_spl_purge_on_flush_single_post', 1);
-                        $this->set_single_config('cf_prefetch_urls_viewport', 0);
-                        $this->set_single_config('cf_purge_only_html', 0);
-                        $this->set_single_config('cf_disable_cache_purging_queue', 0);
-                        $this->update_config();
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            if( $sw_cloudflare_pagecache->get_single_config('cf_woker_enabled', 0) > 0 ) {
-
-                                $error_msg_cf = '';
-
-                                $objects['cloudflare']->disable_page_cache($error_msg_cf);
-                                $objects['cloudflare']->enable_page_cache($error_msg_cf);
-
-                            }
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.3.9 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-                    if( version_compare( $current_version, '4.3.9.2', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.3.9.2');
-
-                        if( $this->get_single_config('cf_maxage', 0) == 604800 )
-                            $this->set_single_config('cf_maxage', 31536000);
-
-                        $cf_fallback_cache_excluded_cookies = $this->get_single_config('cf_fallback_cache_excluded_cookies', array());
-
-                        if( is_array($cf_fallback_cache_excluded_cookies) ) {
-
-                            if( ($key = array_search('wordpress_logged_in_', $cf_fallback_cache_excluded_cookies)) !== false ) {
-                                unset($cf_fallback_cache_excluded_cookies[$key]);
-                            }
-
-                            if( ($key = array_search('wp-', $cf_fallback_cache_excluded_cookies)) !== false ) {
-                                unset($cf_fallback_cache_excluded_cookies[$key]);
-                            }
-
-                            if( ($key = array_search('comment_', $cf_fallback_cache_excluded_cookies)) !== false ) {
-                                unset($cf_fallback_cache_excluded_cookies[$key]);
-                            }
-
-                            if( ($key = array_search('woocommerce_', $cf_fallback_cache_excluded_cookies)) !== false ) {
-                                unset($cf_fallback_cache_excluded_cookies[$key]);
-                            }
-
-                            if( ($key = array_search('wordpressuser_', $cf_fallback_cache_excluded_cookies)) !== false ) {
-                                unset($cf_fallback_cache_excluded_cookies[$key]);
-                            }
-
-                            if( ($key = array_search('wordpresspass_', $cf_fallback_cache_excluded_cookies)) !== false ) {
-                                unset($cf_fallback_cache_excluded_cookies[$key]);
-                            }
-
-                            if( ($key = array_search('wordpress_sec_', $cf_fallback_cache_excluded_cookies)) !== false ) {
-                                unset($cf_fallback_cache_excluded_cookies[$key]);
-                            }
-
-                            $cf_fallback_cache_excluded_cookies[] = '^wordpress_logged_in_';
-                            $cf_fallback_cache_excluded_cookies[] = '^wp-';
-                            $cf_fallback_cache_excluded_cookies[] = '^comment_';
-                            $cf_fallback_cache_excluded_cookies[] = '^woocommerce_';
-                            $cf_fallback_cache_excluded_cookies[] = '^wordpressuser_';
-                            $cf_fallback_cache_excluded_cookies[] = '^wordpresspass_';
-                            $cf_fallback_cache_excluded_cookies[] = '^wordpress_sec_';
-
-                            $this->set_single_config('cf_fallback_cache_excluded_cookies', $cf_fallback_cache_excluded_cookies);
-
-                        }
-
-                        $cf_excluded_urls = $this->get_single_config('cf_excluded_urls', array());
-
-                        if( is_array($cf_excluded_urls) ) {
-
-                            if( !in_array('/*kinsta-monitor*', $cf_excluded_urls) )
-                                $cf_excluded_urls[] = '/*kinsta-monitor*';
-
-                            if( !in_array('*ao_speedup_cachebuster*', $cf_excluded_urls) )
-                                $cf_excluded_urls[] = '*ao_speedup_cachebuster*';
-
-                            $this->set_single_config('cf_excluded_urls', $cf_excluded_urls);
-
-                        }
-
-                        $this->set_single_config('cf_litespeed_purge_on_ccss_flush', 1);
-                        $this->set_single_config('cf_litespeed_purge_on_cssjs_flush', 1);
-                        $this->set_single_config('cf_litespeed_purge_on_object_cache_flush', 1);
-                        $this->set_single_config('cf_litespeed_purge_on_single_post_flush', 1);
-                        $this->update_config();
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            if( defined('SWCFPC_ADVANCED_CACHE') ) {
-
-                                $objects['fallback_cache']->fallback_cache_advanced_cache_disable();
-                                $objects['fallback_cache']->fallback_cache_advanced_cache_enable(true);
-
-                            }
-
-                            $this->objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.3.9.2 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-                    if( version_compare( $current_version, '4.4.0', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.4.0');
-
-                        $this->set_single_config('cf_prefetch_urls_viewport_timestamp', time());
-                        $this->set_single_config('cf_prefetch_urls_on_hover', 0);
-                        $this->set_single_config('keep_settings_on_deactivation', 0);
-                        $this->set_single_config('cf_wpengine_purge_on_flush', 1);
-                        $this->set_single_config('cf_spinupwp_purge_on_flush', 1);
-                        $this->set_single_config('cf_kinsta_purge_on_flush', 1);
-                        $this->set_single_config('cf_siteground_purge_on_flush', 1);
-                        $this->update_config();
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            if( $this->objects['cache_controller']->is_cache_enabled() && $sw_cloudflare_pagecache->get_single_config('cf_purge_only_html', 0) > 0 || $sw_cloudflare_pagecache->get_single_config('cf_woker_enabled', 0) > 0 ) {
-                                $this->objects['logs']->add_log('swcfpc::update_plugin', 'Purge whole cache before to update to v4.4.0');
-                                $objects['cache_controller']->purge_all(false, false, true);
-                            }
-
-                            delete_option('swcfpc_pages_list');
-
-                            $this->objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.4.0 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-
-                    if( version_compare( $current_version, '4.4.1', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.4.1');
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            $error_msg = '';
-                            $objects['cache_controller']->write_htaccess( $error_msg );
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.4.1 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-
-                    if( version_compare( $current_version, '4.4.2', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.4.2');
-
-                        $cf_excluded_urls = $this->get_single_config('cf_excluded_urls', array());
-
-                        if( is_array($cf_excluded_urls) ) {
-
-                            if( !in_array('/*removed_item*', $cf_excluded_urls) )
-                                $cf_excluded_urls[] = '/*removed_item*';
-
-                            $this->set_single_config('cf_excluded_urls', $cf_excluded_urls);
-
-                        }
-
-                        $this->update_config();
-
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            if( $this->objects['cache_controller']->is_cache_enabled() && $sw_cloudflare_pagecache->get_single_config('cf_prefetch_urls_viewport', 0) > 0 ) {
-                                $objects['logs']->add_log('swcfpc::update_plugin', 'Purge whole cache before to update to v4.4.2');
-                                $objects['cache_controller']->purge_all(false, false, true);
-                            }
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.4.2 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-
-                    if( version_compare( $current_version, '4.4.3', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.4.3');
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.4.3 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
-
-                    if( version_compare( $current_version, '4.4.4', '<') ) {
-
-                        if ( count($this->objects) == 0 )
-                            $this->include_libs();
-
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.4.4');
-
-                        $this->set_single_config('cf_flypress_purge_on_cache_flush', 1);
-                        $this->update_config();
-
-                        add_action('shutdown', function() {
-
-                            global $sw_cloudflare_pagecache;
-
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.4.4 complete');
-
-                        }, PHP_INT_MAX);
-
-                    }
-
 
                     if( version_compare( $current_version, '4.5', '<') ) {
 
@@ -1025,6 +1002,29 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
                             $objects['cloudflare']->enable_page_cache($error_msg_cf);
                         
                             $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.6.1 complete');
+                        
+                        }, PHP_INT_MAX);
+                    }
+
+                    if( version_compare( $current_version, '4.7.1', '<' ) ) {
+                        if ( count($this->objects) == 0 )
+                            $this->include_libs();
+
+                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.7.1');
+
+                        add_action('shutdown', function() {
+
+                            global $sw_cloudflare_pagecache;
+                        
+                            $objects = $sw_cloudflare_pagecache->get_objects();
+                        
+                            $error_msg_cf = '';
+                    
+                            // Enable Disable the Page Cache to take effect of the changes
+                            $objects['cloudflare']->disable_page_cache($error_msg_cf);
+                            $objects['cloudflare']->enable_page_cache($error_msg_cf);
+                        
+                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.7.1 complete');
                         
                         }, PHP_INT_MAX);
                     }
@@ -1398,6 +1398,25 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
+        // Pass parse_url() array and get the URL back as string
+        function get_unparsed_url( $parsed_url ) {
+            // PHP_URL_SCHEME
+            $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+            $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
+            $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+            $user     = isset($parsed_url['user']) ? $parsed_url['user'] : '';
+            $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+            $pass     = ($user || $pass) ? "$pass@" : '';
+            $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
+            $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+            $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+            return "{$scheme}{$user}{$pass}{$host}{$port}{$path}{$query}{$fragment}";
+        }
+
+        // Return the ignored query params array
+        function get_ignored_query_params() {
+            return $this->ignored_query_params;
+        }
 
         function get_current_lang_code() {
 
