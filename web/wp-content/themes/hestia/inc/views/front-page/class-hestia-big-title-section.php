@@ -29,7 +29,7 @@ class Hestia_Big_Title_Section extends Hestia_First_Front_Page_Section {
 		 */
 		$parallax_layer1 = get_theme_mod( 'hestia_parallax_layer1', apply_filters( 'hestia_parallax_layer1_default', false ) );
 		$parallax_layer2 = get_theme_mod( 'hestia_parallax_layer2', apply_filters( 'hestia_parallax_layer2_default', false ) );
-		if ( empty( $hestia_big_title_type ) ) {
+		if ( is_customize_preview() && empty( $hestia_big_title_type ) ) {
 			if ( empty( $parallax_layer1 ) ) {
 				return false;
 			}
@@ -116,6 +116,9 @@ class Hestia_Big_Title_Section extends Hestia_First_Front_Page_Section {
 		$background = '';
 		if ( ! $this->should_display_parallax() ) {
 			$background = get_theme_mod( 'hestia_big_title_background', apply_filters( 'hestia_big_title_background_default', get_template_directory_uri() . '/assets/img/slider1.jpg' ) );
+			if ( empty( $background ) ) {
+				$background = apply_filters( 'hestia_big_title_background_default', get_template_directory_uri() . '/assets/img/slider1.jpg' );
+			}
 		}
 
 		return $background;

@@ -29,17 +29,16 @@ class FileLoader {
 	/**
 	 * Checks size of file by sending request using active image loader.
 	 *
-	 * @param string   $url         URL of image.
-	 * @param bool     $set_headers Whether to send headers to confirm that browser supports WebP?
-	 * @param int|null $ver_param   Additional GET param.
+	 * @param string      $url         URL of image.
+	 * @param bool        $set_headers Whether to send headers to confirm that browser supports WebP?
+	 * @param string|null $ver_param   Additional GET param.
 	 *
 	 * @return int Size of retrieved file.
 	 */
-	public function get_file_size_by_url( string $url, bool $set_headers = true, int $ver_param = null ): int {
-		$headers = [
-			'Accept: image/webp',
-			'Referer: ' . $this->plugin_info->get_plugin_directory_url(),
-		];
+	public function get_file_size_by_url( string $url, bool $set_headers = true, string $ver_param = null ): int {
+		$headers = ( $set_headers )
+			? [ 'Accept: image/webp,image/*' ]
+			: [ 'Accept: image/*' ];
 
 		$image_url = ( new PassthruLoader( $this->plugin_info, $this->plugin_data ) )->update_image_urls( $url, true );
 		if ( $ver_param !== null ) {
@@ -47,7 +46,7 @@ class FileLoader {
 		}
 		$image_url = apply_filters( 'webpc_debug_image_url', $image_url );
 
-		return self::get_file_size_for_loaded_file( $image_url, ( $set_headers ) ? $headers : [] );
+		return self::get_file_size_for_loaded_file( $image_url, $headers );
 	}
 
 	/**
@@ -84,11 +83,11 @@ class FileLoader {
 			curl_setopt( $ch, CURLOPT_USERPWD, sprintf( '%1$s:%2$s', $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 		}
 
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
-		curl_setopt( $ch, CURLOPT_FRESH_CONNECT, 1 );
+		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
+		curl_setopt( $ch, CURLOPT_FRESH_CONNECT, true );
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 10 );
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 		$response = curl_exec( $ch );

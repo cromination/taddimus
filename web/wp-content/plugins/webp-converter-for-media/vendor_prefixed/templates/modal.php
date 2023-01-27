@@ -127,6 +127,18 @@ foreach ($form_options->get_options() as $option) {
 ?>
 			</ul>
 
+			<?php 
+if ($form_template->get_notice_message() !== null) {
+    ?>
+				<div class="mattDeactivationModal__notice">
+					<?php 
+    echo wp_kses_post($form_template->get_notice_message());
+    ?>
+				</div>
+			<?php 
+}
+?>
+
 			<ul class="mattDeactivationModal__buttons">
 				<li class="mattDeactivationModal__button">
 					<button type="submit"

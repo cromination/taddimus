@@ -3,7 +3,6 @@
 
 namespace WebpConverter\Settings\Page;
 
-use WebpConverter\Loader\LoaderAbstract;
 use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
 use WebpConverter\Repository\TokenRepository;
@@ -50,15 +49,8 @@ class CdnSettingsPage extends GeneralSettingsPage {
 	 * {@inheritdoc}
 	 */
 	public function get_template_vars(): array {
-		$parent_vars = parent::get_template_vars();
-
-		$this->cloudflare_configurator->set_cache_config();
-		$this->cloudflare_configurator->purge_cache();
-
-		do_action( LoaderAbstract::ACTION_NAME, true );
-
 		return array_merge(
-			$parent_vars,
+			parent::get_template_vars(),
 			[
 				'form_options'         => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_CDN ),
 				'form_input_value'     => OptionAbstract::FORM_TYPE_CDN,
@@ -68,5 +60,15 @@ class CdnSettingsPage extends GeneralSettingsPage {
 				'api_regenerate_nonce' => null,
 			]
 		);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function do_action_before_load() {
+		parent::do_action_before_load();
+
+		$this->cloudflare_configurator->set_cache_config();
+		$this->cloudflare_configurator->purge_cache();
 	}
 }

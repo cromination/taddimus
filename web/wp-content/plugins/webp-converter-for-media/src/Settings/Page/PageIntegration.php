@@ -136,6 +136,8 @@ class PageIntegration implements HookableInterface {
 				continue;
 			}
 
+			$page->do_action_before_load();
+
 			$this->view_loader->load_view(
 				$page->get_template_path(),
 				array_merge(
@@ -154,6 +156,8 @@ class PageIntegration implements HookableInterface {
 					]
 				)
 			);
+
+			$page->do_action_after_load();
 		}
 	}
 

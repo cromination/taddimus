@@ -193,9 +193,8 @@ class Hestia_Big_Title_Controls extends Hestia_Front_Page_Section_Controls_Abstr
 				),
 				'WP_Customize_Image_Control',
 				array(
-					'selector'        => '.big-title-image',
-					'settings'        => 'hestia_big_title_background',
-					'render_callback' => array( $this, 'background_render_callback' ),
+					'selector' => '.big-title-image',
+					'settings' => 'hestia_big_title_background',
 				)
 			)
 		);
@@ -451,21 +450,5 @@ class Hestia_Big_Title_Controls extends Hestia_Front_Page_Section_Controls_Abstr
 	public function alignment_render_callback() {
 		$big_title_section_view = new Hestia_Big_Title_Section();
 		$big_title_section_view->render_big_title_content();
-	}
-
-	/**
-	 * Background callback.
-	 */
-	public function background_render_callback() {
-		$hestia_parallax_layer1 = get_theme_mod( 'hestia_parallax_layer1' );
-		$hestia_parallax_layer2 = get_theme_mod( 'hestia_parallax_layer2' );
-		if ( empty( $hestia_parallax_layer1 ) || empty( $hestia_parallax_layer2 ) ) {
-			$hestia_big_title_background = get_theme_mod( 'hestia_big_title_background' );
-			echo '<style class="big-title-image-css">';
-			echo '#carousel-hestia-generic .header-filter {';
-			echo ! empty( $hestia_big_title_background ) ? 'background-image: url("' . esc_url( $hestia_big_title_background ) . '") !important;' : 'background-image: none !important;';
-			echo '}';
-			echo '</style>';
-		}
 	}
 }

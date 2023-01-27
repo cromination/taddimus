@@ -437,6 +437,10 @@ class Post_Command extends CommandWithDBObject {
 		$post_arr = get_object_vars( $post );
 		unset( $post_arr['filter'] );
 
+		if ( ! isset( $post_arr['url'] ) ) {
+			$post_arr['url'] = get_permalink( $post->ID );
+		}
+
 		if ( empty( $assoc_args['fields'] ) ) {
 			$assoc_args['fields'] = array_keys( $post_arr );
 		}
@@ -464,6 +468,12 @@ class Post_Command extends CommandWithDBObject {
 	 *     # Delete post skipping trash
 	 *     $ wp post delete 123 --force
 	 *     Success: Deleted post 123.
+	 *
+	 *     # Delete multiple posts
+	 *     $ wp post delete 123 456 789
+	 *     Success: Trashed post 123.
+	 *     Success: Trashed post 456.
+	 *     Success: Trashed post 789.
 	 *
 	 *     # Delete all pages
 	 *     $ wp post delete $(wp post list --post_type='page' --format=ids)

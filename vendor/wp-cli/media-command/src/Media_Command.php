@@ -182,6 +182,9 @@ class Media_Command extends WP_CLI_Command {
 	 * [--post_id=<post_id>]
 	 * : ID of the post to attach the imported files to.
 	 *
+	 * [--post_name=<post_name>]
+	 * : Name of the post to attach the imported files to.
+	 *
 	 * [--title=<title>]
 	 * : Attachment title (post title field).
 	 *
@@ -203,7 +206,7 @@ class Media_Command extends WP_CLI_Command {
 	 * Remote files will always use the current time.
 	 *
 	 * [--featured_image]
-	 * : If set, set the imported image as the Featured Image of the post its attached to.
+	 * : If set, set the imported image as the Featured Image of the post it is attached to.
 	 *
 	 * [--porcelain]
 	 * : Output just the new attachment ID.
@@ -242,10 +245,11 @@ class Media_Command extends WP_CLI_Command {
 		$assoc_args = wp_parse_args(
 			$assoc_args,
 			array(
-				'title'   => '',
-				'caption' => '',
-				'alt'     => '',
-				'desc'    => '',
+				'title'     => '',
+				'caption'   => '',
+				'alt'       => '',
+				'desc'      => '',
+				'post_name' => '',
 			)
 		);
 
@@ -324,6 +328,7 @@ class Media_Command extends WP_CLI_Command {
 				'post_title'   => $assoc_args['title'],
 				'post_excerpt' => $assoc_args['caption'],
 				'post_content' => $assoc_args['desc'],
+				'post_name'    => $assoc_args['post_name'],
 			);
 
 			if ( ! empty( $file_time ) ) {
@@ -575,6 +580,8 @@ class Media_Command extends WP_CLI_Command {
 
 		$is_pdf = 'application/pdf' === get_post_mime_type( $id );
 
+		$original_meta = wp_get_attachment_metadata( $id );
+
 		$needs_regeneration = $this->needs_regeneration( $id, $fullsizepath, $is_pdf, $image_size, $skip_delete, $skip_it );
 
 		if ( $skip_it ) {
@@ -614,7 +621,7 @@ class Media_Command extends WP_CLI_Command {
 		}
 
 		if ( $image_size ) {
-			if ( $this->update_attachment_metadata_for_image_size( $id, $metadata, $image_size ) ) {
+			if ( $this->update_attachment_metadata_for_image_size( $id, $metadata, $image_size, $original_meta ) ) {
 				WP_CLI::log( "$progress Regenerated $thumbnail_desc for $att_desc." );
 			} else {
 				WP_CLI::log( "$progress No $thumbnail_desc regeneration needed for $att_desc." );
@@ -881,8 +888,7 @@ class Media_Command extends WP_CLI_Command {
 	}
 
 	// Update attachment sizes metadata just for a particular intermediate image size.
-	private function update_attachment_metadata_for_image_size( $id, $new_metadata, $image_size ) {
-		$metadata = wp_get_attachment_metadata( $id );
+	private function update_attachment_metadata_for_image_size( $id, $new_metadata, $image_size, $metadata ) {
 
 		if ( ! is_array( $metadata ) ) {
 			return false;
@@ -1003,7 +1009,7 @@ class Media_Command extends WP_CLI_Command {
 	 *     Success: Fixed 3 of 3 images.
 	 *
 	 *     # Fix orientation dry run.
-	 *     $ wp media fix-orientation 63 -dry run
+	 *     $ wp media fix-orientation 63 --dry-run
 	 *     1/1 "Portrait_6" (ID 63) will be affected.
 	 *     Success: 1 of 1 image will be affected.
 	 *

@@ -57,6 +57,8 @@ class WelcomeNotice extends NoticeAbstract implements NoticeInterface {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return mixed[]
 	 */
 	public function get_vars_for_view(): array {
 		return [

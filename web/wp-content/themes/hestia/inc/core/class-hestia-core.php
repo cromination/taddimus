@@ -119,6 +119,8 @@ class Hestia_Core {
 					'slider-section',
 					'slider-controls',
 					'view-hooks-with-upsell',
+					'big-title-controls',
+					'big-title-section',
 				)
 			);
 		}

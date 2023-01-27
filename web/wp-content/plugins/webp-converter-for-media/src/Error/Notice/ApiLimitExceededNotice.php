@@ -21,7 +21,13 @@ class ApiLimitExceededNotice implements ErrorNotice {
 	 */
 	public function get_message(): array {
 		return [
-			__( 'Your limit for the number of converted images in the current billing period has been exceeded. You can wait until the end of the billing period. Then your limit will be renewed. Another solution is to cancel the current subscription and buy a new one with a new limit.', 'webp-converter-for-media' ),
+			__( 'It appears that you have reached the maximum number of image conversions for your current billing period. To continue using the service, we recommend upgrading to a higher plan.', 'webp-converter-for-media' ),
+			sprintf(
+			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+				__( 'To manage your subscriptions, please visit %1$sour website%2$s.', 'webp-converter-for-media' ),
+				'<a href="https://url.mattplugins.com/converter-error-token-limit-panel" target="_blank">',
+				'</a>'
+			),
 		];
 	}
 }

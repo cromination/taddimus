@@ -159,7 +159,7 @@ Feature: Manage WordPress plugins
       """
     And STDERR should contain:
       """
-      Error: No plugins updated.
+      Error: No plugins updated (2 failed).
       """
     And the return code should be 1
 
@@ -177,7 +177,7 @@ Feature: Manage WordPress plugins
       """
     And STDERR should contain:
       """
-      Error: Only updated 1 of 3 plugins.
+      Error: Only updated 1 of 3 plugins (2 failed).
       """
     And the return code should be 1
 
@@ -341,6 +341,7 @@ Feature: Manage WordPress plugins
       | akismet            | active   | akismet/akismet.php                       |
       | wordpress-importer | inactive | wordpress-importer/wordpress-importer.php |
 
+  @require-wp-5.2
   Scenario: Flag `--skip-update-check` skips update check when running `wp plugin list`
     Given a WP install
 
@@ -571,19 +572,19 @@ Feature: Manage WordPress plugins
       """
       akismet
       jetpack
-      query-monitor
+      user-switching
       """
-    And a wp-content/mu-plugins/hide-qm-plugin.php file:
+    And a wp-content/mu-plugins/hide-us-plugin.php file:
       """
       <?php
       /**
-       * Plugin Name: Hide Query Monitor on Production
-       * Description: Hides the Query Monitor plugin on production sites
+       * Plugin Name: Hide User Switchign on Production
+       * Description: Hides the User Switching plugin on production sites
        * Author: WP-CLI tests
        */
 
        add_filter( 'all_plugins', function( $all_plugins ) {
-          unset( $all_plugins['query-monitor/query-monitor.php'] );
+          unset( $all_plugins['user-switching/user-switching.php'] );
           return $all_plugins;
        } );
        """
@@ -591,7 +592,7 @@ Feature: Manage WordPress plugins
     When I run `wp plugin list --fields=name`
     Then STDOUT should not contain:
       """
-      query-monitor
+      user-switching
       """
 
   Scenario: Show dropins plugin list

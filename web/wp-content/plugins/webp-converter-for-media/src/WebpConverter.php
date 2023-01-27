@@ -40,6 +40,7 @@ class WebpConverter {
 		( new Notice\NoticeIntegration( $plugin_info, new Notice\ThanksNotice() ) )->init_hooks();
 		( new Notice\NoticeIntegration( $plugin_info, new Notice\CloudflareNotice() ) )->init_hooks();
 		( new Notice\NoticeIntegration( $plugin_info, new Notice\LitespeedNotice() ) )->init_hooks();
+		( new Notice\NoticeIntegration( $plugin_info, new Notice\TokenInactiveNotice( $plugin_data, $token_repository ) ) )->init_hooks();
 		( new Notice\NoticeIntegration( $plugin_info, new Notice\UpgradeNotice( $plugin_data ) ) )->init_hooks();
 		( new Loader\LoaderIntegration( new Loader\HtaccessLoader( $plugin_info, $plugin_data ) ) )->init_hooks();
 		( new Loader\LoaderIntegration( new Loader\PassthruLoader( $plugin_info, $plugin_data ) ) )->init_hooks();
@@ -57,7 +58,7 @@ class WebpConverter {
 			->set_page_integration( new Page\DebugPage( $plugin_info, $plugin_data ) )
 			->set_page_integration( new Page\BulkOptimizationPage( $plugin_info, $plugin_data, $token_repository ) )
 			->init_hooks();
-		( new Service\BackupExcluder() )->init_hooks();
+		( new Service\BackupExcluder( $plugin_data ) )->init_hooks();
 		( new Service\DeactivationModalGenerator( $plugin_info, $plugin_data ) )->load_modal();
 		( new Service\MediaStatusViewer( $plugin_data, $token_repository ) )->init_hooks();
 		( new Service\RestApiUnlocker() )->init_hooks();

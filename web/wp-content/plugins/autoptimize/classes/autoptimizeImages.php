@@ -167,6 +167,9 @@ class autoptimizeImages
         }
 
         if ( apply_filters( 'autoptimize_filter_imgopt_do_css', true ) ) {
+            // fixme; does not act on inline CSS yet?
+            // fixme; also check CCSS?
+            // fixme: also act on already minified CSS!
             add_filter(
                 'autoptimize_filter_base_replace_cdn',
                 array( $this, 'filter_optimize_css_images' ),
@@ -812,13 +815,13 @@ class autoptimizeImages
     /**
      * Lazyload functions
      */
-    public static function should_lazyload_wrapper() {
+    public static function should_lazyload_wrapper( $no_meta = false ) {
         // needed in autoptimizeMain.php.
         $self = new self();
-        return $self->should_lazyload();
+        return $self->should_lazyload( '', $no_meta );
     }
 
-    public function should_lazyload( $context = '' ) {
+    public function should_lazyload( $context = '', $no_meta = false ) {
         if ( ! empty( $this->options['autoptimize_imgopt_checkbox_field_3'] ) && false === $this->check_nolazy() ) {
             $lazyload_return = true;
         } else {
@@ -826,7 +829,7 @@ class autoptimizeImages
         }
 
         // If page/ post check post_meta to see if lazyload is off for page.
-        if ( false === autoptimizeConfig::get_post_meta_ao_settings( 'ao_post_lazyload' ) ) {
+        if ( false === $no_meta && false === autoptimizeConfig::get_post_meta_ao_settings( 'ao_post_lazyload' ) ) {
               $lazyload_return = false;
         }
 
@@ -1013,7 +1016,7 @@ class autoptimizeImages
         $tag   = str_replace( $_from, $_to, $tag );
 
         // and remove title, alt, class and id.
-        $tag = preg_replace( '/ ((?:title|alt|class|id|loading|fetchpriority|decoding|data-no-lazy)=".*")/Um', '', $tag );
+        $tag = preg_replace( '/ ((?:title|alt|class|id|loading|fetchpriority|decoding|data-no-lazy|width|height)=".*")/Um', '', $tag );
         if ( str_replace( array( ' title=', ' class=', ' alt=', ' id=', ' fetchpriority=', ' decoding=', ' data-no-lazy=' ), '', $tag ) !== $tag ) {
             // 2nd regex pass if still title/ class/ alt in case single quotes were used iso doubles.
             $tag = preg_replace( '/ ((?:title|alt|class|id|loading|fetchpriority|decoding|data-no-lazy)=\'.*\')/Um', '', $tag );

@@ -100,8 +100,7 @@ class ConversionMethodOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
-		if ( ! array_key_exists( $current_value, $available_values ?: [] )
-			|| in_array( $current_value, $disabled_values ?: [] ) ) {
+		if ( ! array_key_exists( $current_value, $available_values ?: [] ) ) {
 			return null;
 		}
 

@@ -44,7 +44,6 @@
 					<?php elseif ( isset( $_POST[ $form_input_name ] ) ) : // phpcs:ignore ?>
 						<div class="webpcPage__alert">
 							<?php echo esc_html( __( 'Changes were successfully saved!', 'webp-converter-for-media' ) ); ?>
-							<?php echo esc_html( __( 'Please flush cache if you use caching plugin or caching via hosting.', 'webp-converter-for-media' ) ); ?>
 						</div>
 					<?php endif; ?>
 					<?php

@@ -21,6 +21,24 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 	}
 
 	/**
+	 * Add filter for default value of parallax layer 1.
+	 *
+	 * @return string
+	 */
+	public function parallax_layer1_default() {
+		return get_template_directory_uri() . '/assets/img/parallax_1.jpg';
+	}
+
+	/**
+	 * Add filter for default value of parallax layer 2.
+	 *
+	 * @return string
+	 */
+	public function parallax_layer2_default() {
+		return get_template_directory_uri() . '/assets/img/parallax_2.png';
+	}
+
+	/**
 	 * Remove big title title control that was added via Hestia_Front_Page_Section_Controls_Abstract class.
 	 *
 	 * @param object $wp_customize Customize object.
@@ -148,15 +166,7 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 			'hestia_slider_type',
 			'subcontrols',
 			array(
-				'image'    => array(
-					'hestia_slider_content',
-				),
-				'parallax' => array(
-					'hestia_slider_content',
-					'hestia_parallax_layer1',
-					'hestia_parallax_layer2',
-				),
-				'video'    => array(
+				'video' => array(
 					'hestia_slider_content',
 					'header_video',
 					'external_header_video',
@@ -207,24 +217,6 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 			)
 		);
 
-	}
-
-	/**
-	 * Add filter for default value of parallax layer 1.
-	 *
-	 * @return string
-	 */
-	public function parallax_layer1_default() {
-		return get_template_directory_uri() . '/assets/img/parallax_1.jpg';
-	}
-
-	/**
-	 * Add filter for default value of parallax layer 2.
-	 *
-	 * @return string
-	 */
-	public function parallax_layer2_default() {
-		return get_template_directory_uri() . '/assets/img/parallax_2.png';
 	}
 
 	/**

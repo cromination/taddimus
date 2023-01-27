@@ -40,6 +40,7 @@ Feature: Export content.
       """
     And the return code should be 1
 
+  @require-wp-5.2
   Scenario: Export with post_type and post_status argument
     Given a WP install
 
@@ -78,6 +79,7 @@ Feature: Export content.
       10
       """
 
+  @require-wp-5.2
   Scenario: Export a comma-separated list of post types
     Given a WP install
 
@@ -130,6 +132,7 @@ Feature: Export content.
       10
       """
 
+  @require-wp-5.2
   Scenario: Export only one post
     Given a WP install
 
@@ -201,6 +204,7 @@ Feature: Export content.
       2
       """
 
+  @require-wp-5.2
   Scenario: Export multiple posts, separated by spaces
     Given a WP install
 
@@ -233,6 +237,40 @@ Feature: Export content.
       2
       """
 
+  @require-wp-5.2
+  Scenario: Export multiple posts, separated by comma
+    Given a WP install
+
+    When I run `wp plugin install wordpress-importer --activate`
+    Then STDOUT should contain:
+      """
+      Success:
+      """
+
+    When I run `wp post create --post_title='Test post' --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {POST_ID}
+
+    When I run `wp post create --post_title='Test post 2' --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {POST_ID_TWO}
+
+    When I run `wp export --post__in="{POST_ID},{POST_ID_TWO}"`
+    And save STDOUT 'Writing to file %s' as {EXPORT_FILE}
+
+    When I run `wp site empty --yes`
+    Then STDOUT should not be empty
+
+    When I run `wp import {EXPORT_FILE} --authors=skip`
+    Then STDOUT should not be empty
+
+    When I run `wp post list --post_type=post --format=count`
+    Then STDOUT should be:
+      """
+      2
+      """
+
+  @require-wp-5.2
   Scenario: Export posts within a given date range
     Given a WP install
 
@@ -273,6 +311,7 @@ Feature: Export content.
       10
       """
 
+  @require-wp-5.2
   Scenario: Export posts from a given category
     Given a WP install
     And I run `wp site empty --yes`
@@ -354,6 +393,7 @@ Feature: Export content.
       Apple Post
       """
 
+  @require-wp-5.2
   Scenario: Export posts from a given author
     Given a WP install
     And I run `wp site empty --yes`
@@ -436,6 +476,7 @@ Feature: Export content.
       john.doe@example.com
       """
 
+  @require-wp-5.2
   Scenario: Export posts should include user information
     Given a WP install
     And I run `wp plugin install wordpress-importer --activate`
@@ -462,6 +503,7 @@ Feature: Export content.
       Test User
       """
 
+  @require-wp-5.2
   Scenario: Export posts from a given starting post ID
     Given a WP install
 
@@ -500,6 +542,7 @@ Feature: Export content.
       5
       """
 
+  @require-wp-5.2
   Scenario: Exclude a specific post type from export
     Given a WP install
     And I run `wp site empty --yes`
@@ -605,6 +648,7 @@ Feature: Export content.
       000.xml
       """
 
+  @require-wp-5.2
   Scenario: Export a site and skip the comments
     Given a WP install
     And I run `wp comment generate --post_id=1 --count=2`
@@ -652,12 +696,96 @@ Feature: Export content.
   Scenario: Export splitting the dump
     Given a WP install
 
-    When I run `wp export --max_file_size=0.0001`
+    When I run `wp export --max_file_size=0.0001 --filename_format='{n}.xml'`
     Then STDOUT should contain:
       """
       001.xml
       """
     And STDERR should be empty
+
+    When I run `cat 000.xml`
+    Then STDOUT should contain:
+      """
+      <wp:category>
+      """
+
+    When I run `cat 001.xml`
+    Then STDOUT should contain:
+      """
+      <wp:category>
+      """
+
+  Scenario: Export splitting the dump with a bad --include_once value
+    Given a WP install
+    And I run `wp term generate post_tag --count=1`
+
+    When I try `wp export --max_file_size=0.0001 --include_once=invalid --filename_format='{n}.xml'`
+    Then STDERR should contain:
+      """
+      Warning: include_once should be comma-separated values for optional before_posts sections
+      """
+
+  Scenario: Export splitting the dump with a single --include_once value
+    Given a WP install
+    And I run `wp term generate post_tag --count=1`
+
+    When I run `wp export --max_file_size=0.0001 --include_once=categories --filename_format='{n}.xml'`
+    Then STDOUT should contain:
+      """
+      001.xml
+      """
+    And STDERR should be empty
+
+    When I run `cat 000.xml`
+    Then STDOUT should contain:
+      """
+      <wp:category>
+      """
+    And STDOUT should contain:
+      """
+      <wp:tag>
+      """
+
+    When I run `cat 001.xml`
+    Then STDOUT should not contain:
+      """
+      <wp:category>
+      """
+    And STDOUT should contain:
+      """
+      <wp:tag>
+      """
+
+  Scenario: Export splitting the dump with multiple --include_once values
+    Given a WP install
+    And I run `wp term generate post_tag --count=1`
+
+    When I run `wp export --max_file_size=0.0001 --include_once=categories,tags --filename_format='{n}.xml'`
+    Then STDOUT should contain:
+      """
+      001.xml
+      """
+    And STDERR should be empty
+
+    When I run `cat 000.xml`
+    Then STDOUT should contain:
+      """
+      <wp:category>
+      """
+    And STDOUT should contain:
+      """
+      <wp:tag>
+      """
+
+    When I run `cat 001.xml`
+    Then STDOUT should not contain:
+      """
+      <wp:category>
+      """
+    And STDOUT should not contain:
+      """
+      <wp:tag>
+      """
 
   Scenario: Export without splitting the dump
     Given a WP install
@@ -700,6 +828,7 @@ Feature: Export content.
       """
     And STDERR should be empty
 
+  @require-wp-5.2
   Scenario: Export a site to stdout
     Given a WP install
     And I run `wp comment generate --post_id=1 --count=1`
@@ -753,6 +882,7 @@ Feature: Export content.
       """
     And the return code should be 1
 
+  @require-wp-5.2
   Scenario: Export individual post with attachments
     Given a WP install
     And I run `wp plugin install wordpress-importer --activate`
@@ -844,6 +974,7 @@ Feature: Export content.
       white-150-square.jpg";s:
       """
 
+  @require-wp-5.2
   Scenario: Export categories, tags and terms
     Given a WP install
     And a wp-content/mu-plugins/register-region-taxonomy.php file:
@@ -984,4 +1115,36 @@ Feature: Export content.
     Then STDOUT should contain:
       """
       Europe
+      """
+
+  @require-wp-5.2
+  Scenario: Export posts should not include oembed_cache posts user information
+    Given a WP install
+    And I run `wp plugin install wordpress-importer --activate`
+    And I run `wp user create user user@user.com --role=editor --display_name="Test User"`
+    And I run `wp user create oembed_cache_user oembed_cache@user.com --role=editor --display_name="Oembed User"`
+    And I run `wp post generate --post_type=post --count=10 --post_author=user`
+    And I run `wp post generate --post_type=oembed_cache --count=1 --post_author=oembed_cache_user`
+
+    When I run `wp export`
+    And save STDOUT 'Writing to file %s' as {EXPORT_FILE}
+    Then the {EXPORT_FILE} file should contain:
+      """
+      <wp:author_display_name><![CDATA[Test User]]></wp:author_display_name>
+      """
+    And the {EXPORT_FILE} file should not contain:
+      """
+      <wp:author_display_name><![CDATA[Oembed User]]></wp:author_display_name>
+      """
+    When I run `wp site empty --yes`
+    And I run `wp user list --field=user_login | xargs -n 1 wp user delete --yes`
+    Then STDOUT should not be empty
+
+    When I run `wp import {EXPORT_FILE} --authors=create`
+    Then STDOUT should not be empty
+
+    When I run `wp user get user --field=display_name`
+    Then STDOUT should be:
+      """
+      Test User
       """

@@ -29,6 +29,7 @@ class Export_Command extends WP_CLI_Command {
 
 	private $stdout;
 	private $max_file_size;
+	private $include_once;
 	private $wxr_path;
 
 	/**
@@ -56,6 +57,14 @@ class Export_Command extends WP_CLI_Command {
 	 * default: 15
 	 * ---
 	 *
+	 * [--filename_format=<format>]
+	 * : Use a custom format for export filenames. Defaults to '{site}.wordpress.{date}.{n}.xml'.
+	 *
+	 * [--include_once=<before_posts>]
+	 * : Include specified export section only in the first export file. Valid options
+	 * are categories, tags, nav_menu_items, custom_taxonomies_terms. Separate multiple
+	 * sections with a comma. Defaults to none.
+	 *
 	 * ## FILTERS
 	 *
 	 * [--start_date=<date>]
@@ -76,7 +85,7 @@ class Export_Command extends WP_CLI_Command {
 	 * with a comma. Defaults to none.
 	 *
 	 * [--post__in=<pid>]
-	 * : Export all posts specified as a comma- or space-separated list of IDs.
+	 * : Export all posts specified as a comma-separated or space-separated list of IDs.
 	 * Post's attachments won't be exported unless --with_attachments is specified.
 	 *
 	 * [--with_attachments]
@@ -96,9 +105,6 @@ class Export_Command extends WP_CLI_Command {
 	 *
 	 * [--post_status=<status>]
 	 * : Export only posts with this status.
-	 *
-	 * [--filename_format=<format>]
-	 * : Use a custom format for export filenames. Defaults to '{site}.wordpress.{date}.{n}.xml'.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -138,6 +144,7 @@ class Export_Command extends WP_CLI_Command {
 			'skip_comments'     => null,
 			'max_file_size'     => 15,
 			'filename_format'   => '{site}.wordpress.{date}.{n}.xml',
+			'include_once'      => null,
 		];
 
 		if ( ! empty( $assoc_args['stdout'] ) && ( ! empty( $assoc_args['dir'] ) || ! empty( $assoc_args['filename_format'] ) ) ) {
@@ -192,6 +199,7 @@ class Export_Command extends WP_CLI_Command {
 							'max_file_size'         => $this->max_file_size,
 							'destination_directory' => $this->wxr_path,
 							'filename_template'     => self::get_filename_template( $assoc_args['filename_format'] ),
+							'include_once'          => $this->include_once,
 						],
 					]
 				);
@@ -337,7 +345,7 @@ class Export_Command extends WP_CLI_Command {
 		$separator = false !== stripos( $post__in, ' ' ) ? ' ' : ',';
 		$post__in  = array_filter( array_unique( array_map( 'intval', explode( $separator, $post__in ) ) ) );
 		if ( empty( $post__in ) ) {
-			WP_CLI::warning( 'post__in should be comma-separated post IDs.' );
+			WP_CLI::warning( 'post__in should be comma-separated or space-separated post IDs.' );
 			return false;
 		}
 		// New exporter uses a different argument.
@@ -463,6 +471,24 @@ class Export_Command extends WP_CLI_Command {
 		}
 
 		$this->max_file_size = $size;
+
+		return true;
+	}
+
+	private function check_include_once( $include_once ) {
+		if ( null === $include_once ) {
+			return true;
+		}
+
+		$separator    = false !== stripos( $include_once, ' ' ) ? ' ' : ',';
+		$include_once = array_filter( array_unique( array_map( 'strtolower', explode( $separator, $include_once ) ) ) );
+		$include_once = array_intersect( $include_once, array( 'categories', 'tags', 'nav_menu_terms', 'custom_taxonomies_terms' ) );
+		if ( empty( $include_once ) ) {
+			WP_CLI::warning( 'include_once should be comma-separated values for optional before_posts sections.' );
+			return false;
+		}
+
+		$this->include_once = $include_once;
 
 		return true;
 	}

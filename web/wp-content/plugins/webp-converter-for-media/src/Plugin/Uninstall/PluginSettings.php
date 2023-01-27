@@ -8,6 +8,7 @@ use WebpConverter\Notice\BlackFridayNotice;
 use WebpConverter\Notice\CloudflareNotice;
 use WebpConverter\Notice\LitespeedNotice;
 use WebpConverter\Notice\ThanksNotice;
+use WebpConverter\Notice\TokenInactiveNotice;
 use WebpConverter\Notice\UpgradeNotice;
 use WebpConverter\Notice\WelcomeNotice;
 use WebpConverter\Plugin\Update;
@@ -34,6 +35,7 @@ class PluginSettings {
 		OptionsAccessManager::delete_option( ThanksNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( CloudflareNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( LitespeedNotice::NOTICE_OPTION );
+		OptionsAccessManager::delete_option( TokenInactiveNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( UpgradeNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( BlackFridayNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( 'webpc_notice_avif_support' );
@@ -61,5 +63,6 @@ class PluginSettings {
 		delete_site_transient( CronStatusManager::CRON_STATUS_LOCKED_TRANSIENT );
 		delete_site_transient( CronStatusManager::CRON_REQUEST_ID_TRANSIENT );
 		delete_site_transient( CronStatusManager::CRON_REQUEST_RESPONSE_TRANSIENT );
+		delete_site_transient( ErrorDetectorAggregator::ERROR_DETECTOR_DATE_TRANSIENT );
 	}
 }

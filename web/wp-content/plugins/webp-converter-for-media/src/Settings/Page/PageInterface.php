@@ -36,4 +36,14 @@ interface PageInterface {
 	 * @return mixed[]
 	 */
 	public function get_template_vars(): array;
+
+	/**
+	 * @return void
+	 */
+	public function do_action_before_load();
+
+	/**
+	 * @return void
+	 */
+	public function do_action_after_load();
 }

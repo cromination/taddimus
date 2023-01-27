@@ -197,6 +197,13 @@ jQuery( document ).ready(
 	function () {
 		'use strict';
 		var theme_conrols = jQuery( '#customize-theme-controls' );
+		setTimeout(
+			function() {
+				jQuery(document).find( 'input.customizer-repeater-color-control' ).wpColorPicker( color_options );
+				jQuery(document).find( 'input.customizer-repeater-color2-control' ).wpColorPicker( color_options );
+			},
+			500
+		);
 		theme_conrols.on(
 			'click', '.customizer-repeater-customize-control-title', function () {
 				jQuery( this ).next().slideToggle(
@@ -366,8 +373,6 @@ jQuery( document ).ready(
 			}
 		);
 
-		jQuery( 'input.customizer-repeater-color-control' ).wpColorPicker( color_options );
-		jQuery( 'input.customizer-repeater-color2-control' ).wpColorPicker( color_options );
 
 		theme_conrols.on(
 			'keyup', '.customizer-repeater-subtitle-control', function () {

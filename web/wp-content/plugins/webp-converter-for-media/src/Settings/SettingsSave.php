@@ -66,6 +66,9 @@ class SettingsSave {
 					WebpFormat::FORMAT_EXTENSION,
 				];
 			}
+		} elseif ( ( $plugin_settings[ ConversionMethodOption::OPTION_NAME ] === RemoteMethod::METHOD_NAME )
+			&& ! $plugin_settings[ AccessTokenOption::OPTION_NAME ] ) {
+			$plugin_settings[ ConversionMethodOption::OPTION_NAME ] = '';
 		}
 
 		OptionsAccessManager::update_option( self::SETTINGS_OPTION, $plugin_settings );

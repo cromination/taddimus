@@ -18,6 +18,23 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 ## Changelog ##
 
+##### [Version 3.0.27](https://github.com/Codeinwp/hestia-pro/compare/v3.0.26...v3.0.27) (2023-01-10)
+
+- [Fix] Big title background image issue
+
+
+
+
+##### [Version 3.0.26](https://github.com/Codeinwp/hestia-pro/compare/v3.0.25...v3.0.26) (2023-01-05)
+
+- [Feat] Filter related posts by Yoast primary category
+- [Fix] Big title section render issue
+- [Fix] Button Color Selector is not working
+- [Fix] SEO issues with explicit image width/height
+
+
+
+
 ##### [Version 3.0.25](https://github.com/Codeinwp/hestia-pro/compare/v3.0.24...v3.0.25) (2022-12-20)
 
 - [Fix] Improve TinyMCE editor style

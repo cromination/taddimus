@@ -16,7 +16,7 @@
 >
 	<div class="webpcContent webpcContent--notice">
 		<h4>
-			<?php echo esc_html( __( 'Thank you for using our plugin Converter for Media!', 'webp-converter-for-media' ) ); ?>
+			<?php echo esc_html( __( 'Thank you for using our Converter for Media plugin!', 'webp-converter-for-media' ) ); ?>
 		</h4>
 		<p>
 			<?php

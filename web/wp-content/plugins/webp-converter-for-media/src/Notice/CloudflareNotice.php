@@ -23,13 +23,6 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static function get_default_value(): string {
-		return '';
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function is_available(): bool {
 		$cdn_server = strtolower( $_SERVER['HTTP_CDN_LOOP'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 		if ( isset( $_SERVER['KINSTA_CACHE_ZONE'] ) ) {
@@ -67,6 +60,8 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return mixed[]
 	 */
 	public function get_vars_for_view(): array {
 		return [

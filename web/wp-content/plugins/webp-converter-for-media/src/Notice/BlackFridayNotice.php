@@ -36,13 +36,6 @@ class BlackFridayNotice extends NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static function get_default_value(): string {
-		return '';
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function is_available(): bool {
 		return ( ( basename( $_SERVER['PHP_SELF'] ) === 'index.php' ) // phpcs:ignore WordPress.Security
 			|| ( ( $_GET['page'] ?? '' ) === PageIntegration::SETTINGS_MENU_PAGE ) ); // phpcs:ignore WordPress.Security
@@ -83,6 +76,8 @@ class BlackFridayNotice extends NoticeAbstract implements NoticeInterface {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return mixed[]
 	 */
 	public function get_vars_for_view(): array {
 		return [

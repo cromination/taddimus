@@ -91,7 +91,7 @@ class RemoteMethod extends MethodAbstract {
 			'%1$s (%2$s)',
 			__( 'Remote server', 'webp-converter-for-media' ),
 			sprintf(
-			/* translators: %%1$s: open anchor tag, %2$s: close anchor tag */
+			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( 'available in %1$sthe PRO version%2$s', 'webp-converter-for-media' ),
 				'<a href="https://url.mattplugins.com/converter-field-conversion-method-remote-upgrade" target="_blank">',
 				'</a>'
@@ -337,10 +337,10 @@ class RemoteMethod extends MethodAbstract {
 			return null;
 		}
 
-		curl_setopt( $connect, CURLOPT_SSL_VERIFYPEER, 0 );
-		curl_setopt( $connect, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt( $connect, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $connect, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $connect, CURLOPT_TIMEOUT, apply_filters( 'webpc_remote_timeout', 30 ) );
-		curl_setopt( $connect, CURLOPT_POST, 1 );
+		curl_setopt( $connect, CURLOPT_POST, true );
 		curl_setopt(
 			$connect,
 			CURLOPT_POSTFIELDS,

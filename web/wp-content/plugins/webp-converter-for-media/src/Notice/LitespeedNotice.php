@@ -23,20 +23,7 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static function get_default_value(): string {
-		return '';
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function is_available(): bool {
-		$server_name = strtolower( $_SERVER['SERVER_SOFTWARE'] ?? '' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-
-		if ( ( strpos( $server_name, 'litespeed' ) === false ) && ! is_plugin_active( 'litespeed-cache/litespeed-cache.php' ) ) {
-			return false;
-		}
-
 		return ( ( $_GET['page'] ?? '' ) === PageIntegration::SETTINGS_MENU_PAGE ); // phpcs:ignore WordPress.Security
 	}
 
@@ -65,7 +52,7 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_vars_for_view(): array {
+	public function get_vars_for_view() {
 		$ls_api_key            = ( is_plugin_active( 'litespeed-cache/litespeed-cache.php' ) )
 			? ( ( is_multisite() ) ? get_site_option( 'litespeed.conf.api_key', '' ) : get_option( 'litespeed.conf.api_key', '' ) )
 			: '';
@@ -114,7 +101,7 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 			);
 		}
 
-		if ( ! $steps ) {
+		if ( ! $steps && ( strpos( strtolower( $_SERVER['SERVER_SOFTWARE'] ?? '' ), 'litespeed' ) !== false ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			$steps[] = __( 'Log in to the management panel of your hosting.', 'webp-converter-for-media' );
 			$steps[] = sprintf(
 			/* translators: %1$s: option name */
@@ -126,6 +113,10 @@ class LitespeedNotice extends NoticeAbstract implements NoticeInterface {
 				__( 'Click %1$s.', 'webp-converter-for-media' ),
 				'<strong>"Flush All"</strong>'
 			);
+		}
+
+		if ( ! $steps ) {
+			return null;
 		}
 
 		return [

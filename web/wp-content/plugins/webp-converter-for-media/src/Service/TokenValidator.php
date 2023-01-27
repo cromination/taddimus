@@ -51,10 +51,10 @@ class TokenValidator {
 			return false;
 		}
 
-		curl_setopt( $connect, CURLOPT_SSL_VERIFYPEER, 0 );
-		curl_setopt( $connect, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt( $connect, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $connect, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $connect, CURLOPT_TIMEOUT, 10 );
-		curl_setopt( $connect, CURLOPT_POST, 1 );
+		curl_setopt( $connect, CURLOPT_POST, true );
 		curl_setopt(
 			$connect,
 			CURLOPT_POSTFIELDS,

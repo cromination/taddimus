@@ -89,11 +89,11 @@ class CloudflareConfigurator {
 			return null;
 		}
 
-		curl_setopt( $connect, CURLOPT_SSL_VERIFYPEER, 0 );
-		curl_setopt( $connect, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt( $connect, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $connect, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $connect, CURLOPT_TIMEOUT, 10 );
-		curl_setopt( $connect, CURLOPT_CUSTOMREQUEST, $request_method );
-		curl_setopt( $connect, CURLOPT_POSTFIELDS, json_encode( $request_data ) );
+		curl_setopt( $connect, CURLOPT_CUSTOMREQUEST, $request_method ?: 'POST' );
+		curl_setopt( $connect, CURLOPT_POSTFIELDS, json_encode( $request_data ) ?: '' );
 		curl_setopt(
 			$connect,
 			CURLOPT_HTTPHEADER,

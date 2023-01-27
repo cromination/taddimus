@@ -176,20 +176,28 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 	 */
 	public function related_posts() {
 		global $post;
-		$cats         = wp_get_object_terms(
+		$cats = wp_get_object_terms(
 			$post->ID,
 			'category',
 			array(
 				'fields' => 'ids',
 			)
 		);
-		$args         = array(
+		$args = array(
 			'posts_per_page'      => 3,
 			'cat'                 => $cats,
 			'orderby'             => 'date',
 			'ignore_sticky_posts' => true,
 			'post__not_in'        => array( $post->ID ),
 		);
+
+		if ( function_exists( 'yoast_get_primary_term_id' ) && true === apply_filters( 'hestia_related_posts_by_yoast_primary_term', true ) ) {
+			$yoast_primary_term_id = yoast_get_primary_term_id();
+			if ( $yoast_primary_term_id > 0 ) {
+				$args['category__in'] = array( $yoast_primary_term_id );
+			}
+		}
+
 		$allowed_html = array(
 			'br'     => array(),
 			'em'     => array(),

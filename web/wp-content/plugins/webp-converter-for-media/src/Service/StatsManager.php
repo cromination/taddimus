@@ -101,11 +101,11 @@ class StatsManager {
 	}
 
 	/**
-	 * @param int $value .
+	 * @param int|null $value .
 	 *
 	 * @return void
 	 */
-	public function set_images_webp_unconverted( int $value ) {
+	public function set_images_webp_unconverted( int $value = null ) {
 		OptionsAccessManager::update_option( self::STATS_IMAGES_WEBP_UNCONVERTED_OPTION, $value );
 	}
 
@@ -133,11 +133,11 @@ class StatsManager {
 	}
 
 	/**
-	 * @param int $value .
+	 * @param int|null $value .
 	 *
 	 * @return void
 	 */
-	public function set_images_avif_unconverted( int $value ) {
+	public function set_images_avif_unconverted( int $value = null ) {
 		OptionsAccessManager::update_option( self::STATS_IMAGES_AVIF_UNCONVERTED_OPTION, $value );
 	}
 

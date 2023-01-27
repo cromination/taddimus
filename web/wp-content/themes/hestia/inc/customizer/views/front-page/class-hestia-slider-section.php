@@ -14,7 +14,6 @@ class Hestia_Slider_Section extends Hestia_First_Front_Page_Section {
 	 * Initialize the big title content.
 	 */
 	public function init() {
-		parent::init();
 		add_action( 'hestia_first_front_page_section_content', array( $this, 'render_slider_content' ) );
 		add_filter( 'hestia_custom_header_settings', array( $this, 'add_video_support' ) );
 		add_filter( 'header_video_settings', array( $this, 'video_settings' ) );
@@ -24,23 +23,6 @@ class Hestia_Slider_Section extends Hestia_First_Front_Page_Section {
 	 * The main render function for this section.
 	 */
 	public function render_slider_content() {
-		$this->maybe_render_parallax();
-		$this->maybe_render_video();
-		$this->render_content();
-	}
-
-	/**
-	 * Display video bg.
-	 */
-	private function maybe_render_video() {
-		if ( ! $this->should_display_video() ) {
-			return;
-		}
-
-		if ( ! has_header_video() ) {
-			return;
-		}
-		the_custom_header_markup();
 	}
 
 	/**
@@ -130,114 +112,6 @@ class Hestia_Slider_Section extends Hestia_First_Front_Page_Section {
 			?>
 		</div>
 		<?php
-	}
-
-	/**
-	 * Render slider content.
-	 */
-	public function render_content() {
-
-		$slider_default = $this->get_slider_default();
-
-		$slider_content = get_theme_mod( 'hestia_slider_content', json_encode( $slider_default ) );
-		if ( empty( $slider_content ) ) {
-			return;
-		}
-
-		$slider_content = json_decode( $slider_content );
-		if ( empty( $slider_content ) ) {
-			return;
-		}
-
-		$alignment       = get_theme_mod( 'hestia_slider_alignment', 'center' );
-		$alignment_class = $this->get_big_title_elements_class( $alignment );
-		$alignment_class = $alignment_class['slide'];
-		$counter         = 1;
-
-		foreach ( $slider_content as $slider_item ) {
-			$title                = ! empty( $slider_item->title ) ? apply_filters( 'hestia_translate_single_string', $slider_item->title, 'Slider section' ) : '';
-			$subtitle             = ! empty( $slider_item->subtitle ) ? apply_filters( 'hestia_translate_single_string', $slider_item->subtitle, 'Slider section' ) : '';
-			$button               = ! empty( $slider_item->text ) ? apply_filters( 'hestia_translate_single_string', $slider_item->text, 'Slider section' ) : '';
-			$link                 = ! empty( $slider_item->link ) ? apply_filters( 'hestia_translate_single_string', $slider_item->link, 'Slider section' ) : '';
-			$button2              = ! empty( $slider_item->text2 ) ? apply_filters( 'hestia_translate_single_string', $slider_item->text2, 'Slider section' ) : '';
-			$link2                = ! empty( $slider_item->link2 ) ? apply_filters( 'hestia_translate_single_string', $slider_item->link2, 'Slider section' ) : '';
-			$image                = ! empty( $slider_item->image_url ) && $this->should_display_video() === false && $this->should_display_parallax() === false ? apply_filters( 'hestia_translate_single_string', $slider_item->image_url, 'Slider section' ) : '';
-			$color                = ! empty( $slider_item->color ) ? apply_filters( 'hestia_translate_single_string', $slider_item->color, 'Slider section' ) : '';
-			$color2               = ! empty( $slider_item->color2 ) ? apply_filters( 'hestia_translate_single_string', $slider_item->color2, 'Slider section' ) : '';
-			$item_class           = $this->get_slide_class( $counter );
-			$html_allowed_strings = array(
-				$title,
-				$subtitle,
-				$button,
-				$button2,
-			);
-			maybe_trigger_fa_loading( $html_allowed_strings );
-			?>
-
-			<div class="<?php echo esc_attr( $item_class ); ?>">
-				<div class="page-header">
-					<?php hestia_before_big_title_section_content_trigger(); ?>
-					<div class="container">
-						<?php hestia_top_big_title_section_content_trigger(); ?>
-						<div class="row">
-							<?php $this->maybe_render_widgets_area( $alignment, 'right', $counter ); ?>
-							<div class="<?php echo esc_attr( $alignment_class ); ?>">
-
-								<?php
-								if ( ! empty( $title ) ) {
-									$title = html_entity_decode( $title );
-									?>
-									<h1 class="hestia-title"><?php echo wp_kses_post( $title ); ?></h1>
-									<?php
-								}
-
-								if ( ! empty( $subtitle ) ) {
-									$subtitle = html_entity_decode( $subtitle );
-									?>
-									<span class="sub-title"><?php echo wp_kses_post( $subtitle ); ?></span>
-									<?php
-								}
-
-								$settings = array(
-									'link'    => $link,
-									'button'  => $button,
-									'color'   => $color,
-									'link2'   => $link2,
-									'button2' => $button2,
-									'color2'  => $color2,
-									'counter' => $counter,
-								);
-								$this->render_slide_buttons( $settings );
-								echo $this->get_button_style( $color, $color2, $counter );
-								?>
-
-							</div>
-							<?php $this->maybe_render_widgets_area( $alignment, 'left', $counter ); ?>
-						</div>
-
-						<?php hestia_bottom_big_title_section_content_trigger(); ?>
-					</div>
-					<?php
-					$this->maybe_render_slide_background_image( $image );
-					hestia_after_big_title_section_content_trigger();
-					?>
-				</div>
-			</div>
-
-			<?php
-			$counter ++;
-		}
-
-		if ( $counter >= 3 ) {
-			$left_class  = ! is_rtl() ? 'left' : 'right';
-			$right_class = ! is_rtl() ? 'right' : 'left';
-			echo '<a class="' . esc_attr( $left_class ) . ' carousel-control" href="#carousel-hestia-generic" data-slide="prev">';
-				echo '<i class="fas fa-angle-left"></i>';
-			echo '</a>';
-			echo '<a class="' . esc_attr( $right_class ) . ' carousel-control" href="#carousel-hestia-generic" data-slide="next">';
-				echo '<i class="fas fa-angle-right"></i>';
-			echo '</a>';
-		}
 	}
 
 	/**
@@ -355,83 +229,5 @@ class Hestia_Slider_Section extends Hestia_First_Front_Page_Section {
 		$settings['height'] = 2880;
 
 		return $settings;
-	}
-
-	/**
-	 * Import lite content to slider
-	 *
-	 * @return array
-	 */
-	public function get_slider_default() {
-		$default = array(
-			array(
-				'image_url' => get_template_directory_uri() . '/assets/img/slider1.jpg',
-				'title'     => esc_html__( 'Lorem Ipsum', 'hestia' ),
-				'subtitle'  => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'hestia' ),
-				'text'      => esc_html__( 'Button', 'hestia' ),
-				'link'      => '#',
-				'id'        => 'customizer_repeater_56d7ea7f40a56',
-				'color'     => '#e91e63',
-			),
-			array(
-				'image_url' => get_template_directory_uri() . '/assets/img/slider2.jpg',
-				'title'     => esc_html__( 'Lorem Ipsum', 'hestia' ),
-				'subtitle'  => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'hestia' ),
-				'text'      => esc_html__( 'Button', 'hestia' ),
-				'link'      => '#',
-				'id'        => 'customizer_repeater_56d7ea7f40a57',
-				'color'     => '#e91e63',
-			),
-			array(
-				'image_url' => get_template_directory_uri() . '/assets/img/slider3.jpg',
-				'title'     => esc_html__( 'Lorem Ipsum', 'hestia' ),
-				'subtitle'  => esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'hestia' ),
-				'text'      => esc_html__( 'Button', 'hestia' ),
-				'link'      => '#',
-				'id'        => 'customizer_repeater_56d7ea7f40a58',
-				'color'     => '#e91e63',
-			),
-		);
-
-		$lite_content = get_option( 'theme_mods_hestia' );
-
-		if ( $lite_content ) {
-
-			$hestia_big_title_title       = '';
-			$hestia_big_title_text        = '';
-			$hestia_big_title_button_text = '';
-			$hestia_big_title_button_link = '';
-			$hestia_big_title_background  = apply_filters( 'hestia_big_title_background_default', get_template_directory_uri() . '/assets/img/slider1.jpg' );
-
-			if ( array_key_exists( 'hestia_big_title_title', $lite_content ) ) {
-				$hestia_big_title_title = $lite_content['hestia_big_title_title'];
-			}
-			if ( array_key_exists( 'hestia_big_title_text', $lite_content ) ) {
-				$hestia_big_title_text = $lite_content['hestia_big_title_text'];
-			}
-			if ( array_key_exists( 'hestia_big_title_button_text', $lite_content ) ) {
-				$hestia_big_title_button_text = $lite_content['hestia_big_title_button_text'];
-			}
-			if ( array_key_exists( 'hestia_big_title_button_link', $lite_content ) ) {
-				$hestia_big_title_button_link = $lite_content['hestia_big_title_button_link'];
-			}
-			if ( array_key_exists( 'hestia_big_title_background', $lite_content ) ) {
-				$hestia_big_title_background = $lite_content['hestia_big_title_background'];
-			}
-			if ( ! empty( $hestia_big_title_title ) || ! empty( $hestia_big_title_text ) || ! empty( $hestia_big_title_button_text ) || ! empty( $hestia_big_title_button_link ) || ! empty( $hestia_big_title_background ) ) {
-				return array(
-					array(
-						'id'        => 'customizer_repeater_56d7ea7f40a56',
-						'title'     => $hestia_big_title_title,
-						'subtitle'  => $hestia_big_title_text,
-						'text'      => $hestia_big_title_button_text,
-						'link'      => $hestia_big_title_button_link,
-						'image_url' => $hestia_big_title_background,
-					),
-				);
-			}
-		}
-
-		return $default;
 	}
 }

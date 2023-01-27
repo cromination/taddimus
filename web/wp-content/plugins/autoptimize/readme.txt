@@ -5,7 +5,7 @@ Donate link: http://blog.futtta.be/2013/10/21/do-not-donate-to-me/
 Requires at least: 4.9
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 3.1.4
+Stable tag: 3.1.5
 
 Autoptimize speeds up your website by optimizing JS, CSS, images (incl. lazy-load), HTML and Google Fonts, asyncing JS, removing emoji cruft and more.
 
@@ -318,6 +318,12 @@ You can get help on the [wordpress.org support forum](http://wordpress.org/suppo
 Just [fork Autoptimize on Github](https://github.com/futtta/autoptimize) and code away!
 
 == Changelog ==
+
+= 3.1.5 =
+* improvements to JSMin by Robert Ehrenleitner (big thanks Robert!).
+* do not consider jquery.js as minified any more (WordPress now uses jquery.min.js by default and jquery.js is the unminified version).
+* fix for "undefined array key" PHP errors in autoptimizeCriticalCSSCron.php
+* some other minor changes/ improvements/ filters, see the [GitHub commit log](https://github.com/futtta/autoptimize/commits/beta).
 
 = 3.1.4 =
 * Improvement: when all CSS is inlined, try doing so after SEO meta-tags (just before ld+json script tag which most SEO plugins add as last item on their list).

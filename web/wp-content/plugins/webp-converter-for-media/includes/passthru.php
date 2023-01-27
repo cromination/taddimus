@@ -61,7 +61,7 @@ class PassthruLoader {
 	 * @return void
 	 */
 	private function load_converted_image( string $image_url ) {
-		$mime_types    = json_decode( self::MIME_TYPES, true );
+		$mime_types    = json_decode( self::MIME_TYPES, true ) ?: [];
 		$headers       = array_change_key_case(
 			array_merge( ( function_exists( 'getallheaders' ) ) ? getallheaders() : [], $_SERVER ),
 			CASE_UPPER
@@ -94,8 +94,8 @@ class PassthruLoader {
 			return null;
 		}
 
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
 		$response = curl_exec( $ch );
 		$code     = curl_getinfo( $ch, CURLINFO_HTTP_CODE );

@@ -325,16 +325,38 @@ class Hestia_Header extends Hestia_Abstract_Main {
 
 		if ( ! empty( $main_logo ) ) {
 			$class         = ! empty( $transparent_logo ) ? 'class="hestia-hide-if-transparent"' : '';
+			$custom_logo   = get_theme_mod( 'custom_logo' );
 			$alt_attribute = get_post_meta( get_theme_mod( 'custom_logo' ), '_wp_attachment_image_alt', true );
 			$alt_attribute = ! empty( $alt_attribute ) ? $alt_attribute : get_bloginfo( 'name' );
-			$logo          = '<img ' . $class . ' src="' . esc_url( $main_logo ) . '" alt="' . esc_attr( $alt_attribute ) . '">';
+
+			$custom_logo_metadata = wp_get_attachment_metadata( $custom_logo );
+			$width                = '';
+			$height               = '';
+			if ( ! empty( $custom_logo_metadata['width'] ) ) {
+				$width = $custom_logo_metadata['width'];
+			}
+			if ( ! empty( $custom_logo_metadata['height'] ) ) {
+				$height = $custom_logo_metadata['height'];
+			}
+			$logo = '<img ' . $class . ' src="' . esc_url( $main_logo ) . '" alt="' . esc_attr( $alt_attribute ) . '" width="' . esc_attr( $width ) . '" height="' . esc_attr( $height ) . '">';
 		}
 
 		if ( ! empty( $transparent_logo ) && $transparent_header === true ) {
 			$transparent_logo_attachment_id = attachment_url_to_postid( $transparent_logo );
+			$transparent_logo_metadata      = wp_get_attachment_metadata( $transparent_logo_attachment_id );
+
+			$width  = '';
+			$height = '';
+			if ( ! empty( $transparent_logo_metadata['width'] ) ) {
+				$width = $transparent_logo_metadata['width'];
+			}
+			if ( ! empty( $transparent_logo_metadata['height'] ) ) {
+				$height = $transparent_logo_metadata['height'];
+			}
+
 			$transparent_logo_alt_attribute = get_post_meta( $transparent_logo_attachment_id, '_wp_attachment_image_alt', true );
 			$transparent_logo_alt_attribute = ! empty( $transparent_logo_alt_attribute ) ? $transparent_logo_alt_attribute : get_bloginfo( 'name' );
-			$logo                          .= '<img class="hestia-transparent-logo" src="' . esc_url( $transparent_logo ) . '" alt="' . esc_attr( $transparent_logo_alt_attribute ) . '">';
+			$logo                          .= '<img class="hestia-transparent-logo" src="' . esc_url( $transparent_logo ) . '" alt="' . esc_attr( $transparent_logo_alt_attribute ) . '" width="' . esc_attr( $width ) . '" height="' . esc_attr( $height ) . '">';
 		}
 
 		return $logo;

@@ -5,6 +5,7 @@ namespace WebpConverter\Conversion\Method;
 use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\PluginData;
+use WebpConverter\Service\StatsManager;
 use WebpConverter\Settings\Option\ConversionMethodOption;
 
 /**
@@ -17,8 +18,14 @@ class MethodIntegrator {
 	 */
 	private $plugin_data;
 
-	public function __construct( PluginData $plugin_data ) {
-		$this->plugin_data = $plugin_data;
+	/**
+	 * @var StatsManager
+	 */
+	private $stats_manager;
+
+	public function __construct( PluginData $plugin_data, StatsManager $stats_manager = null ) {
+		$this->plugin_data   = $plugin_data;
+		$this->stats_manager = $stats_manager ?: new StatsManager();
 	}
 
 	/**
@@ -33,6 +40,9 @@ class MethodIntegrator {
 		if ( ! $method = $this->get_method_used() ) {
 			return null;
 		}
+
+		$this->stats_manager->set_images_webp_unconverted();
+		$this->stats_manager->set_images_avif_unconverted();
 
 		$method->convert_paths( $paths, $this->plugin_data->get_plugin_settings(), $regenerate_force );
 		return [

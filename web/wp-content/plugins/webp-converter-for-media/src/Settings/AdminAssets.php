@@ -26,8 +26,8 @@ class AdminAssets implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		add_filter( 'admin_enqueue_scripts', [ $this, 'load_styles' ] );
-		add_filter( 'admin_enqueue_scripts', [ $this, 'load_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'load_styles' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'load_scripts' ] );
 	}
 
 	/**

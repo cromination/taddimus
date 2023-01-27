@@ -67,9 +67,9 @@ class PassthruExecutionDetector implements ErrorDetector {
 			return false;
 		}
 
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_NOBODY, 1 );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_NOBODY, true );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 3 );
 		curl_exec( $ch );

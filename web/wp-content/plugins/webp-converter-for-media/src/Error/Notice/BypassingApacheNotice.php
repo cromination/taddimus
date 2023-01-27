@@ -21,15 +21,16 @@ class BypassingApacheNotice implements ErrorNotice {
 	 */
 	public function get_message(): array {
 		return [
-			sprintf(
-			/* translators: %1$s: open strong tag, %2$s: close strong tag */
-				__( 'Requests to images are processed by Nginx server bypassing Apache. Please log in to your hosting control panel, go to management of this website and try to find one of the following settings %1$sand disable it if it is active%2$s:', 'webp-converter-for-media' ),
-				'<strong>',
-				'</strong>'
-			),
+			__( 'It appears that requests for images on your website are being processed by the Nginx server, bypassing Apache.', 'webp-converter-for-media' ),
 			implode(
 				'<br>',
 				[
+					sprintf(
+					/* translators: %1$s: open strong tag, %2$s: close strong tag */
+						__( 'To fix this issue, please log in to your hosting control panel and navigate to the management of your website. Look for one of the following settings %1$sand disable it if it is active%2$s:', 'webp-converter-for-media' ),
+						'<strong>',
+						'</strong>'
+					),
 					sprintf(
 					/* translators: %1$s: button label, %2$s: tab name, %3$s: tab name, %4$s: section name */
 						__( '- for SiteGround hosting click %1$s button on the websites list -> click %2$s and %3$s tab -> find %4$s section', 'webp-converter-for-media' ),
@@ -51,14 +52,13 @@ class BypassingApacheNotice implements ErrorNotice {
 					),
 				]
 			),
+			__( 'If you have trouble finding these settings, please contact your hosting support and provide them with the following message:', 'webp-converter-for-media' ),
 			sprintf(
-			/* translators: %1$s: open strong tag, %2$s: close strong tag, %3$s: break line tag, %4$s: setting name, %5$s: setting name */
-				__( 'In case of problems with finding such settings, %1$splease contact your hosting support and send them the following message%2$s: %3$s"I would like to disable %4$s (or %5$s) for static content files like .jpg, .jpeg, .png, .gif and .webp. These files should have been handled by Apache server instead of Nginx. I need help on this matter."', 'webp-converter-for-media' ),
-				'<strong>',
-				'</strong>',
-				'<br>',
+			/* translators: %1$s: setting name, %2$s: setting name, %3$s: home URL */
+				'<em>' . __( 'I would like to disable %1$s (or %2$s) for static content files like .jpg, .jpeg, .png, .gif and .webp on my website - %3$s. These files should have been handled by Apache server instead of Nginx. I need help on this matter.', 'webp-converter-for-media' ) . '</em>',
 				'Nginx Caching',
-				'Nginx Direct Delivery'
+				'Nginx Direct Delivery',
+				get_home_url()
 			),
 		];
 	}

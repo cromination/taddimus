@@ -71,10 +71,9 @@ class GeneralSettingsPage extends PageAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_template_vars(): array {
-		( new SettingsSave( $this->plugin_data ) )->save_settings();
-
 		$token = $this->token_repository->get_token();
-		$data  = [
+
+		return [
 			'logo_url'                 => $this->plugin_info->get_plugin_directory_url() . 'assets/img/logo-headline.png',
 			'form_options'             => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_BASIC ),
 			'form_sidebar_options'     => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_SIDEBAR ),
@@ -114,8 +113,19 @@ class GeneralSettingsPage extends PageAbstract {
 			'errors_messages'          => apply_filters( 'webpc_server_errors_messages', [] ),
 			'errors_codes'             => apply_filters( 'webpc_server_errors', [] ),
 		];
+	}
 
+	/**
+	 * {@inheritdoc}
+	 */
+	public function do_action_before_load() {
+		( new SettingsSave( $this->plugin_data ) )->save_settings();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function do_action_after_load() {
 		do_action( LoaderAbstract::ACTION_NAME, true );
-		return $data;
 	}
 }

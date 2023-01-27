@@ -63,9 +63,14 @@ class NoticeIntegration implements HookableInterface {
 	 * @internal
 	 */
 	public function load_notice() {
+		$view_vars = $this->notice->get_vars_for_view();
+		if ( $view_vars === null ) {
+			return;
+		}
+
 		( new ViewLoader( $this->plugin_info ) )->load_view(
 			$this->notice->get_output_path(),
-			$this->notice->get_vars_for_view()
+			$view_vars
 		);
 	}
 
