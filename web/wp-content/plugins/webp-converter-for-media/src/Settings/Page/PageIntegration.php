@@ -47,6 +47,21 @@ class PageIntegration implements HookableInterface {
 	}
 
 	/**
+	 * @return PageInterface|null
+	 */
+	private function get_current_page() {
+		$page_name = $_GET['page'] ?? null; // phpcs:ignore WordPress.Security
+		$tab_name  = $_GET['action'] ?? null; // phpcs:ignore WordPress.Security
+
+		foreach ( $this->pages as $page ) {
+			if ( ( $page->get_menu_parent() === $page_name ) && ( $page->get_slug() === $tab_name ) ) {
+				return $page;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Sets integration for page.
 	 *
 	 * @param PageInterface $page .
@@ -128,37 +143,34 @@ class PageIntegration implements HookableInterface {
 	 * @internal
 	 */
 	public function load_plugin_page() {
-		$page_name = $_GET['page'] ?? null; // phpcs:ignore WordPress.Security
-		$tab_name  = $_GET['action'] ?? null; // phpcs:ignore WordPress.Security
-
-		foreach ( $this->pages as $page ) {
-			if ( ( $page->get_menu_parent() !== $page_name ) || ( $page->get_slug() !== $tab_name ) ) {
-				continue;
-			}
-
-			$page->do_action_before_load();
-
-			$this->view_loader->load_view(
-				$page->get_template_path(),
-				array_merge(
-					$page->get_template_vars(),
-					[
-						'menu_items' => array_map(
-							function ( PageInterface $settings_page ) use ( $page ) {
-								return [
-									'url'       => $settings_page->get_menu_url(),
-									'title'     => $settings_page->get_label(),
-									'is_active' => ( $settings_page === $page ),
-								];
-							},
-							$this->pages
-						),
-					]
-				)
-			);
-
-			$page->do_action_after_load();
+		$page = $this->get_current_page();
+		if ( $page === null ) {
+			return;
 		}
+
+		$page->do_action_before_load();
+		do_action( 'webpc_settings_page_loaded', $page->get_menu_parent(), $page->get_slug() );
+
+		$this->view_loader->load_view(
+			$page->get_template_path(),
+			array_merge(
+				$page->get_template_vars(),
+				[
+					'menu_items' => array_map(
+						function ( PageInterface $settings_page ) use ( $page ) {
+							return [
+								'url'       => $settings_page->get_menu_url(),
+								'title'     => $settings_page->get_label(),
+								'is_active' => ( $settings_page === $page ),
+							];
+						},
+						$this->pages
+					),
+				]
+			)
+		);
+
+		$page->do_action_after_load();
 	}
 
 	/**

@@ -44,10 +44,20 @@ class EndpointIntegration implements HookableInterface {
 				'permission_callback' => function ( \WP_REST_Request $request ) {
 					$header_value = $request->get_header( $this->endpoint_object->get_route_nonce_header() );
 					if ( $header_value === null ) {
-						return false;
+						return new \WP_Error(
+							'webpc_rest_token_not_found',
+							__( 'Sorry, you do not have permission to do that.' ), // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+							[ 'status' => rest_authorization_required_code() ]
+						);
+					} elseif ( ! $this->endpoint_object->is_valid_request( $header_value ) ) {
+						return new \WP_Error(
+							'webpc_rest_token_invalid',
+							__( 'Sorry, you do not have permission to do that.' ), // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+							[ 'status' => rest_authorization_required_code() ]
+						);
 					}
 
-					return $this->endpoint_object->is_valid_request( $header_value );
+					return true;
 				},
 				'callback'            => [ $this, 'get_route_response' ],
 				'args'                => $this->endpoint_object->get_route_args(),
@@ -62,17 +72,6 @@ class EndpointIntegration implements HookableInterface {
 	 * @internal
 	 */
 	public function get_route_response( \WP_REST_Request $request ) {
-		if ( ! defined( 'WEBPC_DOING_CONVERSION' ) ) {
-			define( 'WEBPC_DOING_CONVERSION', true );
-		}
-
-		if ( ! defined( 'WP_ADMIN' ) ) {
-			/* Disable URLs replacement by Hide My WP (wpWave) plugin */
-			define( 'WP_ADMIN', true );
-		}
-		/* Disable URLs replacement by Hide My WP (WPPlugins) plugin */
-		add_filter( 'hmwp_start_buffer', '__return_false' );
-
 		nocache_headers();
 		do_action( 'litespeed_control_set_nocache', 'Converter for Media' );
 

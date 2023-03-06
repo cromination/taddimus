@@ -77,7 +77,7 @@ class ImageResizeOption extends OptionAbstract {
 		$notice = [
 			sprintf(
 			/* translators: %1$s: width value, %2$s: height value */
-				__( 'Reduce the weight of converted images that are larger than their largest image size (thumbnail size) used in your theme even more. The recommended value for you is %1$s x %2$s pixels.', 'webp-converter-for-media' ),
+				__( 'You can further decrease the size of converted images (and thus their weight) that exceed the maximum image size (thumbnail size) used in your theme. The recommended value for you is %1$s x %2$s pixels.', 'webp-converter-for-media' ),
 				$size['width'],
 				$size['height']
 			),

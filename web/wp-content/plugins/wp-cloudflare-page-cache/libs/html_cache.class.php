@@ -33,7 +33,7 @@ class SWCFPC_Html_Cache
     function add_admin_menu_pages() {
 
         add_submenu_page(
-            null,
+            '',
             __( 'Super Page Cache for Cloudflare cached HTML pages', 'wp-cloudflare-page-cache' ),
             __( 'Super Page Cache for Cloudflare cached HTML pages', 'wp-cloudflare-page-cache' ),
             'manage_options',

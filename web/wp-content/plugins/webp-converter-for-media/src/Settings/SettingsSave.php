@@ -53,8 +53,9 @@ class SettingsSave {
 			return;
 		}
 
-		$posted_settings = ( new PluginOptions() )->get_values( $post_data[ self::FORM_TYPE_PARAM_KEY ], false, $post_data );
-		$plugin_settings = array_merge( $this->plugin_data->get_plugin_settings(), $posted_settings );
+		$posted_settings   = ( new PluginOptions() )->get_values( $post_data[ self::FORM_TYPE_PARAM_KEY ], false, $post_data );
+		$previous_settings = $this->plugin_data->get_plugin_settings();
+		$plugin_settings   = array_merge( $previous_settings, $posted_settings );
 
 		$token = $this->token_validator->validate_token( $plugin_settings[ AccessTokenOption::OPTION_NAME ] );
 		if ( $token->get_valid_status() ) {
@@ -74,6 +75,8 @@ class SettingsSave {
 		OptionsAccessManager::update_option( self::SETTINGS_OPTION, $plugin_settings );
 		$this->plugin_data->invalidate_plugin_settings();
 		$this->init_actions_after_save();
+
+		do_action( 'webpc_settings_updated', $plugin_settings, $previous_settings );
 	}
 
 	/**

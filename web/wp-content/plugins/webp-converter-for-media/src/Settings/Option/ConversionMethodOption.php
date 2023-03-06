@@ -62,7 +62,7 @@ class ConversionMethodOption extends OptionAbstract {
 	 */
 	public function get_notice_lines() {
 		$notice = [
-			__( 'The Remote server allows you to reduce the server load, because your images are converted by our server. This option is also useful when the server does not meet all of the plugin\'s technical requirements.', 'webp-converter-for-media' ),
+			__( 'The remote server allows you to reduce the server load, because your images are converted by our server. This option is also useful when the server does not meet all the technical requirements of the plugin.', 'webp-converter-for-media' ),
 		];
 
 		if ( $this->token_repository->get_token()->get_token_value() === null ) {

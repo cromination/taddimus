@@ -3,7 +3,7 @@
  * Plugin Name:  Super Page Cache for Cloudflare
  * Plugin URI:   https://wordpress.org/plugins/wp-cloudflare-page-cache/
  * Description:  Speed up your website by enabling page caching on a Cloudflare free plans.
- * Version:      4.7.2
+ * Version:      4.7.3
  * Author:       Optimole
  * Author URI:   https://optimole.com/
  * License:      GPLv2 or later
@@ -42,7 +42,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         private $config   = false;
         private $objects  = array();
-        private $version  = '4.7.2';
+        private $version  = '4.7.3';
 
         // Sorting Tool: https://onlinestringtools.com/sort-strings
         // Duplicate Finder: https://www.mynikko.com/tools/tool_duplicateremover.html
@@ -81,6 +81,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             '_sm_byp',
             '_sp',
             '_szp',
+            '_thumbnail_id',
             '3x',
             'a',
             'a_k',
@@ -115,6 +116,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'amp;utm_campaign',
             'amp;utm_medium',
             'amp;utm_source',
+            'amp%3Butm_content',
             'ampStoryAutoAnalyticsLinker',
             'ampstoryautoanalyticslinke',
             'an',
@@ -142,6 +144,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'blockedAdTracking',
             'blog-reader-used',
             'blogger',
+            'body',
             'br',
             'bsft_aaid',
             'bsft_clkid',
@@ -203,7 +206,9 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'ee',
             'ef_id',
             'el',
+            'emailID',
             'env',
+            'epik',
             'erprint',
             'et_blog',
             'exch',
@@ -216,6 +221,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'fbzunique',
             'fg-aqp',
             'fireglass_rsn',
+            'firstName',
             'fo',
             'fp_sid',
             'fpa',
@@ -310,10 +316,13 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'mkevt',
             'mkrid',
             'mkwid',
+            'mkt_tok',
             'ml_subscriber',
             'ml_subscriber_hash',
             'mobileOn',
             'mode',
+            'moderation-hash',
+            'modernpatio',
             'month',
             'msID',
             'msclkid',
@@ -329,10 +338,12 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'murphybedstoday',
             'mwprid',
             'n',
+            'name',
             'native_client',
             'navua',
             'nb',
             'nb_klid',
+            'nowprocketcache',
             'o',
             'okijoouuqnqq',
             'org',
@@ -354,8 +365,12 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'plat',
             'platform',
             'playsinline',
+            'position',
             'pp',
             'pr',
+            'preview',
+            'preview_id',
+            'preview_nonce',
             'prid',
             'print',
             'q',
@@ -373,6 +388,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'relatedposts_position',
             'remodel',
             'replytocom',
+            'rest_route',
             'reverse-paginate',
             'rid',
             'rnd',
@@ -401,6 +417,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'share',
             'shared',
             'showcomment',
+            'showComment',
             'si',
             'sid',
             'sid1',
@@ -440,12 +457,14 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             'tsig',
             'turl',
             'u',
+            'unapproved',
             'up_auto_log',
             'upage',
             'updated-max',
             'uptime',
             'us_privacy',
             'usegapi',
+            'userConsent',
             'usqp',
             'utm',
             'utm_campa',
@@ -564,7 +583,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             $this->objects['varnish'] = new SWCFPC_Varnish( $this );
             $this->objects['backend'] = new SWCFPC_Backend( $this );
 
-            if( ( !defined( 'WP_CLI' ) || (defined('WP_CLI') && WP_CLI === false) ) && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 && !is_admin() && !$this->is_login_page() && $this->get_single_config('cf_fallback_cache', 0) > 0 && $this->objects['cache_controller']->is_cache_enabled() ) {
+            if( ( !defined( 'WP_CLI' ) || (defined('WP_CLI') && WP_CLI === false) ) && isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 && !is_admin() && !$this->is_login_page() && $this->get_single_config('cf_fallback_cache', 0) > 0 && $this->objects['cache_controller']->is_cache_enabled() ) {
                 $this->objects['fallback_cache']->fallback_cache_retrive_current_page();
             }
 
@@ -1006,11 +1025,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
                         }, PHP_INT_MAX);
                     }
 
-                    if( version_compare( $current_version, '4.7.1', '<' ) ) {
+                    if( version_compare( $current_version, '4.7.3', '<' ) ) {
                         if ( count($this->objects) == 0 )
                             $this->include_libs();
 
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.7.1');
+                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.7.3');
 
                         add_action('shutdown', function() {
 
@@ -1024,7 +1043,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
                             $objects['cloudflare']->disable_page_cache($error_msg_cf);
                             $objects['cloudflare']->enable_page_cache($error_msg_cf);
                         
-                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.7.1 complete');
+                            $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.7.3 complete');
                         
                         }, PHP_INT_MAX);
                     }
@@ -1387,9 +1406,9 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         function wildcard_match($pattern, $subject) {
 
-            $pattern='#^'.preg_quote($pattern).'$#i'; // Case insensitive
-            $pattern=str_replace('\*', '.*', $pattern);
-            //$pattern=str_replace('\.', '.', $pattern);
+            $pattern = '#^'.preg_quote($pattern).'$#i'; // Case insensitive
+            $pattern = str_replace('\*', '.*', $pattern);
+            //$pattern = str_replace('\.', '.', $pattern);
 
             if(!preg_match($pattern, $subject, $regs))
                 return false;

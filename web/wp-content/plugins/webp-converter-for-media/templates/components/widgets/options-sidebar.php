@@ -26,7 +26,9 @@
 			<div class="webpcPage__widgetRow">
 				<ul class="webpcPage__widgetColumns">
 					<li class="webpcPage__widgetColumn">
-						<h4><?php echo esc_html( $option['label'] ); ?></h4>
+						<?php if ( $option['label'] ) : ?>
+							<h4><?php echo esc_html( $option['label'] ); ?></h4>
+						<?php endif; ?>
 						<?php include dirname( __DIR__ ) . '/fields/' . $option['type'] . '.php'; ?>
 					</li>
 					<?php if ( $option['notice_lines'] ) : ?>

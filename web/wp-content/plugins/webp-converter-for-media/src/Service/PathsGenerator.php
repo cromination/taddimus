@@ -11,9 +11,11 @@ class PathsGenerator {
 	 * Returns path to root directory of WordPress installation.
 	 */
 	public static function get_wordpress_root_path(): string {
+		$root_dir = ( ! defined( 'UPLOADS' ) ) ? dirname( WP_CONTENT_DIR ) : ABSPATH;
+
 		return apply_filters(
 			'webpc_site_root',
-			preg_replace( '/(\/|\\\\)/', DIRECTORY_SEPARATOR, dirname( wp_upload_dir()['basedir'], 2 ) )
+			preg_replace( '/(\/|\\\\)/', DIRECTORY_SEPARATOR, $root_dir )
 		);
 	}
 

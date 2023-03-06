@@ -26,11 +26,11 @@ class PassthruExecutionNotice implements ErrorNotice {
 		return [
 			sprintf(
 			/* translators: %s: anchor tag */
-				__( 'Execution of the PHP file from path "%s" is blocked on your server, or access to this file is blocked. Add an exception and enable this file to be executed via HTTP request. To do this, check the security plugin settings (if you are using) or the security settings of your server.', 'webp-converter-for-media' ),
+				__( 'Execution of the PHP file from the "%s" path is blocked on your server, or access to this file is blocked. Add an exception and enable this file to be executed via an HTTP request. To do this, check the security plugin settings (if you are using them) or the security settings of your server.', 'webp-converter-for-media' ),
 				'<a href="' . $passthru_url . '" target="_blank">' . $passthru_url . '</a>',
 				'<br><br>'
 			),
-			__( 'In this case, please contact your server administrator.', 'webp-converter-for-media' ),
+			__( 'In this case, please, contact your server administrator.', 'webp-converter-for-media' ),
 		];
 	}
 }

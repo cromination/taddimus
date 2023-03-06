@@ -24,7 +24,7 @@
 			echo esc_html(
 				sprintf(
 					/* translators: %1$s: discount value, %2$s: plugin name */
-					__( '%1$s discount on all PRO version plans of %2$s plugin!', 'webp-converter-for-media' ),
+					__( '%1$s discount on all PRO version plans of the %2$s plugin!', 'webp-converter-for-media' ),
 					$discount_value,
 					'Converter for Media'
 				)
@@ -36,7 +36,7 @@
 			echo wp_kses_post(
 				sprintf(
 					/* translators: %1$s: icon heart, %2$s: coupon code, %3$s: discount value, %4$s: date */
-					__( 'We have prepared a special offer for users of our plugin %1$s Use the coupon code: %2$s when placing your order and get %3$s discount! This offer is valid until %4$s.', 'webp-converter-for-media' ),
+					__( 'We have prepared a special offer for users of our %1$s plugin. Use the coupon code: %2$s when placing your order and get %3$s discount! This offer is valid until %4$s.', 'webp-converter-for-media' ),
 					'<span class="dashicons dashicons-heart"></span>',
 					'<code>' . $coupon_code . '</code>',
 					$discount_value,

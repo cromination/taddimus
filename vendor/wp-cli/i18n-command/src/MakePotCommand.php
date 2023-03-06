@@ -47,7 +47,7 @@ class MakePotCommand extends WP_CLI_Command {
 	/**
 	 * @var array
 	 */
-	protected $exclude = [ 'node_modules', '.git', '.svn', '.CVS', '.hg', 'vendor', 'Gruntfile.js', 'webpack.config.js', '*.min.js' ];
+	protected $exclude = [ 'node_modules', '.*', 'vendor', 'Gruntfile.js', 'webpack.config.js', '*.min.js', 'test', 'tests' ];
 
 	/**
 	 * @var string
@@ -213,7 +213,7 @@ class MakePotCommand extends WP_CLI_Command {
 	 *
 	 * [--exclude=<paths>]
 	 * : Comma-separated list of files and paths that should be skipped for string extraction.
-	 * For example, `--exclude=".github,myfile.php` would ignore any strings found within `myfile.php` or the `.github`
+	 * For example, `--exclude=.github,myfile.php` would ignore any strings found within `myfile.php` or the `.github`
 	 * folder. Simple glob patterns can be used, i.e. `--exclude=foo-*.php` excludes any PHP file with the `foo-`
 	 * prefix. Leading and trailing slashes are ignored, i.e. `/my/directory/` is the same as `my/directory`. The
 	 * following files and folders are always excluded: node_modules, .git, .svn, .CVS, .hg, vendor, *.min.js.

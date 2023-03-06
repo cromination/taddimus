@@ -60,7 +60,7 @@ class WpCliManager implements HookableInterface {
 
 		\WP_CLI::success(
 			sprintf(
-			/* translators: %1$s: images count */
+			/* translators: %1$s: images count, %2$s: images count */
 				__( '%1$s for AVIF and %2$s for WebP', 'webp-converter-for-media' ),
 				number_format( $stats_data['files_unconverted'][ AvifFormat::FORMAT_EXTENSION ], 0, '', ' ' ),
 				number_format( $stats_data['files_unconverted'][ WebpFormat::FORMAT_EXTENSION ], 0, '', ' ' )

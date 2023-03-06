@@ -24,37 +24,54 @@ class LoaderIntegration implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		add_action( 'init', [ $this, 'load_loader_actions' ] );
-		add_action( LoaderAbstract::ACTION_NAME, [ $this, 'refresh_loader' ], 10, 2 );
+		add_action( LoaderAbstract::ACTION_NAME, [ $this, 'refresh_active_loader' ], 20, 2 );
+		add_action( LoaderAbstract::ACTION_NAME, [ $this, 'refresh_inactive_loader' ] );
+		add_action( 'webpc_settings_page_loaded', [ $this, 'load_admin_actions' ], 0 );
+		add_action( 'init', [ $this, 'load_front_end_actions' ], 0 );
 	}
 
 	/**
-	 * Loads hooks for loader if loader is active.
+	 * @param bool $is_active .
+	 * @param bool $is_debug  .
 	 *
 	 * @return void
 	 * @internal
 	 */
-	public function load_loader_actions() {
-		if ( ! $this->loader->is_active_loader() || apply_filters( 'webpc_server_errors', [], true ) ) {
-			return;
-		}
-		$this->loader->init_hooks();
-	}
-
-	/**
-	 * Activates or deactivates loader.
-	 *
-	 * @param bool $is_active Is active loader?
-	 * @param bool $is_debug  Is debugging?
-	 *
-	 * @return void
-	 * @internal
-	 */
-	public function refresh_loader( bool $is_active, bool $is_debug = false ) {
-		if ( ( $is_active || $is_debug ) && $this->loader->is_active_loader() ) {
+	public function refresh_active_loader( bool $is_active, bool $is_debug = false ) {
+		if ( $is_active && $this->loader->is_active_loader() ) {
 			$this->loader->activate_loader( $is_debug );
-		} else {
+		}
+	}
+
+	/**
+	 * @param bool $is_active .
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function refresh_inactive_loader( bool $is_active ) {
+		if ( ! $is_active || ! $this->loader->is_active_loader() ) {
 			$this->loader->deactivate_loader();
+		}
+	}
+
+	/**
+	 * @return void
+	 * @internal
+	 */
+	public function load_admin_actions() {
+		if ( $this->loader->is_active_loader() ) {
+			$this->loader->init_admin_hooks();
+		}
+	}
+
+	/**
+	 * @return void
+	 * @internal
+	 */
+	public function load_front_end_actions() {
+		if ( $this->loader->is_active_loader() && ( apply_filters( 'webpc_server_errors', [], true ) === [] ) ) {
+			$this->loader->init_front_end_hooks();
 		}
 	}
 }

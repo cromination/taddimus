@@ -39,7 +39,7 @@ class DebugPage extends PageAbstract {
 	) {
 		$this->plugin_info = $plugin_info;
 		$this->plugin_data = $plugin_data;
-		$this->file_loader = $file_loader ?: new FileLoader( $plugin_info, $plugin_data );
+		$this->file_loader = $file_loader ?: new FileLoader();
 	}
 
 	/**

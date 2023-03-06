@@ -23,7 +23,7 @@ class PathHtaccessNotWritableNotice implements ErrorNotice {
 		return [
 			sprintf(
 			/* translators: %1$s: server path */
-				__( 'Unable to create or edit .htaccess file (function is_readable() or is_writable() returns false). Change directory permissions. The current using path of file is: %1$s. Please contact your server administrator.', 'webp-converter-for-media' ),
+				__( 'Unable to create or edit .htaccess file (is_readable() or is_writable() function returns false). Change directory permissions. The current path of the file is: %1$s. Please, contact your server administrator.', 'webp-converter-for-media' ),
 				'<strong>' . apply_filters( 'webpc_dir_path', '', 'uploads' ) . '/.htaccess</strong>'
 			),
 		];

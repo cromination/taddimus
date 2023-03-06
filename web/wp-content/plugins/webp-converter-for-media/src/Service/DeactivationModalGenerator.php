@@ -57,7 +57,7 @@ class DeactivationModalGenerator {
 					__( 'We are sorry that you are leaving our %s plugin', 'webp-converter-for-media' ),
 					'Converter for Media'
 				),
-				__( 'Can you please take a moment to tell us why you are deactivating this plugin (anonymous answer)?', 'webp-converter-for-media' ),
+				__( 'Can you, please, take a moment to tell us why you are deactivating this plugin (anonymous answer)?', 'webp-converter-for-media' ),
 				__( 'Submit and Deactivate', 'webp-converter-for-media' ),
 				__( 'Skip and Deactivate', 'webp-converter-for-media' ),
 				'https://mattplugins.com/images/matt-plugins-gray.png',
@@ -68,7 +68,11 @@ class DeactivationModalGenerator {
 					new DeactivationModal\Model\FormOption(
 						'server_config',
 						10,
-						__( 'I have "Server configuration error" in plugin settings', 'webp-converter-for-media' ),
+						sprintf(
+							/* translators: %s: notice title */
+							__( 'I have the %s notice in the plugin settings', 'webp-converter-for-media' ),
+							__( 'Server configuration error', 'webp-converter-for-media' )
+						),
 						function () {
 							$errors = apply_filters( 'webpc_server_errors', [] );
 							if ( ! in_array(
@@ -85,14 +89,14 @@ class DeactivationModalGenerator {
 								'</a>'
 							);
 						},
-						__( 'What is your error? Have you been looking for solution to this issue?', 'webp-converter-for-media' )
+						__( 'What is your error? Have you been looking for a solution to this issue?', 'webp-converter-for-media' )
 					)
 				)
 				->set_option(
 					new DeactivationModal\Model\FormOption(
 						'misunderstanding',
 						20,
-						__( 'Images are not displayed in WebP format', 'webp-converter-for-media' ),
+						__( 'Images are not displayed in the WebP format', 'webp-converter-for-media' ),
 						function () {
 							return sprintf(
 							/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
@@ -113,11 +117,7 @@ class DeactivationModalGenerator {
 							return sprintf(
 							/* translators: %1$s: option label, %2$s: open anchor tag, %3$s: close anchor tag */
 								__( 'Check the %1$s option in %2$sthe plugin settings%3$s - this should solve the problem.', 'webp-converter-for-media' ),
-								sprintf(
-									'"%1$s &raquo; %2$s"',
-									__( 'Extra features', 'webp-converter-for-media' ),
-									__( 'Disable rewrite inheritance in .htaccess files', 'webp-converter-for-media' )
-								),
+								__( 'Disable rewrite inheritance in .htaccess files', 'webp-converter-for-media' ),
 								'<a href="' . esc_url( PageIntegration::get_settings_page_url( AdvancedSettingsPage::PAGE_SLUG ) ) . '">',
 								'</a>'
 							);
@@ -131,7 +131,7 @@ class DeactivationModalGenerator {
 						40,
 						__( 'I found a better plugin', 'webp-converter-for-media' ),
 						null,
-						__( 'What is name of this plugin? Why is it better?', 'webp-converter-for-media' )
+						__( 'What is the name of this plugin? Why is it better?', 'webp-converter-for-media' )
 					)
 				)
 				->set_option(
@@ -149,7 +149,7 @@ class DeactivationModalGenerator {
 						60,
 						__( 'Other reason', 'webp-converter-for-media' ),
 						null,
-						__( 'What is reason? What can we improve for you?', 'webp-converter-for-media' )
+						__( 'What is the reason? What can we improve for you?', 'webp-converter-for-media' )
 					)
 				),
 			( new DeactivationModal\Model\FormValues() )
@@ -216,7 +216,7 @@ class DeactivationModalGenerator {
 
 		return sprintf(
 		/* translators: %1$s: button label, %2$s: open anchor tag, %3$s: close anchor tag */
-			__( 'You have unconverted images on your website - click the %1$s button in %2$sthe plugin settings%3$s. This is all you have to do after installing the plugin.', 'webp-converter-for-media' ),
+			__( 'You have unconverted images on your website - click the %1$s button in %2$sthe plugin settings%3$s. This is all you need to do after installing the plugin.', 'webp-converter-for-media' ),
 			'"' . __( 'Start Bulk Optimization', 'webp-converter-for-media' ) . '"',
 			'<a href="' . esc_url( admin_url( 'upload.php?page=' . PageIntegration::UPLOAD_MENU_PAGE ) ) . '">',
 			'</a>'

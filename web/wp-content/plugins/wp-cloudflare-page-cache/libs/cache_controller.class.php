@@ -365,34 +365,36 @@ class SWCFPC_Cache_Controller
         if( !is_user_logged_in() && ( isset($_GET['swcfpc-preloader']) || isset($_GET['swcfpc-purge-all']) ) ) return;
 
         // For non CRON job URLs, we will redirect
-        if( !is_user_logged_in() && isset($_SERVER['QUERY_STRING']) && strlen($_SERVER['QUERY_STRING']) > 0 && strpos( $_SERVER['QUERY_STRING'], $this->get_cache_buster() ) !== false ) {
+        if( !is_user_logged_in() && !empty( $_SERVER['QUERY_STRING'] ) ) {
+            if( strlen( $_SERVER['QUERY_STRING'] ) > 0 && strpos( $_SERVER['QUERY_STRING'], $this->get_cache_buster() ) !== false ) {
 
-            // Build the full URL
-            $parts = parse_url( home_url() );
-            $current_uri = "{$parts['scheme']}://{$parts['host']}" . add_query_arg(NULL, NULL);
-
-            // Strip out the cache buster
-            $parsed = parse_url($current_uri);
-            $query_string = $parsed['query'];
-
-            parse_str($query_string, $params);
-
-            unset($params[ $this->get_cache_buster() ]);
-            $query_string = http_build_query($params);
-
-            // Rebuild the full URL without the cache buster
-            $current_uri = "{$parts['scheme']}://{$parts['host']}";
-
-            if( isset($parsed['path']) )
-                $current_uri .= $parsed['path'];
-
-            if( strlen($query_string) > 0 )
-                $current_uri .= "?{$query_string}";
-
-            // SEO redirect
-            wp_redirect( $current_uri, 301 );
-            die();
-
+                // Build the full URL
+                $parts = parse_url( home_url() );
+                $current_uri = "{$parts['scheme']}://{$parts['host']}" . add_query_arg(NULL, NULL);
+    
+                // Strip out the cache buster
+                $parsed = parse_url($current_uri);
+                $query_string = $parsed['query'];
+    
+                parse_str($query_string, $params);
+    
+                unset($params[ $this->get_cache_buster() ]);
+                $query_string = http_build_query($params);
+    
+                // Rebuild the full URL without the cache buster
+                $current_uri = "{$parts['scheme']}://{$parts['host']}";
+    
+                if( isset($parsed['path']) )
+                    $current_uri .= $parsed['path'];
+    
+                if( strlen($query_string) > 0 )
+                    $current_uri .= "?{$query_string}";
+    
+                // SEO redirect
+                wp_redirect( $current_uri, 301 );
+                die();
+    
+            }
         }
     }
 
@@ -974,6 +976,13 @@ class SWCFPC_Cache_Controller
 
 
     function purge_cache_on_post_edit( $postId ) {
+
+        static $done = [];
+
+        if( isset( $done[ $postId ] ) ) {
+            return;
+        }
+
         // Do not run this on the WordPress Nav Menu Pages
         global $pagenow;
         if ( $pagenow === 'nav-menus.php' ) return;
@@ -1012,6 +1021,8 @@ class SWCFPC_Cache_Controller
 
             $this->purge_urls($urls);
             $this->objects['logs']->add_log('cache_controller::purge_cache_on_post_edit', "Purge Cloudflare cache for only post id {$postId} and related contents - Fired action: {$current_action}");
+
+            $done[ $postId ] = true;
 
         }
 
@@ -1274,7 +1285,7 @@ class SWCFPC_Cache_Controller
 
         <script id="swcfpc">
 
-            function swcfpc_adjust_internal_links( selectors_txt ) {
+            var swcfpc_adjust_internal_links = function ( selectors_txt ) {
 
                 const comp = new RegExp(location.host);
                 const current_url = window.location.href.split("#")[0];
@@ -1317,15 +1328,15 @@ class SWCFPC_Cache_Controller
 
 
             // Looking for dynamic link added after clicking on Pusblish/Update button
-            const swcfpc_wordpress_btn_publish = document.querySelector(".editor-post-publish-button__button");
+            var swcfpc_wordpress_btn_publish = document.querySelector(".editor-post-publish-button__button");
 
             if( swcfpc_wordpress_btn_publish !== undefined && swcfpc_wordpress_btn_publish !== null ) {
 
                 swcfpc_wordpress_btn_publish.addEventListener('click', function() {
 
-                    const swcfpc_wordpress_edited_post_interval = setInterval(function() {
+                    var swcfpc_wordpress_edited_post_interval = setInterval(function() {
 
-                        const swcfpc_wordpress_edited_post_link = document.querySelector(".components-snackbar__action");
+                        var swcfpc_wordpress_edited_post_link = document.querySelector(".components-snackbar__action");
 
                         if( swcfpc_wordpress_edited_post_link !== undefined ) {
                             swcfpc_adjust_internal_links(".components-snackbar__action");
@@ -1826,6 +1837,12 @@ class SWCFPC_Cache_Controller
 
     function wp_rocket_after_rocket_clean_post_hook( $post ) {
 
+        static $done = [];
+
+        if( isset( $done[ $post->ID ] ) ) {
+            return;
+        }
+
         $current_action = function_exists('current_action') ? current_action() : '';
         $this->objects = $this->main_instance->get_objects();
 
@@ -1838,6 +1855,8 @@ class SWCFPC_Cache_Controller
         } else {
             $this->objects['logs']->add_log('cache_controller::wp_rocket_after_rocket_clean_post_hook', "Unable to Purge Cloudflare cache. Valid post object not received  - Fired action: {$current_action}" );
         }
+
+        $done[ $post->ID ] = true;
         
     }
 
@@ -1852,7 +1871,9 @@ class SWCFPC_Cache_Controller
 
         $this->purge_urls( $url_to_purge );
 
-        $this->objects['logs']->add_log('cache_controller::wp_rocket_selective_url_purge_hooks', "Purge Cloudflare cache for only URL {$url_to_purge} - Fired action: {$current_action}" );
+        $urls_purged = json_encode( $url_to_purge );
+
+        $this->objects['logs']->add_log('cache_controller::wp_rocket_selective_url_purge_hooks', "Purge Cloudflare cache for only URL {$urls_purged} - Fired action: {$current_action}" );
 
     }
 
@@ -1875,6 +1896,12 @@ class SWCFPC_Cache_Controller
 
     function litespeed_single_post_hooks( $post_id ) {
 
+        static $done = [];
+
+        if( isset( $done[ $post_id ] ) ) {
+            return;
+        }
+
         $current_action = function_exists('current_action') ? current_action() : "";
 
         $this->objects = $this->main_instance->get_objects();
@@ -1885,6 +1912,8 @@ class SWCFPC_Cache_Controller
         $this->purge_urls( $urls );
 
         $this->objects['logs']->add_log('cache_controller::litespeed_single_post_hooks', "Purge Cloudflare cache for only post {$post_id} - Fired action: {$current_action}" );
+
+        $done[ $post_id ] = true;
 
     }
 
@@ -1931,6 +1960,12 @@ class SWCFPC_Cache_Controller
 
     function yasr_hooks( $post_id ) {
 
+        static $done = [];
+
+        if( isset( $done[ $post_id ] ) ) {
+            return;
+        }
+
         $current_action = function_exists('current_action') ? current_action() : "";
 
         $this->objects = $this->main_instance->get_objects();
@@ -1944,6 +1979,8 @@ class SWCFPC_Cache_Controller
         $this->purge_urls( $urls );
 
         $this->objects['logs']->add_log('cache_controller::yasr_hooks', "Purge Cloudflare cache for only post {$post_id} - Fired action: {$current_action}" );
+
+        $done[ $post_id ] = true;
 
     }
 
@@ -1967,6 +2004,12 @@ class SWCFPC_Cache_Controller
 
     function spl_purge_single_post( $post_id ) {
 
+        static $done = [];
+
+        if( isset( $done[ $post_id ] ) ) {
+            return;
+        }
+
         if( $this->main_instance->get_single_config('cf_spl_purge_on_flush_single_post', 0) > 0 ) {
 
             $current_action = function_exists('current_action') ? current_action() : "";
@@ -1979,6 +2022,8 @@ class SWCFPC_Cache_Controller
             $this->purge_urls( $urls );
 
             $this->objects['logs']->add_log('cache_controller::spl_purge_single_post', "Purge Cloudflare cache for only post {$post_id} - Fired action: {$current_action}" );
+
+            $done[ $post_id ] = true;
 
         }
 

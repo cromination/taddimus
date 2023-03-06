@@ -23,7 +23,7 @@
 				echo wp_kses_post(
 					sprintf(
 					/* translators: %1$s: open anchor tag, %2$s: close anchor tag, %3$s: open anchor tag, %4$s: close anchor tag */
-						__( 'Please %1$scheck our FAQ%2$s before adding a thread with technical problem. If you do not find help there, %3$scheck support forum%4$s for similar problems. If you do not find a solution, please %5$scontact us%6$s.', 'webp-converter-for-media' ),
+						__( 'Please, %1$scheck our FAQ%2$s before adding a thread with a technical problem. If you do not find help there, %3$scheck the support forum%4$s for similar problems. If you do not find a solution, please, %5$scontact us%6$s.', 'webp-converter-for-media' ),
 						'<a href="https://url.mattplugins.com/converter-tab-server-message-faq" target="_blank">',
 						'</a>',
 						'<a href="https://url.mattplugins.com/converter-tab-server-message-support" target="_blank">',

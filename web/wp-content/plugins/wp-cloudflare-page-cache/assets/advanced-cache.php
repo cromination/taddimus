@@ -6,7 +6,7 @@ define( 'SWCFPC_ADVANCED_CACHE', true );
 if( !swcfpc_is_this_page_cachable() )
     return;
 
-if( strcasecmp($_SERVER['REQUEST_METHOD'], "GET") != 0 )
+if( isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp($_SERVER['REQUEST_METHOD'], "GET") != 0 )
     return;
 
 $swcfpc_fallback_cache_config_path = WP_CONTENT_DIR . "/wp-cloudflare-super-page-cache/{$_SERVER['HTTP_HOST']}/";
@@ -74,9 +74,9 @@ function swcfpc_is_this_page_cachable() {
     if( 
         swcfpc_is_api_request() || 
         ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ) ) ) || 
-        ( substr( $_SERVER['REQUEST_URI'], 0, 16 ) == '/wp-register.php' ) || 
-        ( substr( $_SERVER['REQUEST_URI'], 0, 13 ) == '/wp-login.php' ) || 
-        strcasecmp( $_SERVER['REQUEST_METHOD'], 'GET' ) != 0 || 
+        ( isset( $_SERVER['REQUEST_URI'] ) && substr( $_SERVER['REQUEST_URI'], 0, 16 ) == '/wp-register.php' ) || 
+        ( isset( $_SERVER['REQUEST_URI'] ) && substr( $_SERVER['REQUEST_URI'], 0, 13 ) == '/wp-login.php' ) || 
+        ( isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp( $_SERVER['REQUEST_METHOD'], 'GET' ) != 0 ) || 
         ( !defined('SWCFPC_CACHE_BUSTER' ) && isset( $_GET['swcfpc'] ) ) || 
         ( defined( 'SWCFPC_CACHE_BUSTER' ) && isset( $_GET[SWCFPC_CACHE_BUSTER] ) ) || 
         is_admin() || 
@@ -127,7 +127,7 @@ function swcfpc_fallback_cache_end( $html ) {
     if( $sw_cloudflare_pagecache->get_single_config('cf_fallback_cache', 0) == 0 )
         return $html;
 
-    if( $swcfpc_objects['cache_controller']->is_cache_enabled() && !$swcfpc_objects['cache_controller']->is_url_to_bypass() && !$swcfpc_objects['cache_controller']->can_i_bypass_cache() && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 ) {
+    if( $swcfpc_objects['cache_controller']->is_cache_enabled() && !$swcfpc_objects['cache_controller']->is_url_to_bypass() && !$swcfpc_objects['cache_controller']->can_i_bypass_cache() && isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 ) {
 
         if (isset($_SERVER['HTTP_USER_AGENT']) && strcasecmp($_SERVER['HTTP_USER_AGENT'], 'ua-swcfpc-fc') == 0)
             return $html;
@@ -196,9 +196,9 @@ function swcfpc_fallback_cache_get_current_page_cache_key( $url=null ) {
 
         $current_uri = $_SERVER['REQUEST_URI'];
 
-        if( $current_uri == '/' )
+        if( $current_uri == '/' ) {
             $current_uri = $_SERVER['HTTP_HOST'];
-
+        }
     }
 
     if( substr($current_uri, 0, 1) == '/' )
@@ -299,6 +299,7 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 '_sm_byp',
                 '_sp',
                 '_szp',
+                '_thumbnail_id',
                 '3x',
                 'a',
                 'a_k',
@@ -333,6 +334,7 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'amp;utm_campaign',
                 'amp;utm_medium',
                 'amp;utm_source',
+                'amp%3Butm_content',
                 'ampStoryAutoAnalyticsLinker',
                 'ampstoryautoanalyticslinke',
                 'an',
@@ -360,6 +362,7 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'blockedAdTracking',
                 'blog-reader-used',
                 'blogger',
+                'body',
                 'br',
                 'bsft_aaid',
                 'bsft_clkid',
@@ -421,7 +424,9 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'ee',
                 'ef_id',
                 'el',
+                'emailID',
                 'env',
+                'epik',
                 'erprint',
                 'et_blog',
                 'exch',
@@ -434,6 +439,7 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'fbzunique',
                 'fg-aqp',
                 'fireglass_rsn',
+                'firstName',
                 'fo',
                 'fp_sid',
                 'fpa',
@@ -528,10 +534,13 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'mkevt',
                 'mkrid',
                 'mkwid',
+                'mkt_tok',
                 'ml_subscriber',
                 'ml_subscriber_hash',
                 'mobileOn',
                 'mode',
+                'moderation-hash',
+                'modernpatio',
                 'month',
                 'msID',
                 'msclkid',
@@ -547,10 +556,12 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'murphybedstoday',
                 'mwprid',
                 'n',
+                'name',
                 'native_client',
                 'navua',
                 'nb',
                 'nb_klid',
+                'nowprocketcache',
                 'o',
                 'okijoouuqnqq',
                 'org',
@@ -572,8 +583,12 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'plat',
                 'platform',
                 'playsinline',
+                'position',
                 'pp',
                 'pr',
+                'preview',
+                'preview_id',
+                'preview_nonce',
                 'prid',
                 'print',
                 'q',
@@ -591,6 +606,7 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'relatedposts_position',
                 'remodel',
                 'replytocom',
+                'rest_route',
                 'reverse-paginate',
                 'rid',
                 'rnd',
@@ -619,6 +635,7 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'share',
                 'shared',
                 'showcomment',
+                'showComment',
                 'si',
                 'sid',
                 'sid1',
@@ -658,12 +675,14 @@ function swcfpc_fallback_cache_remove_url_parameters( $url ) {
                 'tsig',
                 'turl',
                 'u',
+                'unapproved',
                 'up_auto_log',
                 'upage',
                 'updated-max',
                 'uptime',
                 'us_privacy',
                 'usegapi',
+                'userConsent',
                 'usqp',
                 'utm',
                 'utm_campa',
@@ -928,9 +947,9 @@ function swcfpc_fallback_cache_get_stored_headers( $fallback_cache_path, $cache_
 
 function swcfpc_wildcard_match($pattern, $subject) {
 
-    $pattern='#^'.preg_quote($pattern).'$#i'; // Case insensitive
-    $pattern=str_replace('\*', '.*', $pattern);
-    //$pattern=str_replace('\.', '.', $pattern);
+    $pattern = '#^'.preg_quote($pattern).'$#i'; // Case insensitive
+    $pattern = str_replace('\*', '.*', $pattern);
+    //$pattern = str_replace('\.', '.', $pattern);
 
     if(!preg_match($pattern, $subject, $regs))
         return false;

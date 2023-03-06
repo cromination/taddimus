@@ -23,7 +23,7 @@ class PassthruNotWorkingNotice implements ErrorNotice {
 		return [
 			sprintf(
 			/* translators: %1$s: loader name */
-				__( '%1$s loading mode is not compatible with your server. Sorry for the inconvenience.', 'webp-converter-for-media' ),
+				__( 'The %1$s loading mode is not compatible with your server. Sorry for the inconvenience.', 'webp-converter-for-media' ),
 				'Pass Thru'
 			),
 		];

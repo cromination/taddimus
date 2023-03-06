@@ -5,6 +5,7 @@ namespace WebpConverter\Loader;
 use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
+use WebpConverter\Settings\Option\LoaderTypeOption;
 
 /**
  * Abstract class for class that supports method of loading images.
@@ -37,6 +38,20 @@ abstract class LoaderAbstract implements LoaderInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function is_active_loader(): bool {
+		$settings = $this->plugin_data->get_plugin_settings();
+		return ( $settings[ LoaderTypeOption::OPTION_NAME ] === $this->get_type() );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function init_admin_hooks() {
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function init_front_end_hooks() {
 	}
 }

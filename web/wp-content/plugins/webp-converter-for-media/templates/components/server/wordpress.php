@@ -28,6 +28,18 @@
 		</td>
 	</tr>
 	<tr>
+		<td class="e">WP_CONTENT_DIR</td>
+		<td class="v">
+			<?php echo esc_html( WP_CONTENT_DIR ); ?>
+		</td>
+	</tr>
+	<tr>
+		<td class="e">UPLOADS</td>
+		<td class="v">
+			<?php echo esc_html( defined( 'UPLOADS' ) ? UPLOADS : '-' ); ?>
+		</td>
+	</tr>
+	<tr>
 		<td class="e">wp_upload_dir <em>(basedir)</em></td>
 		<td class="v">
 			<?php echo esc_html( wp_upload_dir()['basedir'] ); ?>

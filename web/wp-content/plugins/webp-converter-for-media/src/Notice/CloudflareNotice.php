@@ -81,7 +81,7 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 				),
 				sprintf(
 				/* translators: %1$s: section label, %2$s: button label */
-					__( 'Under %1$s, click %2$s. A warning window appears.', 'webp-converter-for-media' ),
+					__( 'Under %1$s, click %2$s. A warning window will appear.', 'webp-converter-for-media' ),
 					'<strong>"Purge Cache"</strong>',
 					'<strong>"Purge Everything"</strong>'
 				),

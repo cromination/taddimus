@@ -74,8 +74,10 @@ class SWCFPC_Backend
 
 
         // Footer
-        if( ! empty( $_GET[ 'page' ] ) && ( strpos( $_GET[ 'page' ], 'wp-cloudflare-super-page-cache-' ) === 0 ) ) {
-            add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
+        if( !empty( $_GET[ 'page' ] ) ) {
+            if( strpos( $_GET[ 'page' ], 'wp-cloudflare-super-page-cache-' ) === 0 ) {
+                add_filter('admin_footer_text', array($this, 'admin_footer_text'), 1);
+            }
         }
 
     }
@@ -194,7 +196,7 @@ class SWCFPC_Backend
     function instantpage_wp_enqueue_scripts() {
         if( !( ( function_exists('amp_is_request') && amp_is_request() ) || ( function_exists('ampforwp_is_amp_endpoint') && ampforwp_is_amp_endpoint() ) || is_customize_preview() ) ) {
 
-            wp_enqueue_script( 'swcfpc_instantpage', SWCFPC_PLUGIN_URL . 'assets/js/instantpage.min.js', array(), '5.1.0.3', true );
+            wp_enqueue_script( 'swcfpc_instantpage', SWCFPC_PLUGIN_URL . 'assets/js/instantpage.min.js', array(), null, true );
         }
 
     }
@@ -208,7 +210,7 @@ class SWCFPC_Backend
         ];
 
         // Check if handle is any of the above scripts made sure we load them as defer
-        if( in_array( $handle, $plugin_scripts ) ) {
+        if( !empty( $tag ) && in_array( $handle, $plugin_scripts ) ) {
 
             // If the script is instantpage.js then we also need to make sure we load it as module and not text/javascript
             if( $handle === 'swcfpc_instantpage' ) {
@@ -351,7 +353,7 @@ class SWCFPC_Backend
         );
 
         add_submenu_page(
-            null,
+            '',
             __( 'Super Page Cache for Cloudflare Nginx Settings', 'wp-cloudflare-page-cache' ),
             __( 'Super Page Cache for Cloudflare Nginx Settings', 'wp-cloudflare-page-cache' ),
             'manage_options',

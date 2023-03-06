@@ -6,7 +6,7 @@ use WebpConverter\Service\CloudflareConfigurator;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\PathsGenerator;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
-use WebpConverter\Settings\Option\LoaderTypeOption;
+use WebpConverter\Settings\Option\RewriteInheritanceOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
 
 /**
@@ -19,16 +19,21 @@ class HtaccessLoader extends LoaderAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function get_type(): string {
+		return self::LOADER_TYPE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function init_admin_hooks() {
 		add_filter( 'webpc_htaccess_rewrite_root', [ $this, 'modify_document_root_path' ] );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function is_active_loader(): bool {
-		$settings = $this->plugin_data->get_plugin_settings();
-		return ( ( $settings[ LoaderTypeOption::OPTION_NAME ] ?? '' ) === self::LOADER_TYPE );
+	public function init_front_end_hooks() {
 	}
 
 	/**
@@ -84,15 +89,22 @@ class HtaccessLoader extends LoaderAbstract {
 			return;
 		}
 
-		$content = $this->add_comments_to_rules(
-			[
-				$this->get_mod_rewrite_rules( $settings ),
-				$this->get_mod_headers_rules( $settings ),
-			]
-		);
+		$content = $this->add_comments_to_rules( $this->get_rules_to_wp_content( $settings ) );
 
 		$content = apply_filters( 'webpc_htaccess_rules', $content, $path . '/.htaccess' );
 		$this->save_rewrites_in_htaccesss( $path, $content );
+	}
+
+	/**
+	 * @param mixed[] $settings Plugin settings.
+	 *
+	 * @return string[]
+	 */
+	protected function get_rules_to_wp_content( array $settings ): array {
+		return [
+			$this->get_mod_rewrite_rules( $settings ),
+			$this->get_mod_headers_rules( $settings ),
+		];
 	}
 
 	/**
@@ -155,13 +167,11 @@ class HtaccessLoader extends LoaderAbstract {
 	 *
 	 * @return string Rules for .htaccess file.
 	 */
-	private function get_mod_rewrite_rules( array $settings, string $output_path_suffix = null ): string {
+	protected function get_mod_rewrite_rules( array $settings, string $output_path_suffix = null ): string {
 		$content = '';
 		if ( ! $settings[ SupportedExtensionsOption::OPTION_NAME ] ) {
 			return $content;
 		}
-
-		$inheritance_active = ! ( in_array( ExtraFeaturesOption::OPTION_VALUE_REWRITE_INHERIT, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
 
 		$document_root = PathsGenerator::get_rewrite_root();
 		$root_suffix   = PathsGenerator::get_rewrite_path();
@@ -173,25 +183,25 @@ class HtaccessLoader extends LoaderAbstract {
 		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
 			$content .= '<IfModule mod_rewrite.c>' . PHP_EOL;
 			$content .= '  RewriteEngine On' . PHP_EOL;
-			if ( apply_filters( 'webpc_htaccess_mod_rewrite_inherit', $inheritance_active ) === true ) {
+			if ( apply_filters( 'webpc_htaccess_mod_rewrite_inherit', ! $settings[ RewriteInheritanceOption::OPTION_NAME ] ) === true ) {
 				$content .= '  RewriteOptions Inherit' . PHP_EOL;
 			}
 
 			foreach ( $settings[ SupportedExtensionsOption::OPTION_NAME ] as $ext ) {
-				$content .= "  RewriteCond %{HTTP_ACCEPT} ${mime_type}" . PHP_EOL;
+				$content .= "  RewriteCond %{HTTP_ACCEPT} {$mime_type}" . PHP_EOL;
 				if ( in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
 					$content .= "  RewriteCond %{REQUEST_FILENAME} -f" . PHP_EOL;
 				}
 				if ( strpos( $document_root, '%{DOCUMENT_ROOT}' ) !== false ) {
-					$content .= "  RewriteCond ${document_root}${output_path}/$1.${ext}.${format} -f" . PHP_EOL;
+					$content .= "  RewriteCond {$document_root}{$output_path}/$1.{$ext}.{$format} -f" . PHP_EOL;
 				} else {
-					$content .= "  RewriteCond ${document_root}${output_path}/$1.${ext}.${format} -f [OR]" . PHP_EOL;
-					$content .= "  RewriteCond %{DOCUMENT_ROOT}${root_suffix}${output_path}/$1.${ext}.${format} -f" . PHP_EOL;
+					$content .= "  RewriteCond {$document_root}{$output_path}/$1.{$ext}.{$format} -f [OR]" . PHP_EOL;
+					$content .= "  RewriteCond %{DOCUMENT_ROOT}{$root_suffix}{$output_path}/$1.{$ext}.{$format} -f" . PHP_EOL;
 				}
 				if ( apply_filters( 'webpc_htaccess_mod_rewrite_referer', false ) === true ) {
 					$content .= "  RewriteCond %{HTTP_HOST}@@%{HTTP_REFERER} ^([^@]*)@@https?://\\1/.*" . PHP_EOL;
 				}
-				$content .= "  RewriteRule (.+)\.${ext}$ ${root_suffix}${output_path}/$1.${ext}.${format} [NC,T=${mime_type},L]" . PHP_EOL;
+				$content .= "  RewriteRule (.+)\.{$ext}$ {$root_suffix}{$output_path}/$1.{$ext}.{$format} [NC,T={$mime_type},L]" . PHP_EOL;
 			}
 			$content .= '</IfModule>' . PHP_EOL;
 		}
@@ -206,7 +216,7 @@ class HtaccessLoader extends LoaderAbstract {
 	 *
 	 * @return string Rules for .htaccess file.
 	 */
-	private function get_mod_headers_rules( array $settings ): string {
+	protected function get_mod_headers_rules( array $settings ): string {
 		$content    = '';
 		$extensions = implode( '|', $settings[ SupportedExtensionsOption::OPTION_NAME ] );
 
@@ -242,7 +252,7 @@ class HtaccessLoader extends LoaderAbstract {
 		$content .= '<IfModule mod_expires.c>' . PHP_EOL;
 		$content .= '  ExpiresActive On' . PHP_EOL;
 		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
-			$content .= "  ExpiresByType ${mime_type} \"access plus 1 year\"" . PHP_EOL;
+			$content .= "  ExpiresByType {$mime_type} \"access plus 1 year\"" . PHP_EOL;
 		}
 		$content .= '</IfModule>';
 
@@ -264,7 +274,7 @@ class HtaccessLoader extends LoaderAbstract {
 
 		$content .= '<IfModule mod_mime.c>' . PHP_EOL;
 		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
-			$content .= "  AddType ${mime_type} .${format}" . PHP_EOL;
+			$content .= "  AddType {$mime_type} .{$format}" . PHP_EOL;
 		}
 		$content .= '</IfModule>';
 

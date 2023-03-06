@@ -189,10 +189,9 @@
         ]
     },
     "autoload": {
-        "psr-4": {
-            "": "src/",
-            "WP_CLI\\": "src/WP_CLI"
-        },
+        "classmap": [
+            "src/"
+        ],
         "files": [
             "entity-command.php"
         ]
@@ -205,6 +204,7 @@
         "lint": "run-linter-tests",
         "phpcs": "run-phpcs-tests",
         "phpunit": "run-php-unit-tests",
+        "phpcbf": "run-phpcbf-cleanup",
         "prepare-tests": "install-package-tests",
         "test": [
             "@lint",

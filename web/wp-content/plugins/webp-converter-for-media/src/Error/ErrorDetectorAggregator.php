@@ -7,7 +7,6 @@ use WebpConverter\Error\Detector\LibsNotInstalledDetector;
 use WebpConverter\Error\Detector\LibsWithoutWebpSupportDetector;
 use WebpConverter\Error\Detector\PassthruExecutionDetector;
 use WebpConverter\Error\Detector\PathsErrorsDetector;
-use WebpConverter\Error\Detector\RestApiDisabledDetector;
 use WebpConverter\Error\Detector\RewritesErrorsDetector;
 use WebpConverter\Error\Detector\SettingsIncorrectDetector;
 use WebpConverter\Error\Detector\TokenStatusDetector;
@@ -151,10 +150,6 @@ class ErrorDetectorAggregator implements HookableInterface {
 		} elseif ( $new_error = ( new LibsWithoutWebpSupportDetector( $this->plugin_data ) )->get_error() ) {
 			$this->cached_errors[] = $new_error;
 		} elseif ( $new_error = ( new WebpFormatActivatedDetector( $this->plugin_data ) )->get_error() ) {
-			$this->cached_errors[] = $new_error;
-		}
-
-		if ( $new_error = ( new RestApiDisabledDetector() )->get_error() ) {
 			$this->cached_errors[] = $new_error;
 		}
 

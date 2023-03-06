@@ -2,19 +2,36 @@
 
 namespace WebpConverter\Loader;
 
-use WebpConverter\HookableInterface;
-
 /**
  * Interface for class that supports method of loading images.
  */
-interface LoaderInterface extends HookableInterface {
+interface LoaderInterface {
+
+	/**
+	 * @return string
+	 */
+	public function get_type(): string;
 
 	/**
 	 * Returns status if loader is active.
 	 *
-	 * @return bool Is loader active?
+	 * @return bool
 	 */
 	public function is_active_loader(): bool;
+
+	/**
+	 * Integrates with WordPress hooks.
+	 *
+	 * @return void
+	 */
+	public function init_admin_hooks();
+
+	/**
+	 * Integrates with WordPress hooks.
+	 *
+	 * @return void
+	 */
+	public function init_front_end_hooks();
 
 	/**
 	 * Initializes actions for activating loader.

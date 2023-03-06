@@ -43,7 +43,7 @@ class MediaStatsOption extends OptionAbstract {
 	public function get_info(): string {
 		return sprintf(
 		/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
-			__( 'Show statistics in %1$sMedia Library%2$s', 'webp-converter-for-media' ),
+			__( 'Show the statistics in %1$sMedia Library%2$s', 'webp-converter-for-media' ),
 			'<a href="' . admin_url( 'upload.php?mode=list' ) . '">',
 			'</a>'
 		);

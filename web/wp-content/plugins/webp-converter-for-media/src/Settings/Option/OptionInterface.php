@@ -29,9 +29,9 @@ interface OptionInterface {
 	/**
 	 * Returns label of option.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
-	public function get_label(): string;
+	public function get_label();
 
 	/**
 	 * @return string[]|null

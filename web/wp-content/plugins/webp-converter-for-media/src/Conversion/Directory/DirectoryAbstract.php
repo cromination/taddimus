@@ -13,7 +13,7 @@ abstract class DirectoryAbstract implements DirectoryInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_label(): string {
-		return '';
+		return '/' . $this->get_type();
 	}
 
 	/**
@@ -46,7 +46,7 @@ abstract class DirectoryAbstract implements DirectoryInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_path_url(): string {
-		$source_url     = apply_filters( 'webpc_site_url', get_site_url() );
+		$source_url     = apply_filters( 'webpc_site_url', ( defined( 'WP_HOME' ) ) ? WP_HOME : get_site_url() );
 		$directory_name = apply_filters( 'webpc_dir_name', $this->get_relative_path(), $this->get_type() );
 		return sprintf( '%1$s/%2$s', $source_url, $directory_name );
 	}

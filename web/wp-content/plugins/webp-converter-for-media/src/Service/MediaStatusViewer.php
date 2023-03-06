@@ -58,7 +58,7 @@ class MediaStatusViewer implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		add_action( 'init', [ $this, 'init_hooks_after_setup' ] );
+		add_action( 'admin_init', [ $this, 'init_hooks_after_setup' ] );
 	}
 
 	/**

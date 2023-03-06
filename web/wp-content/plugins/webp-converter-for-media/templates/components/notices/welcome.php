@@ -17,14 +17,22 @@
 >
 	<div class="webpcContent webpcContent--notice">
 		<h4>
-			<?php echo esc_html( __( 'Thank you for installing our Converter for Media plugin!', 'webp-converter-for-media' ) ); ?>
+			<?php
+			echo esc_html(
+				sprintf(
+				/* translators: %s: plugin name */
+					__( 'Thank you for installing our %s plugin!', 'webp-converter-for-media' ),
+					'Converter for Media'
+				)
+			);
+			?>
 		</h4>
 		<p>
 			<?php
 			echo wp_kses_post(
 				sprintf(
 				/* translators: %1$s: button label, %2$s: icon heart */
-					__( 'Optimize all your images by click the "%1$s" button in the plugin settings. It\'s so easy! %2$s', 'webp-converter-for-media' ),
+					__( 'Optimize all your images by clicking the "%1$s" button in the plugin settings. It\'s that easy! %2$s', 'webp-converter-for-media' ),
 					__( 'Start Bulk Optimization', 'webp-converter-for-media' ),
 					'<span class="dashicons dashicons-heart"></span>'
 				)

@@ -91,9 +91,9 @@ class DirectoryIntegration implements HookableInterface {
 	 */
 	public function get_dir_as_name( $value, string $directory_type ): string {
 		if ( isset( $this->directories[ $directory_type ] ) ) {
-			return $this->directories[ $directory_type ]->get_relative_path();
+			$value = $this->directories[ $directory_type ]->get_relative_path();
 		}
-		return $value;
+		return str_replace( '\\', '/', $value );
 	}
 
 	/**
@@ -141,7 +141,7 @@ class DirectoryIntegration implements HookableInterface {
 			}
 		}
 
-		$source_url = apply_filters( 'webpc_site_url', get_site_url() );
+		$source_url = apply_filters( 'webpc_site_url', ( defined( 'WP_HOME' ) ) ? WP_HOME : get_site_url() );
 		return sprintf( '%1$s/%2$s', $source_url, $directory_name );
 	}
 }

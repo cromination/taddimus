@@ -302,7 +302,7 @@ class SWCFPC_Fallback_Cache
         else
             $this->fallback_cache_disable();
 
-        if( $this->fallback_cache == true && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 ) {
+        if( $this->fallback_cache == true && isset( $_SERVER['REQUEST_METHOD'] ) &&  strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 ) {
 
             if (isset($_SERVER['HTTP_USER_AGENT']) && strcasecmp($_SERVER['HTTP_USER_AGENT'], 'ua-swcfpc-fc') == 0)
                 return;
@@ -348,7 +348,7 @@ class SWCFPC_Fallback_Cache
 
     function fallback_cache_add_current_url_to_cache() {
 
-        if( $this->fallback_cache == true && $this->fallback_cache_is_url_to_exclude() == false && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 ) {
+        if( $this->fallback_cache == true && $this->fallback_cache_is_url_to_exclude() == false && isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 ) {
 
             if( isset($_SERVER['HTTP_USER_AGENT']) && strcasecmp($_SERVER['HTTP_USER_AGENT'], 'ua-swcfpc-fc') == 0 )
                 return;

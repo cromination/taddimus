@@ -166,6 +166,15 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 == Changelog ==
 
+#####   Version 4.7.3 (2023-02-02)
+
+
+- Fixing PHP 8.1+ deprecated error notice ([reported here](https://wordpress.org/support/topic/php-8-1-deprecated-notices/#post-16294666))
+- Making sure that the version query param is not added to the instantpage.min.js so that the modulepreload can work correctly
+
+
+
+
 #####   Version 4.7.2 (2022-11-16)
 
 - Loading an old version of the SweetAlert2 library that doesn't have the anti-Russian Malware added. ([Reported here](https://wordpress.org/support/topic/sites-infected-after-update/))

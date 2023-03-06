@@ -2,6 +2,8 @@
 
 namespace WebpConverter\Settings\Option;
 
+use WebpConverter\Error\Notice\BypassingApacheNotice;
+use WebpConverter\Loader\HtaccessBypassingLoader;
 use WebpConverter\Loader\HtaccessLoader;
 use WebpConverter\Loader\PassthruLoader;
 
@@ -47,7 +49,7 @@ class LoaderTypeOption extends OptionAbstract {
 		return implode(
 			' ',
 			[
-				__( 'By changing image loading mode it allows you to bypass some server configuration problems.', 'webp-converter-for-media' ),
+				__( 'By changing this mode, you can bypass some of the server configuration problems.', 'webp-converter-for-media' ),
 				sprintf(
 				/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 					__( 'Check out %1$sour documentation%2$s for more information.', 'webp-converter-for-media' ),
@@ -65,14 +67,20 @@ class LoaderTypeOption extends OptionAbstract {
 	 */
 	public function get_available_values( array $settings ): array {
 		return [
-			HtaccessLoader::LOADER_TYPE => sprintf(
+			HtaccessLoader::LOADER_TYPE          => sprintf(
 			/* translators: %s: loader type */
 				__( '%s (recommended)', 'webp-converter-for-media' ),
 				__( 'via .htaccess', 'webp-converter-for-media' )
 			),
-			PassthruLoader::LOADER_TYPE => sprintf(
+			HtaccessBypassingLoader::LOADER_TYPE => sprintf(
+			/* translators: %1$s: loader type, %2$S: error name */
+				__( '%1$s (use when you have a problem with the %2$s error)', 'webp-converter-for-media' ),
+				__( 'Bypassing Nginx', 'webp-converter-for-media' ),
+				BypassingApacheNotice::ERROR_KEY
+			),
+			PassthruLoader::LOADER_TYPE          => sprintf(
 			/* translators: %s: loader type */
-				__( '%s (without rewrites in .htaccess files or Nginx configuration)', 'webp-converter-for-media' ),
+				__( '%s (without rewrites in .htaccess files or the Nginx configuration)', 'webp-converter-for-media' ),
 				'Pass Thru'
 			),
 		];

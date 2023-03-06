@@ -16,7 +16,15 @@
 >
 	<div class="webpcContent webpcContent--notice">
 		<h4>
-			<?php echo esc_html( __( 'New opportunities in our Converter for Media plugin!', 'webp-converter-for-media' ) ); ?>
+			<?php
+			echo esc_html(
+				sprintf(
+				/* translators: %s: plugin name */
+					__( 'New opportunities in our %s plugin!', 'webp-converter-for-media' ),
+					'Converter for Media'
+				)
+			);
+			?>
 		</h4>
 		<p>
 			<?php
@@ -30,12 +38,12 @@
 				target="_blank"
 				class="webpcContent__button webpcButton webpcButton--blue webpcButton--bg"
 			>
-				<?php echo esc_html( __( 'Explore opportunities for yourself', 'webp-converter-for-media' ) ); ?>
+				<?php echo esc_html( __( 'Explore the opportunities for yourself', 'webp-converter-for-media' ) ); ?>
 			</a>
 			<button type="button" data-permanently
 				class="webpcContent__button webpcButton webpcButton--gray webpcButton--bg"
 			>
-				<?php echo esc_html( __( 'Hide, do not show again', 'webp-converter-for-media' ) ); ?>
+				<?php echo esc_html( __( 'Hide and do not show again', 'webp-converter-for-media' ) ); ?>
 			</button>
 		</div>
 	</div>

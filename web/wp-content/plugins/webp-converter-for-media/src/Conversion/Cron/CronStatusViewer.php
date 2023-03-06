@@ -67,7 +67,7 @@ class CronStatusViewer implements HookableInterface {
 		$menu_child  = [
 			'id'     => 'webpc-menu-message',
 			'title'  => sprintf(
-			/* translators: %1$s: images count */
+			/* translators: %1$s: progress percent */
 				__( 'Converting images (%s) is in progress.', 'webp-converter-for-media' ),
 				$count
 			),

@@ -21,7 +21,7 @@ class SettingsIncorrectNotice implements ErrorNotice {
 	 */
 	public function get_message(): array {
 		return [
-			__( 'The plugin settings are incorrect! Check them out and save them again. Please remember that you must have at least one option selected for each field.', 'webp-converter-for-media' ),
+			__( 'The plugin settings are incorrect! Check them out and save them again. Please, remember that you need to have at least one option selected for each field.', 'webp-converter-for-media' ),
 		];
 	}
 }

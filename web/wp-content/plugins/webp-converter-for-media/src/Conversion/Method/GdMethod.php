@@ -106,6 +106,34 @@ class GdMethod extends LibraryMethodAbstract {
 			throw new ExtensionUnsupportedException( [ $extension, $source_path ] );
 		}
 
+		$exif = ( function_exists( 'exif_read_data' ) ) ? ( exif_read_data( $source_path ) ?: [] ) : [];
+		switch ( $exif['Orientation'] ?? '' ) {
+			case 2:
+				imageflip( $image, IMG_FLIP_HORIZONTAL );
+				break;
+			case 3:
+				$image = imagerotate( $image, 180, 0 );
+				break;
+			case 4:
+				imageflip( $image, IMG_FLIP_HORIZONTAL );
+				$image = imagerotate( $image, 180, 0 );
+				break;
+			case 5:
+				imageflip( $image, IMG_FLIP_VERTICAL );
+				$image = imagerotate( $image, -90, 0 );
+				break;
+			case 6:
+				$image = imagerotate( $image, -90, 0 );
+				break;
+			case 7:
+				imageflip( $image, IMG_FLIP_VERTICAL );
+				$image = imagerotate( $image, 90, 0 );
+				break;
+			case 8:
+				$image = imagerotate( $image, 90, 0 );
+				break;
+		}
+
 		return $this->update_image_resource( $image, $extension );
 	}
 

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitae800bac13071aa62389abde6c4d4902
+class ComposerStaticInit75f4e549667711bc91db2f58f612be32
 {
     public static $prefixLengthsPsr4 = array (
         'W' => 
@@ -49,6 +49,7 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
         'WebpConverter\\Conversion\\Directory\\DirectoryIntegration' => __DIR__ . '/../..' . '/src/Conversion/Directory/DirectoryIntegration.php',
         'WebpConverter\\Conversion\\Directory\\DirectoryInterface' => __DIR__ . '/../..' . '/src/Conversion/Directory/DirectoryInterface.php',
         'WebpConverter\\Conversion\\Directory\\SourceDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/SourceDirectory.php',
+        'WebpConverter\\Conversion\\Directory\\UploadsDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/UploadsDirectory.php',
         'WebpConverter\\Conversion\\Directory\\UploadsWebpcDirectory' => __DIR__ . '/../..' . '/src/Conversion/Directory/UploadsWebpcDirectory.php',
         'WebpConverter\\Conversion\\Endpoint\\CronConversionEndpoint' => __DIR__ . '/../..' . '/src/Conversion/Endpoint/CronConversionEndpoint.php',
         'WebpConverter\\Conversion\\Endpoint\\EndpointAbstract' => __DIR__ . '/../..' . '/src/Conversion/Endpoint/EndpointAbstract.php',
@@ -86,7 +87,6 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
         'WebpConverter\\Error\\Detector\\LibsWithoutWebpSupportDetector' => __DIR__ . '/../..' . '/src/Error/Detector/LibsWithoutWebpSupportDetector.php',
         'WebpConverter\\Error\\Detector\\PassthruExecutionDetector' => __DIR__ . '/../..' . '/src/Error/Detector/PassthruExecutionDetector.php',
         'WebpConverter\\Error\\Detector\\PathsErrorsDetector' => __DIR__ . '/../..' . '/src/Error/Detector/PathsErrorsDetector.php',
-        'WebpConverter\\Error\\Detector\\RestApiDisabledDetector' => __DIR__ . '/../..' . '/src/Error/Detector/RestApiDisabledDetector.php',
         'WebpConverter\\Error\\Detector\\RewritesErrorsDetector' => __DIR__ . '/../..' . '/src/Error/Detector/RewritesErrorsDetector.php',
         'WebpConverter\\Error\\Detector\\SettingsIncorrectDetector' => __DIR__ . '/../..' . '/src/Error/Detector/SettingsIncorrectDetector.php',
         'WebpConverter\\Error\\Detector\\TokenStatusDetector' => __DIR__ . '/../..' . '/src/Error/Detector/TokenStatusDetector.php',
@@ -105,10 +105,10 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
         'WebpConverter\\Error\\Notice\\PathUploadsUnavailableNotice' => __DIR__ . '/../..' . '/src/Error/Notice/PathUploadsUnavailableNotice.php',
         'WebpConverter\\Error\\Notice\\PathWebpDuplicatedNotice' => __DIR__ . '/../..' . '/src/Error/Notice/PathWebpDuplicatedNotice.php',
         'WebpConverter\\Error\\Notice\\PathWebpNotWritableNotice' => __DIR__ . '/../..' . '/src/Error/Notice/PathWebpNotWritableNotice.php',
-        'WebpConverter\\Error\\Notice\\RestApiDisabledNotice' => __DIR__ . '/../..' . '/src/Error/Notice/RestApiDisabledNotice.php',
         'WebpConverter\\Error\\Notice\\RewritesCachedNotice' => __DIR__ . '/../..' . '/src/Error/Notice/RewritesCachedNotice.php',
         'WebpConverter\\Error\\Notice\\RewritesNotExecutedNotice' => __DIR__ . '/../..' . '/src/Error/Notice/RewritesNotExecutedNotice.php',
         'WebpConverter\\Error\\Notice\\RewritesNotWorkingNotice' => __DIR__ . '/../..' . '/src/Error/Notice/RewritesNotWorkingNotice.php',
+        'WebpConverter\\Error\\Notice\\RewritesUploadsBlockedNotice' => __DIR__ . '/../..' . '/src/Error/Notice/RewritesUploadsBlockedNotice.php',
         'WebpConverter\\Error\\Notice\\SettingsIncorrectNotice' => __DIR__ . '/../..' . '/src/Error/Notice/SettingsIncorrectNotice.php',
         'WebpConverter\\Error\\Notice\\WebpRequiredNotice' => __DIR__ . '/../..' . '/src/Error/Notice/WebpRequiredNotice.php',
         'WebpConverter\\Exception\\ConversionErrorException' => __DIR__ . '/../..' . '/src/Exception/ConversionErrorException.php',
@@ -129,6 +129,7 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
         'WebpConverter\\Exception\\ServerConfigurationException' => __DIR__ . '/../..' . '/src/Exception/ServerConfigurationException.php',
         'WebpConverter\\Exception\\SourcePathException' => __DIR__ . '/../..' . '/src/Exception/SourcePathException.php',
         'WebpConverter\\HookableInterface' => __DIR__ . '/../..' . '/src/HookableInterface.php',
+        'WebpConverter\\Loader\\HtaccessBypassingLoader' => __DIR__ . '/../..' . '/src/Loader/HtaccessBypassingLoader.php',
         'WebpConverter\\Loader\\HtaccessLoader' => __DIR__ . '/../..' . '/src/Loader/HtaccessLoader.php',
         'WebpConverter\\Loader\\LoaderAbstract' => __DIR__ . '/../..' . '/src/Loader/LoaderAbstract.php',
         'WebpConverter\\Loader\\LoaderIntegration' => __DIR__ . '/../..' . '/src/Loader/LoaderIntegration.php',
@@ -137,7 +138,6 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
         'WebpConverter\\Model\\Token' => __DIR__ . '/../..' . '/src/Model/Token.php',
         'WebpConverter\\Notice\\BlackFridayNotice' => __DIR__ . '/../..' . '/src/Notice/BlackFridayNotice.php',
         'WebpConverter\\Notice\\CloudflareNotice' => __DIR__ . '/../..' . '/src/Notice/CloudflareNotice.php',
-        'WebpConverter\\Notice\\LitespeedNotice' => __DIR__ . '/../..' . '/src/Notice/LitespeedNotice.php',
         'WebpConverter\\Notice\\NoticeAbstract' => __DIR__ . '/../..' . '/src/Notice/NoticeAbstract.php',
         'WebpConverter\\Notice\\NoticeIntegration' => __DIR__ . '/../..' . '/src/Notice/NoticeIntegration.php',
         'WebpConverter\\Notice\\NoticeInterface' => __DIR__ . '/../..' . '/src/Notice/NoticeInterface.php',
@@ -149,20 +149,18 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
         'WebpConverter\\PluginInfo' => __DIR__ . '/../..' . '/src/PluginInfo.php',
         'WebpConverter\\Plugin\\Activation' => __DIR__ . '/../..' . '/src/Plugin/Activation.php',
         'WebpConverter\\Plugin\\Activation\\DefaultSettings' => __DIR__ . '/../..' . '/src/Plugin/Activation/DefaultSettings.php',
-        'WebpConverter\\Plugin\\Activation\\RefreshLoader' => __DIR__ . '/../..' . '/src/Plugin/Activation/RefreshLoader.php',
         'WebpConverter\\Plugin\\Activation\\WebpDirectory' => __DIR__ . '/../..' . '/src/Plugin/Activation/WebpDirectory.php',
         'WebpConverter\\Plugin\\Deactivation' => __DIR__ . '/../..' . '/src/Plugin/Deactivation.php',
         'WebpConverter\\Plugin\\Deactivation\\CronReset' => __DIR__ . '/../..' . '/src/Plugin/Deactivation/CronReset.php',
         'WebpConverter\\Plugin\\Deactivation\\PluginSettings' => __DIR__ . '/../..' . '/src/Plugin/Deactivation/PluginSettings.php',
-        'WebpConverter\\Plugin\\Deactivation\\RefreshLoader' => __DIR__ . '/../..' . '/src/Plugin/Deactivation/RefreshLoader.php',
         'WebpConverter\\Plugin\\Links' => __DIR__ . '/../..' . '/src/Plugin/Links.php',
         'WebpConverter\\Plugin\\Uninstall' => __DIR__ . '/../..' . '/src/Plugin/Uninstall.php',
         'WebpConverter\\Plugin\\Uninstall\\DebugFiles' => __DIR__ . '/../..' . '/src/Plugin/Uninstall/DebugFiles.php',
         'WebpConverter\\Plugin\\Uninstall\\PluginSettings' => __DIR__ . '/../..' . '/src/Plugin/Uninstall/PluginSettings.php',
         'WebpConverter\\Plugin\\Uninstall\\WebpFiles' => __DIR__ . '/../..' . '/src/Plugin/Uninstall/WebpFiles.php',
-        'WebpConverter\\Plugin\\Update' => __DIR__ . '/../..' . '/src/Plugin/Update.php',
         'WebpConverter\\Repository\\TokenRepository' => __DIR__ . '/../..' . '/src/Repository/TokenRepository.php',
         'WebpConverter\\Service\\BackupExcluder' => __DIR__ . '/../..' . '/src/Service/BackupExcluder.php',
+        'WebpConverter\\Service\\CacheIntegrator' => __DIR__ . '/../..' . '/src/Service/CacheIntegrator.php',
         'WebpConverter\\Service\\CloudflareConfigurator' => __DIR__ . '/../..' . '/src/Service/CloudflareConfigurator.php',
         'WebpConverter\\Service\\DeactivationModalGenerator' => __DIR__ . '/../..' . '/src/Service/DeactivationModalGenerator.php',
         'WebpConverter\\Service\\FileLoader' => __DIR__ . '/../..' . '/src/Service/FileLoader.php',
@@ -192,6 +190,7 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
         'WebpConverter\\Settings\\Option\\OptionInterface' => __DIR__ . '/../..' . '/src/Settings/Option/OptionInterface.php',
         'WebpConverter\\Settings\\Option\\OptionsAggregator' => __DIR__ . '/../..' . '/src/Settings/Option/OptionsAggregator.php',
         'WebpConverter\\Settings\\Option\\OutputFormatsOption' => __DIR__ . '/../..' . '/src/Settings/Option/OutputFormatsOption.php',
+        'WebpConverter\\Settings\\Option\\RewriteInheritanceOption' => __DIR__ . '/../..' . '/src/Settings/Option/RewriteInheritanceOption.php',
         'WebpConverter\\Settings\\Option\\SupportedDirectoriesOption' => __DIR__ . '/../..' . '/src/Settings/Option/SupportedDirectoriesOption.php',
         'WebpConverter\\Settings\\Option\\SupportedExtensionsOption' => __DIR__ . '/../..' . '/src/Settings/Option/SupportedExtensionsOption.php',
         'WebpConverter\\Settings\\Page\\AdvancedSettingsPage' => __DIR__ . '/../..' . '/src/Settings/Page/AdvancedSettingsPage.php',
@@ -211,9 +210,9 @@ class ComposerStaticInitae800bac13071aa62389abde6c4d4902
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitae800bac13071aa62389abde6c4d4902::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitae800bac13071aa62389abde6c4d4902::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitae800bac13071aa62389abde6c4d4902::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit75f4e549667711bc91db2f58f612be32::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit75f4e549667711bc91db2f58f612be32::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit75f4e549667711bc91db2f58f612be32::$classMap;
 
         }, null, ClassLoader::class);
     }

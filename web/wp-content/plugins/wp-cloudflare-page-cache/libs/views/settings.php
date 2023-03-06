@@ -1932,7 +1932,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                             </div>
 
                             <br/>
-                            <div class="description highlighted"><?php _e('<strong>DO NOT ENABLE this option</strong> unless you are a super advanced user confortable with creating advanced Cloudflare rules. Otherwise caching system will break on your website. <br> <strong>Please note:</strong> certain Cloudflare rules can only be implemented for Cloudflare Business and Enterprise plan. So, if you have a Cloudflare Free or Pro account, you can\'t use those features.', 'wp-cloudflare-page-cache'); ?></div>
+                            <div class="description highlighted"><?php _e('<strong>DO NOT ENABLE this option</strong> unless you are an advanced user confortable with creating advanced Cloudflare rules. Otherwise caching system will break on your website.', 'wp-cloudflare-page-cache'); ?></div>
                             <br/>
                             <div class="description highlighted"><?php _e('Check <strong><a href="https://gist.github.com/isaumya/af10e4855ac83156cc210b7148135fa2" target="_blank" rel="external noopener noreferrer">this implementation guide</a></strong> first before enabling this option.', 'wp-cloudflare-page-cache'); ?></div>
                             <br/>

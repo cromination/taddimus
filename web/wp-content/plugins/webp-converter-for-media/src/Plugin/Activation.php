@@ -3,8 +3,8 @@
 namespace WebpConverter\Plugin;
 
 use WebpConverter\HookableInterface;
+use WebpConverter\Loader\LoaderAbstract;
 use WebpConverter\Plugin\Activation\DefaultSettings;
-use WebpConverter\Plugin\Activation\RefreshLoader;
 use WebpConverter\Plugin\Activation\WebpDirectory;
 use WebpConverter\PluginInfo;
 
@@ -37,15 +37,11 @@ class Activation implements HookableInterface {
 	 */
 	public function load_activation_actions() {
 		( new WebpDirectory() )->create_directory_for_uploads_webp();
-		( new RefreshLoader() )->refresh_image_loader();
 
 		$default_settings = new DefaultSettings( $this->plugin_info );
 		$default_settings->add_default_notices_values();
 		$default_settings->add_default_stats_values();
 
-		wp_cache_delete( 'alloptions', 'options' );
-		if ( defined( 'LSCWP_V' ) ) {
-			do_action( 'litespeed_purge_all' );
-		}
+		do_action( LoaderAbstract::ACTION_NAME, true );
 	}
 }

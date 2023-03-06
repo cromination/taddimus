@@ -22,7 +22,7 @@ class DirectoryFactory implements HookableInterface {
 		$this->set_integration( new SourceDirectory( 'gallery' ) );
 		$this->set_integration( new SourceDirectory( 'plugins' ) );
 		$this->set_integration( new SourceDirectory( 'themes' ) );
-		$this->set_integration( new SourceDirectory( 'uploads', true ) );
+		$this->set_integration( new UploadsDirectory() );
 		foreach ( apply_filters( 'webpc_source_directories', [] ) as $directory_name ) {
 			$this->set_integration( new SourceDirectory( $directory_name ) );
 		}

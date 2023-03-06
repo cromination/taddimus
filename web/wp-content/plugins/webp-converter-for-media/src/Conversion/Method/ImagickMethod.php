@@ -97,6 +97,34 @@ class ImagickMethod extends LibraryMethodAbstract {
 			if ( ( $extension === 'gif' ) && ( $imagick->identifyFormat( '%n' ) > 1 ) ) {
 				throw new ImageAnimatedException( $source_path );
 			}
+
+			switch ( $imagick->getImageProperty( 'exif:Orientation' ) ) {
+				case 2:
+					$imagick->flopImage();
+					break;
+				case 3:
+					$imagick->rotateImage( '#000000', 180 );
+					break;
+				case 4:
+					$imagick->flopImage();
+					$imagick->rotateImage( '#000000', 180 );
+					break;
+				case 5:
+					$imagick->flopImage();
+					$imagick->rotateImage( '#000000', -90 );
+					break;
+				case 6:
+					$imagick->rotateImage( '#000000', 90 );
+					break;
+				case 7:
+					$imagick->flopImage();
+					$imagick->rotateImage( '#000000', 90 );
+					break;
+				case 8:
+					$imagick->rotateImage( '#000000', -90 );
+					break;
+			}
+
 			return $imagick;
 		} catch ( \ImagickException $e ) {
 			throw new ImageInvalidException( $source_path );
