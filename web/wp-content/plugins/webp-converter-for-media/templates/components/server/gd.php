@@ -5,6 +5,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <h4>gd</h4>
 <?php if ( ! extension_loaded( 'gd' ) ) : ?>

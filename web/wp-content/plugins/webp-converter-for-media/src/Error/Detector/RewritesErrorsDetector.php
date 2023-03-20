@@ -179,16 +179,18 @@ class RewritesErrorsDetector implements ErrorDetector {
 		$file_webp = $this->file_loader->get_file_size_by_url(
 			$uploads_url . self::PATH_OUTPUT_FILE_PNG,
 			true,
-			$this->test_version
+			$this->test_version,
+			__FUNCTION__
 		);
 
 		if ( $file_webp === 0 ) {
 			$file_status = $this->file_loader->get_file_status_by_url(
 				$uploads_url . self::PATH_OUTPUT_FILE_PNG,
 				false,
-				$this->test_version
+				$this->test_version,
+				__FUNCTION__
 			);
-			return ( ! in_array( $file_status, [ 404, 500 ] ) );
+			return ( ! in_array( $file_status, [ 500 ] ) );
 		}
 
 		return ( $file_webp < $file_size );
@@ -203,7 +205,8 @@ class RewritesErrorsDetector implements ErrorDetector {
 		$file_size = $this->file_loader->get_file_size_by_url(
 			$this->plugin_info->get_plugin_directory_url() . self::URL_DEBUG_HTACCESS_FILE,
 			true,
-			$this->test_version
+			$this->test_version,
+			__FUNCTION__
 		);
 
 		return ( $file_size === 0 );
@@ -220,12 +223,14 @@ class RewritesErrorsDetector implements ErrorDetector {
 		$file_png  = $this->file_loader->get_file_size_by_url(
 			$uploads_url . self::PATH_OUTPUT_FILE_PNG,
 			true,
-			$this->test_version
+			$this->test_version,
+			__FUNCTION__
 		);
 		$file_png2 = $this->file_loader->get_file_size_by_url(
 			$uploads_url . self::PATH_OUTPUT_FILE_PNG2,
 			true,
-			$this->test_version
+			$this->test_version,
+			__FUNCTION__
 		);
 
 		return ( $file_png > $file_png2 );
@@ -246,7 +251,8 @@ class RewritesErrorsDetector implements ErrorDetector {
 		$file_webp = $this->file_loader->get_file_size_by_url(
 			$uploads_url . self::PATH_OUTPUT_FILE_PLUGINS,
 			true,
-			$this->test_version
+			$this->test_version,
+			__FUNCTION__
 		);
 
 		return ( ( $file_webp < $file_size ) && ( $file_webp !== 0 ) );
@@ -263,12 +269,14 @@ class RewritesErrorsDetector implements ErrorDetector {
 		$file_webp     = $this->file_loader->get_file_size_by_url(
 			$uploads_url . self::PATH_OUTPUT_FILE_PNG,
 			true,
-			$this->test_version
+			$this->test_version,
+			__FUNCTION__
 		);
 		$file_original = $this->file_loader->get_file_size_by_url(
 			$uploads_url . self::PATH_OUTPUT_FILE_PNG,
 			false,
-			$this->test_version
+			$this->test_version,
+			__FUNCTION__
 		);
 
 		return ( ( $file_webp > 0 ) && ( $file_webp === $file_original ) );

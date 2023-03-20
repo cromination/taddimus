@@ -22,17 +22,9 @@ class Attachment {
 	 */
 	private $upload_dir;
 
-	/**
-	 * Available intermediate image size names.
-	 *
-	 * @var string[]
-	 */
-	private $image_sizes;
-
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;
 		$this->upload_dir  = wp_upload_dir();
-		$this->image_sizes = get_intermediate_image_sizes();
 	}
 
 	/**
@@ -67,31 +59,25 @@ class Attachment {
 			return $list;
 		}
 
-		$paths = $this->get_paths_by_sizes( $post_id, $metadata['file'] );
+		$paths = $this->get_paths_by_sizes( $post_id, $metadata );
 		return apply_filters( 'webpc_attachment_paths', $paths, $post_id );
 	}
 
 	/**
 	 * Returns unique server paths to source images of attachment.
 	 *
-	 * @param int    $post_id ID of attachment.
-	 * @param string $path    Path of source image.
+	 * @param int     $post_id  ID of attachment.
+	 * @param mixed[] $metadata Data of attachment.
 	 *
 	 * @return string[] Server paths of source images.
 	 */
-	private function get_paths_by_sizes( int $post_id, string $path ): array {
-		$list   = [];
-		$list[] = str_replace( '\\', '/', ( $this->upload_dir['basedir'] . '/' . $path ) );
+	private function get_paths_by_sizes( int $post_id, array $metadata ): array {
+		$main_file = str_replace( '\\', '/', ( $this->upload_dir['basedir'] . '/' . $metadata['file'] ) );
+		$file_path = dirname( $main_file ) . '/';
+		$list      = [ $main_file ];
 
-		foreach ( $this->image_sizes as $size ) {
-			$src = wp_get_attachment_image_src( $post_id, $size );
-			if ( ! is_array( $src ) || ! is_string( $src[0] ) ) {
-				continue;
-			}
-
-			$url    = str_replace( $this->upload_dir['baseurl'], $this->upload_dir['basedir'], $src[0] );
-			$url    = str_replace( '\\', '/', $url );
-			$list[] = $url;
+		foreach ( $metadata['sizes'] ?? [] as $size => $size_data ) {
+			$list[] = $file_path . $size_data['file'];
 		}
 		return array_values( array_unique( $list ) );
 	}

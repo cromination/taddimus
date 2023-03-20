@@ -12,6 +12,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="notice notice-success is-dismissible"
 	data-notice="webp-converter-for-media"

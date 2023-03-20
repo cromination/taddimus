@@ -1,3 +1,14 @@
+##### [Version 3.0.29](https://github.com/Codeinwp/hestia-pro/compare/v3.0.28...v3.0.29) (2023-03-09)
+
+- Improve the release process
+
+##### [Version 3.0.28](https://github.com/Codeinwp/hestia-pro/compare/v3.0.27...v3.0.28) (2023-03-09)
+
+- [Fix] Conflict with the image optimizer plugin
+- [Fix] Logo translation with Polylang
+- [Fix] Scroll to top issue
+- [Fix] Frontpage section reordering
+
 ##### [Version 3.0.27](https://github.com/Codeinwp/hestia-pro/compare/v3.0.26...v3.0.27) (2023-01-10)
 
 - [Fix] Big title background image issue

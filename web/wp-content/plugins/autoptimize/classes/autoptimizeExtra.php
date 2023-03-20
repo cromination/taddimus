@@ -304,7 +304,7 @@ class autoptimizeExtra
                 } else {
                     $rel_string = 'rel="stylesheet"';
                 }
-                $fonts_markup = '<link ' . $rel_string . ' id="ao_optimized_gfonts" href="https://fonts.googleapis.com/css?family=' . $fonts_string . '" />';
+                $fonts_markup = '<link ' . $rel_string . ' id="ao_optimized_gfonts" href="https://fonts.googleapis.com/css?family=' . $fonts_string . '">';
             }
         } elseif ( '4' === $options['autoptimize_extra_radio_field_4'] ) {
             // Aggregate & load async (webfont.js impl.)!
@@ -483,6 +483,15 @@ class autoptimizeExtra
                 function() {
                     wp_dequeue_style( 'wp-block-library' );
                     wp_dequeue_style( 'wp-block-library-theme' );
+                }
+            );
+        }
+
+        if ( true === apply_filters( 'autoptimize_filter_extra_remove_woocommerce_block_css', true ) ) {
+            add_action(
+                'wp_enqueue_scripts',
+                function() {
+                    wp_dequeue_style( 'wc-blocks-style' );
                 }
             );
         }

@@ -10,6 +10,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <?php if ( $option['info'] ) : ?>
 	<p><?php echo wp_kses_post( $option['info'] ); ?></p>

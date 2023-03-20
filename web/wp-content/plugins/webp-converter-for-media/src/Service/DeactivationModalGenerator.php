@@ -182,6 +182,8 @@ class DeactivationModalGenerator {
 								'webp_unconverted'    => $this->stats_manager->get_images_webp_unconverted(),
 								'avif_all'            => $this->stats_manager->get_images_avif_all(),
 								'avif_unconverted'    => $this->stats_manager->get_images_avif_unconverted(),
+								'rewrite_root'        => PathsGenerator::get_rewrite_root(),
+								'rewrite_path'        => PathsGenerator::get_rewrite_path(),
 							];
 
 							$stats_json = json_encode( $stats_data );

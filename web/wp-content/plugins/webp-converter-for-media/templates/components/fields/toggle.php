@@ -8,6 +8,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="webpcField">
 	<input type="checkbox"

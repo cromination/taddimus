@@ -5,6 +5,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WebpConverter\Conversion\Cron\CronStatusManager;
 use WebpConverter\Notice\CloudflareNotice;
 use WebpConverter\Notice\ThanksNotice;

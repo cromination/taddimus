@@ -8,6 +8,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <?php if ( $errors_messages ) : ?>
 	<div class="webpcPage__widget">

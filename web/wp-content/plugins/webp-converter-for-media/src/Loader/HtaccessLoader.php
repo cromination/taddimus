@@ -68,7 +68,7 @@ class HtaccessLoader extends LoaderAbstract {
 	 */
 	public function modify_document_root_path( string $original_path ): string {
 		if ( isset( $_SERVER['SERVER_ADMIN'] ) && strpos( $_SERVER['SERVER_ADMIN'], '.home.pl' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			return '%{DOCUMENT_ROOT}' . ABSPATH;
+			return '%{DOCUMENT_ROOT}' . str_replace( '//', '/', ABSPATH );
 		}
 
 		return $original_path;
@@ -173,9 +173,10 @@ class HtaccessLoader extends LoaderAbstract {
 			return $content;
 		}
 
-		$document_root = PathsGenerator::get_rewrite_root();
-		$root_suffix   = PathsGenerator::get_rewrite_path();
-		$output_path   = apply_filters( 'webpc_dir_name', '', 'webp' );
+		$document_root      = PathsGenerator::get_rewrite_root();
+		$root_suffix        = PathsGenerator::get_rewrite_path();
+		$root_suffix_output = apply_filters( 'webpc_htaccess_rewrite_output', $root_suffix );
+		$output_path        = apply_filters( 'webpc_dir_name', '', 'webp' );
 		if ( $output_path_suffix !== null ) {
 			$output_path .= '/' . $output_path_suffix;
 		}
@@ -201,7 +202,7 @@ class HtaccessLoader extends LoaderAbstract {
 				if ( apply_filters( 'webpc_htaccess_mod_rewrite_referer', false ) === true ) {
 					$content .= "  RewriteCond %{HTTP_HOST}@@%{HTTP_REFERER} ^([^@]*)@@https?://\\1/.*" . PHP_EOL;
 				}
-				$content .= "  RewriteRule (.+)\.{$ext}$ {$root_suffix}{$output_path}/$1.{$ext}.{$format} [NC,T={$mime_type},L]" . PHP_EOL;
+				$content .= "  RewriteRule (.+)\.{$ext}$ {$root_suffix_output}{$output_path}/$1.{$ext}.{$format} [NC,T={$mime_type},L]" . PHP_EOL;
 			}
 			$content .= '</IfModule>' . PHP_EOL;
 		}

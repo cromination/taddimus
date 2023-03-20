@@ -5,6 +5,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $image_sizes = ( function_exists( 'wp_get_registered_image_subsizes' ) )
 	? wp_get_registered_image_subsizes()
 	: wp_get_additional_image_sizes();

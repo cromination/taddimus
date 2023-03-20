@@ -25,7 +25,7 @@ class PathsGenerator {
 	public static function get_rewrite_root(): string {
 		$root_document      = preg_replace( '/(\/|\\\\)/', '/', rtrim( $_SERVER['DOCUMENT_ROOT'], '\/' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 		$root_document_real = preg_replace( '/(\/|\\\\)/', '/', rtrim( realpath( $_SERVER['DOCUMENT_ROOT'] ) ?: '', '\/' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$root_wordpress     = preg_replace( '/(\/|\\\\)/', '/', rtrim( self::get_wordpress_root_path(), '\/' ) );
+		$root_wordpress     = preg_replace( '/(\/|\\\\)/', '/', rtrim( self::get_document_root_path(), '\/' ) );
 
 		$root_path   = trim( str_replace( $root_document_real ?: '', '', $root_wordpress ?: '' ), '\/' );
 		$root_suffix = str_replace( '//', '/', sprintf( '/%s/', $root_path ) );
@@ -41,7 +41,7 @@ class PathsGenerator {
 	 */
 	public static function get_rewrite_path(): string {
 		$root_document_real = preg_replace( '/(\/|\\\\)/', '/', rtrim( realpath( $_SERVER['DOCUMENT_ROOT'] ) ?: '', '\/' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-		$root_wordpress     = preg_replace( '/(\/|\\\\)/', '/', rtrim( self::get_wordpress_root_path(), '\/' ) );
+		$root_wordpress     = preg_replace( '/(\/|\\\\)/', '/', rtrim( self::get_document_root_path(), '\/' ) );
 
 		$root_path = trim( str_replace( $root_document_real ?: '', '', $root_wordpress ?: '' ), '\/' );
 
@@ -49,5 +49,23 @@ class PathsGenerator {
 			'webpc_htaccess_rewrite_path',
 			str_replace( '//', '/', sprintf( '/%s/', $root_path ) )
 		);
+	}
+
+	/**
+	 * Returns real path for DOCUMENT_ROOT value.
+	 */
+	private static function get_document_root_path(): string {
+		$root_dir      = self::get_wordpress_root_path();
+		$document_root = realpath( $_SERVER['DOCUMENT_ROOT'] ) ?: ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		if ( rtrim( $document_root, '\/' ) === rtrim( dirname( $root_dir ), '\/' ) ) {
+			$website_url = apply_filters( 'webpc_site_url', ( defined( 'WP_HOME' ) ) ? WP_HOME : get_site_url() );
+			if ( preg_match( '/(.*)\/(' . basename( $root_dir ) . ')\/?$/', $website_url ) ) {
+				return $root_dir;
+			}
+
+			return $document_root;
+		}
+
+		return $root_dir;
 	}
 }

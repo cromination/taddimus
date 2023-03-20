@@ -14,7 +14,12 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 use WebpConverter\Error\Notice\AccessTokenInvalidNotice;
+use WebpConverter\Service\FileLoader;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\TokenValidator;
 
@@ -79,4 +84,13 @@ use WebpConverter\Service\TokenValidator;
 		</tr>
 	<?php endif; ?>
 	</tbody>
+	<tr>
+		<td class="e">Error detection logs</td>
+		<td class="v">
+			<?php foreach ( $GLOBALS[ FileLoader::GLOBAL_LOGS_VARIABLE ] ?? [] as $log_data ) : ?>
+				<?php echo esc_html( json_encode( $log_data ) ?: '-' ); ?>
+			<br>
+			<?php endforeach; ?>
+		</td>
+	</tr>
 </table>

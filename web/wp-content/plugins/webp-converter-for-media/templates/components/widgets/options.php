@@ -13,6 +13,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="webpcPage__widget">
 	<form method="post" action="" class="webpcContent">

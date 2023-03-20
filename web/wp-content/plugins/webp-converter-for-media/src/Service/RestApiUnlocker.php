@@ -14,15 +14,12 @@ class RestApiUnlocker implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		add_filter(
-			'rest_authentication_errors',
-			[ $this, 'clear_authentication_error' ],
-			9999
-		);
+		add_filter( 'rest_authentication_errors', [ $this, 'clear_authentication_error' ], 9999 );
 		add_filter(
 			'option_mo_api_authentication_protectedrestapi_route_whitelist',
-			[ $this, 'handle_wp_rest_api_authentication' ]
+			[ $this, 'handle_wp_rest_api_authentication_plugin' ]
 		);
+		add_filter( 'jwt_auth_whitelist', [ $this, 'handle_jwt_auth_plugin' ] );
 	}
 
 	/**
@@ -46,7 +43,7 @@ class RestApiUnlocker implements HookableInterface {
 	 * @return array|mixed
 	 * @internal
 	 */
-	public function handle_wp_rest_api_authentication( $all_routes ) {
+	public function handle_wp_rest_api_authentication_plugin( $all_routes ) {
 		if ( ! is_array( $all_routes ) ) {
 			return $all_routes;
 		}
@@ -56,6 +53,21 @@ class RestApiUnlocker implements HookableInterface {
 				unset( $all_routes[ $route_key ] );
 			}
 		}
+		return $all_routes;
+	}
+
+	/**
+	 * @param array|mixed $white_routes .
+	 *
+	 * @return array|mixed
+	 * @internal
+	 */
+	public function handle_jwt_auth_plugin( $white_routes ) {
+		if ( ! is_array( $white_routes ) ) {
+			return $white_routes;
+		}
+
+		$all_routes[] = '/wp-json/' . EndpointIntegration::ROUTE_NAMESPACE . '/*';
 		return $all_routes;
 	}
 }

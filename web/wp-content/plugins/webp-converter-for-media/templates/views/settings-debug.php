@@ -18,6 +18,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="wrap">
 	<hr class="wp-header-end">

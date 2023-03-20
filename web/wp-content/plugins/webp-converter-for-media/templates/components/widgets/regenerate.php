@@ -11,6 +11,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="webpcPage__widget">
 	<h3 class="webpcPage__widgetTitle">

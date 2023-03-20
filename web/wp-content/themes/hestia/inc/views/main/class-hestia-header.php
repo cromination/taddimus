@@ -302,7 +302,11 @@ class Hestia_Header extends Hestia_Abstract_Main {
 		$logo = '<p>' . get_bloginfo( 'name' ) . '</p>';
 
 		$transparent_header = get_theme_mod( 'hestia_navbar_transparent', apply_filters( 'hestia_navbar_transparent_default', true ) );
-		$main_logo          = wp_get_attachment_image_src( get_theme_mod( 'custom_logo' ), 'full' );
+		$custom_logo        = get_theme_mod( 'custom_logo' );
+		if ( function_exists( 'pll__' ) ) {
+			$custom_logo = pll__( $custom_logo );
+		}
+		$main_logo = wp_get_attachment_image_src( $custom_logo, 'full' );
 		if ( ! empty( $main_logo ) && is_array( $main_logo ) ) {
 			$main_logo = $main_logo[0];
 		}
@@ -325,8 +329,7 @@ class Hestia_Header extends Hestia_Abstract_Main {
 
 		if ( ! empty( $main_logo ) ) {
 			$class         = ! empty( $transparent_logo ) ? 'class="hestia-hide-if-transparent"' : '';
-			$custom_logo   = get_theme_mod( 'custom_logo' );
-			$alt_attribute = get_post_meta( get_theme_mod( 'custom_logo' ), '_wp_attachment_image_alt', true );
+			$alt_attribute = get_post_meta( $custom_logo, '_wp_attachment_image_alt', true );
 			$alt_attribute = ! empty( $alt_attribute ) ? $alt_attribute : get_bloginfo( 'name' );
 
 			$custom_logo_metadata = wp_get_attachment_metadata( $custom_logo );

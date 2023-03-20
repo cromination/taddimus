@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 5.8.4 (2023-03-20) =
+* `[Fixed]` Generating rules in .htaccess file when real DOCUMENT_ROOT path is different from WordPress root directory
+
+= 5.8.3 (2023-03-09) =
+* `[Fixed]` Converting images without EXIF data support using GD method
+* `[Added]` Exception for blocked REST API endpoints by JWT Auth plugin
+
 = 5.8.2 (2023-03-02) =
 * `[Changed]` Written content in plugin settings
 * `[Added]` Support for WordPress 6.2

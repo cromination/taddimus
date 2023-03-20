@@ -7,6 +7,10 @@
  * @package Converter for Media
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 ?>
 <div class="webpcMenu">
 	<div class="webpcMenu__wrapper">

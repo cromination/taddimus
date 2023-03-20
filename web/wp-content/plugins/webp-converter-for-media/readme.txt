@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.2
 Requires PHP: 7.0
-Stable tag: 5.8.2
+Stable tag: 5.8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -313,57 +313,6 @@ and add this code *(add these lines at the beginning of the `server { ... }` blo
 `}`
 `# END Converter for Media`
 
-Below is an example host configuration file from the Nginx server (your configuration file will be different, but look for similarities). **Read it to better understand where you should add the rules** (described above) for our plugin in your configuration file.
-
-`server {`
-`    listen 443 ssl http2;`
-`    listen [::]:443 ssl http2;`
-``
-`    server_name your-domain.com;`
-``
-`    client_max_body_size 32M;`
-``
-`    access_log /home/your-domain.com/logs/access.log;`
-`    error_log /home/your-domain.com/logs/error.log;`
-``
-`    error_page 404 /index.php;`
-``
-`    index index.php index.html;`
-`    root /home/your-domain.com/public_html;`
-``
-`    # BEGIN Converter for Media`
-`    set $ext_avif ".avif";`
-`    if ($http_accept !~* "image/avif") {`
-`        set $ext_avif "";`
-`    }`
-``
-`    set $ext_webp ".webp";`
-`    if ($http_accept !~* "image/webp") {`
-`        set $ext_webp "";`
-`    }`
-``
-`    location ~ /wp-content/(?<path>.+)\.(?<ext>jpe?g|png|gif|webp)$ {`
-`        add_header Vary Accept;`
-`        expires 365d;`
-`        try_files`
-`            /wp-content/uploads-webpc/$path.$ext$ext_avif`
-`            /wp-content/uploads-webpc/$path.$ext$ext_webp`
-`            $uri =404;`
-`    }`
-`    # END Converter for Media`
-``
-`    location / {`
-`        try_files $uri $uri/ /index.php?$args;`
-`    }`
-``
-`    location ~ \.php$ {`
-`        include snippets/fastcgi-php.conf;`
-`        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;`
-`    }`
-``
-`    ...`
-`}`
-
 **Step 2**
 
 Then add support for the required MIME types, if they are not supported. Edit the configuration file:
@@ -421,6 +370,13 @@ After making changes, remember to restart the service:
 4. Optimization statistics of Media Library
 
 == Changelog ==
+
+= 5.8.4 (2023-03-20) =
+* `[Fixed]` Generating rules in .htaccess file when real DOCUMENT_ROOT path is different from WordPress root directory
+
+= 5.8.3 (2023-03-09) =
+* `[Fixed]` Converting images without EXIF data support using GD method
+* `[Added]` Exception for blocked REST API endpoints by JWT Auth plugin
 
 = 5.8.2 (2023-03-02) =
 * `[Changed]` Written content in plugin settings

@@ -393,13 +393,21 @@
 			$( window ).on( 'scroll', function () {
 
 				var y_scroll_pos = window.pageYOffset;
-				var scroll_pos_test = $( '.page-header' ).height();
-				if ( y_scroll_pos > scroll_pos_test && showScrollToTop === 0 ) {
+				var headerElement = $( '.page-header' );
+				var scroll_pos_test = 0;
+				if ( headerElement.length > 0 ) {
+					scroll_pos_test = headerElement.height();
+				} else {
+					headerElement = $( '.container' );
+					scroll_pos_test = headerElement.offset().top - $( '.navbar' ).height();
+					scroll_pos_test = scroll_pos_test > 0 ? scroll_pos_test : 0;
+				}
+				if ( y_scroll_pos >= scroll_pos_test && showScrollToTop === 0 ) {
 					$( '.hestia-scroll-to-top' ).addClass( 'hestia-fade' );
 					showScrollToTop = 1;
 				}
 
-				if ( y_scroll_pos < scroll_pos_test && showScrollToTop === 1 ) {
+				if ( y_scroll_pos <= scroll_pos_test && showScrollToTop === 1 ) {
 					$( '.hestia-scroll-to-top' ).removeClass( 'hestia-fade' );
 					showScrollToTop = 0;
 				}
