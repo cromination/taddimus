@@ -300,7 +300,7 @@ class RemoteMethod extends MethodAbstract {
 				$http_code = curl_getinfo( $mh_item, CURLINFO_HTTP_CODE );
 				$response  = curl_multi_getcontent( $mh_item );
 
-				if ( ( $http_code === 200 ) && $response ) {
+				if ( ( $http_code === 200 ) && ( strlen( $response ) > 10 ) ) {
 					$values[ $output_format ]                 = $values[ $output_format ] ?? [];
 					$values[ $output_format ][ $resource_id ] = $response;
 

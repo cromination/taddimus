@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7317207c4dbdcce3816c264e2e1b5a05
+class ComposerStaticInit582128ba67afa84fcd0e4819143edbc2
 {
     public static $files = array (
         '2e85745cdd367ff6e5579a8598f422b9' => __DIR__ . '/..' . '/codeinwp/elementor-extra-widgets/load.php',
@@ -21,7 +21,7 @@ class ComposerStaticInit7317207c4dbdcce3816c264e2e1b5a05
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit7317207c4dbdcce3816c264e2e1b5a05::$classMap;
+            $loader->classMap = ComposerStaticInit582128ba67afa84fcd0e4819143edbc2::$classMap;
 
         }, null, ClassLoader::class);
     }

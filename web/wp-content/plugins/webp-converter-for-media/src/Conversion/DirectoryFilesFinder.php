@@ -84,9 +84,13 @@ class DirectoryFilesFinder {
 						$this->find_files_in_directory( $current_path, $allowed_source_exts, trim( $path_prefix . '/' . $path, '/' ) )
 					);
 				}
-			} elseif ( in_array( strtolower( pathinfo( $current_path, PATHINFO_EXTENSION ) ), $allowed_source_exts ) ) {
-				if ( apply_filters( 'webpc_supported_source_file', true, basename( $current_path ), $current_path ) ) {
-					$list[] = trim( $path_prefix . '/' . $path, '/' );
+			} else {
+				$filename = basename( $current_path );
+				$parts    = array_reverse( explode( '.', $filename ) );
+				if ( in_array( strtolower( $parts[0] ?? '' ), $allowed_source_exts ) && ! in_array( strtolower( $parts[1] ?? '' ), [ 'jpg', 'jpeg', 'png', 'gif' ] ) ) {
+					if ( apply_filters( 'webpc_supported_source_file', true, $filename, $current_path ) ) {
+						$list[] = trim( $path_prefix . '/' . $path, '/' );
+					}
 				}
 			}
 		}

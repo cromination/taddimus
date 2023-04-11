@@ -81,6 +81,8 @@ class Dashboard_Widget extends Abstract_Module {
 			'themeisle_sdk_dashboard_widget_feeds',
 			[
 				'https://themeisle.com/blog/feed',
+				'https://www.codeinwp.com/blog/feed',
+				'https://wpshout.com/feed',
 			]
 		);
 		add_action( 'wp_dashboard_setup', array( &$this, 'add_widget' ) );
@@ -319,7 +321,8 @@ class Dashboard_Widget extends Abstract_Module {
 			}
 
 			$items = $feed->get_items( 0, 5 );
-			foreach ( (array) $items as $item ) {
+			$items = is_array( $items ) ? $items : [];
+			foreach ( $items as $item ) {
 				$items_normalized[] = array(
 					'title' => $item->get_title(),
 					'date'  => $item->get_date( 'U' ),

@@ -24,20 +24,21 @@ class ConvertAttachment implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		add_action( 'webpc_convert_attachment', [ $this, 'convert_files_by_attachment' ] );
+		add_action( 'webpc_convert_attachment', [ $this, 'convert_files_by_attachment' ], 10, 2 );
 	}
 
 	/**
 	 * Converts all sizes of attachment to output formats.
 	 *
-	 * @param int $post_id ID of attachment.
+	 * @param int  $post_id          ID of attachment.
+	 * @param bool $regenerate_force .
 	 *
 	 * @return void
 	 * @internal
 	 */
-	public function convert_files_by_attachment( int $post_id ) {
+	public function convert_files_by_attachment( int $post_id, bool $regenerate_force = false ) {
 		$attachment = new Attachment( $this->plugin_data );
 
-		do_action( 'webpc_convert_paths', $attachment->get_attachment_paths( $post_id ) );
+		do_action( 'webpc_convert_paths', $attachment->get_attachment_paths( $post_id ), $regenerate_force );
 	}
 }

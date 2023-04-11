@@ -154,10 +154,14 @@ class FilesTreeFinder {
 						$list['items'][] = $children;
 					}
 				}
-			} elseif ( in_array( strtolower( pathinfo( $current_path, PATHINFO_EXTENSION ) ), $source_formats ) ) {
-				if ( apply_filters( 'webpc_supported_source_file', true, basename( $current_path ), $current_path )
-					&& ! $this->is_converted_file( $current_path, $output_formats, $force_convert_deleted, $force_convert_crashed ) ) {
-					$list['files'][] = $path;
+			} else {
+				$filename = basename( $current_path );
+				$parts    = array_reverse( explode( '.', $filename ) );
+				if ( in_array( strtolower( $parts[0] ?? '' ), $source_formats ) && ! in_array( strtolower( $parts[1] ?? '' ), [ 'jpg', 'jpeg', 'png', 'gif' ] ) ) {
+					if ( apply_filters( 'webpc_supported_source_file', true, $filename, $current_path )
+						&& ! $this->is_converted_file( $current_path, $output_formats, $force_convert_deleted, $force_convert_crashed ) ) {
+						$list['files'][] = $path;
+					}
 				}
 			}
 		}

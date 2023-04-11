@@ -70,7 +70,7 @@ class LoaderTypeOption extends OptionAbstract {
 			HtaccessLoader::LOADER_TYPE          => sprintf(
 			/* translators: %s: loader type */
 				__( '%s (recommended)', 'webp-converter-for-media' ),
-				__( 'via .htaccess', 'webp-converter-for-media' )
+				__( 'via .htaccess', 'webp-converter-for-media' ) . ' / Nginx'
 			),
 			HtaccessBypassingLoader::LOADER_TYPE => sprintf(
 			/* translators: %1$s: loader type, %2$S: error name */

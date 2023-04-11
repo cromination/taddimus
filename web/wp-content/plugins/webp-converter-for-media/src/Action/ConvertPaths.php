@@ -24,20 +24,21 @@ class ConvertPaths implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		add_action( 'webpc_convert_paths', [ $this, 'convert_files_by_paths' ] );
+		add_action( 'webpc_convert_paths', [ $this, 'convert_files_by_paths' ], 10, 2 );
 	}
 
 	/**
 	 * Converts all given images to output formats.
 	 *
-	 * @param string[] $paths Server paths of images.
+	 * @param string[] $paths            Server paths of images.
+	 * @param bool     $regenerate_force .
 	 *
 	 * @return void
 	 * @internal
 	 */
-	public function convert_files_by_paths( array $paths ) {
+	public function convert_files_by_paths( array $paths, bool $regenerate_force = false ) {
 		( new MethodIntegrator( $this->plugin_data ) )
-			->init_conversion( $this->remove_paths_from_excluded_paths( $paths ), false );
+			->init_conversion( $this->remove_paths_from_excluded_paths( $paths ), $regenerate_force );
 	}
 
 	/**

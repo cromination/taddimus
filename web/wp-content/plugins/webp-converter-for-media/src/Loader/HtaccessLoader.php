@@ -68,6 +68,9 @@ class HtaccessLoader extends LoaderAbstract {
 	 */
 	public function modify_document_root_path( string $original_path ): string {
 		if ( isset( $_SERVER['SERVER_ADMIN'] ) && strpos( $_SERVER['SERVER_ADMIN'], '.home.pl' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			if ( strpos( ABSPATH, '/autoinstalator/' ) !== false ) {
+				return '%{DOCUMENT_ROOT}/';
+			}
 			return '%{DOCUMENT_ROOT}' . str_replace( '//', '/', ABSPATH );
 		}
 

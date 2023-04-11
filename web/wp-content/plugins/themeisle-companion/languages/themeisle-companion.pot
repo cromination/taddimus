@@ -1,15 +1,15 @@
-# Copyright (C) 2022 Themeisle
+# Copyright (C) 2023 Themeisle
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Orbit Fox Companion 2.10.22\n"
+"Project-Id-Version: Orbit Fox Companion 2.10.23\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/Codeinwp/themeisle-companion/issues\n"
-"POT-Creation-Date: 2022-11-30 21:10:58+00:00\n"
+"POT-Creation-Date: 2023-03-31 10:53:35+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Themeisle Translate Team <friends@themeisle.com>\n"
 "Language-Team: Themeisle Translate <friends@themeisle.com>\n"
 "Language: en\n"
@@ -1503,57 +1503,57 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:268
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:273
 msgid "Desmond Purpleson"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:269
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:274
 msgid "CEO"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:270
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:275
 msgid ""
 "Locavore pinterest chambray affogato art party, forage coloring book "
 "typewriter. Bitters cold selfies, retro celiac sartorial mustache."
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:299
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:304
 msgid "Parsley Pepperspray"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:300
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:305
 msgid "Marketing Specialist"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:301
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:306
 msgid ""
 "Craft beer salvia celiac mlkshk. Pinterest celiac tumblr, portland salvia "
 "skateboard cliche thundercats. Tattooed chia austin hell."
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:330
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:335
 msgid "Desmond Eagle"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:331
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:336
 msgid "Graphic Designer"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:332
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:337
 msgid ""
 "Pok pok direct trade godard street art, poutine fam typewriter food truck "
 "narwhal kombucha wolf cardigan butcher whatever pickled you."
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:361
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:366
 msgid "Ruby Von Rails"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:362
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:367
 msgid "Lead Developer"
 msgstr ""
 
-#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:363
+#: obfx_modules/companion-legacy/inc/hestia/inc/sections/hestia-team-section.php:368
 msgid ""
 "Small batch vexillologist 90's blue bottle stumptown bespoke. Pok pok tilde "
 "fixie chartreuse, VHS gluten-free selfies wolf hot."
@@ -2285,7 +2285,7 @@ msgid ""
 msgstr ""
 
 #: obfx_modules/social-sharing/init.php:34
-msgid "demo"
+msgid "documentation"
 msgstr ""
 
 #: obfx_modules/social-sharing/views/hestia-social-sharing-tpl.php:38
@@ -3604,7 +3604,7 @@ msgstr ""
 msgid "Could not retrieve the info because the user is not logged in."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/Promotions.php:478
+#: vendor/codeinwp/themeisle-sdk/src/Modules/Promotions.php:540
 #. translators: %s is the product name.
 msgid "Recommended by %s"
 msgstr ""
