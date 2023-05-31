@@ -71,7 +71,7 @@ site.
 Verifies plugin files against WordPress.org's checksums.
 
 ~~~
-wp plugin verify-checksums [<plugin>...] [--all] [--strict] [--format=<format>] [--insecure]
+wp plugin verify-checksums [<plugin>...] [--all] [--strict] [--version=<version>] [--format=<format>] [--insecure]
 ~~~
 
 **OPTIONS**
@@ -85,6 +85,9 @@ wp plugin verify-checksums [<plugin>...] [--all] [--strict] [--format=<format>] 
 	[--strict]
 		If set, even "soft changes" like readme.txt changes will trigger
 		checksum errors.
+
+	[--version=<version>]
+		Verify checksums against a specific plugin version.
 
 	[--format=<format>]
 		Render output in a specific format.

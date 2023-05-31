@@ -69,7 +69,7 @@ class DeactivationModalGenerator {
 						'server_config',
 						10,
 						sprintf(
-							/* translators: %s: notice title */
+						/* translators: %s: notice title */
 							__( 'I have the %s notice in the plugin settings', 'webp-converter-for-media' ),
 							__( 'Server configuration error', 'webp-converter-for-media' )
 						),

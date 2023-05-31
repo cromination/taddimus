@@ -68,9 +68,6 @@ class HtaccessLoader extends LoaderAbstract {
 	 */
 	public function modify_document_root_path( string $original_path ): string {
 		if ( isset( $_SERVER['SERVER_ADMIN'] ) && strpos( $_SERVER['SERVER_ADMIN'], '.home.pl' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			if ( strpos( ABSPATH, '/autoinstalator/' ) !== false ) {
-				return '%{DOCUMENT_ROOT}/';
-			}
 			return '%{DOCUMENT_ROOT}' . str_replace( '//', '/', ABSPATH );
 		}
 
@@ -196,12 +193,17 @@ class HtaccessLoader extends LoaderAbstract {
 				if ( in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
 					$content .= "  RewriteCond %{REQUEST_FILENAME} -f" . PHP_EOL;
 				}
-				if ( strpos( $document_root, '%{DOCUMENT_ROOT}' ) !== false ) {
-					$content .= "  RewriteCond {$document_root}{$output_path}/$1.{$ext}.{$format} -f" . PHP_EOL;
+
+				if ( $document_root === '%{DOCUMENT_ROOT}/' ) {
+					$content .= "  RewriteCond %{DOCUMENT_ROOT}/{$output_path}/$1.{$ext}.{$format} -f" . PHP_EOL;
+				} elseif ( strpos( $document_root, '%{DOCUMENT_ROOT}' ) !== false ) {
+					$content .= "  RewriteCond {$document_root}{$output_path}/$1.{$ext}.{$format} -f [OR]" . PHP_EOL;
+					$content .= "  RewriteCond %{DOCUMENT_ROOT}/{$output_path}/$1.{$ext}.{$format} -f" . PHP_EOL;
 				} else {
 					$content .= "  RewriteCond {$document_root}{$output_path}/$1.{$ext}.{$format} -f [OR]" . PHP_EOL;
 					$content .= "  RewriteCond %{DOCUMENT_ROOT}{$root_suffix}{$output_path}/$1.{$ext}.{$format} -f" . PHP_EOL;
 				}
+
 				if ( apply_filters( 'webpc_htaccess_mod_rewrite_referer', false ) === true ) {
 					$content .= "  RewriteCond %{HTTP_HOST}@@%{HTTP_REFERER} ^([^@]*)@@https?://\\1/.*" . PHP_EOL;
 				}

@@ -449,7 +449,7 @@ class Site_Command extends CommandWithDBObject {
 
 		$user_id = email_exists( $email );
 		if ( ! $user_id ) { // Create a new user with a random password
-			$password = wp_generate_password( 12, false );
+			$password = wp_generate_password( 24, false );
 			$user_id  = wpmu_create_user( $base, $password, $email );
 			if ( false === $user_id ) {
 				WP_CLI::error( "Can't create user." );
@@ -513,7 +513,7 @@ class Site_Command extends CommandWithDBObject {
 	 *
 	 * [--<field>=<value>]
 	 * : Filter by one or more fields (see "Available Fields" section). However,
-	 * 'url' isn't an available filter, because it's created from domain + path.
+	 * 'url' isn't an available filter, as it comes from 'home' in wp_options.
 	 *
 	 * [--site__in=<value>]
 	 * : Only list the sites with these blog_id values (comma-separated).

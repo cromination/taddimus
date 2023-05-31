@@ -2793,9 +2793,26 @@ wp post term
 
 **EXAMPLES**
 
-    # Set post terms
+    # Set category post term `test` to the post ID 123
     $ wp post term set 123 test category
+    Success: Set term.
+
+    # Set category post terms `test` and `apple` to the post ID 123
+    $ wp post term set 123 test apple category
     Success: Set terms.
+
+    # List category post terms for the post ID 123
+    $ wp post term list 123 category --fields=term_id,slug
+    +---------+-------+
+    | term_id | slug  |
+    +---------+-------+
+    | 2       | apple |
+    | 3       | test  |
+    +----------+------+
+
+    # Remove category post terms `test` and `apple` for the post ID 123
+    $ wp post term remove 123 category test apple
+    Success: Removed terms.
 
 
 
@@ -2823,6 +2840,7 @@ Append the term to the existing set of terms on the object.
 	[--by=<field>]
 		Explicitly handle the term value as a slug or id.
 		---
+		default: slug
 		options:
 		  - slug
 		  - id
@@ -2899,11 +2917,12 @@ wp post term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 		The name of the term's taxonomy.
 
 	[<term>...]
-		The name of the term or terms to be removed from the object.
+		The slug of the term or terms to be removed from the object.
 
 	[--by=<field>]
 		Explicitly handle the term value as a slug or id.
 		---
+		default: slug
 		options:
 		  - slug
 		  - id
@@ -2936,6 +2955,7 @@ Replaces existing terms on the object.
 	[--by=<field>]
 		Explicitly handle the term value as a slug or id.
 		---
+		default: slug
 		options:
 		  - slug
 		  - id
@@ -3429,7 +3449,7 @@ wp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--field=
 
 	[--<field>=<value>]
 		Filter by one or more fields (see "Available Fields" section). However,
-		'url' isn't an available filter, because it's created from domain + path.
+		'url' isn't an available filter, as it comes from 'home' in wp_options.
 
 	[--site__in=<value>]
 		Only list the sites with these blog_id values (comma-separated).
@@ -5280,7 +5300,7 @@ wp user remove-role <user> [<role>]
 Resets the password for one or more users.
 
 ~~~
-wp user reset-password <user>... [--skip-email]
+wp user reset-password <user>... [--skip-email] [--show-password] [--porcelain]
 ~~~
 
 **OPTIONS**
@@ -5291,6 +5311,12 @@ wp user reset-password <user>... [--skip-email]
 	[--skip-email]
 		Don't send an email notification to the affected user(s).
 
+	[--show-password]
+		Show the new password(s).
+
+	[--porcelain]
+		Output only the new password(s).
+
 **EXAMPLES**
 
     # Reset the password for two users and send them the change email.
@@ -5298,6 +5324,10 @@ wp user reset-password <user>... [--skip-email]
     Reset password for admin.
     Reset password for editor.
     Success: Passwords reset for 2 users.
+
+    # Reset the password for one user, displaying only the new password, and not sending the change email.
+    $ wp user reset-password admin --skip-email --porcelain
+    yV6BP*!d70wg
 
 
 
@@ -5506,6 +5536,7 @@ Append the term to the existing set of terms on the object.
 	[--by=<field>]
 		Explicitly handle the term value as a slug or id.
 		---
+		default: slug
 		options:
 		  - slug
 		  - id
@@ -5582,11 +5613,12 @@ wp user term remove <id> <taxonomy> [<term>...] [--by=<field>] [--all]
 		The name of the term's taxonomy.
 
 	[<term>...]
-		The name of the term or terms to be removed from the object.
+		The slug of the term or terms to be removed from the object.
 
 	[--by=<field>]
 		Explicitly handle the term value as a slug or id.
 		---
+		default: slug
 		options:
 		  - slug
 		  - id
@@ -5619,6 +5651,7 @@ Replaces existing terms on the object.
 	[--by=<field>]
 		Explicitly handle the term value as a slug or id.
 		---
+		default: slug
 		options:
 		  - slug
 		  - id

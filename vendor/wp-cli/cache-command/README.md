@@ -164,6 +164,27 @@ Errors if the object cache can't be flushed.
 
 
 
+### wp cache flush-group
+
+Removes all cache items in a group, if the object cache implementation supports it.
+
+~~~
+wp cache flush-group <group>
+~~~
+
+**OPTIONS**
+
+	<group>
+		Cache group key.
+
+**EXAMPLES**
+
+    # Clear cache group.
+    $ wp cache flush-group my_group
+    Success: Cache group 'my_group' was flushed.
+
+
+
 ### wp cache get
 
 Gets a value from the object cache.
@@ -301,6 +322,33 @@ Errors if the value can't be set.
     # Set cache.
     $ wp cache set my_key my_value my_group 300
     Success: Set object 'my_key' in group 'my_group'.
+
+
+
+### wp cache supports
+
+Determines whether the object cache implementation supports a particular feature.
+
+~~~
+wp cache supports <feature>
+~~~
+
+**OPTIONS**
+
+	<feature>
+		Name of the feature to check for.
+
+**EXAMPLES**
+
+    # Check whether is add_multiple supported.
+    $ wp cache supports add_multiple
+    $ echo $?
+    0
+
+    # Bash script for checking whether for support like this:
+    if ! wp cache supports non_existing; then
+        echo 'non_existing is not supported'
+    fi
 
 
 

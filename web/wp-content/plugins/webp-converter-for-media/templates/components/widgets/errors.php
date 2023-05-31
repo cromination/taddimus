@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <?php if ( $errors_messages ) : ?>
-	<div class="webpcPage__widget">
+	<div class="webpcPage__widget" id="server-error-notice">
 		<h3 class="webpcPage__widgetTitle webpcPage__widgetTitle--error">
 			<?php echo esc_html( __( 'Server configuration error', 'webp-converter-for-media' ) ); ?>
 		</h3>

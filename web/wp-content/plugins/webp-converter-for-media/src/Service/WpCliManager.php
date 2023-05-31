@@ -41,8 +41,23 @@ class WpCliManager implements HookableInterface {
 			return;
 		}
 
-		\WP_CLI::add_command( 'converter-for-media calculate', [ $this, 'calculate_images' ] );
-		\WP_CLI::add_command( 'converter-for-media regenerate', [ $this, 'regenerate_images' ] );
+		\WP_CLI::add_command(
+			'converter-for-media calculate',
+			[ $this, 'calculate_images' ],
+			[]
+		);
+		\WP_CLI::add_command(
+			'converter-for-media regenerate',
+			[ $this, 'regenerate_images' ],
+			[
+				'synopsis' => [
+					'type'        => 'flag',
+					'name'        => 'force',
+					'description' => __( 'Force the conversion of all images again', 'webp-converter-for-media' ),
+				],
+			]
+		);
+
 		\WP_CLI::add_command( 'webp-converter calculate', [ $this, 'calculate_images' ] );
 		\WP_CLI::add_command( 'webp-converter regenerate', [ $this, 'regenerate_images' ] );
 	}
@@ -69,14 +84,15 @@ class WpCliManager implements HookableInterface {
 	}
 
 	/**
-	 * @param string[] $args .
+	 * @param string[] $args       .
+	 * @param string[] $assoc_args .
 	 *
 	 * @return void
 	 */
-	public function regenerate_images( array $args ) {
-		$skip_converted    = ( ( $args[0] ?? '' ) !== '-force' );
+	public function regenerate_images( array $args, array $assoc_args = [] ) {
+		$force_flag        = ( isset( $assoc_args['force'] ) || in_array( '-force', $args ) );
 		$paths_chunks      = ( new PathsFinder( $this->plugin_data, $this->token_repository ) )
-			->get_paths_by_chunks( $skip_converted );
+			->get_paths_by_chunks( ! $force_flag );
 		$conversion_method = ( new MethodIntegrator( $this->plugin_data ) );
 
 		$count = 0;
@@ -97,7 +113,7 @@ class WpCliManager implements HookableInterface {
 			foreach ( $chunk_data['files'] as $images_paths ) {
 				$response = $conversion_method->init_conversion(
 					$this->parse_files_paths( $images_paths, $chunk_data['path'] ),
-					! $skip_converted
+					$force_flag
 				);
 
 				if ( $response !== null ) {

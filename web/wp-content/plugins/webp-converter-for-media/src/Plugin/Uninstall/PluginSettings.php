@@ -38,6 +38,7 @@ class PluginSettings {
 		OptionsAccessManager::delete_option( 'webpc_notice_avif_support' );
 		OptionsAccessManager::delete_option( 'webpc_notice_cloudways' );
 		OptionsAccessManager::delete_option( 'webpc_notice_litespeed' );
+		OptionsAccessManager::delete_option( 'webpc_notice_bf2022' );
 
 		OptionsAccessManager::delete_option( ErrorDetectorAggregator::ERRORS_CACHE_OPTION );
 		OptionsAccessManager::delete_option( SettingsSave::SETTINGS_OPTION );

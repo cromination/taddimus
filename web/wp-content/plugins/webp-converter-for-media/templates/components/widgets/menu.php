@@ -2,7 +2,7 @@
 /**
  * Widget displayed on plugin settings page.
  *
- * @var string[][] $menu_items Tabs on plugin settings page.
+ * @var mixed[][] $menu_items Tabs on plugin settings page.
  *
  * @package Converter for Media
  */

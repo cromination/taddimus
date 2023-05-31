@@ -58,7 +58,7 @@ class Upload implements HookableInterface {
 	 */
 	public function init_attachment_convert( array $data = null, int $attachment_id = null ) {
 		if ( ( $data === null ) || ( $attachment_id === null )
-			|| ! is_array( $data ) || ! isset( $data['file'] ) || ! isset( $data['sizes'] ) ) {
+			|| ! isset( $data['file'] ) || ! isset( $data['sizes'] ) ) {
 			return $data;
 		}
 

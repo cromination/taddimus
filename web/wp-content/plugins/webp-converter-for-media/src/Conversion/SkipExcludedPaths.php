@@ -11,6 +11,15 @@ use WebpConverter\Settings\Option\ExcludedDirectoriesOption;
  */
 class SkipExcludedPaths implements HookableInterface {
 
+	const EXCLUDED_SUB_EXTENSIONS = [
+		'jpg',
+		'jpeg',
+		'png',
+		'gif',
+		'bk',
+		'bak',
+	];
+
 	/**
 	 * @var string[]
 	 */
@@ -22,6 +31,8 @@ class SkipExcludedPaths implements HookableInterface {
 		'node_modules',
 		'wpmc-trash',
 		'__MACOSX',
+		'ShortpixelBackups',
+		'backup',
 	];
 
 	/**

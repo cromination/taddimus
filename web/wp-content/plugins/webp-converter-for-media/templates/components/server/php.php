@@ -37,5 +37,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php echo esc_html( ini_get( 'disable_functions' ) ?: '-' ); ?>
 		</td>
 	</tr>
+	<tr>
+		<td class="e">SERVER_SOFTWARE</td>
+		<td class="v">
+			<?php echo esc_html( $_SERVER['SERVER_SOFTWARE'] ?? '-' ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput ?>
+		</td>
+	</tr>
 	</tbody>
 </table>

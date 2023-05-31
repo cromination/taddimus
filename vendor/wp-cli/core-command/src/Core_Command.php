@@ -137,7 +137,11 @@ class Core_Command extends WP_CLI_Command {
 			? ( rtrim( $assoc_args['path'], '/\\' ) . '/' )
 			: ABSPATH;
 
-		$wordpress_present = is_readable( $download_dir . 'wp-load.php' );
+		// Check for files if WordPress already present or not.
+		$wordpress_present = is_readable( $download_dir . 'wp-load.php' )
+			|| is_readable( $download_dir . 'wp-mail.php' )
+			|| is_readable( $download_dir . 'wp-cron.php' )
+			|| is_readable( $download_dir . 'wp-links-opml.php' );
 
 		if ( $wordpress_present && ! Utils\get_flag_value( $assoc_args, 'force' ) ) {
 			WP_CLI::error( 'WordPress files seem to already be present here.' );
@@ -448,6 +452,9 @@ class Core_Command extends WP_CLI_Command {
 	 *
 	 * [--subdomains]
 	 * : If passed, the network will use subdomains, instead of subdirectories. Doesn't work with 'localhost'.
+	 *
+	 * [--skip-config]
+	 * : Don't add multisite constants to wp-config.php.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -1524,6 +1531,21 @@ EOT;
 			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 			for ( $i = 0; $i < $zip->numFiles; $i++ ) {
 				$info = $zip->statIndex( $i );
+				// Strip all files in wp-content/themes and wp-content/plugins
+				// but leave the directories and index.php files intact.
+				if ( in_array(
+					$info['name'],
+					array(
+						'wordpress/wp-content/plugins/',
+						'wordpress/wp-content/plugins/index.php',
+						'wordpress/wp-content/themes/',
+						'wordpress/wp-content/themes/index.php',
+					),
+					true
+				) ) {
+					continue;
+				}
+
 				if ( 0 === stripos( $info['name'], 'wordpress/wp-content/themes/' ) || 0 === stripos( $info['name'], 'wordpress/wp-content/plugins/' ) ) {
 					$zip->deleteIndex( $i );
 				}

@@ -127,7 +127,7 @@ class PassthruLoader extends LoaderAbstract {
 
 		return preg_replace(
 			'/(https?:\/\/(?:[^\s()"\']+)(?:' . $dir_paths . ')(?:[^\s()"\']+)\.(?:' . $extensions . '))/',
-			$source_dir . '?src=$1' . ( ( $has_nocache ) ? '&nocache=1' : '' ),
+			$source_dir . '?src=$1' . ( ( $has_nocache ) ? '&amp;nocache=1' : '' ),
 			$buffer
 		) ?: '';
 	}

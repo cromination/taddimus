@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Error\Detector;
 
+use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\OutputPath;
 use WebpConverter\Error\Notice\BypassingApacheNotice;
@@ -29,6 +30,7 @@ class RewritesErrorsDetector implements ErrorDetector {
 
 	const PATH_SOURCE_FILE_PNG     = '/assets/img/icon-test.png';
 	const PATH_SOURCE_FILE_WEBP    = '/assets/img/icon-test.webp';
+	const PATH_SOURCE_FILE_AVIF    = '/assets/img/icon-test.avif';
 	const PATH_OUTPUT_FILE_PNG     = '/webp-converter-for-media-test.png';
 	const PATH_OUTPUT_FILE_PNG2    = '/webp-converter-for-media-test.png2';
 	const PATH_OUTPUT_FILE_PLUGINS = '/webp-converter-for-media/assets/img/icon-test.png';
@@ -149,9 +151,14 @@ class RewritesErrorsDetector implements ErrorDetector {
 			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_PNG, $path_file_png );
 			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_PNG, $path_file_png2 );
 		}
+
 		if ( ( $output_path = $this->output_path->get_path( $path_file_png, true, WebpFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {
 			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_WEBP, $output_path );
+		}
+		if ( ( $output_path = $this->output_path->get_path( $path_file_png, true, AvifFormat::FORMAT_EXTENSION ) )
+			&& ! file_exists( $output_path ) ) {
+			copy( $this->plugin_info->get_plugin_directory_path() . self::PATH_SOURCE_FILE_AVIF, $output_path );
 		}
 		if ( ( $output_path = $this->output_path->get_path( $path_file_png2, true, WebpFormat::FORMAT_EXTENSION ) )
 			&& ! file_exists( $output_path ) ) {

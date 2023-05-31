@@ -39,9 +39,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php
 			echo wp_kses_post(
 				sprintf(
-					/* translators: %1$s: icon heart, %2$s: coupon code, %3$s: discount value, %4$s: date */
+					/* translators: %1$s: plugin name, %2$s: coupon code, %3$s: discount value, %4$s: date */
 					__( 'We have prepared a special offer for users of our %1$s plugin. Use the coupon code: %2$s when placing your order and get %3$s discount! This offer is valid until %4$s.', 'webp-converter-for-media' ),
-					'<span class="dashicons dashicons-heart"></span>',
+					'Converter for Media',
 					'<code>' . $coupon_code . '</code>',
 					$discount_value,
 					wp_date( get_option( 'date_format' ), strtotime( $promotion_date ) ?: 0 )

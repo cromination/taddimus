@@ -2,10 +2,10 @@
 Contributors: futtta, optimizingmatters, zytzagoo, turl
 Tags: optimize, minify, performance, images, core web vitals, lazy-load, pagespeed, google fonts
 Donate link: http://blog.futtta.be/2013/10/21/do-not-donate-to-me/
-Requires at least: 4.9
+Requires at least: 5.3 
 Tested up to: 6.2
 Requires PHP: 5.6
-Stable tag: 3.1.6
+Stable tag: 3.1.7
 
 Autoptimize speeds up your website by optimizing JS, CSS, images (incl. lazy-load), HTML and Google Fonts, asyncing JS, removing emoji cruft and more.
 
@@ -318,6 +318,9 @@ You can get help on the [wordpress.org support forum](http://wordpress.org/suppo
 Just [fork Autoptimize on Github](https://github.com/futtta/autoptimize) and code away!
 
 == Changelog ==
+
+= 3.1.7 =
+* security: improve validation (import) and sanitization (output) of critical CSS rules, to fix a medium severity Admin+ Stored Cross-Site Scripting vulnerability as reported by WP Scan Security.
 
 = 3.1.6 =
 * CSS: removing trailing slashes in <link tags for more W3 HTML validation love
