@@ -33,5 +33,4 @@ if ( ! is_singular( 'elementor_library' ) ) {
 	do_action( 'hestia_blog_related_posts' );
 }
 ?>
-<div class="footer-wrapper">
-	<?php get_footer(); ?>
+<?php get_footer(); ?>

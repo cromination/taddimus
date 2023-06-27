@@ -213,5 +213,46 @@ jQuery( document ).ready(
                 headerVideoControl.active.bind( toggleNotice );
             } );
         } );
+
+        // Open navigation panel.
+        wp.customize.section( 'hestia_navigation' ).expanded.bind( function ( isExpanded ) {
+        	if ( isExpanded ) {
+        		var hasIcon = jQuery( '#customize-control-hestia_cart_icon' );
+        		if ( hasIcon.length === 0 ) {
+        			var iconStatusElement = jQuery( '#customize-control-hestia_cart_icon_status input:checkbox' );
+        			var iconStatusLable = iconStatusElement.next( 'label' );
+        			var hasLockedIcon = iconStatusLable.find( '.dashicons-lock' );
+        			if ( hasLockedIcon.length === 0 ) {
+        				iconStatusElement.attr( 'readonly', true );
+        				iconStatusLable.html( iconStatusLable.html() + ' <span class="dashicons dashicons-lock"></span>' );
+        				iconStatusElement.parents( 'li' ).addClass( 'customize-locked-control' );
+        			}
+        		}
+        	}
+        } );
+
+        // Choose cart icon.
+        wp.customize.control( 'hestia_cart_icon', function( control ) {
+        	control.container.on( 'change', 'input:radio', function() {
+        		if ( 'code' === jQuery( this ).val() ) {
+        			jQuery( '#customize-control-hestia_cart_custom_icon' ).addClass( 'hestia-show-custom-icon' );
+        		} else {
+        			jQuery( '#customize-control-hestia_cart_custom_icon' ).removeClass( 'hestia-show-custom-icon' );
+        		}
+        	} );
+        	jQuery( 'input:radio:checked', control.container ).trigger( 'change' );
+        } );
+
+        // Toggle cart icon.
+        wp.customize.control( 'hestia_cart_icon_status', function( control ) {
+        	control.container.on( 'change', 'input:checkbox', function() {
+        		if ( jQuery( this ).is( ':checked' ) ) {
+        			jQuery( '#customize-control-hestia_cart_icon' ).fadeIn( 'show' );
+        		} else {
+        			jQuery( '#customize-control-hestia_cart_icon' ).fadeOut();
+        		}
+        	} );
+        	jQuery( 'input:checkbox:checked', control.container ).trigger( 'change' );
+        } );
 	}
 );

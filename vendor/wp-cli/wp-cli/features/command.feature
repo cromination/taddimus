@@ -141,7 +141,7 @@ Feature: WP-CLI Commands
       """
       <?php
       class Foo_Class extends WP_CLI_Command {
-
+        private $prefix;
         public function __construct( $prefix ) {
           $this->prefix = $prefix;
         }
@@ -236,7 +236,7 @@ Feature: WP-CLI Commands
       """
       <?php
       class Foo_Class {
-
+        private $message;
         public function __construct( $message ) {
           $this->message = $message;
         }
@@ -948,7 +948,7 @@ Feature: WP-CLI Commands
       """
       <?php
       class Foo_Class {
-
+        private $message;
         public function __construct( $message ) {
           $this->message = $message;
         }
@@ -1518,3 +1518,37 @@ Feature: WP-CLI Commands
     """
     wp custom
     """
+
+  Scenario: subcommand alias should respect @when definition
+    Given an empty directory
+    And a custom-cmd.php file:
+      """
+      <?php
+      class Test_Command {
+        /**
+         * test
+         *
+         * @alias bar
+         *
+         * @when before_wp_load
+         *
+         */
+        public function foo( $args, $assoc_args ) {
+          echo 'Hello' . PHP_EOL;
+        }
+      }
+
+      WP_CLI::add_command( 'test', Test_Command::class );
+      """
+
+    When I run `wp --require=custom-cmd.php test foo`
+    Then STDOUT should contain:
+      """
+      Hello
+      """
+
+    When I run `wp --require=custom-cmd.php test bar`
+    Then STDOUT should contain:
+      """
+      Hello
+      """

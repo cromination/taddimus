@@ -49,7 +49,7 @@ Feature: Bootstrap WP-CLI
         ],
         "require": {
           "wp-cli/override": "*",
-          "wp-cli/wp-cli": "dev-master"
+          "wp-cli/wp-cli": "dev-main"
         }
       }
       """
@@ -401,10 +401,10 @@ Feature: Bootstrap WP-CLI
       """
     And the return code should be 1
 
-    When I run `wp cache flush --url=invalid.com`
+    When I try `wp cache flush --url=invalid.com`
     Then STDOUT should contain:
       """
-      Success:
+      Success: The cache was flushed.
       """
     And the return code should be 0
 

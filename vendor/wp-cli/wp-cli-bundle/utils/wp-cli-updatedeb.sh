@@ -64,7 +64,7 @@ fi
 # copyright
 if ! [ -r usr/share/doc/php-wpcli/copyright ]; then
     mkdir -p usr/share/doc/php-wpcli &> /dev/null
-    wget -nv -O usr/share/doc/php-wpcli/copyright https://github.com/wp-cli/wp-cli/raw/master/LICENSE
+    wget -nv -O usr/share/doc/php-wpcli/copyright https://raw.githubusercontent.com/wp-cli/wp-cli/main/LICENSE
 fi
 
 # changelog
@@ -79,6 +79,7 @@ fi
 
 # move phar
 mv ../wp-cli.phar usr/bin/wp
+chmod +x usr/bin/wp
 
 # get version
 WPCLI_VER="$(usr/bin/wp cli version | cut -d " " -f 2)"

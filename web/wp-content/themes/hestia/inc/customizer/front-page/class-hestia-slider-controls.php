@@ -67,8 +67,9 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 	 */
 	public function add_content_controls() {
 		$description = sprintf(
-			/* translators: %s is the Learn more link */
-			__( 'More Options Available for big title section in the PRO version. %s', 'hestia' ),
+			/* translators: %1$s is the Learn more link, %2$s is the section title */
+			__( 'More Options Available for %1$s in the PRO version. %2$s', 'hestia' ),
+			esc_html__( 'big title section', 'hestia' ),
 			/* translators: %s is the Learn more label*/
 			sprintf(
 				'<a class="button button-primary" target="_blank" href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'bigtitlesection' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',

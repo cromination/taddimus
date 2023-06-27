@@ -234,7 +234,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="description"><?php _e('The Global API Key extrapolated from your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
                     </div>
                     <div class="right_column">
-                        <input type="password" name="swcfpc_cf_apikey"  value="<?php echo $this->main_instance->get_cloudflare_api_key(); ?>" autocomplete="new-password" />
+                        <input type="password" name="swcfpc_cf_apikey" value="<?php echo $this->main_instance->get_cloudflare_api_key(); ?>" autocomplete="new-password" />
                     </div>
                     <div class="clear"></div>
                 </div>
@@ -245,7 +245,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="description"><?php _e('The API Token extrapolated from your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
                     </div>
                     <div class="right_column">
-                        <input type="password" name="swcfpc_cf_apitoken"  value="<?php echo $this->main_instance->get_cloudflare_api_token(); ?>" autocomplete="new-password" />
+                        <input type="password" name="swcfpc_cf_apitoken" value="<?php echo $this->main_instance->get_cloudflare_api_token(); ?>" autocomplete="new-password" />
                     </div>
                     <div class="clear"></div>
                 </div>

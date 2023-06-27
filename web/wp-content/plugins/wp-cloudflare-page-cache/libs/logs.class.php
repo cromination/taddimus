@@ -72,7 +72,7 @@ class SWCFPC_Logs
 
         if( $this->is_logging_enabled && $this->log_file_path ) {
 
-            $log = sprintf('[%s] [%s] %s', date('Y-m-d H:i:s'), $identifier, $message) . PHP_EOL;
+            $log = sprintf('[%s] [%s] %s', current_time('Y-m-d H:i:s'), $identifier, $message) . PHP_EOL;
 
             error_log($log, 3, $this->log_file_path);
 

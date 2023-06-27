@@ -303,6 +303,7 @@ class Hestia_Header extends Hestia_Abstract_Main {
 
 		$transparent_header = get_theme_mod( 'hestia_navbar_transparent', apply_filters( 'hestia_navbar_transparent_default', true ) );
 		$custom_logo        = get_theme_mod( 'custom_logo' );
+		$logo_display       = get_theme_mod( 'hestia_logo_display', 'only-logo' );
 		if ( function_exists( 'pll__' ) ) {
 			$custom_logo = pll__( $custom_logo );
 		}
@@ -360,6 +361,18 @@ class Hestia_Header extends Hestia_Abstract_Main {
 			$transparent_logo_alt_attribute = get_post_meta( $transparent_logo_attachment_id, '_wp_attachment_image_alt', true );
 			$transparent_logo_alt_attribute = ! empty( $transparent_logo_alt_attribute ) ? $transparent_logo_alt_attribute : get_bloginfo( 'name' );
 			$logo                          .= '<img class="hestia-transparent-logo" src="' . esc_url( $transparent_logo ) . '" alt="' . esc_attr( $transparent_logo_alt_attribute ) . '" width="' . esc_attr( $width ) . '" height="' . esc_attr( $height ) . '">';
+		}
+
+		if ( 'right-text' === $logo_display ) {
+			return sprintf( '<div class="hestia-title-with-logo hestia-text-right"><div class="hestia-logo">%s</div><div class="hestia-title-tagline-wrap"><div class="site-title">%s</div><small>%s</small></div></div>', $logo, get_bloginfo( 'name' ), get_bloginfo( 'description' ) );
+		}
+
+		if ( 'left-text' === $logo_display ) {
+			return sprintf( '<div class="hestia-title-with-logo hestia-text-left"><div class="hestia-logo">%s</div><div class="hestia-title-tagline-wrap"><div class="site-title">%s</div><small>%s</small></div></div>', $logo, get_bloginfo( 'name' ), get_bloginfo( 'description' ) );
+		}
+
+		if ( 'bottom-text' === $logo_display ) {
+			return sprintf( '<div class="hestia-logo-on-top hestia-text-bottom"><div class="hestia-logo">%s</div><div class="hestia-title-tagline-wrap"><div class="site-title">%s</div><small>%s</small></div></div>', $logo, get_bloginfo( 'name' ), get_bloginfo( 'description' ) );
 		}
 
 		return $logo;

@@ -11,6 +11,27 @@
 class Hestia_Admin {
 
 	/**
+	 * Theme name
+	 *
+	 * @var string $theme_name Theme name.
+	 */
+	public $theme_name = '';
+
+	/**
+	 * Theme slug
+	 *
+	 * @var string $theme_slug Theme slug.
+	 */
+	public $theme_slug = '';
+
+	/**
+	 * Show welcome message
+	 *
+	 * @var bool $should_show_welcome Show welcome.
+	 */
+	public $should_show_welcome = false;
+
+	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0

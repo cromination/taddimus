@@ -175,7 +175,11 @@ class Hestia_Customize_Control_Radio_Image extends WP_Customize_Control {
 			<label for="{{ data.id }}-{{ key }}" <# if( data.choices[key]['redirect'] ){ #> class="pro-feature" <#}#>>
 				<# if( !data.is_tab) {#>
 				<span class="screen-reader-text">{{ data.choices[ key ]['label'] }}</span>
-				<img src="{{ data.choices[ key ]['url'] }}" alt="{{ data.choices[ key ]['label'] }}"/>
+					<# if( data.choices[ key ]['icon'] ) {#>
+						<i class="fas fa-{{ data.choices[ key ]['icon'] }}"></i>
+					<# } else { #>
+						<img src="{{ data.choices[ key ]['url'] }}" alt="{{ data.choices[ key ]['label'] }}"/>
+					<# } #>
 				<# } else { #>
 				<# if( data.choices[ key ]['icon'] ){ #>
 				<i class="fas fa-{{ data.choices[ key ]['icon'] }}"></i>

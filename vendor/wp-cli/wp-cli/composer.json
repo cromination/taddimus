@@ -11,7 +11,6 @@
         "php": "^5.6 || ^7.0 || ^8.0",
         "ext-curl": "*",
         "mustache/mustache": "^2.14.1",
-        "rmccue/requests": "^1.8",
         "symfony/finder": ">2.7",
         "wp-cli/mustangostang-spyc": "^0.6.3",
         "wp-cli/php-cli-tools": "~0.11.2"
@@ -38,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.8.x-dev"
+            "dev-main": "2.9.x-dev"
         }
     },
     "autoload": {
@@ -64,6 +63,7 @@
         "behat-rerun": "rerun-behat-tests",
         "lint": "run-linter-tests",
         "phpcs": "run-phpcs-tests",
+        "phpcbf": "run-phpcbf-cleanup",
         "phpunit": "run-php-unit-tests",
         "prepare-tests": "install-package-tests",
         "test": [

@@ -15,7 +15,11 @@ jQuery( function ( $ ) {
 			},
 			success: function () {
 				$( '#accordion-section-' + control_id ).fadeOut( 300, function () {
-					$( this ).remove();
+					if ( 'function' === typeof wp.customize ) {
+						wp.customize.section.remove( control_id );
+					} else {
+						$( this ).remove();
+					}
 				} );
 			}
 		} );

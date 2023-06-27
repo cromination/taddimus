@@ -3,19 +3,22 @@
  * Plugin Name:  Super Page Cache for Cloudflare
  * Plugin URI:   https://wordpress.org/plugins/wp-cloudflare-page-cache/
  * Description:  Speed up your website by enabling page caching on a Cloudflare free plans.
- * Version:      4.7.3
+ * Version:      4.7.4
  * Author:       Optimole
  * Author URI:   https://optimole.com/
  * License:      GPLv2 or later
  * Text Domain:  wp-cloudflare-page-cache
  * Requires at least: 4.9
  * Requires PHP: 7.0
+ * WordPress Available: yes
+ * Requires License: no
 */
 
 if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
     define('SWCFPC_PLUGIN_PATH', plugin_dir_path(__FILE__));
     define('SWCFPC_PLUGIN_URL', plugin_dir_url(__FILE__));
+    define('SWCFPC_BASEFILE', __FILE__ );
     define('SWCFPC_PLUGIN_REVIEWS_URL', 'https://wordpress.org/support/plugin/wp-cloudflare-page-cache/reviews/');
     define('SWCFPC_PLUGIN_FORUM_URL', 'https://wordpress.org/support/plugin/wp-cloudflare-page-cache/');
     define('SWCFPC_AUTH_MODE_API_KEY',   0);
@@ -42,7 +45,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         private $config   = false;
         private $objects  = array();
-        private $version  = '4.7.3';
+        private $version  = '4.7.4';
 
         // Sorting Tool: https://onlinestringtools.com/sort-strings
         // Duplicate Finder: https://www.mynikko.com/tools/tool_duplicateremover.html
@@ -598,7 +601,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
 
         function actions() {
-
+	        add_filter( 'themeisle_sdk_products', array( $this, 'load_sdk' ) );
             add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array($this, 'add_plugin_action_links') );
             add_filter( 'plugin_row_meta' , array($this, 'add_plugin_meta_links'), 10, 2 );
 
@@ -606,6 +609,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             add_action( 'plugins_loaded', array($this, 'load_textdomain') );
 
         }
+
+		function load_sdk( $products ) {
+			$products[] = SWCFPC_BASEFILE;
+			return $products;
+		}
 
 
         function get_default_config() {

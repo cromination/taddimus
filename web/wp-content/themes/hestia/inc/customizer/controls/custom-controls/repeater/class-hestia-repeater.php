@@ -134,7 +134,7 @@ class Hestia_Repeater extends WP_Customize_Control {
 	 *
 	 * @var string
 	 */
-	public $default;
+	public $default = '';
 
 	/**
 	 * Value of setting.

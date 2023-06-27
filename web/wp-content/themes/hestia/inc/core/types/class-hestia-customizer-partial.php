@@ -24,6 +24,13 @@ class Hestia_Customizer_Partial {
 	public $args = array();
 
 	/**
+	 * Control id
+	 *
+	 * @var string $id Control id.
+	 */
+	public $id = '';
+
+	/**
 	 * Hestia_Customizer_Partial constructor.
 	 *
 	 * @param string $control_id the control id.

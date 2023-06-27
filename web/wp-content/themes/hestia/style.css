@@ -6,7 +6,7 @@ Author URI:     https://themeisle.com
 Tested up to:   5.8.2
 Requires PHP:   5.4.0
 Description:    Hestia is a modern WordPress theme for professionals. It fits creative business, small businesses (restaurants, wedding planners, sport/medical shops), startups, corporate businesses, online agencies and firms, portfolios, ecommerce (WooCommerce), and freelancers. It has a multipurpose one-page design, widgetized footer, blog/news page and a clean look, is compatible with: Flat Parallax Slider, Photo Gallery, Travel Map and Elementor Page Builder . The theme is responsive, WPML, Retina ready, SEO friendly, and uses Material Kit for design.
-Version:        3.0.29
+Version:        3.0.30
 License:        GNU General Public License v2 or later
 License URI:    http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:    hestia
@@ -2371,7 +2371,6 @@ body.admin-bar .navbar {
 }
 
 .navbar .title-logo-wrapper {
-  max-width: 250px;
   display: flex;
   align-items: center;
 }
@@ -3458,6 +3457,76 @@ table > tbody > tr:last-child,
 .header-layout-classic-blog:not(.page-template-default):not(.home):not(.archive).single .main-raised,
 .header-layout-classic-blog:not(.page-template-default):not(.home):not(.archive) .main-raised {
   margin-top: 0;
+}
+
+/*--------------------------------------------------------------
+# Logo
+--------------------------------------------------------------*/
+.hestia-title-with-logo {
+  line-height: normal;
+}
+
+.hestia-title-with-logo .hestia-logo {
+  width: auto;
+}
+
+.hestia-title-with-logo .hestia-title-tagline-wrap {
+  display: block;
+  line-height: normal;
+}
+
+.hestia-title-tagline-wrap .site-title {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  line-height: normal;
+  margin-bottom: 5px;
+}
+
+.hestia-title-tagline-wrap small {
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.hestia-text-left {
+  display: inline-flex;
+  align-items: center;
+}
+
+.hestia-text-left .hestia-title-tagline-wrap {
+  margin-right: 10px;
+  order: 1;
+}
+
+.hestia-text-left .hestia-logo {
+  order: 2;
+}
+
+.hestia-text-right {
+  display: inline-flex;
+  align-items: center;
+}
+
+.hestia-text-right .hestia-title-tagline-wrap {
+  margin-left: 10px;
+}
+
+.hestia-text-bottom {
+  display: inline-block;
+}
+
+.hestia-text-bottom .hestia-title-tagline-wrap {
+  width: 100%;
+  display: block;
+  line-height: normal;
+  margin-top: 10px;
+}
+
+.hestia-text-bottom .hestia-title-tagline-wrap .site-title {
+  margin-bottom: 0;
 }
 
 /*--------------------------------------------------------------

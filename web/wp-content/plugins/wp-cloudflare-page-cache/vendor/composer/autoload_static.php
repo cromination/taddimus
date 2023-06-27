@@ -4,8 +4,12 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit3c90ba1ac7f7f27a45a0950841cfc739
+class ComposerStaticInit82890d20b229166efb61b3cb39805b13
 {
+    public static $files = array (
+        'f3e742daca6ecc1d4ff0a2b5cf792c05' => __DIR__ . '/..' . '/codeinwp/themeisle-sdk/load.php',
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'WP_Async_Request' => __DIR__ . '/..' . '/deliciousbrains/wp-background-processing/classes/wp-async-request.php',
@@ -15,7 +19,7 @@ class ComposerStaticInit3c90ba1ac7f7f27a45a0950841cfc739
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit3c90ba1ac7f7f27a45a0950841cfc739::$classMap;
+            $loader->classMap = ComposerStaticInit82890d20b229166efb61b3cb39805b13::$classMap;
 
         }, null, ClassLoader::class);
     }

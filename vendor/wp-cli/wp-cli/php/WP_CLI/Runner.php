@@ -91,7 +91,13 @@ class Runner {
 	 * @param Subcommand $command
 	 */
 	public function register_early_invoke( $when, $command ) {
-		$this->early_invoke[ $when ][] = array_slice( Dispatcher\get_path( $command ), 1 );
+		$cmd_path                      = array_slice( Dispatcher\get_path( $command ), 1 );
+		$this->early_invoke[ $when ][] = $cmd_path;
+		if ( $command->get_alias() ) {
+			array_pop( $cmd_path );
+			$cmd_path[]                    = $command->get_alias();
+			$this->early_invoke[ $when ][] = $cmd_path;
+		}
 	}
 
 	/**
@@ -241,9 +247,15 @@ class Runner {
 	 * Find the directory that contains the WordPress files.
 	 * Defaults to the current working dir.
 	 *
-	 * @return string An absolute path
+	 * @return string An absolute path.
 	 */
-	private function find_wp_root() {
+	public function find_wp_root() {
+		if ( isset( $this->config['path'] ) &&
+			( is_bool( $this->config['path'] ) || empty( $this->config['path'] ) )
+		) {
+			WP_CLI::error( 'The --path parameter cannot be empty when provided.' );
+		}
+
 		if ( ! empty( $this->config['path'] ) ) {
 			$path = $this->config['path'];
 			if ( ! Utils\is_path_absolute( $path ) ) {
@@ -967,6 +979,7 @@ class Runner {
 			}
 			WP_CLI::error(
 				"This does not seem to be a WordPress installation.\n" .
+				'The used path is: ' . ABSPATH . "\n" .
 				'Pass --path=`path/to/wordpress` or run `wp core download`.'
 			);
 		}
@@ -1771,6 +1784,19 @@ class Runner {
 		foreach ( $hooks as $hook ) {
 			add_filter( $hook, $wp_cli_filter_active_theme, 999 );
 		}
+
+		// Remove theme-related actions not directly tied into the theme lifecycle.
+		if ( WP_CLI::get_runner()->config['skip-themes'] ) {
+			$theme_related_actions = [
+				[ 'init', '_register_theme_block_patterns' ],          // Block patterns registration in WP Core.
+				[ 'init', 'gutenberg_register_theme_block_patterns' ], // Block patterns registration in the GB plugin.
+			];
+			foreach ( $theme_related_actions as $action ) {
+				list( $hook, $callback ) = $action;
+				remove_action( $hook, $callback );
+			}
+		}
+
 		// Clean up after the TEMPLATEPATH and STYLESHEETPATH constants are defined
 		WP_CLI::add_wp_hook(
 			'after_setup_theme',

@@ -272,10 +272,21 @@ class SWCFPC_Backend
 
         if( $this->main_instance->get_single_config('cf_remove_purge_option_toolbar', 0) == 0 ) {
 
+            $swpfpc_toolbar_container_url_query_arg_admin = [
+                'page' => 'wp-cloudflare-super-page-cache-index',
+                $this->objects['cache_controller']->get_cache_buster() => 1
+            ];
+
+            if( $this->main_instance->get_single_config('cf_remove_cache_buster', 1) > 0 ) {
+                $swpfpc_toolbar_container_url_query_arg_admin = [
+                    'page' => 'wp-cloudflare-super-page-cache-index'
+                ];
+            }
+
             $admin_bar->add_menu(array(
                 'id' => 'wp-cloudflare-super-page-cache-toolbar-container',
                 'title' => '<span class="ab-icon"></span><span class="ab-label">' . __( 'CF Cache', 'wp-cloudflare-page-cache' ) . '</span>',
-                'href' => current_user_can('manage_options') ? add_query_arg( array( 'page' => 'wp-cloudflare-super-page-cache-index', $this->objects['cache_controller']->get_cache_buster() => 1), admin_url('options-general.php')) : '#',
+                'href' => current_user_can('manage_options') ? add_query_arg( $swpfpc_toolbar_container_url_query_arg_admin, admin_url('options-general.php')) : '#',
             ));
 
             if ($this->main_instance->get_single_config('cf_cache_enabled', 0) > 0) {
@@ -322,9 +333,11 @@ class SWCFPC_Backend
 
     function add_post_row_actions( $actions, $post ) {
 
-        $this->objects = $this->main_instance->get_objects();
+        //$this->objects = $this->main_instance->get_objects();
 
-        $actions['swcfpc_single_purge'] = '<a class="swcfpc_action_row_single_post_cache_purge" data-post_id="'.$post->ID.'" href="#" target="_blank">'.__('Purge CF Cache', 'wp-cloudflare-page-cache').'</a>';
+        if( $post->post_type !== 'shop_order' ) {
+            $actions['swcfpc_single_purge'] = '<a class="swcfpc_action_row_single_post_cache_purge" data-post_id="'.$post->ID.'" href="#" target="_blank">'.__('Purge CF Cache', 'wp-cloudflare-page-cache').'</a>';
+        }
 
         return $actions;
 
@@ -1367,17 +1380,35 @@ class SWCFPC_Backend
             $zone_id_list = array();
         }
 
-        $cronjob_url = add_query_arg( array(
+        $cornjob_url_query_arg = [
             $this->objects['cache_controller']->get_cache_buster() => '1',
             'swcfpc-purge-all' => '1',
-            'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_purge_url_secret_key', wp_generate_password(20, false, false)),
-        ), site_url() );
+            'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_purge_url_secret_key', wp_generate_password(20, false, false))
+        ];
 
-        $preloader_cronjob_url = add_query_arg( array(
+        if( $this->main_instance->get_single_config('cf_remove_cache_buster', 1) > 0 ) {
+            $cornjob_url_query_arg = [
+                'swcfpc-purge-all' => '1',
+                'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_purge_url_secret_key', wp_generate_password(20, false, false))
+            ];
+        }
+
+        $cronjob_url = add_query_arg( $cornjob_url_query_arg, site_url() );
+
+        $preloader_cronjob_url_query_arg = [
             $this->objects['cache_controller']->get_cache_buster() => '1',
             'swcfpc-preloader' => '1',
-            'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_preloader_url_secret_key', wp_generate_password(20, false, false)),
-        ), site_url() );
+            'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_preloader_url_secret_key', wp_generate_password(20, false, false))
+        ];
+
+        if( $this->main_instance->get_single_config('cf_remove_cache_buster', 1) > 0 ) {
+            $preloader_cronjob_url_query_arg = [
+                'swcfpc-preloader' => '1',
+                'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_preloader_url_secret_key', wp_generate_password(20, false, false))
+            ];
+        }
+
+        $preloader_cronjob_url = add_query_arg( $preloader_cronjob_url_query_arg, site_url() );
 
         $wordpress_menus = wp_get_nav_menus();
         $wordpress_roles = $this->main_instance->get_wordpress_roles();

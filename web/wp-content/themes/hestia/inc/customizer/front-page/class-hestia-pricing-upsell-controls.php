@@ -30,8 +30,9 @@ class Hestia_Pricing_Upsell_Controls extends Hestia_Front_Page_Section_Controls_
 	public function add_controls() {
 		$this->add_tabs();
 		$description = sprintf(
-			/* translators: %s is the Learn more link */
-			__( 'More Options Available for Pricing in the PRO version. %s', 'hestia' ),
+			/* translators: %1$s is the Learn more link, %2$s is the section title */
+			__( 'More Options Available for %1$s in the PRO version. %2$s', 'hestia' ),
+			esc_html__( 'Pricing', 'hestia' ),
 			/* translators: %s is the Learn more label*/
 			sprintf(
 				'<a class="button button-primary" target="_blank" href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'pricingsection' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',

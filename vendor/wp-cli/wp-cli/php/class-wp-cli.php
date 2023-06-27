@@ -227,8 +227,8 @@ class WP_CLI {
 	 *
 	 * * `before_add_command:<command>` - Before the command is added.
 	 * * `after_add_command:<command>` - After the command was added.
-	 * * `before_invoke:<command>` - Just before a command is invoked.
-	 * * `after_invoke:<command>` - Just after a command is invoked.
+	 * * `before_invoke:<command>` (1) - Just before a command is invoked.
+	 * * `after_invoke:<command>` (1) - Just after a command is invoked.
 	 * * `find_command_to_run_pre` - Just before WP-CLI finds the command to run.
 	 * * `before_registering_contexts` (1) - Before the contexts are registered.
 	 * * `before_wp_load` - Just before the WP load process begins.
@@ -249,7 +249,7 @@ class WP_CLI {
 	 * ```
 	 * # `wp network meta` confirms command is executing in multisite context.
 	 * WP_CLI::add_command( 'network meta', 'Network_Meta_Command', array(
-	 *    'before_invoke' => function () {
+	 *    'before_invoke' => function ( $name ) {
 	 *        if ( !is_multisite() ) {
 	 *            WP_CLI::error( 'This is not a multisite installation.' );
 	 *        }
@@ -1269,13 +1269,15 @@ class WP_CLI {
 	 * * Prevent halting script execution on error.
 	 * * Capture and return STDOUT, or full details about command execution.
 	 * * Parse JSON output if the command rendered it.
+	 * * Include additional arguments that are passed to the command.
 	 *
 	 * ```
 	 * $options = array(
-	 *   'return'     => true,   // Return 'STDOUT'; use 'all' for full object.
-	 *   'parse'      => 'json', // Parse captured STDOUT to JSON array.
-	 *   'launch'     => false,  // Reuse the current process.
-	 *   'exit_error' => true,   // Halt script execution on error.
+	 *   'return'       => true,                // Return 'STDOUT'; use 'all' for full object.
+	 *   'parse'        => 'json',              // Parse captured STDOUT to JSON array.
+	 *   'launch'       => false,               // Reuse the current process.
+	 *   'exit_error'   => true,                // Halt script execution on error.
+	 *   'command_args' => [ '--skip-themes' ], // Additional arguments to be passed to the $command.
 	 * );
 	 * $plugins = WP_CLI::runcommand( 'plugin list --format=json', $options );
 	 * ```
@@ -1288,18 +1290,25 @@ class WP_CLI {
 	 * @return mixed
 	 */
 	public static function runcommand( $command, $options = [] ) {
-		$defaults   = [
-			'launch'     => true, // Launch a new process, or reuse the existing.
-			'exit_error' => true, // Exit on error by default.
-			'return'     => false, // Capture and return output, or render in realtime.
-			'parse'      => false, // Parse returned output as a particular format.
+		$defaults     = [
+			'launch'       => true,  // Launch a new process, or reuse the existing.
+			'exit_error'   => true,  // Exit on error by default.
+			'return'       => false, // Capture and return output, or render in realtime.
+			'parse'        => false, // Parse returned output as a particular format.
+			'command_args' => [],    // Include optional command arguments.
 		];
-		$options    = array_merge( $defaults, $options );
-		$launch     = $options['launch'];
-		$exit_error = $options['exit_error'];
-		$return     = $options['return'];
-		$parse      = $options['parse'];
-		$retval     = null;
+		$options      = array_merge( $defaults, $options );
+		$launch       = $options['launch'];
+		$exit_error   = $options['exit_error'];
+		$return       = $options['return'];
+		$parse        = $options['parse'];
+		$command_args = $options['command_args'];
+
+		if ( ! empty( $command_args ) ) {
+			$command .= ' ' . implode( ' ', $command_args );
+		}
+
+		$retval = null;
 		if ( $launch ) {
 			Utils\check_proc_available( 'launch option' );
 

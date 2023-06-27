@@ -44,11 +44,6 @@ add_action( 'woocommerce_before_checkout_form', 'hestia_coupon_after_order_table
 add_action( 'woocommerce_checkout_order_review', 'hestia_coupon_after_order_table' );
 
 /**
- * Ensure cart contents update when products are added to the cart via AJAX
- */
-add_filter( 'woocommerce_add_to_cart_fragments', 'hestia_cart_link_fragment' );
-
-/**
  * Add before and after cart totals code for card.
  */
 add_action( 'woocommerce_before_cart_totals', 'hestia_woocommerce_before_cart_totals', 1 );

@@ -3,7 +3,7 @@ Contributors: optimole, salvatorefresta, isaumya
 Tags: cloudflare cache, improve speed, improve performance, page caching
 Requires at least: 4.9
 Requires PHP: 7.0
-Tested up to: 6.1
+Tested up to: 6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,14 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 
 == Changelog ==
+
+#####   Version 4.7.4 (2023-06-12)
+
+- Making sure the log file shows the date and time in accordance with the Timezone settings set inside WordPress admin
+- Making sure that the Purge CF Cache option is not showing up for the WooCommerce individual order items
+
+
+
 
 #####   Version 4.7.3 (2023-02-02)
 

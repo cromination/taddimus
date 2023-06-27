@@ -1,3 +1,8 @@
+#####   Version 4.7.4 (2023-06-12)
+
+- Making sure the log file shows the date and time in accordance with the Timezone settings set inside WordPress admin
+- Making sure that the Purge CF Cache option is not showing up for the WooCommerce individual order items
+
 #####   Version 4.7.3 (2023-02-02)
 
 

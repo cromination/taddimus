@@ -145,7 +145,15 @@ function maybe_require( $since, $path ) {
 
 function get_upgrader( $class, $insecure = false ) {
 	if ( ! class_exists( '\WP_Upgrader' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		if ( file_exists( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' ) ) {
+			include ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		}
+	}
+
+	if ( ! class_exists( '\WP_Upgrader_Skin' ) ) {
+		if ( file_exists( ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php' ) ) {
+			include ABSPATH . 'wp-admin/includes/class-wp-upgrader-skin.php';
+		}
 	}
 
 	$uses_insecure_flag = false;
@@ -290,6 +298,10 @@ function wp_get_cache_type() {
 		} elseif ( method_exists( $wp_object_cache, 'redis_instance' ) && method_exists( $wp_object_cache, 'redis_status' ) ) {
 			$message = 'Redis';
 
+			// Test for Object Cache Pro (https://objectcache.pro/)
+		} elseif ( method_exists( $wp_object_cache, 'config' ) && method_exists( $wp_object_cache, 'connection' ) ) {
+			$message = 'Redis';
+
 			// Test for WP LCache Object cache (https://github.com/lcache/wp-lcache)
 		} elseif ( isset( $wp_object_cache->lcache ) && $wp_object_cache->lcache instanceof \LCache\Integrated ) {
 			$message = 'WP LCache';
@@ -325,6 +337,13 @@ function wp_clear_object_cache() {
 	global $wpdb, $wp_object_cache;
 
 	$wpdb->queries = [];
+
+	if ( function_exists( 'wp_cache_flush_runtime' ) && function_exists( 'wp_cache_supports' ) ) {
+		if ( wp_cache_supports( 'flush_runtime' ) ) {
+			wp_cache_flush_runtime();
+			return;
+		}
+	}
 
 	if ( ! is_object( $wp_object_cache ) ) {
 		return;

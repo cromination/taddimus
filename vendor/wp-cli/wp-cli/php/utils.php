@@ -14,8 +14,6 @@ use Composer\Semver\Semver;
 use Exception;
 use Mustache_Engine;
 use ReflectionFunction;
-use Requests;
-use Requests_Exception;
 use RuntimeException;
 use WP_CLI;
 use WP_CLI\ExitException;
@@ -24,7 +22,13 @@ use WP_CLI\Inflector;
 use WP_CLI\Iterators\Transform;
 use WP_CLI\NoOp;
 use WP_CLI\Process;
+use WP_CLI\RequestsLibrary;
 
+/**
+ * File stream wrapper prefix for Phar archives.
+ *
+ * @var string
+ */
 const PHAR_STREAM_PREFIX = 'phar://';
 
 /**
@@ -40,13 +44,37 @@ const PHAR_STREAM_PREFIX = 'phar://';
  */
 const FILE_DIR_PATTERN = '%(?>#.*?$)|(?>//.*?$)|(?>/\*.*?\*/)|(?>\'(?:(?=(\\\\?))\1.)*?\')|(?>"(?:(?=(\\\\?))\2.)*?")|(?<file>\b__FILE__\b)|(?<dir>\b__DIR__\b)%ms';
 
-function inside_phar() {
-	return 0 === strpos( WP_CLI_ROOT, PHAR_STREAM_PREFIX );
+/**
+ * Check if a certain path is within a Phar archive.
+ *
+ * If no path is provided, the function checks whether the current WP_CLI instance is
+ * running from within a Phar archive.
+ *
+ * @param string|null $path Optional. Path to check. Defaults to null, which checks WP_CLI_ROOT.
+ */
+function inside_phar( $path = null ) {
+	if ( null === $path ) {
+		if ( ! defined( 'WP_CLI_ROOT' ) ) {
+			return false;
+		}
+
+		$path = WP_CLI_ROOT;
+	}
+
+	return 0 === strpos( $path, PHAR_STREAM_PREFIX );
 }
 
-// Files that need to be read by external programs have to be extracted from the Phar archive.
+/**
+ * Extract a file from a Phar archive.
+ *
+ * Files that need to be read by external programs have to be extracted from the Phar archive.
+ * If the file is not within a Phar archive, the function returns the path unchanged.
+ *
+ * @param string $path Path to the file to extract.
+ * @return string Path to the extracted file.
+ */
 function extract_from_phar( $path ) {
-	if ( ! inside_phar() ) {
+	if ( ! inside_phar( $path ) ) {
 		return $path;
 	}
 
@@ -197,7 +225,7 @@ function is_path_absolute( $path ) {
 		return true;
 	}
 
-	return '/' === $path[0];
+	return isset( $path[0] ) && '/' === $path[0];
 }
 
 /**
@@ -613,7 +641,7 @@ function mustache_render( $template_name, $data = [] ) {
  * @param string  $message  Text to display before the progress bar.
  * @param integer $count    Total number of ticks to be performed.
  * @param int     $interval Optional. The interval in milliseconds between updates. Default 100.
- * @return cli\progress\Bar|NoOp
+ * @return \cli\progress\Bar|\WP_CLI\NoOp
  */
 function make_progress_bar( $message, $count, $interval = 100 ) {
 	if ( Shell::isPiped() ) {
@@ -746,12 +774,6 @@ function replace_path_consts( $source, $path ) {
  * @throws ExitException If the request failed and $halt_on_error is true.
  */
 function http_request( $method, $url, $data = null, $headers = [], $options = [] ) {
-
-	if ( ! class_exists( 'Requests_Hooks' ) ) {
-		// Autoloader for the Requests library has not been registered yet.
-		Requests::register_autoloader();
-	}
-
 	$insecure      = isset( $options['insecure'] ) && (bool) $options['insecure'];
 	$halt_on_error = ! isset( $options['halt_on_error'] ) || (bool) $options['halt_on_error'];
 	unset( $options['halt_on_error'] );
@@ -761,53 +783,70 @@ function http_request( $method, $url, $data = null, $headers = [], $options = []
 		$options['verify'] = ! empty( ini_get( 'curl.cainfo' ) ) ? ini_get( 'curl.cainfo' ) : true;
 	}
 
+	RequestsLibrary::register_autoloader();
+
+	$request_method = [ RequestsLibrary::get_class_name(), 'request' ];
+
 	try {
 		try {
-			return Requests::request( $url, $headers, $data, $method, $options );
-		} catch ( Requests_Exception $ex ) {
-			if ( true !== $options['verify'] || 'curlerror' !== $ex->getType() || curl_errno( $ex->getData() ) !== CURLE_SSL_CACERT ) {
-				throw $ex;
+			return $request_method( $url, $headers, $data, $method, $options );
+		} catch ( Exception $exception ) {
+			if ( RequestsLibrary::is_requests_exception( $exception ) ) {
+				if (
+					true !== $options['verify']
+					|| 'curlerror' !== $exception->getType()
+					|| curl_errno( $exception->getData() ) !== CURLE_SSL_CACERT
+				) {
+					throw $exception;
+				}
+
+				$options['verify'] = get_default_cacert( $halt_on_error );
+
+				return $request_method( $url, $headers, $data, $method, $options );
+			}
+			throw $exception;
+		}
+	} catch ( Exception $exception ) {
+		if ( RequestsLibrary::is_requests_exception( $exception ) ) {
+			// CURLE_SSL_CACERT_BADFILE only defined for PHP >= 7.
+			if (
+				! $insecure
+				||
+				'curlerror' !== $exception->getType()
+				||
+				! in_array( curl_errno( $exception->getData() ), [ CURLE_SSL_CONNECT_ERROR, CURLE_SSL_CERTPROBLEM, 77 /*CURLE_SSL_CACERT_BADFILE*/ ], true )
+			) {
+				$error_msg = sprintf( "Failed to get url '%s': %s.", $url, $exception->getMessage() );
+				if ( $halt_on_error ) {
+					WP_CLI::error( $error_msg );
+				}
+				throw new RuntimeException( $error_msg, null, $exception );
 			}
 
-			$options['verify'] = get_default_cacert( $halt_on_error );
+			$warning = sprintf(
+				"Re-trying without verify after failing to get verified url '%s' %s.",
+				$url,
+				$exception->getMessage()
+			);
+			WP_CLI::warning( $warning );
 
-			return Requests::request( $url, $headers, $data, $method, $options );
-		}
-	} catch ( Requests_Exception $ex ) {
-		// CURLE_SSL_CACERT_BADFILE only defined for PHP >= 7.
-		if (
-			! $insecure
-			||
-			'curlerror' !== $ex->getType()
-			||
-			! in_array( curl_errno( $ex->getData() ), [ CURLE_SSL_CONNECT_ERROR, CURLE_SSL_CERTPROBLEM, 77 /*CURLE_SSL_CACERT_BADFILE*/ ], true )
-		) {
-			$error_msg = sprintf( "Failed to get url '%s': %s.", $url, $ex->getMessage() );
-			if ( $halt_on_error ) {
-				WP_CLI::error( $error_msg );
+			// Disable certificate validation for the next try.
+			$options['verify'] = false;
+
+			try {
+				return $request_method( $url, $headers, $data, $method, $options );
+			} catch ( Exception $exception ) {
+				if ( RequestsLibrary::is_requests_exception( $exception ) ) {
+					$error_msg = sprintf( "Failed to get non-verified url '%s' %s.", $url, $exception->getMessage() );
+					if ( $halt_on_error ) {
+						WP_CLI::error( $error_msg );
+					}
+					throw new RuntimeException( $error_msg, null, $exception );
+				}
+				throw $exception;
 			}
-			throw new RuntimeException( $error_msg, null, $ex );
 		}
-
-		$warning = sprintf(
-			"Re-trying without verify after failing to get verified url '%s' %s.",
-			$url,
-			$ex->getMessage()
-		);
-		WP_CLI::warning( $warning );
-
-		// Disable certificate validation for the next try.
-		$options['verify'] = false;
-
-		try {
-			return Requests::request( $url, $headers, $data, $method, $options );
-		} catch ( Requests_Exception $ex ) {
-			$error_msg = sprintf( "Failed to get non-verified url '%s' %s.", $url, $ex->getMessage() );
-			if ( $halt_on_error ) {
-				WP_CLI::error( $error_msg );
-			}
-			throw new RuntimeException( $error_msg, null, $ex );
-		}
+		throw $exception;
 	}
 }
 
@@ -820,18 +859,16 @@ function http_request( $method, $url, $data = null, $headers = [], $options = []
  * @throws ExitException If unable to locate the cert and $halt_on_error is true.
  */
 function get_default_cacert( $halt_on_error = false ) {
-	$cert_path = '/rmccue/requests/library/Requests/Transport/cacert.pem';
+	$cert_path = RequestsLibrary::get_bundled_certificate_path();
 	$error_msg = 'Cannot find SSL certificate.';
 
-	if ( inside_phar() ) {
+	if ( inside_phar( $cert_path ) ) {
 		// cURL can't read Phar archives
-		return extract_from_phar( WP_CLI_VENDOR_DIR . $cert_path );
+		return extract_from_phar( $cert_path );
 	}
 
-	foreach ( get_vendor_paths() as $vendor_path ) {
-		if ( file_exists( $vendor_path . $cert_path ) ) {
-			return $vendor_path . $cert_path;
-		}
+	if ( file_exists( $cert_path ) ) {
+		return $cert_path;
 	}
 
 	if ( $halt_on_error ) {
@@ -1175,14 +1212,23 @@ function basename( $path, $suffix = '' ) {
 /**
  * Checks whether the output of the current script is a TTY or a pipe / redirect
  *
- * Returns true if STDOUT output is being redirected to a pipe or a file; false is
+ * Returns `true` if `STDOUT` output is being redirected to a pipe or a file; `false` is
  * output is being sent directly to the terminal.
  *
- * If an env variable SHELL_PIPE exists, returned result depends on its
- * value. Strings like 1, 0, yes, no, that validate to booleans are accepted.
+ * If an env variable `SHELL_PIPE` exists, the returned result depends on its
+ * value. Strings like `1`, `0`, `yes`, `no`, that validate to booleans are accepted.
  *
  * To enable ASCII formatting even when the shell is piped, use the
- * ENV variable SHELL_PIPE=0.
+ * ENV variable `SHELL_PIPE=0`.
+ * ```
+ * SHELL_PIPE=0 wp plugin list | cat
+ * ```
+ *
+ * Note that the db command forwards to the mysql client, which is unaware of the env
+ * variable. For db commands, pass the `--table` option instead.
+ * ```
+ * wp db query --table "SELECT 1" | cat
+ * ```
  *
  * @access public
  *
@@ -1411,7 +1457,7 @@ function phar_safe_path( $path ) {
 	}
 
 	return str_replace(
-		PHAR_STREAM_PREFIX . WP_CLI_PHAR_PATH . '/',
+		PHAR_STREAM_PREFIX . rtrim( WP_CLI_PHAR_PATH, '/' ) . '/',
 		PHAR_STREAM_PREFIX,
 		$path
 	);
@@ -1495,7 +1541,7 @@ function past_tense_verb( $verb ) {
  * @return string
  */
 function get_php_binary() {
-	// PHAR installs always use PHP_BINARY.
+	// Phar installs always use PHP_BINARY.
 	if ( inside_phar() ) {
 		return PHP_BINARY;
 	}
@@ -1529,8 +1575,7 @@ function get_php_binary() {
  */
 function proc_open_compat( $cmd, $descriptorspec, &$pipes, $cwd = null, $env = null, $other_options = null ) {
 	if ( is_windows() ) {
-		// Need to encompass the whole command in double quotes - PHP bug https://bugs.php.net/bug.php?id=49139
-		$cmd = '"' . _proc_open_compat_win_env( $cmd, $env ) . '"';
+		$cmd = _proc_open_compat_win_env( $cmd, $env );
 	}
 	return proc_open( $cmd, $descriptorspec, $pipes, $cwd, $env, $other_options );
 }

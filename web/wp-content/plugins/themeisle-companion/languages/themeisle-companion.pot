@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Orbit Fox Companion 2.10.24\n"
+"Project-Id-Version: Orbit Fox Companion 2.10.25\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/Codeinwp/themeisle-companion/issues\n"
-"POT-Creation-Date: 2023-04-27 14:32:01+00:00\n"
+"POT-Creation-Date: 2023-06-15 12:18:05+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -166,6 +166,7 @@ msgid "Got it!"
 msgstr ""
 
 #: core/app/views/partials/module-tile-tpl.php:67
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:199
 msgid "Activate"
 msgstr ""
 
@@ -2155,67 +2156,67 @@ msgstr ""
 msgid "Deselect"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:49
+#: obfx_modules/mystock-import/init.php:56
 msgid "Mystock Import"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:50
+#: obfx_modules/mystock-import/init.php:57
 msgid "Module to import images directly from"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:130
+#: obfx_modules/mystock-import/init.php:137
 msgid "There was an error getting image details from the request, please try again."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:135
+#: obfx_modules/mystock-import/init.php:142
 msgid "The current user does not have permission to upload files."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:141
+#: obfx_modules/mystock-import/init.php:148
 msgid "Invalid nonce."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:146
+#: obfx_modules/mystock-import/init.php:153
 msgid "The URL of the image does not exist."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:160
+#: obfx_modules/mystock-import/init.php:167
 msgid "Image download failed, please try again."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:167
+#: obfx_modules/mystock-import/init.php:174
 msgid "Image type could not be determined"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:178
+#: obfx_modules/mystock-import/init.php:185
 msgid "Image successfully uploaded to the media library!"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:268
+#: obfx_modules/mystock-import/init.php:275
 msgid "Fetching data"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:269
+#: obfx_modules/mystock-import/init.php:276
 msgid "Downloading image. Please wait..."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:270
+#: obfx_modules/mystock-import/init.php:277
 msgid "Your image was imported. Go to Media Library tab to use it."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:271
+#: obfx_modules/mystock-import/init.php:278
 msgid "Loading more photos..."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:272
+#: obfx_modules/mystock-import/init.php:279
 msgid "MyStock Library"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:273
+#: obfx_modules/mystock-import/init.php:280
 msgid "Import & set featured image"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:274
+#: obfx_modules/mystock-import/init.php:281
 msgid "Import & insert image"
 msgstr ""
 
@@ -2303,7 +2304,7 @@ msgid ""
 msgstr ""
 
 #: obfx_modules/template-directory/init.php:73
-#: obfx_modules/template-directory/init.php:120
+#: obfx_modules/template-directory/init.php:121
 msgid "Orbit Fox Template Directory"
 msgstr ""
 
@@ -2311,27 +2312,27 @@ msgstr ""
 msgid "Template Directory"
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:216
+#: obfx_modules/template-directory/init.php:217
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to install and "
 "activate Neve."
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:217
+#: obfx_modules/template-directory/init.php:218
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to activate Neve."
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:218
+#: obfx_modules/template-directory/init.php:219
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to install and "
 "activate Templates Cloud."
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:219
+#: obfx_modules/template-directory/init.php:220
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to activate "
@@ -3604,7 +3605,96 @@ msgstr ""
 msgid "Could not retrieve the info because the user is not logged in."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/Promotions.php:540
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:99
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:100
+msgid "About Us"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:190
+msgid "About us"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:191
+msgid "Our Story"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:192
+msgid ""
+"Themeisle was founded in 2012 by a group of passionate developers who "
+"wanted to create beautiful and functional WordPress themes and plugins. "
+"Since then, we have grown into a team of over 20 dedicated professionals "
+"who are committed to delivering the best possible products to our customers."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:193
+msgid ""
+"At Themeisle, we offer a wide range of WordPress themes and plugins that "
+"are designed to meet the needs of both beginners and advanced users. Our "
+"products are feature-rich, easy to use, and are designed to help you create "
+"beautiful and functional websites."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:194
+msgid "Our team in WCEU2022 in Portugal"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:195
+msgid "Stay connected for news & updates!"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:196
+msgid "Your email address"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:197
+msgid "Sign me up"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:198
+msgid "Install Now"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:200
+msgid "Learn More"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:201
+msgid "Installed"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:202
+msgid "Not Installed"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:203
+msgid "Active"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:222
+msgid ""
+"A fast, lightweight, customizable WordPress theme offering responsive "
+"design, speed, and flexibility for various website types."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:245
+msgid ""
+"Turn WordPress into a landing page powerhouse with Landing Kit, map domains "
+"to pages or any other published resource."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:255
+msgid ""
+"Extend your store functionality with 8 ultra-performant features like "
+"product comparisons, variation swatches, wishlist, and more."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:261
+msgid ""
+"Ultimate Free Templates Cloud for WordPress, for blocks, patters of full "
+"pages."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/Promotions.php:585
 #. translators: %s is the product name.
 msgid "Recommended by %s"
 msgstr ""

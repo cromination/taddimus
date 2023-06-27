@@ -860,7 +860,19 @@ select.is-pro-option + span.dashicons-lock {
 #sub-accordion-section-hestia_big_title.hestia-locked-icon #customize-control-hestia_big_title_upsell_notice {
     display: block !important;
 }
-/**
+.customize-locked-control {
+    opacity: .4;
+    pointer-events: none;
+}
+#customize-control-hestia_cart_custom_icon:not(.hestia-show-custom-icon) {
+	display: none;
+}
+.customize-control-checkbox#customize-control-hestia_cart_icon_status .dashicons-lock {
+	margin-top: 1px;
+}
+#customize-control-hestia_cart_icon {
+	display: none;
+}/**
  * Alpha Color Picker CSS
  */
 
@@ -1722,7 +1734,19 @@ select.is-pro-option + span.dashicons-lock {
 #sub-accordion-section-hestia_big_title.hestia-locked-icon #customize-control-hestia_big_title_upsell_notice {
     display: block !important;
 }
-.accordion-section-title .button {
+.customize-locked-control {
+    opacity: .4;
+    pointer-events: none;
+}
+#customize-control-hestia_cart_custom_icon:not(.hestia-show-custom-icon) {
+	display: none;
+}
+.customize-control-checkbox#customize-control-hestia_cart_icon_status .dashicons-lock {
+	margin-top: 1px;
+}
+#customize-control-hestia_cart_icon {
+	display: none;
+}.accordion-section-title .button {
   font-weight: 400;
 }
 

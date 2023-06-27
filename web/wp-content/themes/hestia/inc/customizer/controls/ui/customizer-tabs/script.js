@@ -181,6 +181,10 @@ wp.customize.controlConstructor['interface-tabs'] = wp.customize.Control.extend(
 wp.customize.control( 'hestia_slider_type', function( control ) {
     var sectionGroup = jQuery( control.container ).parents( 'ul' );
     var selectedType = control.setting._value || '';
+    var isLocked     = control.params.locked  || false;
+    if ( false === isLocked ) {
+        return;
+    }
     if ( 'video' === selectedType ) {
         sectionGroup.addClass( 'hestia-locked-icon' );
     }

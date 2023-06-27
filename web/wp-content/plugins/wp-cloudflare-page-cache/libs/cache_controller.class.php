@@ -224,7 +224,7 @@ class SWCFPC_Cache_Controller
         add_action( 'swcfpc_purge_cache', array($this, 'purge_cache_programmatically'), PHP_INT_MAX, 1 );
 
         // Elementor AJAX update
-        add_action('elementor/ajax/register_actions', array($this, 'purge_cache_on_elementor_ajax_update'));
+        //add_action('elementor/ajax/register_actions', array($this, 'purge_cache_on_elementor_ajax_update'));
 
         $purge_actions = array(
             'wp_update_nav_menu',                                     // When a custom menu is updated
@@ -3194,7 +3194,7 @@ class SWCFPC_Cache_Controller
     }
 
 
-    function purge_cache_on_elementor_ajax_update() {
+    /*function purge_cache_on_elementor_ajax_update() {
 
         if( isset($_REQUEST['editor_post_id']) ) {
 
@@ -3213,7 +3213,7 @@ class SWCFPC_Cache_Controller
 
         }
 
-    }
+    }*/
 
 
     function ajax_preloader_unlock() {

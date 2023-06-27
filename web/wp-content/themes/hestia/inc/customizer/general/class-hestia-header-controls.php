@@ -133,6 +133,33 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 			)
 		);
 
+		if ( ! class_exists( '\Hestia_Addon_Manager' ) ) {
+			$description = sprintf(
+				/* translators: %1$s is the Learn more link, %2$s is the section title */
+				__( 'More Options Available for %1$s in the PRO version. %2$s', 'hestia' ),
+				esc_html__( 'Navigation', 'hestia' ),
+				/* translators: %s is the Learn more label*/
+				sprintf(
+					'<a class="button button-primary" target="_blank" href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'navigation' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
+					__( 'Upgrade to Unlock', 'hestia' )
+				)
+			);
+			$this->add_control(
+				new Hestia_Customizer_Control(
+					'hestia_navigation_upsell_notice',
+					array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					array(
+						'section'     => 'hestia_navigation',
+						'description' => $description . '<hr style="margin-left: 0px; border-bottom: none;">',
+						'priority'    => 1,
+						'type'        => 'hidden',
+					)
+				)
+			);
+		}
+
 		$this->add_control(
 			new Hestia_Customizer_Control(
 				'hestia_navbar_transparent',
@@ -165,6 +192,24 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 			)
 		);
 
+		if ( class_exists( '\WooCommerce', false ) ) {
+			$this->add_control(
+				new Hestia_Customizer_Control(
+					'hestia_cart_icon_status',
+					array(
+						'sanitize_callback' => 'hestia_sanitize_checkbox',
+						'default'           => false,
+					),
+					array(
+						'type'     => 'checkbox',
+						'label'    => esc_html__( 'Customize Mini Cart', 'hestia' ),
+						'section'  => 'hestia_navigation',
+						'priority' => 20,
+					)
+				)
+			);
+		}
+
 		$this->add_control(
 			new Hestia_Customizer_Control(
 				'hestia_header_alignment',
@@ -174,7 +219,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 				),
 				array(
 					'label'    => esc_html__( 'Layout', 'hestia' ),
-					'priority' => 25,
+					'priority' => 35,
 					'section'  => 'hestia_navigation',
 					'choices'  => apply_filters(
 						'hestia_nav_layout_choices',
@@ -293,6 +338,31 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 					'priority'        => 12,
 					'choices'         => $product_layout_choices,
 					'active_callback' => array( $this, 'check_if_woo' ),
+
+				),
+				'Hestia_Customize_Control_Radio_Image'
+			)
+		);
+
+		$this->add_control(
+			new Hestia_Customizer_Control(
+				'hestia_logo_display',
+				array(
+					'type'              => 'theme_mod',
+					'sanitize_callback' => 'sanitize_text_field',
+					'default'           => 'only-logo',
+				),
+				array(
+					'type'     => 'select',
+					'label'    => esc_html__( 'Display', 'hestia' ),
+					'section'  => 'title_tagline',
+					'priority' => 7,
+					'choices'  => array(
+						'only-logo'   => esc_html__( 'Only Logo', 'hestia' ),
+						'right-text'  => esc_html__( 'Logo With Right Text', 'hestia' ),
+						'left-text'   => esc_html__( 'Logo With Left Text', 'hestia' ),
+						'bottom-text' => esc_html__( 'Logo With Bottom Text', 'hestia' ),
+					),
 
 				),
 				'Hestia_Customize_Control_Radio_Image'

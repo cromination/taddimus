@@ -1,3 +1,11 @@
+##### [Version 3.0.30](https://github.com/Codeinwp/hestia-pro/compare/v3.0.29...v3.0.30) (2023-06-15)
+
+- Fix Lighthouse errors
+- Fix a stray HTML tag in Footer
+- Fix notice not disappearing
+- Fix PHP errors with PHP 8.1
+- Fix issue with Big Title section being locked under certain conditions
+
 ##### [Version 3.0.29](https://github.com/Codeinwp/hestia-pro/compare/v3.0.28...v3.0.29) (2023-03-09)
 
 - Improve the release process

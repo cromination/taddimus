@@ -61,9 +61,18 @@ endif;
 function hestia_woocommerce_header_add_to_cart_fragment( $fragments ) {
 	global $woocommerce;
 
-	$fragments['a.cart-contents']  = '<a class="cart-contents btn btn-white pull-right" href="' . esc_url( wc_get_cart_url() ) . '"
-			title="' . esc_attr__( 'View your shopping cart', 'hestia' ) . '">';
-	$fragments['a.cart-contents'] .= '<i class="fas fa-shopping-cart"></i>';
+	$fragments['a.cart-contents'] = '<a class="cart-contents btn btn-white pull-right" href="' . esc_url( wc_get_cart_url() ) . '" title="' . esc_attr__( 'View your shopping cart', 'hestia' ) . '">';
+	if ( get_theme_mod( 'hestia_cart_icon_status', true ) ) {
+		$cart_icon   = get_theme_mod( 'hestia_cart_icon', 'shopping-cart' );
+		$custom_icon = get_theme_mod( 'hestia_cart_custom_icon', false );
+		if ( 'code' === $cart_icon ) {
+			$icon = $custom_icon;
+		} else {
+			$cart_icon = get_theme_mod( 'hestia_cart_icon', 'shopping-cart' );
+			$icon      = sprintf( '<i class="fas fa-%s"></i>', esc_attr( $cart_icon ) );
+		}
+		$fragments['a.cart-contents'] .= $icon;
+	}
 	$fragments['a.cart-contents'] .= sprintf(
 		/* translators: %d is number of items */
 		_n( '%d item', '%d items', absint( $woocommerce->cart->cart_contents_count ), 'hestia' ),
@@ -407,31 +416,24 @@ if ( ! function_exists( 'hestia_cart_link_after_primary_navigation' ) ) {
 	 * @since  1.0.0
 	 */
 	function hestia_cart_link_after_primary_navigation() {
+		if ( ! get_theme_mod( 'hestia_cart_icon_status', true ) ) {
+			return;
+		}
+
+		$cart_icon   = get_theme_mod( 'hestia_cart_icon', 'shopping-cart' );
+		$custom_icon = get_theme_mod( 'hestia_cart_custom_icon', false );
+		if ( 'code' === $cart_icon ) {
+			$icon = $custom_icon;
+		} else {
+			$icon = sprintf( '<i class="fas fa-%s"></i>', esc_attr( $cart_icon ) );
+		}
+
 		?>
 		<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php esc_attr_e( 'View cart', 'hestia' ); ?>"
 				class="nav-cart-icon">
-			<i class="fas fa-shopping-cart"></i><?php echo trim( ( WC()->cart->get_cart_contents_count() > 0 ) ? '<span>' . WC()->cart->get_cart_contents_count() . '</span>' : '' ); ?></span>
+			<?php echo wp_kses_post( $icon ); ?><?php echo trim( ( WC()->cart->get_cart_contents_count() > 0 ) ? '<span>' . WC()->cart->get_cart_contents_count() . '</span>' : '' ); ?></span>
 		</a>
 		<?php
-	}
-}
-
-if ( ! function_exists( 'hestia_cart_link_fragment' ) ) {
-	/**
-	 * Cart Fragments
-	 * Ensure cart contents update when products are added to the cart via AJAX
-	 *
-	 * @param  array $fragments Fragments to refresh via AJAX.
-	 *
-	 * @return array Fragments to refresh via AJAX.
-	 */
-	function hestia_cart_link_fragment( $fragments ) {
-		global $woocommerce;
-		ob_start();
-		hestia_cart_link_after_primary_navigation();
-		$fragments['.nav-cart-icon'] = ob_get_clean();
-
-		return $fragments;
 	}
 }
 
