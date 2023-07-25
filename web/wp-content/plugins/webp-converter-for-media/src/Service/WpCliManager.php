@@ -91,9 +91,22 @@ class WpCliManager implements HookableInterface {
 	 */
 	public function regenerate_images( array $args, array $assoc_args = [] ) {
 		$force_flag        = ( isset( $assoc_args['force'] ) || in_array( '-force', $args ) );
-		$paths_chunks      = ( new PathsFinder( $this->plugin_data, $this->token_repository ) )
-			->get_paths_by_chunks( ! $force_flag );
 		$conversion_method = ( new MethodIntegrator( $this->plugin_data ) );
+		$method_used       = $conversion_method->get_method_used();
+
+		if ( $method_used === null ) {
+			\WP_CLI::error(
+				sprintf(
+				/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+					__( 'GD or Imagick library is not installed on your server.', 'webp-converter-for-media' ) . ' ' . __( 'This means that you cannot convert images to the WebP format on your server, because it does not meet the plugin requirements described in %1$sthe plugin FAQ%2$s. This issue is not dependent on the plugin.', 'webp-converter-for-media' ),
+					'<a href="https://url.mattplugins.com/converter-error-libs-not-installed-faq" target="_blank">',
+					'</a>'
+				)
+			);
+		}
+
+		$paths_chunks = ( new PathsFinder( $this->plugin_data, $this->token_repository ) )
+			->get_paths_by_chunks( ! $force_flag );
 
 		$count = 0;
 		foreach ( $paths_chunks as $chunk_data ) {
@@ -113,7 +126,8 @@ class WpCliManager implements HookableInterface {
 			foreach ( $chunk_data['files'] as $images_paths ) {
 				$response = $conversion_method->init_conversion(
 					$this->parse_files_paths( $images_paths, $chunk_data['path'] ),
-					$force_flag
+					$force_flag,
+					true
 				);
 
 				if ( $response !== null ) {

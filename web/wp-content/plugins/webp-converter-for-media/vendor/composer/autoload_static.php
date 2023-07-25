@@ -163,6 +163,7 @@ class ComposerStaticInitffe2d8364e5cb5e284fe0f59671985ae
         'WebpConverter\\Service\\CacheIntegrator' => __DIR__ . '/../..' . '/src/Service/CacheIntegrator.php',
         'WebpConverter\\Service\\CloudflareConfigurator' => __DIR__ . '/../..' . '/src/Service/CloudflareConfigurator.php',
         'WebpConverter\\Service\\DeactivationModalGenerator' => __DIR__ . '/../..' . '/src/Service/DeactivationModalGenerator.php',
+        'WebpConverter\\Service\\EnvDetector' => __DIR__ . '/../..' . '/src/Service/EnvDetector.php',
         'WebpConverter\\Service\\FileLoader' => __DIR__ . '/../..' . '/src/Service/FileLoader.php',
         'WebpConverter\\Service\\MediaStatusViewer' => __DIR__ . '/../..' . '/src/Service/MediaStatusViewer.php',
         'WebpConverter\\Service\\OptionsAccessManager' => __DIR__ . '/../..' . '/src/Service/OptionsAccessManager.php',

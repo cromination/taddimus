@@ -73,7 +73,7 @@ use WebpConverter\Service\StatsManager;
 	<tr>
 		<td class="e"><?php echo esc_html( CronStatusManager::CRON_REQUEST_RESPONSE_TRANSIENT ); ?></td>
 		<td class="v">
-			<?php echo json_encode( get_site_transient( CronStatusManager::CRON_REQUEST_RESPONSE_TRANSIENT ) ); ?>
+			<?php echo esc_html( json_encode( get_site_transient( CronStatusManager::CRON_REQUEST_RESPONSE_TRANSIENT ) ) ?: '' ); ?>
 		</td>
 	</tr>
 	<tr>

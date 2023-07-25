@@ -48,6 +48,7 @@ class User_Command extends CommandWithDBObject {
 	private $cap_fields = [
 		'name',
 	];
+	private $fetcher;
 
 	public function __construct() {
 		$this->fetcher = new UserFetcher();
@@ -295,6 +296,9 @@ class User_Command extends CommandWithDBObject {
 				if ( $network ) {
 					$result  = wpmu_delete_user( $user_id );
 					$message = "Deleted user {$user_id}.";
+				} elseif ( is_multisite() && empty( $user->roles ) ) {
+					$message = "No roles found for user {$user_id} on " . home_url() . ', no users deleted.';
+					return [ 'error', $message ];
 				} else {
 					$result  = wp_delete_user( $user_id, $reassign );
 					$message = "Removed user {$user_id} from " . home_url() . '.';
@@ -1113,6 +1117,18 @@ class User_Command extends CommandWithDBObject {
 	 *     # Reset the password for one user, displaying only the new password, and not sending the change email.
 	 *     $ wp user reset-password admin --skip-email --porcelain
 	 *     yV6BP*!d70wg
+	 *
+	 *     # Reset password for all users.
+	 *     $ wp user reset-password $(wp user list --format=ids)
+	 *     Reset password for admin
+	 *     Reset password for editor
+	 *     Reset password for subscriber
+	 *     Success: Passwords reset for 3 users.
+	 *
+	 *     # Reset password for all users with a particular role.
+	 *     $ wp user reset-password $(wp user list --format=ids --role=administrator)
+	 *     Reset password for admin
+	 *     Success: Password reset for 1 user.
 	 *
 	 * @subcommand reset-password
 	 */

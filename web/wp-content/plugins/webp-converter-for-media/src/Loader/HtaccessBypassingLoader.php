@@ -65,9 +65,11 @@ class HtaccessBypassingLoader extends HtaccessLoader {
 		}
 
 		$path_dir_uploads = apply_filters( 'webpc_dir_name', '', 'uploads' );
-		return preg_replace(
+		return preg_replace_callback(
 			'/((?:\/' . str_replace( '/', '\\/', $path_dir_uploads ) . '\/)(?:.*?))\.(' . $extensions . ')/',
-			'$1' . self::FILENAME_SUFFIX . '.$2',
+			function ( $matches ) {
+				return str_replace( self::FILENAME_SUFFIX, '', $matches[1] ) . self::FILENAME_SUFFIX . '.' . $matches[2];
+			},
 			$buffer
 		) ?: $buffer;
 	}

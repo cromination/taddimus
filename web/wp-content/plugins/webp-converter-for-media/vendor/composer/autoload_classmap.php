@@ -148,6 +148,7 @@ return array(
     'WebpConverter\\Service\\CacheIntegrator' => $baseDir . '/src/Service/CacheIntegrator.php',
     'WebpConverter\\Service\\CloudflareConfigurator' => $baseDir . '/src/Service/CloudflareConfigurator.php',
     'WebpConverter\\Service\\DeactivationModalGenerator' => $baseDir . '/src/Service/DeactivationModalGenerator.php',
+    'WebpConverter\\Service\\EnvDetector' => $baseDir . '/src/Service/EnvDetector.php',
     'WebpConverter\\Service\\FileLoader' => $baseDir . '/src/Service/FileLoader.php',
     'WebpConverter\\Service\\MediaStatusViewer' => $baseDir . '/src/Service/MediaStatusViewer.php',
     'WebpConverter\\Service\\OptionsAccessManager' => $baseDir . '/src/Service/OptionsAccessManager.php',

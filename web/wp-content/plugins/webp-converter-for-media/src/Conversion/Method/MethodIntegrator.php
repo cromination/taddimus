@@ -7,6 +7,7 @@ use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\PluginData;
 use WebpConverter\Service\StatsManager;
 use WebpConverter\Settings\Option\ConversionMethodOption;
+use WebpConverter\Settings\Option\OutputFormatsOption;
 
 /**
  * Initializes image conversion using active image conversion method.
@@ -31,13 +32,19 @@ class MethodIntegrator {
 	/**
 	 * Initializes converting source images using active and set conversion method.
 	 *
-	 * @param string[] $paths            Server paths for source images.
-	 * @param bool     $regenerate_force .
+	 * @param string[] $paths              Server paths for source images.
+	 * @param bool     $regenerate_force   .
+	 * @param bool     $skip_server_errors .
 	 *
 	 * @return mixed[]|null Results data of conversion.
 	 */
-	public function init_conversion( array $paths, bool $regenerate_force ) {
-		if ( ! $method = $this->get_method_used() ) {
+	public function init_conversion( array $paths, bool $regenerate_force, bool $skip_server_errors = false ) {
+		if ( ! $skip_server_errors && apply_filters( 'webpc_server_errors', [], true ) ) {
+			return null;
+		}
+
+		$method = $this->get_method_used();
+		if ( $method === null ) {
 			return null;
 		}
 
@@ -66,12 +73,14 @@ class MethodIntegrator {
 	 *
 	 * @return MethodInterface|null Object of conversion method.
 	 */
-	private function get_method_used() {
-		if ( apply_filters( 'webpc_server_errors', [], true ) ) {
+	public function get_method_used() {
+		$plugin_settings = $this->plugin_data->get_plugin_settings();
+		$output_formats  = $plugin_settings[ OutputFormatsOption::OPTION_NAME ] ?? null;
+		if ( ! $output_formats ) {
 			return null;
 		}
 
-		$method_key = $this->plugin_data->get_plugin_settings()[ ConversionMethodOption::OPTION_NAME ] ?? null;
+		$method_key = $plugin_settings[ ConversionMethodOption::OPTION_NAME ] ?? null;
 		$methods    = ( new MethodFactory() )->get_methods_objects();
 		foreach ( $methods as $method_name => $method ) {
 			if ( $method_key === $method_name ) {

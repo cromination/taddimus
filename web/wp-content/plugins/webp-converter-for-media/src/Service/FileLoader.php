@@ -32,11 +32,12 @@ class FileLoader {
 			$response = '';
 		}
 
-		$http_code = curl_getinfo( $connect, CURLINFO_HTTP_CODE );
+		$http_code  = curl_getinfo( $connect, CURLINFO_HTTP_CODE );
+		$curl_error = curl_error( $connect );
 		curl_close( $connect );
 
 		if ( $debug_context !== null ) {
-			$this->log_request( $debug_context, $request_url, $set_headers, $http_code, strlen( $response ) );
+			$this->log_request( $debug_context, $request_url, $set_headers, $http_code, $curl_error, strlen( $response ) );
 		}
 
 		return ( $http_code === 200 ) ? strlen( $response ) : 0;
@@ -61,11 +62,12 @@ class FileLoader {
 		}
 
 		curl_exec( $connect );
-		$http_code = curl_getinfo( $connect, CURLINFO_HTTP_CODE );
+		$http_code  = curl_getinfo( $connect, CURLINFO_HTTP_CODE );
+		$curl_error = curl_error( $connect );
 		curl_close( $connect );
 
 		if ( $debug_context !== null ) {
-			$this->log_request( $debug_context, $request_url, $set_headers, $http_code, null );
+			$this->log_request( $debug_context, $request_url, $set_headers, $http_code, $curl_error, null );
 		}
 
 		return $http_code;
@@ -135,32 +137,41 @@ class FileLoader {
 		curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true );
 		curl_setopt( $ch, CURLOPT_FRESH_CONNECT, true );
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 10 );
-		curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0' );
+		curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' );
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
 		return $ch;
 	}
 
 	/**
-	 * @param string   $debug_context   .
-	 * @param string   $url             .
-	 * @param bool     $is_webp_request .
-	 * @param int      $response_code   .
-	 * @param int|null $response_length .
+	 * @param string      $debug_context   .
+	 * @param string      $url             .
+	 * @param bool        $is_webp_request .
+	 * @param int         $response_code   .
+	 * @param string|null $curl_error      .
+	 * @param int|null    $response_length .
 	 *
 	 * @return void
 	 */
-	private function log_request( string $debug_context, string $url, bool $is_webp_request, int $response_code, int $response_length = null ) {
+	private function log_request(
+		string $debug_context,
+		string $url,
+		bool $is_webp_request,
+		int $response_code,
+		string $curl_error = null,
+		int $response_length = null
+	) {
 		if ( ! isset( $GLOBALS[ self::GLOBAL_LOGS_VARIABLE ] ) ) {
 			$GLOBALS[ self::GLOBAL_LOGS_VARIABLE ] = [];
 		}
 
 		$GLOBALS[ self::GLOBAL_LOGS_VARIABLE ][] = [
-			'context'   => $debug_context,
-			'url'       => $url,
-			'is_webp'   => $is_webp_request,
-			'http_code' => $response_code,
-			'response'  => $response_length,
+			'context'    => $debug_context,
+			'url'        => $url,
+			'is_webp'    => $is_webp_request,
+			'http_code'  => $response_code,
+			'response'   => $response_length,
+			'curl_error' => ( $curl_error === '' ) ? null : $curl_error,
 		];
 	}
 }

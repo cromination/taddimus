@@ -75,6 +75,7 @@ class GeneralSettingsPage extends PageAbstract {
 
 		return [
 			'logo_url'                 => $this->plugin_info->get_plugin_directory_url() . 'assets/img/logo-headline.png',
+			'author_image_url'         => $this->plugin_info->get_plugin_directory_url() . 'assets/img/author.png',
 			'form_options'             => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_BASIC ),
 			'form_sidebar_options'     => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_SIDEBAR ),
 			'form_input_name'          => SettingsSave::FORM_TYPE_PARAM_KEY,

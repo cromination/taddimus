@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php
 				echo wp_kses_post(
 					sprintf(
-					/* translators: %1$s: icon heart, %2$s: author name, %3$s: open anchor tag, %4$s: close anchor tag */
+					/* translators: %1$s: icon heart, %2$s: author name, %3$s: open anchor tag, %4$s: stars icons, %5$s: close anchor tag */
 						__( 'Created with %1$s by %2$s - if you like our plugin, please, %3$srate one%4$s%5$s', 'webp-converter-for-media' ),
 						'<span class="webpcPage__footerIcon webpcPage__footerIcon--heart"></span>',
 						'<a href="https://url.mattplugins.com/converter-settings-footer-author-website" target="_blank">matt plugins</a>',

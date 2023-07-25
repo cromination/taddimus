@@ -3,6 +3,7 @@
 namespace WebpConverter\Loader;
 
 use WebpConverter\Service\CloudflareConfigurator;
+use WebpConverter\Service\EnvDetector;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\PathsGenerator;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
@@ -28,6 +29,7 @@ class HtaccessLoader extends LoaderAbstract {
 	 */
 	public function init_admin_hooks() {
 		add_filter( 'webpc_htaccess_rewrite_root', [ $this, 'modify_document_root_path' ] );
+		add_filter( 'webpc_debug_image_url', [ $this, 'update_image_urls_to_bunny_cdn' ] );
 	}
 
 	/**
@@ -72,6 +74,21 @@ class HtaccessLoader extends LoaderAbstract {
 		}
 
 		return $original_path;
+	}
+
+	/**
+	 * @param string $url .
+	 *
+	 * @return string
+	 * @internal
+	 */
+	public function update_image_urls_to_bunny_cdn( string $url ): string {
+		if ( ! class_exists( '\BunnyCDN' ) || ! EnvDetector::is_cdn_bunny() ) {
+			return $url;
+		}
+		$options = \BunnyCDN::getOptions();
+
+		return str_replace( $options['site_url'], ( is_ssl() ? 'https://' : 'http://' ) . $options['cdn_domain_name'], $url );
 	}
 
 	/**
@@ -228,6 +245,8 @@ class HtaccessLoader extends LoaderAbstract {
 
 		$cache_control = true;
 		if ( OptionsAccessManager::get_option( CloudflareConfigurator::REQUEST_CACHE_CONFIG_OPTION ) === 'yes' ) {
+			$cache_control = false;
+		} elseif ( EnvDetector::is_cdn_bunny() ) {
 			$cache_control = false;
 		}
 
