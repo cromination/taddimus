@@ -450,6 +450,8 @@ class Hestia_Public {
 
 		add_image_size( 'hestia-blog', 360, 240, true );
 
+		$webfont_url = hestia_get_local_webfont_url( 'https://fonts.googleapis.com/css?family=Roboto+Slab:400,700|Roboto:300,400,500,700' );
+		add_editor_style( $webfont_url );
 		add_editor_style();
 
 		$this->setup_woocommerce();

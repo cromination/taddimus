@@ -60,6 +60,7 @@ class WebpConverter {
 			->init_hooks();
 		( new Service\BackupExcluder( $plugin_data ) )->init_hooks();
 		( new Service\CacheIntegrator( $plugin_info ) )->init_hooks();
+		( new Service\CloudflareConfigurator( $plugin_info, $plugin_data ) )->init_hooks();
 		( new Service\DeactivationModalGenerator( $plugin_info, $plugin_data ) )->load_modal();
 		( new Service\MediaStatusViewer( $plugin_data, $token_repository ) )->init_hooks();
 		( new Service\RestApiUnlocker() )->init_hooks();

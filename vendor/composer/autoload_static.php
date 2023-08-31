@@ -87,7 +87,6 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         array (
             'Psr\\Log\\' => 8,
             'Psr\\Container\\' => 14,
-            'Peast\\test\\' => 11,
             'Peast\\' => 6,
         ),
         'M' => 
@@ -208,10 +207,6 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
-        ),
-        'Peast\\test\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/mck89/peast/test/Peast',
         ),
         'Peast\\' => 
         array (

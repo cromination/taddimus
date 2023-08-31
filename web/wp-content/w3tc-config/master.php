@@ -1,5 +1,5 @@
 <?php exit; ?>{
-    "version": "2.3.3",
+    "version": "2.4.1",
     "cluster.messagebus.debug": false,
     "cluster.messagebus.enabled": false,
     "cluster.messagebus.sns.region": "",
@@ -288,7 +288,7 @@
         "utm_source",
         "utm_term"
     ],
-    "pgcache.migrated.qsexempts": 1690306779,
+    "pgcache.migrated.qsexempts": 1693448412,
     "pgcache.late_init": false,
     "pgcache.late_caching": false,
     "pgcache.mirrors.enabled": false,
@@ -1026,9 +1026,7 @@
     "timelimit.minify_recommendations": 600,
     "common.instance_id": 0,
     "common.force_master": true,
-    "extensions.active": {
-        "fragmentcache": "w3-total-cache\/Extension_FragmentCache_Plugin.php"
-    },
+    "extensions.active": [],
     "extensions.active_frontend": [],
     "extensions.active_dropin": [],
     "plugin.license_key": "",
@@ -1039,5 +1037,8 @@
         "auto": "enabled",
         "visibility": "never"
     },
-    "imageservice.configuration_overloaded": true
+    "imageservice.configuration_overloaded": true,
+    "fragmentcache": {
+        "engine": "file"
+    }
 }

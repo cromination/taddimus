@@ -6,6 +6,8 @@ use WebpConverter\Service\CloudflareConfigurator;
 use WebpConverter\Service\EnvDetector;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Service\PathsGenerator;
+use WebpConverter\Settings\Option\CloudflareApiTokenOption;
+use WebpConverter\Settings\Option\CloudflareZoneIdOption;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
 use WebpConverter\Settings\Option\RewriteInheritanceOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
@@ -29,6 +31,7 @@ class HtaccessLoader extends LoaderAbstract {
 	 */
 	public function init_admin_hooks() {
 		add_filter( 'webpc_htaccess_rewrite_root', [ $this, 'modify_document_root_path' ] );
+		add_filter( 'webpc_htaccess_rewrite_output', [ $this, 'modify_output_root_path' ], 10, 2 );
 		add_filter( 'webpc_debug_image_url', [ $this, 'update_image_urls_to_bunny_cdn' ] );
 	}
 
@@ -74,6 +77,21 @@ class HtaccessLoader extends LoaderAbstract {
 		}
 
 		return $original_path;
+	}
+
+	/**
+	 * @param string $output_path .
+	 * @param string $root_path   .
+	 *
+	 * @return string
+	 * @internal
+	 */
+	public function modify_output_root_path( string $output_path, string $root_path ): string {
+		if ( $output_path === $root_path ) {
+			return '/';
+		}
+
+		return $output_path;
 	}
 
 	/**
@@ -192,19 +210,25 @@ class HtaccessLoader extends LoaderAbstract {
 
 		$document_root      = PathsGenerator::get_rewrite_root();
 		$root_suffix        = PathsGenerator::get_rewrite_path();
-		$root_suffix_output = apply_filters( 'webpc_htaccess_rewrite_output', $root_suffix );
+		$root_suffix_output = apply_filters( 'webpc_htaccess_rewrite_output', $root_suffix, $document_root );
 		$output_path        = apply_filters( 'webpc_dir_name', '', 'webp' );
 		if ( $output_path_suffix !== null ) {
 			$output_path .= '/' . $output_path_suffix;
 		}
 
-		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
-			$content .= '<IfModule mod_rewrite.c>' . PHP_EOL;
-			$content .= '  RewriteEngine On' . PHP_EOL;
-			if ( apply_filters( 'webpc_htaccess_mod_rewrite_inherit', ! $settings[ RewriteInheritanceOption::OPTION_NAME ] ) === true ) {
-				$content .= '  RewriteOptions Inherit' . PHP_EOL;
-			}
+		$content .= '<IfModule mod_rewrite.c>' . PHP_EOL;
+		$content .= '  RewriteEngine On' . PHP_EOL;
+		if ( apply_filters( 'webpc_htaccess_mod_rewrite_inherit', ! $settings[ RewriteInheritanceOption::OPTION_NAME ] ) === true ) {
+			$content .= '  RewriteOptions Inherit' . PHP_EOL;
+		}
 
+		$content .= PHP_EOL;
+		$content .= '  ' . apply_filters( 'webpc_htaccess_original_cond', 'RewriteCond %{QUERY_STRING} original$' ) . PHP_EOL;
+		$content .= '  RewriteCond %{REQUEST_FILENAME} -f' . PHP_EOL;
+		$content .= '  RewriteRule . - [L]' . PHP_EOL;
+
+		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
+			$content .= PHP_EOL;
 			foreach ( $settings[ SupportedExtensionsOption::OPTION_NAME ] as $ext ) {
 				$content .= "  RewriteCond %{HTTP_ACCEPT} {$mime_type}" . PHP_EOL;
 				if ( in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
@@ -226,8 +250,9 @@ class HtaccessLoader extends LoaderAbstract {
 				}
 				$content .= "  RewriteRule (.+)\.{$ext}$ {$root_suffix_output}{$output_path}/$1.{$ext}.{$format} [NC,T={$mime_type},L]" . PHP_EOL;
 			}
-			$content .= '</IfModule>' . PHP_EOL;
 		}
+
+		$content .= '</IfModule>' . PHP_EOL;
 
 		return apply_filters( 'webpc_htaccess_mod_rewrite', trim( $content ), $output_path );
 	}
@@ -244,7 +269,8 @@ class HtaccessLoader extends LoaderAbstract {
 		$extensions = implode( '|', $settings[ SupportedExtensionsOption::OPTION_NAME ] );
 
 		$cache_control = true;
-		if ( OptionsAccessManager::get_option( CloudflareConfigurator::REQUEST_CACHE_CONFIG_OPTION ) === 'yes' ) {
+		if ( $settings[ CloudflareZoneIdOption::OPTION_NAME ] && $settings[ CloudflareApiTokenOption::OPTION_NAME ]
+			&& OptionsAccessManager::get_option( CloudflareConfigurator::REQUEST_CACHE_CONFIG_OPTION ) === 'yes' ) {
 			$cache_control = false;
 		} elseif ( EnvDetector::is_cdn_bunny() ) {
 			$cache_control = false;

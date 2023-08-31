@@ -4,9 +4,8 @@ namespace WebpConverter\Plugin;
 
 use WebpConverter\HookableInterface;
 use WebpConverter\Plugin\Uninstall\DebugFiles;
-use WebpConverter\Plugin\Uninstall\HtaccessFile;
 use WebpConverter\Plugin\Uninstall\PluginSettings;
-use WebpConverter\Plugin\Uninstall\WebpFiles;
+use WebpConverter\Plugin\Uninstall\OutputFilesRemover;
 use WebpConverter\PluginInfo;
 
 /**
@@ -41,7 +40,7 @@ class Uninstall implements HookableInterface {
 	 */
 	public static function load_uninstall_actions() {
 		PluginSettings::remove_plugin_settings();
-		WebpFiles::remove_webp_files();
+		OutputFilesRemover::remove_webp_files();
 		DebugFiles::remove_debug_files();
 	}
 }

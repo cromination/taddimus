@@ -25,6 +25,7 @@ class Hestia_Typography_Controls extends Hestia_Register_Customizer_Controls {
 		$this->add_section_ui_tabs();
 		$this->add_font_family_selectors();
 		$this->add_font_subsets_control();
+		$this->add_local_font_control();
 		$this->add_section_ui_headings();
 		$this->add_posts_pages_controls();
 		$this->add_front_page_controls();
@@ -80,10 +81,11 @@ class Hestia_Typography_Controls extends Hestia_Register_Customizer_Controls {
 					),
 					'controls' => array(
 						'font_family' => array(
-							'hestia_headings_font'     => array(),
-							'hestia_body_font'         => array(),
-							'hestia_font_subsets'      => array(),
-							'hestia_typography_upsell' => array(),
+							'hestia_headings_font'      => array(),
+							'hestia_body_font'          => array(),
+							'hestia_font_subsets'       => array(),
+							'hestia_typography_upsell'  => array(),
+							'hestia_enable_local_fonts' => array(),
 						),
 						'font_sizes'  => array(
 							'hestia_posts_and_pages_title' => array(),
@@ -448,6 +450,27 @@ class Hestia_Typography_Controls extends Hestia_Register_Customizer_Controls {
 					'sum_type'   => true,
 				),
 				'Hestia_Customizer_Range_Value_Control'
+			)
+		);
+	}
+
+	/**
+	 * Local fonts enable/disable control.
+	 */
+	private function add_local_font_control() {
+		$this->add_control(
+			new Hestia_Customizer_Control(
+				'hestia_enable_local_fonts',
+				array(
+					'sanitize_callback' => 'hestia_sanitize_checkbox',
+					'default'           => false,
+				),
+				array(
+					'type'     => 'checkbox',
+					'label'    => esc_html__( 'Local fonts hosting', 'hestia' ),
+					'section'  => 'hestia_typography',
+					'priority' => 50,
+				)
 			)
 		);
 	}

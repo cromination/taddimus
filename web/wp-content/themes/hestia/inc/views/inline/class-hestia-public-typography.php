@@ -15,6 +15,10 @@ class Hestia_Public_Typography extends Hestia_Inline_Style_Manager {
 	 */
 	public function init() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_inline_font_styles' ) );
+		add_action( 'wp_print_styles', array( $this, 'load_external_fonts_locally' ), PHP_INT_MAX );
+		add_filter( 'wp_resource_hints', array( $this, 'remove_google_fontapi_resource_hints' ), 10, 2 );
+		add_filter( 'wptt_get_local_fonts_base_path', array( $this, 'set_local_fonts_base_path' ) );
+		add_filter( 'wptt_get_local_fonts_base_url', array( $this, 'set_local_fonts_base_url' ) );
 	}
 
 	/**
@@ -563,6 +567,140 @@ class Hestia_Public_Typography extends Hestia_Inline_Style_Manager {
 		$custom_css = $this->add_media_query( $dimension, $custom_css );
 
 		return $custom_css;
+	}
+
+	/**
+	 * Load Google Fonts locally.
+	 *
+	 * @return void
+	 */
+	public function load_external_fonts_locally() {
+
+		if ( ! hestia_enable_local_fonts() ) {
+			return;
+		}
+
+		$is_admin_context = is_admin() || is_customize_preview();
+		$wptt_vendor_file = trailingslashit( get_template_directory() ) . 'vendor/wptt/webfont-loader/wptt-webfont-loader.php';
+
+		if ( $is_admin_context || ! is_readable( $wptt_vendor_file ) ) {
+			return;
+		}
+
+		/**
+		 * Bail when in Elementor edit mode.
+		 *
+		 * We do this so that initial load of Elementor editor will not be slowed down by Hestia downloading fonts.
+		 */
+		if ( class_exists( '\Elementor\Plugin' ) ) {
+			global $post;
+			if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ||
+				\Elementor\Plugin::$instance->preview->is_preview_mode()
+				) {
+				return;
+			}
+		}
+
+		/**
+		 * Allow filtering for additional external font providers.
+		 *
+		 * The domains provided to this filter should be from services that link directly to a CSS file or else WPTT will not be able to download the fonts.
+		 */
+		$external_font_domains = apply_filters(
+			'hestia_font_providers',
+			array(
+				'fonts.googleapis.com/css',
+				'use.typekit.net',
+			)
+		);
+
+		global $wp_styles;
+		$enqueued_styles = $wp_styles->queue ? $wp_styles->queue : '';
+
+		if ( ! is_array( $enqueued_styles ) ) {
+			return;
+		}
+
+		$external_fonts = array();
+
+		foreach ( $enqueued_styles as $style ) {
+
+			$source = $wp_styles->registered[ $style ]->src;
+
+			foreach ( $external_font_domains as $domain ) {
+
+				if ( strpos( $source, $domain ) !== false ) {
+					$parts = wp_parse_url( $source );
+					/**
+					 * Some plugins might set font url without protocol example //fonts.googleapis.com...
+					 * Lets build the url ourselves to be sure the its whats expected.
+					*/
+					$normalized_source = 'https://' . $parts['host'] . $parts['path'] . ( isset( $parts['query'] ) ? '?' . $parts['query'] : '' );
+					$external_fonts[]  = $normalized_source;
+					// Dequeue this handle since we are going to load the font locally.
+					wp_dequeue_style( $style );
+				}
+			}
+		}
+
+		$external_fonts = array_unique( $external_fonts );
+
+		require_once $wptt_vendor_file;
+
+		foreach ( $external_fonts as $font_link ) {
+			wp_add_inline_style( 'hestia_style', wptt_get_webfont_styles( $font_link ) );
+		}
+
+	}
+
+	/**
+	 * Filters domains and URLs for resource hints of relation type.
+	 *
+	 * @param array  $urls  Array of resources and their attributes, or URLs to print for resource hints.
+	 * @param string $relation_type The relation type the URLs are printed for e.g. 'preconnect' or 'prerender'.
+	 * @return array
+	 */
+	public function remove_google_fontapi_resource_hints( $urls, $relation_type ) {
+		if ( hestia_enable_local_fonts() ) {
+			$urls = array_filter(
+				$urls,
+				function( $url ) {
+					if ( strpos( $url, 'fonts.googleapis.com' ) !== false ) {
+						return;
+					}
+					return $url;
+				}
+			);
+		}
+		return $urls;
+	}
+
+	/**
+	 * Set local fonts base path.
+	 *
+	 * @param string $base_path Folder base path.
+	 * @return string
+	 */
+	public function set_local_fonts_base_path( $base_path ) {
+		$upload_dir = wp_upload_dir();
+		if ( isset( $upload_dir['basedir'] ) ) {
+			$base_path = $upload_dir['basedir'];
+		}
+		return $base_path;
+	}
+
+	/**
+	 * Set local fonts base url.
+	 *
+	 * @param string $base_url Folder base url.
+	 * @return string
+	 */
+	public function set_local_fonts_base_url( $base_url ) {
+		$upload_dir = wp_upload_dir();
+		if ( isset( $upload_dir['baseurl'] ) ) {
+			$base_url = $upload_dir['baseurl'];
+		}
+		return $base_url;
 	}
 
 }

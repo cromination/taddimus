@@ -1,3 +1,13 @@
+#### [Version 3.1.0](https://github.com/Codeinwp/hestia-pro/compare/v3.0.30...v3.1.0) (2023-08-29)
+
+- Improved The Onboarding Experience With A New Setup Wizard.
+- Added Header Customization Options: Display Menu On Mobile, Customize Cart Icon, And Transparent Header Support For Other Pages.
+- Introduced New Page Patterns.
+- Allowed Disabling Of Page Titles From Individual Page Options.
+- Added An Option To Display The Site Title Near The Logo.
+- Implemented Local Font Loading For Better Performance.
+- Added A Filter For No-Follow Links In The Clients Bar Section.
+
 ##### [Version 3.0.30](https://github.com/Codeinwp/hestia-pro/compare/v3.0.29...v3.0.30) (2023-06-15)
 
 - Fix Lighthouse errors

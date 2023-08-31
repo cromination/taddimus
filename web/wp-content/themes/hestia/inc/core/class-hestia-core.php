@@ -108,6 +108,7 @@ class Hestia_Core {
 				'wp-forms',
 				'sync-about',
 				'woocommerce-manager',
+				'setup-wizard',
 			)
 		);
 
@@ -181,6 +182,10 @@ class Hestia_Core {
 		add_action( 'wp_enqueue_scripts', array( $front_end, 'enqueue_scripts' ) );
 		add_action( 'enqueue_block_editor_assets', array( $front_end, 'enqueue_custom_fonts' ) );
 		add_action( 'elementor/frontend/before_register_styles', array( $front_end, 'enqueue_before_elementor' ) );
+
+		// Register patterns.
+		$patterns = new Hestia_Patterns();
+		add_action( 'init', array( $patterns, 'define_patterns' ) );
 	}
 
 	/**

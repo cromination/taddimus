@@ -27,7 +27,7 @@ use WebpConverter\WebpConverterConstants;
 class RemoteMethod extends MethodAbstract {
 
 	const METHOD_NAME        = 'remote';
-	const MAX_FILESIZE_BYTES = ( 25 * 1024 * 1024 );
+	const MAX_FILESIZE_BYTES = ( 32 * 1024 * 1024 );
 
 	/**
 	 * @var SkipCrashed

@@ -27,9 +27,11 @@ class CloudflareStatusDetector implements ErrorDetector {
 	 */
 	public function get_error() {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
+		if ( ! $plugin_settings[ CloudflareZoneIdOption::OPTION_NAME ] ) {
+			return null;
+		}
 
-		if ( $plugin_settings[ CloudflareZoneIdOption::OPTION_NAME ]
-			&& ( OptionsAccessManager::get_option( CloudflareConfigurator::REQUEST_CACHE_PURGE_OPTION, 'yes' ) !== 'yes' ) ) {
+		if ( OptionsAccessManager::get_option( CloudflareConfigurator::REQUEST_CACHE_PURGE_OPTION, 'yes' ) !== 'yes' ) {
 			return new CloudflareSettingsIncorrectNotice();
 		}
 

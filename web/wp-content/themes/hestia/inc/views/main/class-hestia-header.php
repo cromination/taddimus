@@ -149,9 +149,14 @@ class Hestia_Header extends Hestia_Abstract_Main {
 			hestia_before_navbar_toggle_trigger();
 			?>
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navigation">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
+				<?php
+				$mobile_menu_icon = '<span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>';
+				if ( get_theme_mod( 'hestia_mobile_menu_icon_status', false ) ) :
+					$mobile_icon      = get_theme_mod( 'hestia_mobile_menu_icon', $mobile_menu_icon );
+					$mobile_menu_icon = ! empty( $mobile_icon ) ? $mobile_icon : $mobile_menu_icon;
+					?>
+				<?php endif; ?>
+				<?php echo wp_kses_post( $mobile_menu_icon ); ?>
 				<span class="sr-only"><?php esc_html_e( 'Toggle Navigation', 'hestia' ); ?></span>
 			</button>
 			<?php
@@ -200,25 +205,11 @@ class Hestia_Header extends Hestia_Abstract_Main {
 		$class = ' navbar-color-on-scroll navbar-transparent';
 
 		$disabled_frontpage = get_theme_mod( 'disable_frontpage_sections', false );
-		if ( true === (bool) $disabled_frontpage ) {
+		if ( is_front_page() && true === (bool) $disabled_frontpage ) {
 			$class = '';
 		}
 
-		if ( get_option( 'show_on_front' ) !== 'page' ) {
-			$class = '';
-		}
-		if ( ! is_front_page() ) {
-			$class = '';
-		}
-		if ( is_front_page() && is_home() ) {
-			return '';
-		}
-		if ( is_page_template() && ! get_option( 'fresh_site' ) ) {
-			$class = '';
-		}
-
-		$is_nav_transparent = get_theme_mod( 'hestia_navbar_transparent', apply_filters( 'hestia_navbar_transparent_default', true ) );
-		if ( ! $is_nav_transparent ) {
+		if ( ! $this->handle_header_transparent() ) {
 			$class = '';
 		}
 
@@ -442,5 +433,22 @@ class Hestia_Header extends Hestia_Abstract_Main {
 		$output .= '</li>';
 
 		return $output;
+	}
+
+	/**
+	 * Handle transparent header.
+	 */
+	private function handle_header_transparent() {
+		$current_page          = get_queried_object();
+		$pid                   = $current_page instanceof WP_Post ? $current_page->ID : get_the_ID();
+		$is_transparent_header = get_post_meta( $pid, 'hestia_enable_transparent', true );
+		$is_nav_transparent    = class_exists( '\Hestia_Addon_Manager', false ) && 'on' === $is_transparent_header;
+		if ( is_front_page() && is_home() ) {
+			$is_nav_transparent = false;
+		}
+		if ( ! $is_nav_transparent && is_front_page() && ! is_home() ) {
+			$is_nav_transparent = get_theme_mod( 'hestia_navbar_transparent', apply_filters( 'hestia_navbar_transparent_default', true ) );
+		}
+		return $is_nav_transparent;
 	}
 }

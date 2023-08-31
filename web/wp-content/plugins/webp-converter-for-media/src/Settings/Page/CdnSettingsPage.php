@@ -3,10 +3,6 @@
 
 namespace WebpConverter\Settings\Page;
 
-use WebpConverter\PluginData;
-use WebpConverter\PluginInfo;
-use WebpConverter\Repository\TokenRepository;
-use WebpConverter\Service\CloudflareConfigurator;
 use WebpConverter\Settings\Option\OptionAbstract;
 use WebpConverter\Settings\PluginOptions;
 
@@ -16,20 +12,6 @@ use WebpConverter\Settings\PluginOptions;
 class CdnSettingsPage extends GeneralSettingsPage {
 
 	const PAGE_SLUG = 'cdn';
-	/**
-	 * @var CloudflareConfigurator
-	 */
-	private $cloudflare_configurator;
-
-	public function __construct(
-		PluginInfo $plugin_info,
-		PluginData $plugin_data,
-		TokenRepository $token_repository,
-		CloudflareConfigurator $cloudflare_configurator = null
-	) {
-		parent::__construct( $plugin_info, $plugin_data, $token_repository );
-		$this->cloudflare_configurator = $cloudflare_configurator ?: new CloudflareConfigurator( $plugin_data );
-	}
 
 	/**
 	 * {@inheritdoc}
@@ -60,15 +42,5 @@ class CdnSettingsPage extends GeneralSettingsPage {
 				'api_regenerate_nonce' => null,
 			]
 		);
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function do_action_before_load() {
-		parent::do_action_before_load();
-
-		$this->cloudflare_configurator->set_cache_config();
-		$this->cloudflare_configurator->purge_cache();
 	}
 }

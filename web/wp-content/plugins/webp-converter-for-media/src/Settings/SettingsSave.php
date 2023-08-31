@@ -3,7 +3,6 @@
 namespace WebpConverter\Settings;
 
 use WebpConverter\Conversion\Cron\CronEventGenerator;
-use WebpConverter\Conversion\Directory\DirectoryFactory;
 use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\Method\RemoteMethod;
@@ -14,7 +13,6 @@ use WebpConverter\Service\TokenValidator;
 use WebpConverter\Settings\Option\AccessTokenOption;
 use WebpConverter\Settings\Option\ConversionMethodOption;
 use WebpConverter\Settings\Option\OutputFormatsOption;
-use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 
 /**
  * Supports saving plugin settings on plugin settings page.
@@ -87,8 +85,5 @@ class SettingsSave {
 	private function init_actions_after_save() {
 		do_action( LoaderAbstract::ACTION_NAME, true );
 		wp_clear_scheduled_hook( CronEventGenerator::CRON_PATHS_ACTION );
-
-		$settings = $this->plugin_data->get_plugin_settings();
-		( new DirectoryFactory() )->remove_unused_output_directories( $settings[ SupportedDirectoriesOption::OPTION_NAME ] );
 	}
 }

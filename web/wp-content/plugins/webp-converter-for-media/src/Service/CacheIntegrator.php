@@ -24,13 +24,29 @@ class CacheIntegrator implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
+		add_action( 'webpc_settings_updated', [ $this, 'clear_after_settings_save' ], 10, 2 );
 		register_activation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'clear_cache' ] );
 		register_deactivation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'clear_cache' ] );
-		add_action( 'webpc_settings_updated', [ $this, 'clear_after_settings_save' ], 10, 2 );
+	}
+
+	/**
+	 * @param mixed[] $current_settings  .
+	 * @param mixed[] $previous_settings .
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function clear_after_settings_save( array $current_settings, array $previous_settings ) {
+		if ( $previous_settings[ LoaderTypeOption::OPTION_NAME ] === $current_settings[ LoaderTypeOption::OPTION_NAME ] ) {
+			return;
+		}
+
+		$this->clear_cache();
 	}
 
 	/**
 	 * @return void
+	 * @internal
 	 */
 	public function clear_cache() {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
@@ -66,20 +82,5 @@ class CacheIntegrator implements HookableInterface {
 		}
 
 		wp_cache_delete( 'alloptions', 'options' );
-	}
-
-	/**
-	 * @param mixed[] $current_settings  .
-	 * @param mixed[] $previous_settings .
-	 *
-	 * @return void
-	 * @internal
-	 */
-	public function clear_after_settings_save( array $current_settings, array $previous_settings ) {
-		if ( $previous_settings[ LoaderTypeOption::OPTION_NAME ] === $current_settings[ LoaderTypeOption::OPTION_NAME ] ) {
-			return;
-		}
-
-		$this->clear_cache();
 	}
 }

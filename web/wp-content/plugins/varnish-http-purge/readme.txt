@@ -2,7 +2,7 @@
 Contributors: Ipstenu, mikeschroder, techpriester, danielbachhuber
 Tags: proxy, purge, cache, varnish, nginx
 Requires at least: 5.0
-Tested up to: 6.0
+Tested up to: 6.3
 Stable tag: 5.1.3
 Requires PHP: 5.6
 
@@ -100,6 +100,14 @@ When using Nginx based proxies, your IP will likely be `localhost`.
 **Please report all issues in the [support forums](https://wordpress.org/support/plugin/varnish-http-purge)**
 
 If you have code patches, [pull requests are welcome](https://github.com/Ipstenu/varnish-http-purge).
+
+= Don't you work at DreamHost? Is this Official or DreamHost only? =
+
+This plugin was originally adopted and updated for DreamHost's DreamPress server, however it is not (and never has been) for DreamHost _only_.
+
+I worked at DreamHost from 2012 to 2022, and have maintained the plugin since around 2014 or so.
+
+This plugin is installed by default for _all_ DreamPress installs on DreamHost, and I still maintain it, but it was not originally an official DreamHost plugin which means I will continue to support all users to the best of my ability.
 
 = Is this plugin caching my data? =
 
@@ -237,13 +245,6 @@ This is a question beyond the support of plugin. I do not have the resources ava
 = How can I see what the plugin is sending to the cache service? =
 
 Yes _IF_ the service has an interface. Sadly Nginx does not. [Detailed directions can be found on the debugging section on GitHub](https://github.com/Ipstenu/varnish-http-purge/wiki). Bear in mind, these interfaces tend to be command-line only.
-
-= Don't you work at DreamHost? Is this Official or DreamHost only? =
-
-* Yes, I do work for DreamHost
-* No, this plugin is not DreamHost Only
-
-This plugin is installed by default for _all_ DreamPress installs on DreamHost, and I maintain it for DreamHost, but it was not originally an official DreamHost plugin which means I will continue to support all users to the best of my ability.
 
 == Changelog ==
 

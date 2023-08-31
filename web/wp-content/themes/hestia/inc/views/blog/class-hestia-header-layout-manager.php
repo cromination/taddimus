@@ -290,6 +290,15 @@ class Hestia_Header_Layout_Manager extends Hestia_Abstract_Main {
 	 * @return string
 	 */
 	private function render_header( $layout ) {
+
+		$current_page        = get_queried_object();
+		$pid                 = $current_page instanceof WP_Post ? $current_page->ID : get_the_ID();
+		$specific_hide_title = get_post_meta( $pid, 'hestia_meta_disable_title', true );
+		// Hide the post title if the individual page option is enabled.
+		if ( class_exists( 'Hestia_Addon_Manager' ) && 'on' === $specific_hide_title ) {
+			return;
+		}
+
 		if ( is_attachment() ) {
 			$layout = 'default';
 		}

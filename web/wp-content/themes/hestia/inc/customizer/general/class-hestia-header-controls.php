@@ -25,6 +25,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 		$this->add_top_bar_options();
 		$this->add_navigation_options();
 		$this->add_header_options();
+		$this->add_mobile_menu_icon_options();
 	}
 
 	/**
@@ -219,7 +220,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 				),
 				array(
 					'label'    => esc_html__( 'Layout', 'hestia' ),
-					'priority' => 35,
+					'priority' => 45,
 					'section'  => 'hestia_navigation',
 					'choices'  => apply_filters(
 						'hestia_nav_layout_choices',
@@ -504,5 +505,26 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 	public function hestia_transparent_header_logo_callback() {
 		$transparent_navbar = get_theme_mod( 'hestia_navbar_transparent' );
 		return $transparent_navbar === true;
+	}
+
+	/**
+	 * Add mobile menu icon options.
+	 */
+	public function add_mobile_menu_icon_options() {
+		$this->add_control(
+			new Hestia_Customizer_Control(
+				'hestia_mobile_menu_icon_status',
+				array(
+					'sanitize_callback' => 'hestia_sanitize_checkbox',
+					'default'           => false,
+				),
+				array(
+					'type'     => 'checkbox',
+					'label'    => esc_html__( 'Enable Mobile Menu Icon', 'hestia' ),
+					'section'  => 'hestia_navigation',
+					'priority' => 35,
+				)
+			)
+		);
 	}
 }

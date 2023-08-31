@@ -1,3 +1,15 @@
+##### [Version 3.3.3](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.2...v3.3.3) (2023-08-22)
+
+- Disable install buttons on the About page if users can not install plugins
+
+##### [Version 3.3.2](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.1...v3.3.2) (2023-08-02)
+
+- Added a new product page for Otter
+
+##### [Version 3.3.1](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.0...v3.3.1) (2023-06-21)
+
+- Fix Neve FSE promo typo
+
 #### [Version 3.3.0](https://github.com/Codeinwp/themeisle-sdk/compare/v3.2.41...v3.3.0) (2023-05-30)
 
 - Adds About Page Integration

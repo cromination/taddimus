@@ -15,6 +15,7 @@ class Hestia_Colors extends Hestia_Abstract_Main {
 	 */
 	public function init() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'add_inline_color_styles' ) );
+		add_filter( 'theme_mod_background_color', array( $this, 'filter_background_color' ) );
 	}
 
 	/**
@@ -194,5 +195,18 @@ class Hestia_Colors extends Hestia_Abstract_Main {
 		';
 
 		return $custom_css;
+	}
+
+	/**
+	 * Background color.
+	 *
+	 * @param string $color Color code.
+	 * @return string
+	 */
+	public function filter_background_color( $color ) {
+		if ( ! is_string( $color ) ) {
+			return $color;
+		}
+		return str_replace( '#', '', $color );
 	}
 }

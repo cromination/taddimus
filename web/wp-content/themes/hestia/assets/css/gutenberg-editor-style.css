@@ -146,3 +146,19 @@
   max-width: 100%;
   height: 1px;
 }
+
+.wp-block-image.is-style-rounded img,
+.wp-block-media-text.is-image-fill .wp-block-media-text__media,
+.wp-block-post-featured-image,
+.wp-block-image-shadow img,
+.wp-block-media-text .wp-block-media-text__media img {
+  -webkit-box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56), 0 4px 25px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56), 0 4px 25px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56), 0 4px 25px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.hestia-3-cols-team .has-text-align-center,
+.hestia-3-cols-team .has-text-align-left,
+.hestia-3-cols-team .has-text-align-right {
+  max-width: 486px;
+}

@@ -62,10 +62,12 @@ class Hestia_Customizer_Page_Editor_Helper extends Hestia_Abstract_Main {
 		$custom_css    = '';
 		// Load google font.
 		if ( ! empty( $body_font ) ) {
-			$custom_css .= '@import url(\'https://fonts.googleapis.com/css?family=' . esc_attr( $body_font ) . '\');';
+			$body_font_url = hestia_get_local_webfont_url( 'https://fonts.googleapis.com/css?family=' . esc_attr( $body_font ) );
+			$custom_css   .= '@import url(' . $body_font_url . ');';
 		}
 		if ( ! empty( $headings_font ) ) {
-			$custom_css .= '@import url(\'https://fonts.googleapis.com/css?family=' . esc_attr( $headings_font ) . '\');';
+			$headings_font_url = hestia_get_local_webfont_url( 'https://fonts.googleapis.com/css?family=' . esc_attr( $headings_font ) );
+			$custom_css       .= '@import url(' . $headings_font_url . ');';
 		}
 		// Check if accent color is exists.
 		if ( ! empty( $accent_color ) ) {

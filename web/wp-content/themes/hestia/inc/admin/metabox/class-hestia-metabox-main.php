@@ -105,6 +105,7 @@ class Hestia_Metabox_Main extends Hestia_Metabox_Controls_Base {
 	 */
 	private function content_toggles() {
 
+		$is_pro           = class_exists( 'Hestia_Addon_Manager' );
 		$content_controls = array(
 			'hestia_disable_navigation' => array(
 				'default'     => 'off',
@@ -117,14 +118,37 @@ class Hestia_Metabox_Main extends Hestia_Metabox_Controls_Base {
 				'input_label' => __( 'Disable Footer', 'hestia' ),
 				'priority'    => 4,
 			),
+			'hestia_meta_disable_title' => array(
+				'default'            => 'off',
+				'input_label'        => __( 'Disable Title', 'hestia' ),
+				'active_callback'    => array( $this, 'hide_on_single_product' ),
+				'priority'           => 5,
+				'show_upsell_notice' => ! $is_pro ? 'show' : 'hide',
+				'upsell_data'        => array(
+					'text'    => __( 'your page title & header', 'hestia' ),
+					'utm_tag' => 'disabletitle',
+				),
+			),
+			'hestia_enable_transparent' => array(
+				'default'            => 'off',
+				'input_label'        => __( 'Enable transparent header', 'hestia' ),
+				'priority'           => 6,
+				'show_upsell_notice' => ! $is_pro ? 'show' : 'hide',
+				'upsell_data'        => array(
+					'text'    => __( 'the transparent header', 'hestia' ),
+					'utm_tag' => 'transparentHeader',
+				),
+			),
 		);
 
 		$default_control_args = array(
-			'default'         => 'off',
-			'label'           => '',
-			'input_label'     => '',
-			'active_callback' => '__return_true',
-			'priority'        => 10,
+			'default'            => 'off',
+			'label'              => '',
+			'input_label'        => '',
+			'active_callback'    => '__return_true',
+			'priority'           => 10,
+			'show_upsell_notice' => false,
+			'upsell_data'        => array(),
 		);
 
 		foreach ( $content_controls as $control_id => $args ) {
@@ -139,6 +163,8 @@ class Hestia_Metabox_Main extends Hestia_Metabox_Controls_Base {
 						'label'           => $args['label'],
 						'input_label'     => $args['input_label'],
 						'active_callback' => $args['active_callback'],
+						'show_notice'     => isset( $args['show_upsell_notice'] ) ? $args['show_upsell_notice'] : '',
+						'upsell_data'     => isset( $args['upsell_data'] ) ? $args['upsell_data'] : array(),
 					)
 				)
 			);
@@ -219,6 +245,29 @@ class Hestia_Metabox_Main extends Hestia_Metabox_Controls_Base {
 				continue;
 			}
 
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Callback to hide on single product edit page.
+	 *
+	 * @return bool
+	 */
+	public function hide_on_single_product() {
+		if ( isset( $_GET['post_type'] ) && $_GET['post_type'] === 'product' ) {
+			return false;
+		}
+
+		if ( ! isset( $_GET['post'] ) ) {
+			return true;
+		}
+
+		$post_type = get_post_type( (int) $_GET['post'] );
+
+		if ( $post_type !== 'product' ) {
 			return true;
 		}
 

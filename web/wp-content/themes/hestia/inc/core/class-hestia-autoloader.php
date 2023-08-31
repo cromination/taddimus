@@ -200,6 +200,8 @@ class Hestia_Autoloader {
 			'Hestia_Slider_Controls'                      => HESTIA_PHP_INCLUDE . 'customizer/front-page',
 			'Hestia_Slider_Section'                       => HESTIA_PHP_INCLUDE . 'customizer/views/front-page',
 			'Hestia_View_Hooks_With_Upsell'               => HESTIA_PHP_INCLUDE . 'customizer/view-hooks',
+			'Hestia_Patterns'                             => HESTIA_PHP_INCLUDE . 'compatibility',
+			'Hestia_Setup_Wizard'                         => HESTIA_PHP_INCLUDE . 'setup-wizard',
 		);
 	}
 

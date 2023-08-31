@@ -1900,3 +1900,8 @@ select.is-pro-option + span.dashicons-lock {
   float: right;
   margin-top: 2px;
 }
+
+.customize-locked-control {
+  opacity: .4;
+  pointer-events: none;
+}

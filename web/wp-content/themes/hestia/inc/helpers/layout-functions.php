@@ -399,14 +399,15 @@ if ( ! function_exists( 'hestia_is_external_url' ) ) {
 	function hestia_is_external_url( $url ) {
 		$link_url = parse_url( $url );
 		$home_url = parse_url( home_url() );
+		$attr     = '';
 
 		if ( ! empty( $link_url['host'] ) ) {
 			if ( $link_url['host'] !== $home_url['host'] ) {
-				return ' target="_blank"';
+				$attr = 'target="_blank"';
 			}
-		} else {
-			return '';
 		}
+
+		return apply_filters( 'hestia_external_url_attr', hestia_esc_attr( $attr ) );
 	}
 }
 
@@ -1911,4 +1912,71 @@ function maybe_trigger_fa_loading( $strings ) {
 	}
 
 	return false;
+}
+
+if ( ! function_exists( 'hestia_esc_attr' ) ) {
+	/**
+	 * Escaping attribute.
+	 *
+	 * @param string $attributes HTML attributes.
+	 * @return string
+	 */
+	function hestia_esc_attr( $attributes = '' ) {
+		if ( ! empty( $attributes ) ) {
+			$attributes = explode( ' ', $attributes );
+			$attributes = array_filter( $attributes );
+			$attributes = is_array( $attributes ) ? $attributes : array();
+			$attributes = array_map(
+				function( $attr ) {
+					$attr = explode( '=', $attr );
+					if ( empty( $attr ) ) {
+						return '';
+					}
+					return sprintf( '%s="%s"', esc_attr( reset( $attr ) ), esc_attr( str_replace( '"', '', end( $attr ) ) ) );
+				},
+				$attributes
+			);
+			$attributes = implode( ' ', $attributes );
+		}
+		return sprintf( ' %s', $attributes );
+	}
+}
+
+if ( ! function_exists( 'hestia_enable_local_fonts' ) ) {
+	/**
+	 * Check enable local font loading or not.
+	 */
+	function hestia_enable_local_fonts() {
+
+		$toggle = get_theme_mod( 'hestia_enable_local_fonts', false );
+
+		/**
+		 * Filters whether the remote fonts should be hosted locally.
+		 *
+		 * This filter applies for both Google Fonts and Typekit Fonts if the Typekit module is used.
+		 *
+		 * @param bool $should_enqueue_locally Whether the Google Fonts should be hosted locally. Default value is false.
+		 *
+		 * @since 3.1
+		 */
+		return (bool) apply_filters( 'hestia_load_remote_fonts_locally', $toggle );
+	}
+}
+
+if ( ! function_exists( 'hestia_get_local_webfont_url' ) ) {
+	/**
+	 * Get local webfont URL.
+	 *
+	 * @param string $font_url Font URL.
+	 * @return string
+	 */
+	function hestia_get_local_webfont_url( $font_url = '' ) {
+		if ( ! hestia_enable_local_fonts() ) {
+			return $font_url;
+		}
+		if ( ! function_exists( 'wptt_get_webfont_url' ) ) {
+			require_once trailingslashit( get_template_directory() ) . 'vendor/wptt/webfont-loader/wptt-webfont-loader.php';
+		}
+		return wptt_get_webfont_url( $font_url );
+	}
 }
