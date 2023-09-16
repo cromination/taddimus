@@ -3,16 +3,17 @@
 
 namespace WebpConverter\Settings\Page;
 
+use WebpConverter\Conversion\Cron\CronEventGenerator;
 use WebpConverter\Conversion\Endpoint\FilesStatsEndpoint;
 use WebpConverter\Conversion\Endpoint\PathsEndpoint;
 use WebpConverter\Conversion\Endpoint\RegenerateEndpoint;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Loader\LoaderAbstract;
 use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
 use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Settings\Option\OptionAbstract;
-use WebpConverter\Settings\PluginOptions;
-use WebpConverter\Settings\SettingsSave;
+use WebpConverter\Settings\SettingsManager;
 
 /**
  * {@inheritdoc}
@@ -29,21 +30,28 @@ class GeneralSettingsPage extends PageAbstract {
 	/**
 	 * @var PluginData
 	 */
-	private $plugin_data;
+	protected $plugin_data;
 
 	/**
 	 * @var TokenRepository
 	 */
 	private $token_repository;
 
+	/**
+	 * @var FormatFactory
+	 */
+	private $format_factory;
+
 	public function __construct(
 		PluginInfo $plugin_info,
 		PluginData $plugin_data,
-		TokenRepository $token_repository
+		TokenRepository $token_repository,
+		FormatFactory $format_factory
 	) {
 		$this->plugin_info      = $plugin_info;
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository;
+		$this->format_factory   = $format_factory;
 	}
 
 	/**
@@ -76,13 +84,13 @@ class GeneralSettingsPage extends PageAbstract {
 		return [
 			'logo_url'                 => $this->plugin_info->get_plugin_directory_url() . 'assets/img/logo-headline.png',
 			'author_image_url'         => $this->plugin_info->get_plugin_directory_url() . 'assets/img/author.png',
-			'form_options'             => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_BASIC ),
-			'form_sidebar_options'     => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_SIDEBAR ),
-			'form_input_name'          => SettingsSave::FORM_TYPE_PARAM_KEY,
+			'form_options'             => $this->plugin_data->get_plugin_options( OptionAbstract::FORM_TYPE_BASIC ),
+			'form_sidebar_options'     => $this->plugin_data->get_plugin_options( OptionAbstract::FORM_TYPE_SIDEBAR ),
+			'form_input_name'          => SettingsManager::FORM_TYPE_PARAM_KEY,
 			'form_input_value'         => OptionAbstract::FORM_TYPE_BASIC,
 			'form_sidebar_input_value' => OptionAbstract::FORM_TYPE_SIDEBAR,
-			'nonce_input_name'         => SettingsSave::NONCE_PARAM_KEY,
-			'nonce_input_value'        => wp_create_nonce( SettingsSave::NONCE_PARAM_VALUE ),
+			'nonce_input_name'         => SettingsManager::NONCE_PARAM_KEY,
+			'nonce_input_value'        => wp_create_nonce( SettingsManager::NONCE_PARAM_VALUE ),
 			'token_valid_status'       => $token->get_valid_status(),
 			'token_active_status'      => $token->is_active(),
 			'api_paths_url'            => PathsEndpoint::get_route_url(),
@@ -91,7 +99,7 @@ class GeneralSettingsPage extends PageAbstract {
 			'api_regenerate_nonce'     => RegenerateEndpoint::get_route_nonce(),
 			'api_stats_url'            => FilesStatsEndpoint::get_route_url(),
 			'api_stats_nonce'          => FilesStatsEndpoint::get_route_nonce(),
-			'url_debug_page'           => PageIntegration::get_settings_page_url( DebugPage::PAGE_SLUG ),
+			'url_debug_page'           => PageIntegrator::get_settings_page_url( DebugPage::PAGE_SLUG ),
 			'output_formats'           => [
 				'webp' => [
 					'label' => 'WebP',
@@ -120,7 +128,16 @@ class GeneralSettingsPage extends PageAbstract {
 	 * {@inheritdoc}
 	 */
 	public function do_action_before_load() {
-		( new SettingsSave( $this->plugin_data ) )->save_settings();
+		$post_data = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( isset( $post_data[ SettingsManager::FORM_TYPE_PARAM_KEY ] )
+			&& wp_verify_nonce( $post_data[ SettingsManager::NONCE_PARAM_KEY ] ?? '', SettingsManager::NONCE_PARAM_VALUE ) ) {
+			( new SettingsManager( $this->plugin_data, $this->token_repository ) )->save_settings( $post_data );
+		}
+
+		do_action( LoaderAbstract::ACTION_NAME, true );
+		wp_clear_scheduled_hook( CronEventGenerator::CRON_PATHS_ACTION );
+
+		$this->format_factory->reset_available_formats();
 	}
 
 	/**

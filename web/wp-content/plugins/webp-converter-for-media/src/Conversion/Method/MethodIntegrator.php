@@ -20,13 +20,19 @@ class MethodIntegrator {
 	private $plugin_data;
 
 	/**
+	 * @var MethodFactory
+	 */
+	private $method_factory;
+
+	/**
 	 * @var StatsManager
 	 */
 	private $stats_manager;
 
-	public function __construct( PluginData $plugin_data, StatsManager $stats_manager = null ) {
-		$this->plugin_data   = $plugin_data;
-		$this->stats_manager = $stats_manager ?: new StatsManager();
+	public function __construct( PluginData $plugin_data, MethodFactory $method_factory, StatsManager $stats_manager = null ) {
+		$this->plugin_data    = $plugin_data;
+		$this->method_factory = $method_factory;
+		$this->stats_manager  = $stats_manager ?: new StatsManager();
 	}
 
 	/**
@@ -81,7 +87,7 @@ class MethodIntegrator {
 		}
 
 		$method_key = $plugin_settings[ ConversionMethodOption::OPTION_NAME ] ?? null;
-		$methods    = ( new MethodFactory() )->get_methods_objects();
+		$methods    = $this->method_factory->get_methods_objects();
 		foreach ( $methods as $method_name => $method ) {
 			if ( $method_key === $method_name ) {
 				return $method;

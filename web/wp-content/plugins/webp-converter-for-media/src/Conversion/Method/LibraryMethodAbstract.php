@@ -2,43 +2,14 @@
 
 namespace WebpConverter\Conversion\Method;
 
-use WebpConverter\Conversion\SkipCrashed;
-use WebpConverter\Conversion\SkipLarger;
 use WebpConverter\Exception\ExceptionInterface;
 use WebpConverter\Exception\LargerThanOriginalException;
-use WebpConverter\Service\ServerConfigurator;
 use WebpConverter\Settings\Option\OutputFormatsOption;
 
 /**
  * Abstract class for class that converts images using the PHP library.
  */
 abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMethodInterface {
-
-	/**
-	 * @var SkipCrashed
-	 */
-	private $skip_crashed;
-
-	/**
-	 * @var SkipLarger
-	 */
-	private $skip_larger;
-
-	/**
-	 * @var ServerConfigurator
-	 */
-	private $server_configurator;
-
-	public function __construct(
-		SkipCrashed $skip_crashed,
-		SkipLarger $skip_larger,
-		ServerConfigurator $server_configurator
-	) {
-		parent::__construct();
-		$this->skip_crashed        = $skip_crashed;
-		$this->skip_larger         = $skip_larger;
-		$this->server_configurator = $server_configurator;
-	}
 
 	/**
 	 * {@inheritdoc}

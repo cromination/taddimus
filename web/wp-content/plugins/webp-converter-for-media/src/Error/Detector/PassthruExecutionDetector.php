@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Error\Detector;
 
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Error\Notice\PassthruExecutionNotice;
 use WebpConverter\Loader\LoaderAbstract;
 use WebpConverter\Loader\PassthruLoader;
@@ -12,7 +13,7 @@ use WebpConverter\Settings\Option\LoaderTypeOption;
 /**
  * Checks for configuration errors about disabled file supports Pass Thru loader.
  */
-class PassthruExecutionDetector implements ErrorDetector {
+class PassthruExecutionDetector implements DetectorInterface {
 
 	/**
 	 * @var PluginInfo
@@ -24,9 +25,15 @@ class PassthruExecutionDetector implements ErrorDetector {
 	 */
 	private $plugin_data;
 
-	public function __construct( PluginInfo $plugin_info, PluginData $plugin_data ) {
-		$this->plugin_info = $plugin_info;
-		$this->plugin_data = $plugin_data;
+	/**
+	 * @var FormatFactory
+	 */
+	private $format_factory;
+
+	public function __construct( PluginInfo $plugin_info, PluginData $plugin_data, FormatFactory $format_factory ) {
+		$this->plugin_info    = $plugin_info;
+		$this->plugin_data    = $plugin_data;
+		$this->format_factory = $format_factory;
 	}
 
 	/**
@@ -56,7 +63,7 @@ class PassthruExecutionDetector implements ErrorDetector {
 	 * @return bool Verification status.
 	 */
 	private function if_passthru_execution_allowed(): bool {
-		$loader = new PassthruLoader( $this->plugin_info, $this->plugin_data );
+		$loader = new PassthruLoader( $this->plugin_info, $this->plugin_data, $this->format_factory );
 		if ( $loader->is_active_loader() !== true ) {
 			return true;
 		}

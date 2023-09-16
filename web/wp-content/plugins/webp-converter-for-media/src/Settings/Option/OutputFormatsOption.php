@@ -25,16 +25,14 @@ class OutputFormatsOption extends OptionAbstract {
 	private $conversion_method_option;
 
 	/**
-	 * Object of integration class supports all conversion methods.
-	 *
 	 * @var FormatFactory
 	 */
-	private $formats_integration;
+	private $format_factory;
 
-	public function __construct( TokenRepository $token_repository, ConversionMethodOption $conversion_method_option ) {
+	public function __construct( TokenRepository $token_repository, FormatFactory $format_factory, ConversionMethodOption $conversion_method_option ) {
 		$this->token_repository         = $token_repository;
 		$this->conversion_method_option = $conversion_method_option;
-		$this->formats_integration      = new FormatFactory();
+		$this->format_factory           = $format_factory;
 	}
 
 	/**
@@ -90,7 +88,7 @@ class OutputFormatsOption extends OptionAbstract {
 	 * @return string[]
 	 */
 	public function get_available_values( array $settings ): array {
-		return $this->formats_integration->get_formats();
+		return $this->format_factory->get_formats();
 	}
 
 	/**
@@ -103,16 +101,31 @@ class OutputFormatsOption extends OptionAbstract {
 		if ( ! $method || in_array( $method, $this->conversion_method_option->get_disabled_values( $settings ) ) ) {
 			$method = $this->conversion_method_option->get_default_value( $settings );
 		}
-		$formats           = $this->formats_integration->get_formats();
-		$formats_available = $this->formats_integration->get_available_formats( $method );
+		$formats           = $this->format_factory->get_formats();
+		$formats_available = $this->format_factory->get_available_formats( $method );
 
 		return array_keys( array_diff( $formats, $formats_available ) );
 	}
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return string[]
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function get_default_value( array $settings = null ): array {
+		$method = $settings[ ConversionMethodOption::OPTION_NAME ] ?? null;
+		if ( ! $method ) {
+			$method = $this->conversion_method_option->get_default_value( $settings );
+		}
+		$formats = array_keys( $this->format_factory->get_available_formats( $method ) );
+
+		return ( in_array( WebpFormat::FORMAT_EXTENSION, $formats ) ) ? [ WebpFormat::FORMAT_EXTENSION ] : [];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
 		$valid_values = [];
 		if ( ! $current_value ) {
 			return $valid_values;
@@ -130,17 +143,14 @@ class OutputFormatsOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return string[]
 	 */
-	public function get_default_value( array $settings = null ): array {
-		$method = $settings[ ConversionMethodOption::OPTION_NAME ] ?? null;
-		if ( ! $method ) {
-			$method = $this->conversion_method_option->get_default_value( $settings );
-		}
-		$formats = array_keys( $this->formats_integration->get_available_formats( $method ) );
+	public function sanitize_value( $current_value ) {
+		$values = [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ];
 
-		return ( in_array( WebpFormat::FORMAT_EXTENSION, $formats ) ) ? [ WebpFormat::FORMAT_EXTENSION ] : [];
+		return $this->validate_value(
+			$current_value,
+			array_combine( $values, $values )
+		);
 	}
 
 	/**

@@ -4,7 +4,9 @@ namespace WebpConverter\Service;
 
 use WebpConverter\Conversion\FilesTreeFinder;
 use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
+use WebpConverter\Conversion\Method\MethodFactory;
 use WebpConverter\Conversion\Method\MethodIntegrator;
 use WebpConverter\Conversion\PathsFinder;
 use WebpConverter\HookableInterface;
@@ -28,9 +30,26 @@ class WpCliManager implements HookableInterface {
 	 */
 	private $token_repository;
 
-	public function __construct( PluginData $plugin_data, TokenRepository $token_repository ) {
+	/**
+	 * @var MethodFactory
+	 */
+	private $method_factory;
+
+	/**
+	 * @var FormatFactory
+	 */
+	private $format_factory;
+
+	public function __construct(
+		PluginData $plugin_data,
+		TokenRepository $token_repository,
+		MethodFactory $method_factory,
+		FormatFactory $format_factory
+	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository;
+		$this->method_factory   = $method_factory;
+		$this->format_factory   = $format_factory;
 	}
 
 	/**
@@ -70,7 +89,7 @@ class WpCliManager implements HookableInterface {
 			__( 'How many images to convert are remaining on my website?', 'webp-converter-for-media' )
 		);
 
-		$stats_data = ( new FilesTreeFinder( $this->plugin_data ) )
+		$stats_data = ( new FilesTreeFinder( $this->plugin_data, $this->format_factory ) )
 			->get_tree( [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ] );
 
 		\WP_CLI::success(
@@ -91,7 +110,7 @@ class WpCliManager implements HookableInterface {
 	 */
 	public function regenerate_images( array $args, array $assoc_args = [] ) {
 		$force_flag        = ( isset( $assoc_args['force'] ) || in_array( '-force', $args ) );
-		$conversion_method = ( new MethodIntegrator( $this->plugin_data ) );
+		$conversion_method = ( new MethodIntegrator( $this->plugin_data, $this->method_factory ) );
 		$method_used       = $conversion_method->get_method_used();
 
 		if ( $method_used === null ) {
@@ -105,7 +124,7 @@ class WpCliManager implements HookableInterface {
 			);
 		}
 
-		$paths_chunks = ( new PathsFinder( $this->plugin_data, $this->token_repository ) )
+		$paths_chunks = ( new PathsFinder( $this->plugin_data, $this->token_repository, $this->format_factory ) )
 			->get_paths_by_chunks( ! $force_flag );
 
 		$count = 0;

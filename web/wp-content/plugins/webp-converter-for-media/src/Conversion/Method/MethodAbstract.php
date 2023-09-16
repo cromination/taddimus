@@ -2,10 +2,14 @@
 
 namespace WebpConverter\Conversion\Method;
 
+use WebpConverter\Conversion\CrashedFilesOperator;
 use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
-use WebpConverter\Conversion\OutputPath;
+use WebpConverter\Conversion\LargerFilesOperator;
+use WebpConverter\Conversion\OutputPathGenerator;
 use WebpConverter\Exception;
+use WebpConverter\Service\ServerConfigurator;
 
 /**
  * Abstract class for class that converts images.
@@ -13,12 +17,36 @@ use WebpConverter\Exception;
 abstract class MethodAbstract implements MethodInterface {
 
 	/**
-	 * @var OutputPath
+	 * @var CrashedFilesOperator
+	 */
+	protected $skip_crashed;
+
+	/**
+	 * @var LargerFilesOperator
+	 */
+	protected $skip_larger;
+
+	/**
+	 * @var ServerConfigurator
+	 */
+	protected $server_configurator;
+
+	/**
+	 * @var OutputPathGenerator
 	 */
 	private $output_path;
 
-	public function __construct( OutputPath $output_path = null ) {
-		$this->output_path = $output_path ?: new OutputPath();
+	public function __construct(
+		FormatFactory $format_factory,
+		CrashedFilesOperator $skip_crashed,
+		LargerFilesOperator $skip_larger,
+		ServerConfigurator $server_configurator,
+		OutputPathGenerator $output_path = null
+	) {
+		$this->skip_crashed        = $skip_crashed;
+		$this->skip_larger         = $skip_larger;
+		$this->server_configurator = $server_configurator;
+		$this->output_path         = $output_path ?: new OutputPathGenerator( $format_factory );
 	}
 
 	/**

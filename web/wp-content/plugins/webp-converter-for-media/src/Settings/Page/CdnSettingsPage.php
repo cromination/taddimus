@@ -4,7 +4,6 @@
 namespace WebpConverter\Settings\Page;
 
 use WebpConverter\Settings\Option\OptionAbstract;
-use WebpConverter\Settings\PluginOptions;
 
 /**
  * {@inheritdoc}
@@ -34,7 +33,7 @@ class CdnSettingsPage extends GeneralSettingsPage {
 		return array_merge(
 			parent::get_template_vars(),
 			[
-				'form_options'         => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_CDN ),
+				'form_options'         => $this->plugin_data->get_plugin_options( OptionAbstract::FORM_TYPE_CDN ),
 				'form_input_value'     => OptionAbstract::FORM_TYPE_CDN,
 				'api_paths_url'        => null,
 				'api_paths_nonce'      => null,

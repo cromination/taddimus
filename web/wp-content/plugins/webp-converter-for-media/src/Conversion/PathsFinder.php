@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Conversion;
 
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Method\RemoteMethod;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
@@ -37,7 +38,7 @@ class PathsFinder {
 	private $stats_manager;
 
 	/**
-	 * @var OutputPath
+	 * @var OutputPathGenerator
 	 */
 	private $output_path;
 
@@ -49,13 +50,14 @@ class PathsFinder {
 	public function __construct(
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
+		FormatFactory $format_factory,
 		StatsManager $stats_manager = null,
-		OutputPath $output_path = null
+		OutputPathGenerator $output_path = null
 	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository;
 		$this->stats_manager    = $stats_manager ?: new StatsManager();
-		$this->output_path      = $output_path ?: new OutputPath();
+		$this->output_path      = $output_path ?: new OutputPathGenerator( $format_factory );
 		$this->files_finder     = new DirectoryFilesFinder( $plugin_data );
 	}
 
@@ -232,9 +234,9 @@ class PathsFinder {
 	): bool {
 		if ( file_exists( $output_path ) ) {
 			return ( $force_convert_modified ) ? ( filemtime( $source_path ) <= filemtime( $output_path ) ) : true;
-		} elseif ( ! $force_convert_deleted && file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ) {
+		} elseif ( ! $force_convert_deleted && file_exists( $output_path . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) ) {
 			return true;
-		} elseif ( ! $force_convert_crashed && file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION ) ) {
+		} elseif ( ! $force_convert_crashed && file_exists( $output_path . '.' . CrashedFilesOperator::CRASHED_FILE_EXTENSION ) ) {
 			return true;
 		}
 

@@ -19,18 +19,18 @@ class BulkOptimizationPage extends GeneralSettingsPage {
 	 * {@inheritdoc}
 	 */
 	public function get_menu_parent(): string {
-		return PageIntegration::UPLOAD_MENU_PAGE;
+		return PageIntegrator::UPLOAD_MENU_PAGE;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function get_menu_url() {
-		if ( ( $_GET['page'] ?? '' ) !== PageIntegration::UPLOAD_MENU_PAGE ) { // phpcs:ignore WordPress.Security
+		if ( ( $_GET['page'] ?? '' ) !== PageIntegrator::UPLOAD_MENU_PAGE ) { // phpcs:ignore WordPress.Security
 			return null;
 		}
 
-		return admin_url( 'upload.php?page=' . PageIntegration::UPLOAD_MENU_PAGE );
+		return admin_url( 'upload.php?page=' . PageIntegrator::UPLOAD_MENU_PAGE );
 	}
 
 	/**

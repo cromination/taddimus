@@ -54,14 +54,21 @@ class AutoConversionOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function get_default_value( array $settings = null ): string {
+		return 'yes';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ): string {
 		return ( $current_value === 'yes' ) ? 'yes' : '';
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
-		return 'yes';
+	public function sanitize_value( $current_value ): string {
+		return $this->validate_value( $current_value );
 	}
 }

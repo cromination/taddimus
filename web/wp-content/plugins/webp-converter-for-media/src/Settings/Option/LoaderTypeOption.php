@@ -89,7 +89,14 @@ class LoaderTypeOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function get_default_value( array $settings = null ): string {
+		return HtaccessLoader::LOADER_TYPE;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
 		if ( ! array_key_exists( $current_value, $available_values ?: [] )
 			|| in_array( $current_value, $disabled_values ?: [] ) ) {
 			return null;
@@ -101,7 +108,12 @@ class LoaderTypeOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
-		return HtaccessLoader::LOADER_TYPE;
+	public function sanitize_value( $current_value ) {
+		$values = [ HtaccessLoader::LOADER_TYPE, HtaccessBypassingLoader::LOADER_TYPE, PassthruLoader::LOADER_TYPE ];
+
+		return $this->validate_value(
+			$current_value,
+			array_combine( $values, $values )
+		);
 	}
 }

@@ -4,6 +4,7 @@ namespace WebpConverter\Conversion\Endpoint;
 
 use WebpConverter\Conversion\FilesTreeFinder;
 use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\PluginData;
 
@@ -17,8 +18,14 @@ class FilesStatsEndpoint extends EndpointAbstract {
 	 */
 	private $plugin_data;
 
-	public function __construct( PluginData $plugin_data ) {
-		$this->plugin_data = $plugin_data;
+	/**
+	 * @var FormatFactory
+	 */
+	private $format_factory;
+
+	public function __construct( PluginData $plugin_data, FormatFactory $format_factory ) {
+		$this->plugin_data    = $plugin_data;
+		$this->format_factory = $format_factory;
 	}
 
 	/**
@@ -39,7 +46,7 @@ class FilesStatsEndpoint extends EndpointAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_route_response( \WP_REST_Request $request ) {
-		$stats_data = ( new FilesTreeFinder( $this->plugin_data ) )
+		$stats_data = ( new FilesTreeFinder( $this->plugin_data, $this->format_factory ) )
 			->get_tree( [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ] );
 
 		return new \WP_REST_Response(

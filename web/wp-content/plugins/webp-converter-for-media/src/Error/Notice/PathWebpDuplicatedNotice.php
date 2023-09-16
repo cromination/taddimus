@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class PathWebpDuplicatedNotice implements ErrorNotice {
+class PathWebpDuplicatedNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'path_webp_duplicated';
 

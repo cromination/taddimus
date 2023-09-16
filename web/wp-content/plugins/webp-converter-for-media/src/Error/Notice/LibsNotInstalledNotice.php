@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class LibsNotInstalledNotice implements ErrorNotice {
+class LibsNotInstalledNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'libs_not_installed';
 

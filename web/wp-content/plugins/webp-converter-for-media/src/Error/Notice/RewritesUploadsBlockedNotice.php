@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class RewritesUploadsBlockedNotice implements ErrorNotice {
+class RewritesUploadsBlockedNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'rewrites_uploads_blocked';
 

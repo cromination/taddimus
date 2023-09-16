@@ -12,6 +12,15 @@ class SupportedDirectoriesOption extends OptionAbstract {
 	const OPTION_NAME = 'dirs';
 
 	/**
+	 * @var DirectoryFactory
+	 */
+	private $directory_factory;
+
+	public function __construct( DirectoryFactory $directory_factory ) {
+		$this->directory_factory = $directory_factory;
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function get_name(): string {
@@ -52,13 +61,22 @@ class SupportedDirectoriesOption extends OptionAbstract {
 	 * @return string[]
 	 */
 	public function get_available_values( array $settings ): array {
-		return ( new DirectoryFactory() )->get_directories();
+		return $this->directory_factory->get_directories();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @return string[]
+	 */
+	public function get_default_value( array $settings = null ): array {
+		return [ 'uploads' ];
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
 		$valid_values = [];
 		if ( ! $current_value ) {
 			return $valid_values;
@@ -76,11 +94,12 @@ class SupportedDirectoriesOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return string[]
 	 */
-	public function get_default_value( array $settings = null ): array {
-		return [ 'uploads' ];
+	public function sanitize_value( $current_value ) {
+		return $this->validate_value(
+			$current_value,
+			$this->get_available_values( [] )
+		);
 	}
 
 	/**

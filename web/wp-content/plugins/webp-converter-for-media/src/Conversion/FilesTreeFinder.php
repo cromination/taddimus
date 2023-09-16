@@ -3,6 +3,7 @@
 namespace WebpConverter\Conversion;
 
 use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Error\Detector\RewritesErrorsDetector;
 use WebpConverter\PluginData;
@@ -33,7 +34,7 @@ class FilesTreeFinder {
 	private $stats_manager;
 
 	/**
-	 * @var OutputPath
+	 * @var OutputPathGenerator
 	 */
 	private $output_path;
 
@@ -49,14 +50,15 @@ class FilesTreeFinder {
 
 	public function __construct(
 		PluginData $plugin_data,
+		FormatFactory $format_factory,
 		ServerConfigurator $server_configurator = null,
 		StatsManager $stats_manager = null,
-		OutputPath $output_path = null
+		OutputPathGenerator $output_path = null
 	) {
 		$this->plugin_data         = $plugin_data;
 		$this->server_configurator = $server_configurator ?: new ServerConfigurator();
 		$this->stats_manager       = $stats_manager ?: new StatsManager();
-		$this->output_path         = $output_path ?: new OutputPath();
+		$this->output_path         = $output_path ?: new OutputPathGenerator( $format_factory );
 	}
 
 	/**
@@ -157,7 +159,7 @@ class FilesTreeFinder {
 			} else {
 				$filename = basename( $current_path );
 				$parts    = array_reverse( explode( '.', $filename ) );
-				if ( in_array( strtolower( $parts[0] ?? '' ), $source_formats ) && ! in_array( strtolower( $parts[1] ?? '' ), SkipExcludedPaths::EXCLUDED_SUB_EXTENSIONS ) ) {
+				if ( in_array( strtolower( $parts[0] ?? '' ), $source_formats ) && ! in_array( strtolower( $parts[1] ?? '' ), ExcludedPathsOperator::EXCLUDED_SUB_EXTENSIONS ) ) {
 					if ( apply_filters( 'webpc_supported_source_file', true, $filename, $current_path )
 						&& ! $this->is_converted_file( $current_path, $output_formats, $force_convert_deleted, $force_convert_crashed ) ) {
 						$list['files'][] = $path;
@@ -189,9 +191,9 @@ class FilesTreeFinder {
 
 			if ( file_exists( $output_path ) ) {
 				$this->files_converted[ $output_format ]++;
-			} elseif ( ! $force_convert_deleted && file_exists( $output_path . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ) {
+			} elseif ( ! $force_convert_deleted && file_exists( $output_path . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) ) {
 				$this->files_converted[ $output_format ]++;
-			} elseif ( ! $force_convert_crashed && file_exists( $output_path . '.' . SkipCrashed::CRASHED_FILE_EXTENSION ) ) {
+			} elseif ( ! $force_convert_crashed && file_exists( $output_path . '.' . CrashedFilesOperator::CRASHED_FILE_EXTENSION ) ) {
 				$this->files_converted[ $output_format ]++;
 			} else {
 				$this->files_unconverted[ $output_format ]++;

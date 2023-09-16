@@ -7,7 +7,7 @@ use WebpConverter\Loader\PassthruLoader;
 /**
  * {@inheritdoc}
  */
-class PassthruExecutionNotice implements ErrorNotice {
+class PassthruExecutionNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'passthru_execution';
 

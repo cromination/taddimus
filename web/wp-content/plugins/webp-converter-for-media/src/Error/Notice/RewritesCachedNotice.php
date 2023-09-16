@@ -7,7 +7,7 @@ use WebpConverter\Service\EnvDetector;
 /**
  * {@inheritdoc}
  */
-class RewritesCachedNotice implements ErrorNotice {
+class RewritesCachedNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'rewrites_cached';
 

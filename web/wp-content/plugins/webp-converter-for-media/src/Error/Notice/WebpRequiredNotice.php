@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class WebpRequiredNotice implements ErrorNotice {
+class WebpRequiredNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'webp_required';
 

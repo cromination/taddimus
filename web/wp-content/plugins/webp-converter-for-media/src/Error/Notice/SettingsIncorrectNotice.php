@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class SettingsIncorrectNotice implements ErrorNotice {
+class SettingsIncorrectNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'settings_incorrect';
 

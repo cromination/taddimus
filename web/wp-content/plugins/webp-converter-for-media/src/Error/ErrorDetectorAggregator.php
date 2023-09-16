@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Error;
 
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Error\Detector\CloudflareStatusDetector;
 use WebpConverter\Error\Detector\LibsNotInstalledDetector;
 use WebpConverter\Error\Detector\LibsWithoutWebpSupportDetector;
@@ -11,7 +12,7 @@ use WebpConverter\Error\Detector\RewritesErrorsDetector;
 use WebpConverter\Error\Detector\SettingsIncorrectDetector;
 use WebpConverter\Error\Detector\TokenStatusDetector;
 use WebpConverter\Error\Detector\WebpFormatActivatedDetector;
-use WebpConverter\Error\Notice\ErrorNotice;
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\Error\Notice\RewritesCachedNotice;
 use WebpConverter\HookableInterface;
 use WebpConverter\PluginData;
@@ -37,6 +38,11 @@ class ErrorDetectorAggregator implements HookableInterface {
 	private $plugin_data;
 
 	/**
+	 * @var FormatFactory
+	 */
+	private $format_factory;
+
+	/**
 	 * @var string[]
 	 */
 	private $not_fatal_errors = [
@@ -44,13 +50,18 @@ class ErrorDetectorAggregator implements HookableInterface {
 	];
 
 	/**
-	 * @var ErrorNotice[]|null
+	 * @var NoticeInterface[]|null
 	 */
 	private $cached_errors = null;
 
-	public function __construct( PluginInfo $plugin_info, PluginData $plugin_data ) {
-		$this->plugin_info = $plugin_info;
-		$this->plugin_data = $plugin_data;
+	public function __construct(
+		PluginInfo $plugin_info,
+		PluginData $plugin_data,
+		FormatFactory $format_factory
+	) {
+		$this->plugin_info    = $plugin_info;
+		$this->plugin_data    = $plugin_data;
+		$this->format_factory = $format_factory;
 	}
 
 	/**
@@ -116,7 +127,7 @@ class ErrorDetectorAggregator implements HookableInterface {
 	}
 
 	/**
-	 * @param ErrorNotice[] $detected_errors .
+	 * @param NoticeInterface[] $detected_errors .
 	 *
 	 * @return void
 	 */
@@ -133,7 +144,7 @@ class ErrorDetectorAggregator implements HookableInterface {
 	 * Checks for configuration errors according to specified logic.
 	 * Saves errors to cache.
 	 *
-	 * @return ErrorNotice[]
+	 * @return NoticeInterface[]
 	 */
 	private function get_errors_list(): array {
 		if ( $this->cached_errors !== null ) {
@@ -157,9 +168,9 @@ class ErrorDetectorAggregator implements HookableInterface {
 			$this->cached_errors[] = $new_error;
 		}
 
-		if ( $new_error = ( new PassthruExecutionDetector( $this->plugin_info, $this->plugin_data ) )->get_error() ) {
+		if ( $new_error = ( new PassthruExecutionDetector( $this->plugin_info, $this->plugin_data, $this->format_factory ) )->get_error() ) {
 			$this->cached_errors[] = $new_error;
-		} elseif ( $new_error = ( new RewritesErrorsDetector( $this->plugin_info, $this->plugin_data ) )->get_error() ) {
+		} elseif ( $new_error = ( new RewritesErrorsDetector( $this->plugin_info, $this->plugin_data, $this->format_factory ) )->get_error() ) {
 			$this->cached_errors[] = $new_error;
 		}
 

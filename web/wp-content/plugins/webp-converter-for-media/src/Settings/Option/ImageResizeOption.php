@@ -117,8 +117,17 @@ class ImageResizeOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return mixed[]
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function get_default_value( array $settings = null ): array {
+		return [ '', '', '' ];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
 		if ( ! is_array( $current_value ) ) {
 			return [ '', '', '' ];
 		}
@@ -135,11 +144,9 @@ class ImageResizeOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return mixed[]
 	 */
-	public function get_default_value( array $settings = null ): array {
-		return [ '', '', '' ];
+	public function sanitize_value( $current_value ) {
+		return $this->validate_value( $current_value );
 	}
 
 	/**

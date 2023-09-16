@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class RewritesNotExecutedNotice implements ErrorNotice {
+class RewritesNotExecutedNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'rewrites_not_executed';
 

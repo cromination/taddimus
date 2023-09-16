@@ -9,7 +9,7 @@ use WebpConverter\Settings\Option\OutputFormatsOption;
 /**
  * Checks if the WebP as output format is active.
  */
-class WebpFormatActivatedDetector implements ErrorDetector {
+class WebpFormatActivatedDetector implements DetectorInterface {
 
 	/**
 	 * @var PluginData

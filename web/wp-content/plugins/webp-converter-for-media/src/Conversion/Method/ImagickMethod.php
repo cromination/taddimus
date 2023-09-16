@@ -51,7 +51,7 @@ class ImagickMethod extends LibraryMethodAbstract {
 	 */
 	public static function is_method_active( string $format ): bool {
 		if ( ! self::is_method_installed()
-			|| ! ( $formats = ( new \Imagick() )->queryformats( 'WEBP' ) )
+			|| ! ( $formats = \Imagick::queryformats( 'WEBP' ) )
 			|| ! ( $extension = self::get_format_extension( $format ) ) ) {
 			return false;
 		}

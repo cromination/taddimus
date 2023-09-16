@@ -13,7 +13,7 @@ use WebpConverter\Settings\Option\ConversionMethodOption;
 /**
  * Checks for configuration errors about image conversion methods that do not support WebP output format.
  */
-class LibsWithoutWebpSupportDetector implements ErrorDetector {
+class LibsWithoutWebpSupportDetector implements DetectorInterface {
 
 	/**
 	 * @var PluginData

@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class PathUploadsUnavailableNotice implements ErrorNotice {
+class PathUploadsUnavailableNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'path_uploads_unavailable';
 

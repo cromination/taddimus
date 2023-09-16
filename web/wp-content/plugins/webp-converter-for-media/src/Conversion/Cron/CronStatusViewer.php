@@ -3,7 +3,7 @@
 namespace WebpConverter\Conversion\Cron;
 
 use WebpConverter\HookableInterface;
-use WebpConverter\Settings\Page\PageIntegration;
+use WebpConverter\Settings\Page\PageIntegrator;
 
 /**
  * Displays converting status on top menu bar in the WordPress Dashboard.
@@ -58,7 +58,7 @@ class CronStatusViewer implements HookableInterface {
 		$count       = number_format( $this->paths_preview_count, 0, '', ' ' );
 		$menu_parent = [
 			'id'    => 'webpc-menu',
-			'href'  => PageIntegration::get_settings_page_url(),
+			'href'  => PageIntegrator::get_settings_page_url(),
 			'title' => sprintf(
 				'<span class="ab-icon"></span><span class="ab-label">%1$s</span>',
 				$count

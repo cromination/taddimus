@@ -12,7 +12,7 @@ use WebpConverter\Settings\Option\AccessTokenOption;
 /**
  * Checks for the token status for the PRO version.
  */
-class TokenStatusDetector implements ErrorDetector {
+class TokenStatusDetector implements DetectorInterface {
 
 	/**
 	 * @var PluginData
@@ -36,7 +36,7 @@ class TokenStatusDetector implements ErrorDetector {
 	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository ?: new TokenRepository();
-		$this->token_validator  = $token_validator ?: new TokenValidator();
+		$this->token_validator  = $token_validator ?: new TokenValidator( $token_repository );
 	}
 
 	/**

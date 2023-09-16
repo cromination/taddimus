@@ -2,6 +2,9 @@
 
 namespace WebpConverter\Settings\Option;
 
+use WebpConverter\Conversion\Directory\DirectoryFactory;
+use WebpConverter\Conversion\Format\FormatFactory;
+use WebpConverter\Conversion\Method\MethodFactory;
 use WebpConverter\Repository\TokenRepository;
 
 /**
@@ -16,13 +19,17 @@ class OptionsAggregator {
 	 */
 	private $options = [];
 
-	public function __construct( TokenRepository $token_repository = null ) {
-		$token_repository  = $token_repository ?: new TokenRepository();
-		$conversion_method = new ConversionMethodOption( $token_repository );
+	public function __construct(
+		TokenRepository $token_repository,
+		MethodFactory $method_factory,
+		FormatFactory $format_factory,
+		DirectoryFactory $directory_factory
+	) {
+		$conversion_method = new ConversionMethodOption( $token_repository, $method_factory );
 
 		$this->set_option( new ImagesQualityOption() );
-		$this->set_option( new OutputFormatsOption( $token_repository, $conversion_method ) );
-		$this->set_option( new SupportedDirectoriesOption() );
+		$this->set_option( new OutputFormatsOption( $token_repository, $format_factory, $conversion_method ) );
+		$this->set_option( new SupportedDirectoriesOption( $directory_factory ) );
 		$this->set_option( new ImageResizeOption( $token_repository ) );
 		$this->set_option( new AutoConversionOption() );
 

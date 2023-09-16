@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Conversion\Directory;
 
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\HookableInterface;
 use WebpConverter\Plugin\Uninstall\OutputFilesRemover;
@@ -14,13 +15,20 @@ use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 class DirectoryFactory implements HookableInterface {
 
 	/**
+	 * @var FormatFactory
+	 */
+	private $format_factory;
+
+	/**
 	 * Object of directories integration.
 	 *
-	 * @var DirectoryIntegration
+	 * @var DirectoryIntegrator
 	 */
 	private $directories_integration;
 
-	public function __construct() {
+	public function __construct( FormatFactory $format_factory ) {
+		$this->format_factory = $format_factory;
+
 		$this->set_integration( new SourceDirectory( 'cache' ) );
 		$this->set_integration( new SourceDirectory( 'gallery' ) );
 		$this->set_integration( new SourceDirectory( 'plugins' ) );
@@ -41,7 +49,7 @@ class DirectoryFactory implements HookableInterface {
 	 */
 	private function set_integration( DirectoryInterface $directory ) {
 		if ( $this->directories_integration === null ) {
-			$this->directories_integration = new DirectoryIntegration();
+			$this->directories_integration = new DirectoryIntegrator( $this->format_factory );
 		}
 		$this->directories_integration->add_directory( $directory );
 	}
@@ -73,7 +81,7 @@ class DirectoryFactory implements HookableInterface {
 	 * @return string[] Types of directories with labels.
 	 */
 	public function get_directories(): array {
-		return $this->directories_integration->get_input_directories();
+		return $this->directories_integration->get_source_directories();
 	}
 
 	/**

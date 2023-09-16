@@ -12,7 +12,7 @@ use WebpConverter\Settings\Option\ConversionMethodOption;
 /**
  * Checks for configuration errors about non-installed methods for converting images.
  */
-class LibsNotInstalledDetector implements ErrorDetector {
+class LibsNotInstalledDetector implements DetectorInterface {
 
 	/**
 	 * @var PluginData

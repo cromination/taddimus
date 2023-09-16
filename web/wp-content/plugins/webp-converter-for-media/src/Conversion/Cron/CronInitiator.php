@@ -3,6 +3,7 @@
 namespace WebpConverter\Conversion\Cron;
 
 use WebpConverter\Conversion\Endpoint\CronConversionEndpoint;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\PathsFinder;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
@@ -31,12 +32,13 @@ class CronInitiator {
 	public function __construct(
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
+		FormatFactory $format_factory,
 		CronStatusManager $cron_status_manager = null,
 		PathsFinder $paths_finder = null
 	) {
 		$this->plugin_data         = $plugin_data;
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
-		$this->paths_finder        = $paths_finder ?: new PathsFinder( $plugin_data, $token_repository );
+		$this->paths_finder        = $paths_finder ?: new PathsFinder( $plugin_data, $token_repository, $format_factory );
 	}
 
 	public function refresh_paths_to_conversion( bool $force_init = false ): bool {

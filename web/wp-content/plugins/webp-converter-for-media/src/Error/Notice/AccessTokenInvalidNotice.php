@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class AccessTokenInvalidNotice implements ErrorNotice {
+class AccessTokenInvalidNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'token_invalid';
 

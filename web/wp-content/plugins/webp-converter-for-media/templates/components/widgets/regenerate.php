@@ -46,7 +46,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<p class="webpcTree__headline">
 					<?php echo wp_kses_post( __( 'The list of files that can be optimized:', 'webp-converter-for-media' ) ); ?>
 				</p>
-				<div class="webpcTree__output" data-tree>
+				<div class="webpcTree__output"
+					data-tree
+					data-tree-files-count="<?php /* translators: %s: files count */ echo esc_attr( __( '+%s other files', 'webp-converter-for-media' ) ); ?>">
 					<p class="webpcContent__loader" data-tree-loader>
 						<?php echo wp_kses_post( sprintf( __( 'Loading, please wait', 'webp-converter-for-media' ) ) ); ?>
 					</p>

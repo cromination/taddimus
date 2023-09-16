@@ -3,12 +3,12 @@
 namespace WebpConverter\Error\Notice;
 
 use WebpConverter\Settings\Page\AdvancedSettingsPage;
-use WebpConverter\Settings\Page\PageIntegration;
+use WebpConverter\Settings\Page\PageIntegrator;
 
 /**
  * {@inheritdoc}
  */
-class BypassingApacheNotice implements ErrorNotice {
+class BypassingApacheNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'bypassing_apache';
 
@@ -62,7 +62,7 @@ class BypassingApacheNotice implements ErrorNotice {
 				'</strong>',
 				'"' . __( 'Bypassing Nginx', 'webp-converter-for-media' ) . '"',
 				'"' . __( 'Image loading mode', 'webp-converter-for-media' ) . '"',
-				'<a href="' . esc_attr( PageIntegration::get_settings_page_url( AdvancedSettingsPage::PAGE_SLUG ) ) . '#bypassing-notice">',
+				'<a href="' . esc_attr( PageIntegrator::get_settings_page_url( AdvancedSettingsPage::PAGE_SLUG ) ) . '#bypassing-notice">',
 				'</a>'
 			),
 		];

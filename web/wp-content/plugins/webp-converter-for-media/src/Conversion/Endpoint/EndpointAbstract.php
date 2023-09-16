@@ -31,7 +31,7 @@ abstract class EndpointAbstract implements EndpointInterface {
 			null,
 			sprintf(
 				'%1$s/%2$s',
-				EndpointIntegration::ROUTE_NAMESPACE,
+				EndpointIntegrator::ROUTE_NAMESPACE,
 				static::get_route_name()
 			)
 		);

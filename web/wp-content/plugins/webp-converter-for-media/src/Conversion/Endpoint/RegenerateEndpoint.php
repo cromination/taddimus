@@ -3,6 +3,7 @@
 namespace WebpConverter\Conversion\Endpoint;
 
 use WebpConverter\Conversion\Cron\CronStatusManager;
+use WebpConverter\Conversion\Method\MethodFactory;
 use WebpConverter\Conversion\Method\MethodIntegrator;
 use WebpConverter\PluginData;
 
@@ -17,12 +18,22 @@ class RegenerateEndpoint extends EndpointAbstract {
 	private $plugin_data;
 
 	/**
+	 * @var MethodFactory
+	 */
+	private $method_factory;
+
+	/**
 	 * @var CronStatusManager
 	 */
 	private $cron_status_manager;
 
-	public function __construct( PluginData $plugin_data, CronStatusManager $cron_status_manager = null ) {
+	public function __construct(
+		PluginData $plugin_data,
+		MethodFactory $method_factory,
+		CronStatusManager $cron_status_manager = null
+	) {
 		$this->plugin_data         = $plugin_data;
+		$this->method_factory      = $method_factory;
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
 	}
 
@@ -101,7 +112,7 @@ class RegenerateEndpoint extends EndpointAbstract {
 	 * @return mixed[]|false Status of conversion.
 	 */
 	public function convert_images( array $paths, bool $regenerate_force ) {
-		$response = ( new MethodIntegrator( $this->plugin_data ) )->init_conversion( $paths, $regenerate_force );
+		$response = ( new MethodIntegrator( $this->plugin_data, $this->method_factory ) )->init_conversion( $paths, $regenerate_force );
 		if ( $response === null ) {
 			return false;
 		}

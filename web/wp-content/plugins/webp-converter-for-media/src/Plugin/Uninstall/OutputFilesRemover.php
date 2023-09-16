@@ -2,10 +2,10 @@
 
 namespace WebpConverter\Plugin\Uninstall;
 
+use WebpConverter\Conversion\CrashedFilesOperator;
 use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\WebpFormat;
-use WebpConverter\Conversion\SkipCrashed;
-use WebpConverter\Conversion\SkipLarger;
+use WebpConverter\Conversion\LargerFilesOperator;
 
 /**
  * Removes output files from /uploads-webpc directory.
@@ -64,9 +64,15 @@ class OutputFilesRemover {
 		}
 
 		$regex = sprintf(
-			'/((jpe?g|png|gif)\.(%1$s)(\.(%2$s))?|\.htaccess)$/i',
-			implode( '|', $file_formats ?: [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ] ),
-			implode( '|', [ SkipLarger::DELETED_FILE_EXTENSION, SkipCrashed::CRASHED_FILE_EXTENSION ] )
+			'/((jpe?g|png|gif|png2)\.(%1$s)(\.(%2$s))?|\.htaccess)$/i',
+			implode(
+				'|',
+				$file_formats ?: [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ]
+			),
+			implode(
+				'|',
+				[ LargerFilesOperator::DELETED_FILE_EXTENSION, CrashedFilesOperator::CRASHED_FILE_EXTENSION ]
+			)
 		);
 
 		foreach ( $paths as $path ) {

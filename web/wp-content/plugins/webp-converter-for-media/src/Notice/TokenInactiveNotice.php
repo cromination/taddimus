@@ -6,7 +6,7 @@ use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Settings\Option\AccessTokenOption;
-use WebpConverter\Settings\Page\PageIntegration;
+use WebpConverter\Settings\Page\PageIntegrator;
 
 /**
  * Supports notice displayed information about invalid Access Token.
@@ -44,7 +44,7 @@ class TokenInactiveNotice extends NoticeAbstract implements NoticeInterface {
 	public function is_available(): bool {
 		return ( ! in_array(
 			( $_GET['page'] ?? '' ), // phpcs:ignore WordPress.Security
-			[ PageIntegration::SETTINGS_MENU_PAGE, PageIntegration::UPLOAD_MENU_PAGE ]
+			[ PageIntegrator::SETTINGS_MENU_PAGE, PageIntegrator::UPLOAD_MENU_PAGE ]
 		) );
 	}
 
@@ -86,7 +86,7 @@ class TokenInactiveNotice extends NoticeAbstract implements NoticeInterface {
 		return [
 			'ajax_url'     => admin_url( 'admin-ajax.php' ),
 			'close_action' => self::NOTICE_OPTION,
-			'settings_url' => PageIntegration::get_settings_page_url(),
+			'settings_url' => PageIntegrator::get_settings_page_url(),
 		];
 	}
 

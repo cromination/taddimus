@@ -14,7 +14,7 @@ use WebpConverter\Settings\Option\SupportedExtensionsOption;
 /**
  * Checks for configuration errors about incorrectly saved plugin settings.
  */
-class SettingsIncorrectDetector implements ErrorDetector {
+class SettingsIncorrectDetector implements DetectorInterface {
 
 	/**
 	 * @var PluginData

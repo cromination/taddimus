@@ -71,15 +71,22 @@ class CloudflareZoneIdOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ): string {
+	public function get_default_value( array $settings = null ): string {
+		return '';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ): string {
 		return sanitize_text_field( $current_value );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
-		return '';
+	public function sanitize_value( $current_value ): string {
+		return $this->validate_value( $current_value );
 	}
 
 	/**

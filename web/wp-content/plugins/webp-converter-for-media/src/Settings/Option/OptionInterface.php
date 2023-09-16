@@ -65,6 +65,15 @@ interface OptionInterface {
 	public function get_disabled_values( array $settings );
 
 	/**
+	 * Returns default value of field.
+	 *
+	 * @param mixed[]|null $settings Plugin settings.
+	 *
+	 * @return string|string[]
+	 */
+	public function get_default_value( array $settings = null );
+
+	/**
 	 * Returns verified value of field.
 	 *
 	 * @param mixed|null    $current_value    .
@@ -73,16 +82,16 @@ interface OptionInterface {
 	 *
 	 * @return mixed|null
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null );
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null );
 
 	/**
-	 * Returns default value of field.
+	 * Returns sanitized value of field.
 	 *
-	 * @param mixed[]|null $settings Plugin settings.
+	 * @param mixed|null $current_value .
 	 *
-	 * @return string|string[]
+	 * @return mixed|null
 	 */
-	public function get_default_value( array $settings = null );
+	public function sanitize_value( $current_value );
 
 	/**
 	 * Returns value of field without sensitive data.

@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.3
 Requires PHP: 7.0
-Stable tag: 5.9.6
+Stable tag: 5.10.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -375,6 +375,16 @@ Current list of supported CDN servers:
 4. Optimization statistics of Media Library
 
 == Changelog ==
+
+= 5.10.1 (2023-09-10) =
+* `[Fixed]` Detection of bypassing_apache error in server configuration
+
+= 5.10.0 (2023-09-09) =
+* `[Fixed]` Removing files from /uploads-webpc directory after uninstalling plugin
+* `[Changed]` Error message for rewrites_not_working error in server configuration
+* `[Changed]` Verification of correct operation of rewrites from .htaccess file
+* `[Added]` Changes to improve performance of plugin
+* `[Added]` Changes to improve loading time of plugin settings
 
 = 5.9.6 (2023-08-25) =
 * `[Changed]` Maximum weight of supported files from 25 MB to 32 MB

@@ -4,7 +4,6 @@
 namespace WebpConverter\Settings\Page;
 
 use WebpConverter\Settings\Option\OptionAbstract;
-use WebpConverter\Settings\PluginOptions;
 
 /**
  * {@inheritdoc}
@@ -34,7 +33,7 @@ class AdvancedSettingsPage extends GeneralSettingsPage {
 		return array_merge(
 			parent::get_template_vars(),
 			[
-				'form_options'     => ( new PluginOptions() )->get_options( OptionAbstract::FORM_TYPE_ADVANCED ),
+				'form_options'     => $this->plugin_data->get_plugin_options( OptionAbstract::FORM_TYPE_ADVANCED ),
 				'form_input_value' => OptionAbstract::FORM_TYPE_ADVANCED,
 			]
 		);

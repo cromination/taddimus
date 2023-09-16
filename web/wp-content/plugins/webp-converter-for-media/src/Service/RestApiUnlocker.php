@@ -2,7 +2,7 @@
 
 namespace WebpConverter\Service;
 
-use WebpConverter\Conversion\Endpoint\EndpointIntegration;
+use WebpConverter\Conversion\Endpoint\EndpointIntegrator;
 use WebpConverter\HookableInterface;
 
 /**
@@ -30,7 +30,7 @@ class RestApiUnlocker implements HookableInterface {
 	 */
 	public function clear_authentication_error( $result ) {
 		$current_route = untrailingslashit( $GLOBALS['wp']->query_vars['rest_route'] ?? '' );
-		if ( strpos( $current_route, '/' . EndpointIntegration::ROUTE_NAMESPACE . '/' ) === 0 ) {
+		if ( strpos( $current_route, '/' . EndpointIntegrator::ROUTE_NAMESPACE . '/' ) === 0 ) {
 			return true;
 		}
 
@@ -49,7 +49,7 @@ class RestApiUnlocker implements HookableInterface {
 		}
 
 		foreach ( $all_routes as $route_key => $route_path ) {
-			if ( strpos( $route_path, '/' . EndpointIntegration::ROUTE_NAMESPACE . '/' ) === 0 ) {
+			if ( strpos( $route_path, '/' . EndpointIntegrator::ROUTE_NAMESPACE . '/' ) === 0 ) {
 				unset( $all_routes[ $route_key ] );
 			}
 		}
@@ -67,7 +67,7 @@ class RestApiUnlocker implements HookableInterface {
 			return $white_routes;
 		}
 
-		$all_routes[] = '/wp-json/' . EndpointIntegration::ROUTE_NAMESPACE . '/*';
+		$all_routes[] = '/wp-json/' . EndpointIntegrator::ROUTE_NAMESPACE . '/*';
 		return $all_routes;
 	}
 }

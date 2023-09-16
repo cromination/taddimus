@@ -11,13 +11,13 @@ abstract class PageAbstract implements PageInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_menu_parent(): string {
-		return PageIntegration::SETTINGS_MENU_PAGE;
+		return PageIntegrator::SETTINGS_MENU_PAGE;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function get_menu_url() {
-		return PageIntegration::get_settings_page_url( $this->get_slug() );
+		return PageIntegrator::get_settings_page_url( $this->get_slug() );
 	}
 }

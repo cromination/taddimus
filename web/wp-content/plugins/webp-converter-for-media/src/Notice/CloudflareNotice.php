@@ -3,7 +3,7 @@
 namespace WebpConverter\Notice;
 
 use WebpConverter\Service\OptionsAccessManager;
-use WebpConverter\Settings\Page\PageIntegration;
+use WebpConverter\Settings\Page\PageIntegrator;
 
 /**
  * Supports notice asking to clear CDN cache for Cloudflare.
@@ -33,7 +33,7 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 			return false;
 		}
 
-		return ( ( $_GET['page'] ?? '' ) === PageIntegration::SETTINGS_MENU_PAGE ); // phpcs:ignore WordPress.Security
+		return ( ( $_GET['page'] ?? '' ) === PageIntegrator::SETTINGS_MENU_PAGE ); // phpcs:ignore WordPress.Security
 	}
 
 	/**

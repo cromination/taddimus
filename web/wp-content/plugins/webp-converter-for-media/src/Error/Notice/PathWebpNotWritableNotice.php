@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class PathWebpNotWritableNotice implements ErrorNotice {
+class PathWebpNotWritableNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'path_webp_not_writable';
 

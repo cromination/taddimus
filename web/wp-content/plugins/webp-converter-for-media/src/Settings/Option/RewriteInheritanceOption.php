@@ -58,13 +58,6 @@ class RewriteInheritanceOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
-		return ( $current_value === 'yes' ) ? 'yes' : '';
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
 	public function get_default_value( array $settings = null ): string {
 		$features = ( $settings ) ? $settings[ ExtraFeaturesOption::OPTION_NAME ] : [];
 		if ( in_array( ExtraFeaturesOption::OPTION_VALUE_REWRITE_INHERIT, $features ) ) {
@@ -74,5 +67,19 @@ class RewriteInheritanceOption extends OptionAbstract {
 		}
 
 		return '';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ): string {
+		return ( $current_value === 'yes' ) ? 'yes' : '';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function sanitize_value( $current_value ): string {
+		return $this->validate_value( $current_value );
 	}
 }

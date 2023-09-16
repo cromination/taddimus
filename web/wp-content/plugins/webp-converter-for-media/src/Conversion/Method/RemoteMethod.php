@@ -2,8 +2,9 @@
 
 namespace WebpConverter\Conversion\Method;
 
-use WebpConverter\Conversion\SkipCrashed;
-use WebpConverter\Conversion\SkipLarger;
+use WebpConverter\Conversion\CrashedFilesOperator;
+use WebpConverter\Conversion\Format\FormatFactory;
+use WebpConverter\Conversion\LargerFilesOperator;
 use WebpConverter\Exception\ExceptionInterface;
 use WebpConverter\Exception\FilesizeOversizeException;
 use WebpConverter\Exception\LargerThanOriginalException;
@@ -30,16 +31,6 @@ class RemoteMethod extends MethodAbstract {
 	const MAX_FILESIZE_BYTES = ( 32 * 1024 * 1024 );
 
 	/**
-	 * @var SkipCrashed
-	 */
-	private $skip_crashed;
-
-	/**
-	 * @var SkipLarger
-	 */
-	private $skip_larger;
-
-	/**
 	 * @var TokenRepository
 	 */
 	private $token_repository;
@@ -50,26 +41,19 @@ class RemoteMethod extends MethodAbstract {
 	private $token;
 
 	/**
-	 * @var ServerConfigurator
-	 */
-	private $server_configurator;
-
-	/**
 	 * @var mixed[]
 	 */
 	private $failed_converted_source_files = [];
 
 	public function __construct(
-		SkipCrashed $skip_crashed,
-		SkipLarger $skip_larger,
 		TokenRepository $token_repository,
+		FormatFactory $format_factory,
+		CrashedFilesOperator $skip_crashed,
+		LargerFilesOperator $skip_larger,
 		ServerConfigurator $server_configurator
 	) {
-		parent::__construct();
-		$this->skip_crashed        = $skip_crashed;
-		$this->skip_larger         = $skip_larger;
-		$this->token_repository    = $token_repository;
-		$this->server_configurator = $server_configurator;
+		parent::__construct( $format_factory, $skip_crashed, $skip_larger, $server_configurator );
+		$this->token_repository = $token_repository;
 	}
 
 	/**
@@ -154,7 +138,7 @@ class RemoteMethod extends MethodAbstract {
 			foreach ( $source_paths as $output_format => $extensions_paths ) {
 				foreach ( $extensions_paths as $path_index => $extensions_path ) {
 					if ( file_exists( $output_paths[ $output_format ][ $path_index ] )
-						|| ( ! $force_convert_deleted && file_exists( $output_paths[ $output_format ][ $path_index ] . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ) ) {
+						|| ( ! $force_convert_deleted && file_exists( $output_paths[ $output_format ][ $path_index ] . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) ) ) {
 						unset( $source_paths[ $output_format ][ $path_index ] );
 						unset( $output_paths[ $output_format ][ $path_index ] );
 

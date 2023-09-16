@@ -11,7 +11,7 @@ use WebpConverter\Settings\Option\CloudflareZoneIdOption;
 /**
  * Validates Cloudflare configuration.
  */
-class CloudflareStatusDetector implements ErrorDetector {
+class CloudflareStatusDetector implements DetectorInterface {
 
 	/**
 	 * @var PluginData

@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class PathHtaccessNotWritableNotice implements ErrorNotice {
+class PathHtaccessNotWritableNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'path_htaccess_not_writable';
 

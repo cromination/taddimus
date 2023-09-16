@@ -2,17 +2,18 @@
 
 namespace WebpConverter\Service;
 
+use WebpConverter\Conversion\AttachmentPathsGenerator;
 use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
-use WebpConverter\Conversion\Media\Attachment;
-use WebpConverter\Conversion\OutputPath;
-use WebpConverter\Conversion\SkipLarger;
+use WebpConverter\Conversion\LargerFilesOperator;
+use WebpConverter\Conversion\OutputPathGenerator;
 use WebpConverter\HookableInterface;
 use WebpConverter\Model\Token;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Settings\Option\MediaStatsOption;
-use WebpConverter\Settings\Page\PageIntegration;
+use WebpConverter\Settings\Page\PageIntegrator;
 
 /**
  * Generates information about conversion status in Media Library.
@@ -30,12 +31,12 @@ class MediaStatusViewer implements HookableInterface {
 	private $token_repository;
 
 	/**
-	 * @var OutputPath
+	 * @var OutputPathGenerator
 	 */
 	private $output_path;
 
 	/**
-	 * @var Attachment|null
+	 * @var AttachmentPathsGenerator|null
 	 */
 	private $attachment = null;
 
@@ -47,11 +48,12 @@ class MediaStatusViewer implements HookableInterface {
 	public function __construct(
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
-		OutputPath $output_path = null
+		FormatFactory $format_factory,
+		OutputPathGenerator $output_path = null
 	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository;
-		$this->output_path      = $output_path ?: new OutputPath();
+		$this->output_path      = $output_path ?: new OutputPathGenerator( $format_factory );
 	}
 
 	/**
@@ -123,7 +125,7 @@ class MediaStatusViewer implements HookableInterface {
 		$conversion_status[] = sprintf(
 		/* translators: %s: plugin name */
 			'<small>' . __( 'Optimized by: %s', 'webp-converter-for-media' ) . '</small>',
-			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegration::get_settings_page_url() ), 'Converter for Media' )
+			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegrator::get_settings_page_url() ), 'Converter for Media' )
 		);
 
 		?>
@@ -154,7 +156,7 @@ class MediaStatusViewer implements HookableInterface {
 		$conversion_status[] = sprintf(
 		/* translators: %s: plugin name */
 			'<small>' . __( 'Optimized by: %s', 'webp-converter-for-media' ) . '</small>',
-			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegration::get_settings_page_url() ), 'Converter for Media' )
+			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegrator::get_settings_page_url() ), 'Converter for Media' )
 		);
 
 		$response['compat']         = $response['compat'] ?? [];
@@ -170,7 +172,7 @@ class MediaStatusViewer implements HookableInterface {
 	 * @return string[]|null
 	 */
 	private function get_conversion_status( int $post_id ) {
-		$this->attachment = $this->attachment ?: new Attachment( $this->plugin_data );
+		$this->attachment = $this->attachment ?: new AttachmentPathsGenerator( $this->plugin_data );
 		$this->token      = $this->token ?: $this->token_repository->get_token();
 
 		$source_paths = $this->attachment->get_attachment_paths( $post_id );
@@ -256,7 +258,7 @@ class MediaStatusViewer implements HookableInterface {
 				sprintf(
 					'<strong>%1$s</strong> <small>(<a href="%2$s">%3$s</a>)</small>',
 					$avif_files_count,
-					esc_attr( PageIntegration::get_settings_page_url() ),
+					esc_attr( PageIntegrator::get_settings_page_url() ),
 					__( 'in the PRO', 'webp-converter-for-media' )
 				)
 			);
@@ -308,9 +310,9 @@ class MediaStatusViewer implements HookableInterface {
 			$items[] = [
 				'original_size' => $filesize_original,
 				'webp_size'     => $filesize_webp,
-				'webp_status'   => ( ( $filesize_webp !== null ) || file_exists( $output_path_webp . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ),
+				'webp_status'   => ( ( $filesize_webp !== null ) || file_exists( $output_path_webp . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) ),
 				'avif_size'     => $filesize_avif,
-				'avif_status'   => ( ( $filesize_avif !== null ) || file_exists( $output_path_avif . '.' . SkipLarger::DELETED_FILE_EXTENSION ) ),
+				'avif_status'   => ( ( $filesize_avif !== null ) || file_exists( $output_path_avif . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) ),
 			];
 		}
 

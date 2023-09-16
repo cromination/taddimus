@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class LibsWithoutWebpSupportNotice implements ErrorNotice {
+class LibsWithoutWebpSupportNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'libs_without_webp_support';
 

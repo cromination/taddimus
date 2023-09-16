@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class CloudflareSettingsIncorrectNotice implements ErrorNotice {
+class CloudflareSettingsIncorrectNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'settings_cloudflare';
 

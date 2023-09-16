@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class PassthruNotWorkingNotice implements ErrorNotice {
+class PassthruNotWorkingNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'passthru_not_working';
 

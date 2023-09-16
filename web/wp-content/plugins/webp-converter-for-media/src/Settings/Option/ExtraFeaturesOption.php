@@ -100,8 +100,19 @@ class ExtraFeaturesOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return string[]
 	 */
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function get_default_value( array $settings = null ): array {
+		return [
+			self::OPTION_VALUE_ONLY_SMALLER,
+		];
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
 		$valid_values = [];
 		if ( ! $current_value ) {
 			return $valid_values;
@@ -119,12 +130,19 @@ class ExtraFeaturesOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
-	 *
-	 * @return string[]
 	 */
-	public function get_default_value( array $settings = null ): array {
-		return [
+	public function sanitize_value( $current_value ) {
+		$values = [
 			self::OPTION_VALUE_ONLY_SMALLER,
+			self::OPTION_VALUE_KEEP_METADATA,
+			self::OPTION_VALUE_CRON_ENABLED,
+			self::OPTION_VALUE_BACKUP_ENABLED,
+			self::OPTION_VALUE_SERVICE_MODE,
 		];
+
+		return $this->validate_value(
+			$current_value,
+			array_combine( $values, $values )
+		);
 	}
 }

@@ -5,7 +5,7 @@ namespace WebpConverter\Notice;
 use WebpConverter\PluginData;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Settings\Option\AccessTokenOption;
-use WebpConverter\Settings\Page\PageIntegration;
+use WebpConverter\Settings\Page\PageIntegrator;
 
 /**
  * Supports notice displayed information about the PRO version.
@@ -38,7 +38,7 @@ class BlackFridayNotice extends NoticeAbstract implements NoticeInterface {
 	 */
 	public function is_available(): bool {
 		return ( ( basename( $_SERVER['PHP_SELF'] ) === 'index.php' ) // phpcs:ignore WordPress.Security
-			|| ( ( $_GET['page'] ?? '' ) === PageIntegration::SETTINGS_MENU_PAGE ) ); // phpcs:ignore WordPress.Security
+			|| ( ( $_GET['page'] ?? '' ) === PageIntegrator::SETTINGS_MENU_PAGE ) ); // phpcs:ignore WordPress.Security
 	}
 
 	/**

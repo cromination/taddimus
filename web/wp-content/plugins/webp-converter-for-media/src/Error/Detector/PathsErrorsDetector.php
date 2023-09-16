@@ -11,7 +11,7 @@ use WebpConverter\Service\PathsGenerator;
 /**
  * Checks for configuration errors about incorrect paths of directories.
  */
-class PathsErrorsDetector implements ErrorDetector {
+class PathsErrorsDetector implements DetectorInterface {
 
 	/**
 	 * {@inheritdoc}

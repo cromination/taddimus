@@ -5,7 +5,7 @@ namespace WebpConverter\Error\Notice;
 /**
  * {@inheritdoc}
  */
-class ApiLimitExceededNotice implements ErrorNotice {
+class ApiLimitExceededNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'token_limit';
 

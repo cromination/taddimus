@@ -70,10 +70,7 @@ class ImagesQualityOption extends OptionAbstract {
 	 * @return string[]
 	 */
 	public function get_available_values( array $settings ): array {
-		$levels = apply_filters(
-			'webpc_option_quality_levels',
-			[ '75', '80', '85', '90', '95' ]
-		);
+		$levels = apply_filters( 'webpc_option_quality_levels', [ '75', '80', '85', '90', '95' ] );
 
 		$values = [];
 		foreach ( $levels as $level ) {
@@ -86,7 +83,14 @@ class ImagesQualityOption extends OptionAbstract {
 		return $values;
 	}
 
-	public function get_valid_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_default_value( array $settings = null ): string {
+		return '85';
+	}
+
+	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
 		if ( $current_value === '100' ) {
 			return '95';
 		} elseif ( ! array_key_exists( $current_value, $available_values ?: [] )
@@ -100,7 +104,12 @@ class ImagesQualityOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
-		return '85';
+	public function sanitize_value( $current_value ): string {
+		$values = apply_filters( 'webpc_option_quality_levels', [ '75', '80', '85', '90', '95' ] );
+
+		return $this->validate_value(
+			$current_value,
+			array_combine( $values, $values )
+		);
 	}
 }

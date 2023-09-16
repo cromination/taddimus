@@ -4,6 +4,7 @@ namespace WebpConverter\Conversion\Endpoint;
 
 use WebpConverter\Conversion\Cron\CronInitiator;
 use WebpConverter\Conversion\Cron\CronStatusManager;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
 
@@ -27,10 +28,11 @@ class CronConversionEndpoint extends EndpointAbstract {
 	public function __construct(
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
+		FormatFactory $format_factory,
 		CronInitiator $cron_initiator = null,
 		CronStatusManager $cron_status_manager = null
 	) {
-		$this->cron_initiator      = $cron_initiator ?: new CronInitiator( $plugin_data, $token_repository );
+		$this->cron_initiator      = $cron_initiator ?: new CronInitiator( $plugin_data, $token_repository, $format_factory );
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
 	}
 
@@ -68,7 +70,7 @@ class CronConversionEndpoint extends EndpointAbstract {
 			null,
 			sprintf(
 				'%1$s/%2$s',
-				EndpointIntegration::ROUTE_NAMESPACE,
+				EndpointIntegrator::ROUTE_NAMESPACE,
 				self::get_route_name()
 			)
 		);

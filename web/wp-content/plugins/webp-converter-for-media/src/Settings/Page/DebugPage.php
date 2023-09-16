@@ -104,7 +104,7 @@ class DebugPage extends PageAbstract {
 				$ver_param
 			),
 			'plugin_settings'       => $this->plugin_data->get_public_settings(),
-			'url_debug_page'        => PageIntegration::get_settings_page_url( self::PAGE_SLUG ),
+			'url_debug_page'        => PageIntegrator::get_settings_page_url( self::PAGE_SLUG ),
 			'errors_messages'       => $errors_messages,
 			'errors_codes'          => $errors_codes,
 		];
