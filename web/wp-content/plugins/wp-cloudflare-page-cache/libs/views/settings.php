@@ -1154,7 +1154,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <h3>
                             <?php echo __( 'Easy Digital Downloads settings', 'wp-cloudflare-page-cache' ); ?>
 
-                            <?php if( is_plugin_active( 'easy-digital-downloads/easy-digital-downloads.php' ) ): ?>
+                            <?php if( is_plugin_active( 'easy-digital-downloads/easy-digital-downloads.php' ) || is_plugin_active( 'easy-digital-downloads-pro/easy-digital-downloads.php' ) ): ?>
                                 <span class="swcfpc_plugin_active"><?php _e('Active plugin', 'wp-cloudflare-page-cache'); ?></span>
                             <?php else: ?>
                                 <span class="swcfpc_plugin_inactive"><?php _e('Inactive plugin', 'wp-cloudflare-page-cache'); ?></span>
@@ -2401,6 +2401,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                             <p>Filters:</p>
 
                             <ul>
+                                <li><strong>swcfpc_bypass_cache_metabox_post_types</strong>, <?php _e('$allowed_post_types (Array). You can use this filter to ensure that the bypass cache metabox is also shown for your own custom post types. Example code link: https://wordpress.org/support/topic/disable-page-caching-for-specific-pages-with-cpt/#post-16824221', 'wp-cloudflare-page-cache'); ?></li>
                                 <li><strong>swcfpc_fc_modify_current_url</strong>, <?php _e('$current_uri (string). You can use this filter to modify the url that will be used by the fallback cache. For example you can remove many query strings from the url. Please note that this filter will return the URL without the trailing slash.', 'wp-cloudflare-page-cache'); ?></li>
                                 <li><strong>swcfpc_cache_bypass</strong>, <?php _e('one arguments. Return true to bypass the cache.', 'wp-cloudflare-page-cache'); ?></li>
                                 <li><strong>swcfpc_post_related_url_init</strong>, <?php _e('$listofurls (array), $postId. Fired when creating the initial array that holds the list of related urls to be purged when a post is updated. Show return array of full URLs (e.g. https://example.com/some-example/) that you want to include in the related purge list.', 'wp-cloudflare-page-cache'); ?></li>

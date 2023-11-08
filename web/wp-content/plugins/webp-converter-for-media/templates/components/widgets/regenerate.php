@@ -44,11 +44,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="webpcPage__widgetRow">
 			<div class="webpcTree">
 				<p class="webpcTree__headline">
-					<?php echo wp_kses_post( __( 'The list of files that can be optimized:', 'webp-converter-for-media' ) ); ?>
+					<span class="webpcTree__headlineTitle">
+						<?php echo wp_kses_post( __( 'The list of files that can be optimized:', 'webp-converter-for-media' ) ); ?>
+					</span>
+					<a href="#" class="webpcTree__headlineButton" data-tree-toggle-button hidden>
+						<?php echo esc_attr( __( 'Expand/collapse all', 'webp-converter-for-media' ) ); ?>
+					</a>
 				</p>
 				<div class="webpcTree__output"
 					data-tree
-					data-tree-files-count="<?php /* translators: %s: files count */ echo esc_attr( __( '+%s other files', 'webp-converter-for-media' ) ); ?>">
+					data-tree-files-count="<?php /* translators: %s: files count */ echo esc_attr( __( '+%s other files', 'webp-converter-for-media' ) ); ?>"
+					data-tree-input-tooltip="<?php echo esc_attr( __( 'Click to expand/collapse', 'webp-converter-for-media' ) ); ?>">
 					<p class="webpcContent__loader" data-tree-loader>
 						<?php echo wp_kses_post( sprintf( __( 'Loading, please wait', 'webp-converter-for-media' ) ) ); ?>
 					</p>

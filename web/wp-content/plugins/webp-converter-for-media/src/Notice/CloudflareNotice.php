@@ -31,6 +31,8 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 
 		if ( ( strpos( $cdn_server, 'cloudflare' ) === false ) && ! is_plugin_active( 'cloudflare/cloudflare.php' ) ) {
 			return false;
+		} elseif ( strpos( $_SERVER['SERVER_NAME'] ?? '', 'tastewp.com' ) !== false ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			return false;
 		}
 
 		return ( ( $_GET['page'] ?? '' ) === PageIntegrator::SETTINGS_MENU_PAGE ); // phpcs:ignore WordPress.Security

@@ -122,16 +122,19 @@ Feature: Manage translation files for a WordPress install
     And the wp-content/languages/themes/twentyten-de_DE.po file should not exist
     And the wp-content/languages/themes/twentyten-de_DE.mo file should not exist
       """
-      Success: Language uninstalled.
-      Success: Language uninstalled.
+      Success: Language 'cs_CZ' for 'twentyten' uninstalled.
+      Success: Language 'de_DE' for 'twentyten' uninstalled.
       """
 
     When I try `wp language theme uninstall twentyten de_DE`
-    Then STDERR should be:
+    Then STDERR should contain:
       """
-      Error: Language not installed.
+      Language 'de_DE' not installed.
       """
-    And STDOUT should be empty
+    And STDERR should contain:
+      """
+      Error: No languages uninstalled (1 failed).
+      """
     And the return code should be 1
 
     When I try `wp language theme install twentyten invalid_lang`
@@ -191,6 +194,14 @@ Feature: Manage translation files for a WordPress install
       """
     And STDOUT should be empty
 
+    When I try `wp language theme uninstall de_DE`
+    Then the return code should be 1
+    And STDERR should be:
+      """
+      Error: Please specify one or more themes, or use --all.
+      """
+    And STDOUT should be empty
+
     Given an empty {THEME_DIR} directory
     When I run `wp language theme list --all`
     Then STDOUT should be:
@@ -199,6 +210,12 @@ Feature: Manage translation files for a WordPress install
       """
 
     When I run `wp language theme update --all`
+    Then STDOUT should be:
+      """
+      Success: No themes installed.
+      """
+
+    When I run `wp language theme uninstall de_DE --all`
     Then STDOUT should be:
       """
       Success: No themes installed.
@@ -267,5 +284,25 @@ Feature: Manage translation files for a WordPress install
       twentyseventeen,invalid_lang,"not available"
       twentysixteen,de_DE,"already installed"
       twentysixteen,invalid_lang,"not available"
+      """
+    And STDERR should be empty
+
+    When I run `wp language theme uninstall --all de_DE --format=csv`
+    Then the return code should be 0
+    And STDOUT should be:
+      """
+      name,locale,status
+      twentyseventeen,de_DE,uninstalled
+      twentysixteen,de_DE,uninstalled
+      """
+    And STDERR should be empty
+
+    When I run `wp language theme uninstall --all de_DE --format=csv`
+    Then the return code should be 0
+    And STDOUT should be:
+      """
+      name,locale,status
+      twentyseventeen,de_DE,"not installed"
+      twentysixteen,de_DE,"not installed"
       """
     And STDERR should be empty

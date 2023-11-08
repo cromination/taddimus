@@ -3,6 +3,7 @@
 namespace WebpConverter\Service;
 
 use WebpConverter\Conversion\AttachmentPathsGenerator;
+use WebpConverter\Conversion\Endpoint\RegenerateAttachmentEndpoint;
 use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
@@ -61,6 +62,7 @@ class MediaStatusViewer implements HookableInterface {
 	 */
 	public function init_hooks() {
 		add_action( 'admin_init', [ $this, 'init_hooks_after_setup' ] );
+		add_filter( 'webpc_attachment_stats', [ $this, 'get_conversion_stats_for_attachment' ], 10, 3 );
 	}
 
 	/**
@@ -77,6 +79,23 @@ class MediaStatusViewer implements HookableInterface {
 		add_action( 'manage_media_custom_column', [ $this, 'print_table_column_value' ], 10, 2 );
 		add_action( 'attachment_submitbox_misc_actions', [ $this, 'print_attachment_sidebar_value' ], 20 );
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'add_status_for_attachment_data' ], 10, 2 );
+	}
+
+	/**
+	 * @param string   $current_value  .
+	 * @param int      $post_id        .
+	 * @param int|null $strategy_level .
+	 *
+	 * @return string|null
+	 * @internal
+	 */
+	public function get_conversion_stats_for_attachment( string $current_value, int $post_id, int $strategy_level = null ) {
+		$conversion_status = $this->get_conversion_status( $post_id, $strategy_level );
+		if ( $conversion_status === null ) {
+			return null;
+		}
+
+		return wp_kses( implode( '<br>', $conversion_status ), $this->get_allowed_html_tags() );
 	}
 
 	/**
@@ -102,12 +121,16 @@ class MediaStatusViewer implements HookableInterface {
 			return;
 		}
 
-		$conversion_status = $this->get_conversion_status( $post_id );
-		if ( $conversion_status === null ) {
+		$conversion_stats = $this->get_conversion_stats_for_attachment( '', $post_id );
+		if ( $conversion_stats === null ) {
 			return;
 		}
 
-		echo wp_kses_post( implode( '<br>', $conversion_status ) );
+		echo sprintf(
+			'<div id="webpc-attachment-trigger-%1$s-wrapper">%2$s</div>',
+			esc_attr( (string) $post_id ),
+			wp_kses( $conversion_stats, $this->get_allowed_html_tags() )
+		);
 	}
 
 	/**
@@ -117,20 +140,27 @@ class MediaStatusViewer implements HookableInterface {
 	 * @internal
 	 */
 	public function print_attachment_sidebar_value( \WP_Post $post ) {
-		$conversion_status = $this->get_conversion_status( $post->ID );
-		if ( $conversion_status === null ) {
+		$conversion_stats = $this->get_conversion_stats_for_attachment( '', $post->ID );
+		if ( $conversion_stats === null ) {
 			return;
 		}
 
-		$conversion_status[] = sprintf(
-		/* translators: %s: plugin name */
-			'<small>' . __( 'Optimized by: %s', 'webp-converter-for-media' ) . '</small>',
-			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegrator::get_settings_page_url() ), 'Converter for Media' )
-		);
-
 		?>
 		<div class="misc-pub-section misc-pub-webpc">
-			<?php echo wp_kses_post( implode( '<br>', $conversion_status ) ); ?>
+			<div id="webpc-attachment-trigger-<?php echo esc_attr( (string) $post->ID ); ?>-wrapper">
+				<?php echo wp_kses( $conversion_stats, $this->get_allowed_html_tags() ); ?>
+			</div>
+			<small>
+				<?php
+				echo wp_kses_post(
+					sprintf(
+					/* translators: %s: plugin name */
+						__( 'Optimized by: %s', 'webp-converter-for-media' ),
+						sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegrator::get_settings_page_url() ), 'Converter for Media' )
+					)
+				);
+				?>
+			</small>
 		</div>
 		<?php
 	}
@@ -148,30 +178,37 @@ class MediaStatusViewer implements HookableInterface {
 			return $response;
 		}
 
-		$conversion_status = $this->get_conversion_status( $attachment->ID );
-		if ( $conversion_status === null ) {
+		$conversion_stats = $this->get_conversion_stats_for_attachment( '', $attachment->ID );
+		if ( $conversion_stats === null ) {
 			return $response;
 		}
-
-		$conversion_status[] = sprintf(
-		/* translators: %s: plugin name */
-			'<small>' . __( 'Optimized by: %s', 'webp-converter-for-media' ) . '</small>',
-			sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegrator::get_settings_page_url() ), 'Converter for Media' )
-		);
 
 		$response['compat']         = $response['compat'] ?? [];
 		$response['compat']['meta'] = $response['compat']['meta'] ?? '';
 
-		$response['compat']['meta'] .= '<br>' . wp_kses_post( implode( '<br>', $conversion_status ) );
+		$response['compat']['meta'] .= sprintf(
+			'<br><div id="webpc-attachment-trigger-%1$s-wrapper">%2$s</div><small>%3$s</small>',
+			$attachment->ID,
+			$conversion_stats,
+			wp_kses_post(
+				sprintf(
+				/* translators: %s: plugin name */
+					__( 'Optimized by: %s', 'webp-converter-for-media' ),
+					sprintf( '<a href="%1$s">%2$s</a>', esc_attr( PageIntegrator::get_settings_page_url() ), 'Converter for Media' )
+				)
+			)
+		);
+
 		return $response;
 	}
 
 	/**
-	 * @param int $post_id .
+	 * @param int      $post_id        .
+	 * @param int|null $strategy_level .
 	 *
 	 * @return string[]|null
 	 */
-	private function get_conversion_status( int $post_id ) {
+	private function get_conversion_status( int $post_id, int $strategy_level = null ) {
 		$this->attachment = $this->attachment ?: new AttachmentPathsGenerator( $this->plugin_data );
 		$this->token      = $this->token ?: $this->token_repository->get_token();
 
@@ -215,6 +252,8 @@ class MediaStatusViewer implements HookableInterface {
 			}
 		}
 
+		$is_optimized = ( $size_optimized || ( $webp_files_count > 0 ) || ( $avif_files_count > 0 ) );
+
 		$rows = [
 			sprintf(
 			/* translators: %s: file size */
@@ -238,7 +277,7 @@ class MediaStatusViewer implements HookableInterface {
 			/* translators: %1$s: output format, %2$s: number of images */
 				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
 				'WebP',
-				( count( $webp_source_size ) > 0 )
+				( $webp_files_count > 0 )
 					?
 					sprintf(
 						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
@@ -267,7 +306,7 @@ class MediaStatusViewer implements HookableInterface {
 			/* translators: %1$s: output format, %2$s: number of images */
 				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
 				'AVIF',
-				( count( $avif_source_size ) > 0 )
+				( $avif_files_count > 0 )
 					?
 					sprintf(
 						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
@@ -278,6 +317,87 @@ class MediaStatusViewer implements HookableInterface {
 					: '<strong>' . $avif_files_count . '</strong>'
 			);
 		}
+
+		if ( ! $is_optimized ) {
+			$rows = array_slice( $rows, 0, 1 );
+		}
+
+		$rows[] = sprintf(
+			'<select id="webpc-attachment-trigger-%1$s" onchange="webpcConvertAttachment(this,%1$s);" data-api-path="%2$s|%3$s">%4$s</select><span id="webpc-attachment-trigger-%1$s-spinner" class="spinner no-float" hidden></span>',
+			$post_id,
+			RegenerateAttachmentEndpoint::get_route_url(),
+			RegenerateAttachmentEndpoint::get_route_nonce(),
+			implode(
+				'',
+				[
+					sprintf(
+						'<option value="%1$s" %2$s disabled>%3$s</option>',
+						'',
+						( $strategy_level === null ) ? 'selected' : '',
+						__( 'Optimize Now', 'webp-converter-for-media' )
+					),
+					sprintf(
+						'<option value="%1$s" %2$s>%3$s</option>',
+						75,
+						( $strategy_level === 75 ) ? 'selected' : '',
+						sprintf(
+						/* translators: %s: strategy level */
+							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
+							sprintf( '%1$s (%2$s)', '#1', __( 'Lossy', 'webp-converter-for-media' ) )
+						)
+					),
+					sprintf(
+						'<option value="%1$s" %2$s>%3$s</option>',
+						80,
+						( $strategy_level === 80 ) ? 'selected' : '',
+						sprintf(
+						/* translators: %s: strategy level */
+							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
+							'#2'
+						)
+					),
+					sprintf(
+						'<option value="%1$s" %2$s>%3$s</option>',
+						85,
+						( $strategy_level === 85 ) ? 'selected' : '',
+						sprintf(
+						/* translators: %s: strategy level */
+							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
+							sprintf( '%1$s (%2$s)', '#3', __( 'Optimal', 'webp-converter-for-media' ) )
+						)
+					),
+					sprintf(
+						'<option value="%1$s" %2$s>%3$s</option>',
+						90,
+						( $strategy_level === 90 ) ? 'selected' : '',
+						sprintf(
+						/* translators: %s: strategy level */
+							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
+							'#4'
+						)
+					),
+					sprintf(
+						'<option value="%1$s" %2$s>%3$s</option>',
+						95,
+						( $strategy_level === 95 ) ? 'selected' : '',
+						sprintf(
+						/* translators: %s: strategy level */
+							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
+							sprintf( '%1$s (%2$s)', '#5', __( 'Lossless', 'webp-converter-for-media' ) )
+						)
+					),
+					( $is_optimized )
+						?
+						sprintf(
+							'<option value="%1$s" %2$s>%3$s</option>',
+							0,
+							( $strategy_level === 0 ) ? 'selected' : '',
+							__( 'Restore Originals', 'webp-converter-for-media' )
+						)
+						: '',
+				]
+			)
+		);
 
 		return $rows;
 	}
@@ -333,5 +453,32 @@ class MediaStatusViewer implements HookableInterface {
 		return ( $output_percent >= 0 )
 			? sprintf( '-%s%%', $output_percent )
 			: sprintf( '+%s%%', abs( $output_percent ) );
+	}
+
+	/**
+	 * @return mixed[]
+	 */
+	private function get_allowed_html_tags(): array {
+		return [
+			'br'     => [],
+			'a'      => [
+				'href' => [],
+			],
+			'strong' => [],
+			'select' => [
+				'id'            => [],
+				'onchange'      => [],
+				'data-api-path' => [],
+			],
+			'option' => [
+				'value'    => [],
+				'selected' => [],
+				'disabled' => [],
+			],
+			'span'   => [
+				'id'    => [],
+				'class' => [],
+			],
+		];
 	}
 }

@@ -168,7 +168,7 @@ Feature: Skipping themes
       bool(false)
       """
 
-  @require-wp-6.1
+  @require-wp-6.1 @require-php-7.0
   Scenario: Skip a theme using block patterns with Gutenberg active
     Given a WP installation
     And I run `wp plugin install gutenberg --activate`
@@ -184,4 +184,19 @@ Feature: Skipping themes
     Then STDOUT should be:
       """
       bool(false)
+      """
+
+  @require-wp-5.2
+  Scenario: Display a custom error message when themes/functions.php causes the fatal
+    Given a WP installation
+    And a wp-content/themes/functions.php file:
+      """
+      <?php
+      wp_cli_function_doesnt_exist_5240();
+      """
+
+    When I try `wp --skip-themes plugin list`
+    Then STDERR should contain:
+      """
+      Error: An unexpected functions.php file in the themes directory may have caused this internal server error.
       """

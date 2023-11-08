@@ -1,3 +1,8 @@
+#####   Version 4.7.5 (2023-10-30)
+
+- Added swcfpc_bypass_cache_metabox_post_types filter to ensure users can add their CPTs to the list of allowed post types for which the bypass cache meta box will be registered.
+- Make sure that the Purge CF cache option is not shown for WC Subscription page
+
 #####   Version 4.7.4 (2023-06-12)
 
 - Making sure the log file shows the date and time in accordance with the Timezone settings set inside WordPress admin

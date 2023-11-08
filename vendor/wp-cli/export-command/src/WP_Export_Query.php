@@ -11,15 +11,16 @@ class WP_Export_Query {
 	const QUERY_CHUNK = 100;
 
 	private static $defaults = [
-		'post_ids'      => null,
-		'post_type'     => null,
-		'status'        => null,
-		'author'        => null,
-		'start_date'    => null,
-		'end_date'      => null,
-		'start_id'      => null,
-		'max_num_posts' => null,
-		'category'      => null,
+		'post_ids'           => null,
+		'post_type'          => null,
+		'status'             => null,
+		'author'             => null,
+		'start_date'         => null,
+		'end_date'           => null,
+		'start_id'           => null,
+		'max_num_posts'      => null,
+		'category'           => null,
+		'allow_orphan_terms' => null,
 	];
 
 	private $post_ids;
@@ -97,7 +98,7 @@ class WP_Export_Query {
 		}
 		$categories = (array) get_categories( [ 'get' => 'all' ] );
 
-		$this->check_for_orphaned_terms( $categories );
+		$categories = $this->process_orphaned_terms( $categories );
 
 		$categories = self::topologically_sort_terms( $categories );
 
@@ -110,7 +111,7 @@ class WP_Export_Query {
 		}
 		$tags = (array) get_tags( [ 'get' => 'all' ] );
 
-		$this->check_for_orphaned_terms( $tags );
+		$tags = $this->process_orphaned_terms( $tags );
 
 		return $tags;
 	}
@@ -120,8 +121,9 @@ class WP_Export_Query {
 			return [];
 		}
 		$custom_taxonomies = get_taxonomies( [ '_builtin' => false ] );
-		$custom_terms      = (array) get_terms( $custom_taxonomies, [ 'get' => 'all' ] );
-		$this->check_for_orphaned_terms( $custom_terms );
+		// phpcs:ignore WordPress.WP.DeprecatedParameters.Get_termsParam2Found -- Deprecated, but we need to support older versions of WordPress.
+		$custom_terms = (array) get_terms( $custom_taxonomies, [ 'get' => 'all' ] );
+		$custom_terms = $this->process_orphaned_terms( $custom_terms );
 		$custom_terms = self::topologically_sort_terms( $custom_terms );
 		return $custom_terms;
 	}
@@ -305,7 +307,7 @@ class WP_Export_Query {
 			return [];
 		}
 		$attachment_ids = [];
-		// phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition -- Assigment is part of the break condition.
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition -- Assigment is part of the break condition.
 		while ( $batch_of_post_ids = array_splice( $post_ids, 0, self::QUERY_CHUNK ) ) {
 			$post_parent_condition = _wp_export_build_IN_condition( 'post_parent', $batch_of_post_ids );
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Escaped in wpcli_export_build_in_condition() function.
@@ -344,7 +346,7 @@ class WP_Export_Query {
 
 	private static function topologically_sort_terms( $terms ) {
 		$sorted = [];
-		// phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition -- assignment is used as break condition.
+		// phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition -- assignment is used as break condition.
 		while ( $term = array_shift( $terms ) ) {
 			if ( 0 === (int) $term->parent || isset( $sorted[ $term->parent ] ) ) {
 				$sorted[ $term->term_id ] = $term;
@@ -355,9 +357,11 @@ class WP_Export_Query {
 		return $sorted;
 	}
 
-	private function check_for_orphaned_terms( $terms ) {
+	private function process_orphaned_terms( $terms ) {
+
 		$term_ids    = [];
 		$have_parent = [];
+		$orphans     = [];
 
 		foreach ( $terms as $term ) {
 			$term_ids[ $term->term_id ] = true;
@@ -368,10 +372,30 @@ class WP_Export_Query {
 
 		foreach ( $have_parent as $has_parent ) {
 			if ( ! isset( $term_ids[ $has_parent->parent ] ) ) {
-				$this->missing_parents = $has_parent;
-				throw new WP_Export_Term_Exception( "Term is missing a parent: {$has_parent->slug} ({$has_parent->term_taxonomy_id})" );
+				if ( $this->filters['allow_orphan_terms'] ) {
+					$orphans[ $has_parent->term_id ] = true;
+				} else {
+					$this->missing_parents = $has_parent;
+					throw new WP_Export_Term_Exception( "Term is missing a parent: {$has_parent->slug} ({$has_parent->term_taxonomy_id})" );
+				}
 			}
 		}
+
+		if ( ! $this->filters['allow_orphan_terms'] ) {
+			return $terms;
+		}
+
+		if ( count( $orphans ) > 0 ) {
+			$terms_return = [];
+			foreach ( $terms as $term ) {
+				if ( isset( $orphans[ $term->term_id ] ) ) {
+					$term->parent = 0;
+				}
+				$terms_return[] = $term;
+			}
+			$terms = $terms_return;
+		}
+		return $terms;
 	}
 
 	private static function get_terms_for_post( $post ) {
@@ -413,4 +437,3 @@ class WP_Export_Query {
 		return $comments;
 	}
 }
-

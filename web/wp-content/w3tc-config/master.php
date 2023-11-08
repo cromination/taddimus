@@ -1,5 +1,5 @@
 <?php exit; ?>{
-    "version": "2.4.1",
+    "version": "2.6.0",
     "cluster.messagebus.debug": false,
     "cluster.messagebus.enabled": false,
     "cluster.messagebus.sns.region": "",
@@ -288,7 +288,7 @@
         "utm_source",
         "utm_term"
     ],
-    "pgcache.migrated.qsexempts": 1693448412,
+    "pgcache.migrated.qsexempts": 1699405271,
     "pgcache.late_init": false,
     "pgcache.late_caching": false,
     "pgcache.mirrors.enabled": false,

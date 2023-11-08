@@ -156,7 +156,7 @@ class Search_Replace_Command extends WP_CLI_Command {
 	 *     $ wp search-replace '\[foo id="([0-9]+)"' '[bar id="\1"' --regex --regex-flags='i'
 	 *
 	 *     # Turn your production multisite database into a local dev database
-	 *     $ wp search-replace --url=example.com example.com example.test 'wp_*options' wp_blogs
+	 *     $ wp search-replace --url=example.com example.com example.test 'wp_*options' wp_blogs wp_site --network
 	 *
 	 *     # Search/replace to a SQL file without transforming the database
 	 *     $ wp search-replace foo bar --export=database.sql
@@ -248,7 +248,7 @@ class Search_Replace_Command extends WP_CLI_Command {
 				}
 			}
 			$export_insert_size = Utils\get_flag_value( $assoc_args, 'export_insert_size', 50 );
-			// phpcs:ignore WordPress.PHP.StrictComparisons.LooseComparison -- See the code, this is deliberate.
+			// phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual -- See the code, this is deliberate.
 			if ( (int) $export_insert_size == $export_insert_size && $export_insert_size > 0 ) {
 				$this->export_insert_size = $export_insert_size;
 			}
@@ -473,7 +473,7 @@ class Search_Replace_Command extends WP_CLI_Command {
 				if ( $value && ! in_array( $col, $primary_keys, true ) && ! in_array( $col, $this->skip_columns, true ) ) {
 					$new_value = $replacer->run( $value );
 					if ( $new_value !== $value ) {
-						$col_counts[ $col ]++;
+						++$col_counts[ $col ];
 						$value = $new_value;
 					}
 				}
@@ -491,7 +491,7 @@ class Search_Replace_Command extends WP_CLI_Command {
 				$table_report[] = array( $table, $col, $col_count, 'PHP' );
 			}
 			if ( $col_count ) {
-				$total_cols++;
+				++$total_cols;
 				$total_rows += $col_count;
 			}
 		}
@@ -590,7 +590,7 @@ class Search_Replace_Command extends WP_CLI_Command {
 					$replacer->clear_log_data();
 				}
 
-				$count++;
+				++$count;
 				if ( ! $this->dry_run ) {
 					$update_where = array();
 					foreach ( (array) $keys as $k => $v ) {
@@ -682,10 +682,10 @@ class Search_Replace_Command extends WP_CLI_Command {
 
 			// Add new insert statement if needed. Before this we close the previous with semicolon and write statement to sql-file.
 			// "Statement break" is needed:
-			//		1. When the loop is running every nth time (where n is insert statement size, $export_index_size). Remainder is zero also on first round, so it have to be excluded.
-			//			$index % $export_insert_size == 0 && $index > 0
-			//		2. Or when the loop is running last time
-			//			$index == $count
+			//      1. When the loop is running every nth time (where n is insert statement size, $export_index_size). Remainder is zero also on first round, so it have to be excluded.
+			//          $index % $export_insert_size == 0 && $index > 0
+			//      2. Or when the loop is running last time
+			//          $index == $count
 			if ( ( 0 === $index % $export_insert_size && $index > 0 ) || $index === $count ) {
 				$sql .= ";\n";
 
@@ -710,7 +710,7 @@ class Search_Replace_Command extends WP_CLI_Command {
 				$sql .= ",\n";
 			}
 
-			$index++;
+			++$index;
 		}
 	}
 
@@ -1043,5 +1043,4 @@ class Search_Replace_Command extends WP_CLI_Command {
 
 		fwrite( $this->log_handle, "{$table_column_id_log}\n{$old_log}\n{$new_log}\n" );
 	}
-
 }

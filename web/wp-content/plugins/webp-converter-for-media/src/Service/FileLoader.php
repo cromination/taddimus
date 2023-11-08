@@ -121,6 +121,10 @@ class FileLoader {
 	 * @return resource|null
 	 */
 	private function get_curl_connection( string $url, array $headers ) {
+		if ( ! function_exists( 'curl_init' ) ) {
+			return null;
+		}
+
 		$ch = curl_init( $url );
 		if ( $ch === false ) {
 			return null;

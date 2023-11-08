@@ -409,7 +409,7 @@ class autoptimizeUtils
         if ( null === $_found_pagecache ) {
             $_page_cache_constants = array(
                 'NgInx' => 'NGINX_HELPER_BASENAME',
-                'Kinsta' => 'KINSTA_CACHE_ZONE',
+                'Kinsta' => 'KINSTAMU_VERSION',
                 'Presslabs' => 'PL_INSTANCE_REF',
                 'Cache Enabler' => 'CACHE_ENABLER_VERSION',
                 'Speed Booster Pack' => 'SBP_PLUGIN_NAME',
@@ -490,7 +490,7 @@ class autoptimizeUtils
      * @return bool
      */
     public static function is_ao_settings() {
-        $_is_ao_settings = ( str_replace( array( 'autoptimize', 'autoptimize_imgopt', 'ao_critcss', 'autoptimize_extra', 'ao_partners', 'ao_pro_boosters' ), '', $_SERVER['REQUEST_URI'] ) !== $_SERVER['REQUEST_URI'] ? true : false );
+        $_is_ao_settings = ( str_replace( array( 'autoptimize', 'autoptimize_imgopt', 'ao_critcss', 'autoptimize_extra', 'ao_partners', 'ao_pro_boosters', 'ao_pro_pagecache', 'ao_protab' ), '', $_SERVER['REQUEST_URI'] ) !== $_SERVER['REQUEST_URI'] ? true : false );
         return $_is_ao_settings;
     }
 
@@ -556,8 +556,9 @@ class autoptimizeUtils
             } elseif ( in_array( $_domain, array( '127.0.0.1', '0000:0000:0000:0000:0000:0000:0000:0001', '0:0:0:0:0:0:0:1', '::1' ) ) ) {
                 // localhost IPv4/ IPv6.
                 $_is_local_server = true;
-            } elseif ( 0 === strpos( $_domain, '127.' ) || 0 === strpos( $_domain, '192.168.' ) || 0 === strpos( $_domain, 'fd' ) ) {
+            } elseif ( 0 === strpos( $_domain, '127.' ) || 0 === strpos( $_domain, '192.168.' ) || 0 === strpos( $_domain, '10.' ) || 0 === strpos( $_domain, 'fd' ) ) {
                 // private ranges so unreachable for imgopt/ CCSS.
+                // fixme; 172.16.0.0–172.31.255.255 also private.
                 $_is_local_server = true;
             } elseif ( autoptimizeUtils::str_ends_in( $_domain, '.local') ) {
                 // matches 'whatever.local'.

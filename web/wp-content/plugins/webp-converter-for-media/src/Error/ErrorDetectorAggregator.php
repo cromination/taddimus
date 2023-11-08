@@ -11,6 +11,7 @@ use WebpConverter\Error\Detector\PathsErrorsDetector;
 use WebpConverter\Error\Detector\RewritesErrorsDetector;
 use WebpConverter\Error\Detector\SettingsIncorrectDetector;
 use WebpConverter\Error\Detector\TokenStatusDetector;
+use WebpConverter\Error\Detector\UnsupportedServerDetector;
 use WebpConverter\Error\Detector\WebpFormatActivatedDetector;
 use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\Error\Notice\RewritesCachedNotice;
@@ -153,6 +154,11 @@ class ErrorDetectorAggregator implements HookableInterface {
 
 		$this->pause_duplicated_detection();
 		$this->cached_errors = [];
+
+		if ( $new_error = ( new UnsupportedServerDetector() )->get_error() ) {
+			$this->cached_errors[] = $new_error;
+			return $this->cached_errors;
+		}
 
 		if ( $new_error = ( new TokenStatusDetector( $this->plugin_data ) )->get_error() ) {
 			$this->cached_errors[] = $new_error;

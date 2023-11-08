@@ -90,7 +90,7 @@ class SupportedExtensionsOption extends OptionAbstract {
 			$valid_values[] = 'jpeg';
 		}
 
-		return $valid_values;
+		return array_unique( $valid_values );
 	}
 
 	/**

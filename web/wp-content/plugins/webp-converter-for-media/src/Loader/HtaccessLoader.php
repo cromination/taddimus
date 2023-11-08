@@ -230,6 +230,10 @@ class HtaccessLoader extends LoaderAbstract {
 		foreach ( $this->format_factory->get_mime_types() as $format => $mime_type ) {
 			$content .= PHP_EOL;
 			foreach ( $settings[ SupportedExtensionsOption::OPTION_NAME ] as $ext ) {
+				if ( $format === $ext ) {
+					continue;
+				}
+
 				$content .= "  RewriteCond %{HTTP_ACCEPT} {$mime_type}" . PHP_EOL;
 				if ( in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
 					$content .= "  RewriteCond %{REQUEST_FILENAME} -f" . PHP_EOL;

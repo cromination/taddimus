@@ -202,12 +202,14 @@ class RemoteMethod extends MethodAbstract {
 	 * @throws OutputPathException
 	 */
 	private function get_source_paths( array $paths, array $plugin_settings, string $output_format ): array {
+		$max_filesize = apply_filters( 'webpc_remote_max_filesize', self::MAX_FILESIZE_BYTES );
 		$source_paths = [];
+
 		foreach ( $paths as $path ) {
 			$source_path = $this->get_image_source_path( $path );
-			if ( filesize( $source_path ) > self::MAX_FILESIZE_BYTES ) {
+			if ( filesize( $source_path ) > $max_filesize ) {
 				$this->save_conversion_error(
-					( new FilesizeOversizeException( [ self::MAX_FILESIZE_BYTES, $source_path ] ) )->getMessage(),
+					( new FilesizeOversizeException( [ $max_filesize, $source_path ] ) )->getMessage(),
 					$plugin_settings
 				);
 				$this->skip_crashed->create_crashed_file( $this->get_image_output_path( $source_path, $output_format ) );

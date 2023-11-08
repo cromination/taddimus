@@ -15,7 +15,7 @@ jobs:
     if: ${{ github.repository_owner == 'wp-cli' }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up PHP environment
         uses: shivammathur/setup-php@v2
@@ -67,17 +67,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+        php: ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
         wp: ['latest']
         mysql: ['8.0']
         include:
-          - php: '5.6'
+          - php: '7.0'
             wp: 'trunk'
             mysql: '8.0'
-          - php: '5.6'
+          - php: '7.0'
             wp: 'trunk'
             mysql: '5.7'
-          - php: '5.6'
+          - php: '7.0'
             wp: 'trunk'
             mysql: '5.6'
           - php: '7.4'
@@ -110,7 +110,7 @@ jobs:
     if: ${{ github.repository_owner == 'wp-cli' }}
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Ghostscript
         run: |
@@ -195,7 +195,7 @@ jobs:
     if: ${{ github.repository_owner == 'wp-cli' }}
     steps:
       - name: Check out builds repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: wp-cli/builds
           token: ${{ secrets.ACTIONS_BOT }}
@@ -259,7 +259,7 @@ jobs:
 
     steps:
       - name: Check out builds repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: wp-cli/builds
           token: ${{ secrets.ACTIONS_BOT }}
@@ -313,7 +313,7 @@ jobs:
 
     steps:
       - name: Check out builds repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: wp-cli/builds
           token: ${{ secrets.ACTIONS_BOT }}

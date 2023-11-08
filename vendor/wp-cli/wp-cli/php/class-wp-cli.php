@@ -125,7 +125,7 @@ class WP_CLI {
 	}
 
 	private static function set_url_params( $url_parts ) {
-		$f = function( $key ) use ( $url_parts ) {
+		$f = function ( $key ) use ( $url_parts ) {
 			return Utils\get_flag_value( $url_parts, $key, '' );
 		};
 
@@ -463,7 +463,7 @@ class WP_CLI {
 	 * @category Registration
 	 *
 	 * @param string   $name Name for the command (e.g. "post list" or "site empty").
-	 * @param callable $callable Command implementation as a class, function or closure.
+	 * @param callable|object|string $callable Command implementation as a class, function or closure.
 	 * @param array    $args {
 	 *    Optional. An associative array with additional registration parameters.
 	 *
@@ -1005,8 +1005,11 @@ class WP_CLI {
 			// We don't use file_get_contents() here because it doesn't handle
 			// Ctrl-D properly, when typing in the value interactively.
 			$raw_value = '';
-			while ( false !== ( $line = fgets( STDIN ) ) ) {
+			$line      = fgets( STDIN );
+
+			while ( false !== $line ) {
 				$raw_value .= $line;
+				$line       = fgets( STDIN );
 			}
 		}
 
@@ -1067,7 +1070,7 @@ class WP_CLI {
 		}
 
 		// Only json_encode() the data when it needs it
-		$render_data = function( $data ) {
+		$render_data = function ( $data ) {
 			if ( is_array( $data ) || is_object( $data ) ) {
 				return json_encode( $data );
 			}

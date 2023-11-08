@@ -180,7 +180,7 @@ class SWCFPC_Cache_Controller
 
         // Edd actions
         if( $this->main_instance->get_single_config('cf_auto_purge_edd_payment_add', 0) > 0 )
-            add_action( 'edd_insert_payment', array($this, 'edd_purge_cache_on_payment_add', PHP_INT_MAX ) );
+            add_action( 'edd_built_order', array($this, 'edd_purge_cache_on_payment_add'), PHP_INT_MAX );
 
         // Nginx Helper actions
         if( $this->main_instance->get_single_config('cf_nginx_helper_purge_on_cache_flush', 0) > 0 ) {
@@ -200,8 +200,10 @@ class SWCFPC_Cache_Controller
             add_action( 'wpacu_clear_cache_after', array($this, 'wpacu_hooks'), PHP_INT_MAX );
 
         // Flying Press actions
-        if( $this->main_instance->get_single_config('cf_flypress_purge_on_cache_flush', 0) > 0 )
-            add_action( 'fp_purged_cache', array($this, 'flying_press_hooks'), PHP_INT_MAX );
+        if( $this->main_instance->get_single_config('cf_flypress_purge_on_cache_flush', 0) > 0 ) {
+            add_action( 'flying_press_purge_pages:after', array($this, 'flying_press_hook'), PHP_INT_MAX );
+            add_action( 'flying_press_purge_everything:after', array($this, 'flying_press_hook'), PHP_INT_MAX );
+        }
 
         // Autoptimize actions
         if( $this->main_instance->get_single_config('cf_autoptimize_purge_on_cache_flush', 0) > 0 )
@@ -306,11 +308,13 @@ class SWCFPC_Cache_Controller
 
     function add_metaboxes() {
 
+        $allowed_post_types = apply_filters( 'swcfpc_bypass_cache_metabox_post_types', [ 'post', 'page' ] );
+
         add_meta_box(
             'swcfpc_cache_mbox',
             __('Cloudflare Page Cache Settings', 'wp-cloudflare-page-cache'),
             array($this, 'swcfpc_cache_mbox_callback'),
-            array('post', 'page'),
+            $allowed_post_types,
             'side'
         );
 
@@ -2042,14 +2046,14 @@ class SWCFPC_Cache_Controller
     }
 
 
-    function flying_press_hooks() {
+    function flying_press_hook() {
 
         $current_action = function_exists('current_action') ? current_action() : "";
 
         $this->objects = $this->main_instance->get_objects();
 
         $this->purge_all(false, true, true);
-        $this->objects['logs']->add_log('cache_controller::flying_press_hooks', "Purge whole Cloudflare cache (fired action: {$current_action})" );
+        $this->objects['logs']->add_log('cache_controller::flying_press_hook', "Purge whole Cloudflare cache (fired action: {$current_action})" );
 
     }
 

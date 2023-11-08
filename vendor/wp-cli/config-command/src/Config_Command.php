@@ -149,6 +149,9 @@ class Config_Command extends WP_CLI_Command {
 			'config-file' => rtrim( ABSPATH, '/\\' ) . '/wp-config.php',
 		];
 		$assoc_args = array_merge( $defaults, $assoc_args );
+		if ( empty( $assoc_args['dbprefix'] ) ) {
+			WP_CLI::error( '--dbprefix cannot be empty' );
+		}
 		if ( preg_match( '|[^a-z0-9_]|i', $assoc_args['dbprefix'] ) ) {
 			WP_CLI::error( '--dbprefix can only contain numbers, letters, and underscores.' );
 		}
@@ -162,7 +165,7 @@ class Config_Command extends WP_CLI_Command {
 			try {
 				mysqli_real_connect( $mysql, $assoc_args['dbhost'], $assoc_args['dbuser'], $assoc_args['dbpass'] );
 			} catch ( mysqli_sql_exception $exception ) {
-				die( 'Database connection error (' . $exception->getCode() . ') ' . $exception->getMessage() );
+				WP_CLI::error( 'Database connection error (' . $exception->getCode() . ') ' . $exception->getMessage() );
 			}
 			// phpcs:enable WordPress.DB.RestrictedFunctions
 		}
@@ -421,13 +424,51 @@ class Config_Command extends WP_CLI_Command {
 	 * @when before_wp_load
 	 */
 	public function get( $args, $assoc_args ) {
-		$path                = $this->get_config_path( $assoc_args );
-		$wp_config_file_name = basename( $path );
-		list( $name )        = $args;
-		$type                = Utils\get_flag_value( $assoc_args, 'type' );
-
-		$value = $this->return_value( $name, $type, self::get_wp_config_vars( $path ), $wp_config_file_name );
+		$value = $this->get_value( $assoc_args, $args );
 		WP_CLI::print_value( $value, $assoc_args );
+	}
+
+	/**
+	 * Determines whether value of a specific defined constant or variable is truthy.
+	 *
+	 * This determination is made by evaluating the retrieved value via boolval().
+	 *
+	 * ## OPTIONS
+	 *
+	 * <name>
+	 * : Name of the wp-config.php constant or variable.
+	 *
+	 * [--type=<type>]
+	 * : Type of config value to retrieve. Defaults to 'all'.
+	 * ---
+	 * default: all
+	 * options:
+	 *   - constant
+	 *   - variable
+	 *   - all
+	 * ---
+	 *
+	 * [--config-file=<path>]
+	 * : Specify the file path to the config file to be read. Defaults to the root of the
+	 * WordPress installation and the filename "wp-config.php".
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Assert if MULTISITE is true
+	 *     $ wp config is-true MULTISITE
+	 *     $ echo $?
+	 *     0
+	 *
+	 * @subcommand is-true
+	 * @when before_wp_load
+	 */
+	public function is_true( $args, $assoc_args ) {
+		$value = $this->get_value( $assoc_args, $args );
+
+		if ( boolval( $value ) ) {
+			WP_CLI::halt( 0 );
+		}
+		WP_CLI::halt( 1 );
 	}
 
 	/**
@@ -818,21 +859,20 @@ class Config_Command extends WP_CLI_Command {
 		}
 
 		WP_CLI::success( 'Shuffled the salt keys.' );
-
 	}
 
 	/**
 	 * Filters wp-config.php file configurations.
 	 *
-	 * @param array $list
+	 * @param array $vars
 	 * @param array $previous_list
 	 * @param string $type
 	 * @param array $exclude_list
 	 * @return array
 	 */
-	private static function get_wp_config_diff( $list, $previous_list, $type, $exclude_list = [] ) {
+	private static function get_wp_config_diff( $vars, $previous_list, $type, $exclude_list = [] ) {
 		$result = [];
-		foreach ( $list as $name => $val ) {
+		foreach ( $vars as $name => $val ) {
 			if ( array_key_exists( $name, $previous_list ) || in_array( $name, $exclude_list, true ) ) {
 				continue;
 			}
@@ -1006,6 +1046,30 @@ class Config_Command extends WP_CLI_Command {
 		);
 
 		return $separator;
+	}
+
+	/**
+	 * Gets the value of a specific constant or variable defined in wp-config.php file.
+	 *
+	 * @param $assoc_args
+	 * @param $args
+	 *
+	 * @return string
+	 */
+	protected function get_value( $assoc_args, $args ) {
+		$path                = $this->get_config_path( $assoc_args );
+		$wp_config_file_name = basename( $path );
+		list( $name )        = $args;
+		$type                = Utils\get_flag_value( $assoc_args, 'type' );
+
+		$value = $this->return_value(
+			$name,
+			$type,
+			self::get_wp_config_vars( $path ),
+			$wp_config_file_name
+		);
+
+		return $value;
 	}
 
 	/**

@@ -52,17 +52,19 @@ Feature: Generate new WordPress posts
 
   Scenario: Generating post and outputting title and name
     When I run `wp post generate --count=3 --post_title=Howdy!`
-    And I run `wp post list --field=post_title --posts_per_page=3`
+    And I run `wp post list --field=post_title --posts_per_page=4 --orderby=ID --order=asc`
     Then STDOUT should contain:
       """
+      Hello world!
       Howdy!
       Howdy! 2
       Howdy! 3
       """
     And STDERR should be empty
-    And I run `wp post list --field=post_name --posts_per_page=3`
+    And I run `wp post list --field=post_name --posts_per_page=4 --orderby=ID --order=asc`
     Then STDOUT should contain:
       """
+      hello-world
       howdy
       howdy-2
       howdy-3
@@ -171,4 +173,18 @@ Feature: Generate new WordPress posts
     Then STDOUT should contain:
       """
       2000-01-01 02:11:00
+      """
+
+  Scenario: Generating posts when the site timezone is ahead of UTC
+    When I run `wp option update timezone_string "Europe/Helsinki"`
+    And I run `wp post delete 1 --force`
+
+    When I run `wp post list --field=post_status`
+    Then STDOUT should be empty
+    
+    When I run `wp post generate --count=1`
+    And I run `wp post list --field=post_status`
+    Then STDOUT should be:
+      """
+      publish
       """

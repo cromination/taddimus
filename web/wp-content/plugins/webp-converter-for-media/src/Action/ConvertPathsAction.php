@@ -31,7 +31,7 @@ class ConvertPathsAction implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
-		add_action( 'webpc_convert_paths', [ $this, 'convert_files_by_paths' ], 10, 2 );
+		add_action( 'webpc_convert_paths', [ $this, 'convert_files_by_paths' ], 10, 3 );
 	}
 
 	/**
@@ -39,13 +39,14 @@ class ConvertPathsAction implements HookableInterface {
 	 *
 	 * @param string[] $paths            Server paths of images.
 	 * @param bool     $regenerate_force .
+	 * @param int      $quality_level    .
 	 *
 	 * @return void
 	 * @internal
 	 */
-	public function convert_files_by_paths( array $paths, bool $regenerate_force = false ) {
+	public function convert_files_by_paths( array $paths, bool $regenerate_force = false, int $quality_level = null ) {
 		( new MethodIntegrator( $this->plugin_data, $this->method_factory ) )
-			->init_conversion( $this->remove_paths_from_excluded_paths( $paths ), $regenerate_force );
+			->init_conversion( $this->remove_paths_from_excluded_paths( $paths ), $regenerate_force, false, $quality_level );
 	}
 
 	/**

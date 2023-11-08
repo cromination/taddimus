@@ -36,6 +36,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 				__( 'Did you know that by using the PRO version of our plugin you can speed up your website even more? Find out now what you can gain.', 'webp-converter-for-media' )
 			);
 			?>
+			<?php
+			echo wp_kses_post(
+				sprintf(
+				/* translators: %1$s: open strong tag, %2$s: discount value, %3$s: close strong tag, %4$s: coupon code */
+					__( '%1$sOnly now you can get %2$s discount%3$s by using the coupon code: %4$s when placing your order.', 'webp-converter-for-media' ),
+					'<strong>',
+					'10%',
+					'</strong>',
+					'<code>10D4FD7814</code>'
+				)
+			);
+			?>
 		</p>
 		<div class="webpcContent__buttons">
 			<a href="https://url.mattplugins.com/converter-notice-upgrade-button-read"

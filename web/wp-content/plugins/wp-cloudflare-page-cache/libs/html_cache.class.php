@@ -75,6 +75,16 @@ class SWCFPC_Html_Cache
 
         $this->objects = $this->main_instance->get_objects();
 
+        // First check for WP CLI as $_SERVER is not available for WP_CLI
+        if( defined( 'WP_CLI' ) && WP_CLI === true ) {
+
+            if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
+                $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', 'The URL cannot be cached due to WP CLI.' );
+
+            return;
+
+        }
+
         $parts = parse_url( home_url() );
         $current_url = "{$parts['scheme']}://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 
@@ -94,15 +104,6 @@ class SWCFPC_Html_Cache
 
             return;
             
-        }
-
-        if( defined( 'WP_CLI' ) && WP_CLI === true ) {
-
-            if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
-                $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached due to WP CLI." );
-
-            return;
-
         }
 
         if( strcasecmp($_SERVER['HTTP_HOST'], $parts['host']) != 0 ) {

@@ -68,7 +68,7 @@ class OutputFormatsOption extends OptionAbstract {
 	 */
 	public function get_notice_lines() {
 		$notice = [
-			__( 'The AVIF format is a new extension - it is the successor to WebP. It allows you to achieve even higher levels of image compression, and the quality of the converted images is better than in WebP.', 'webp-converter-for-media' ),
+			__( 'The AVIF format is the successor to the WebP format. Images converted to the AVIF format weigh about 50% less than images converted only to the WebP format, while maintaining better image quality.', 'webp-converter-for-media' ),
 		];
 
 		if ( $this->token_repository->get_token()->get_token_value() === null ) {

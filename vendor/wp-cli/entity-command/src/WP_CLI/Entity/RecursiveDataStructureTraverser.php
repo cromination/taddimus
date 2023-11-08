@@ -24,14 +24,14 @@ class RecursiveDataStructureTraverser {
 	/**
 	 * RecursiveDataStructureTraverser constructor.
 	 *
-	 * @param mixed $data The data to read/manipulate by reference.
-	 * @param string|int $key The key/property the data belongs to.
-	 * @param static $parent
+	 * @param mixed       $data            The data to read/manipulate by reference.
+	 * @param string|int  $key             The key/property the data belongs to.
+	 * @param static|null $parent_instance The parent instance of the traverser.
 	 */
-	public function __construct( &$data, $key = null, $parent = null ) {
+	public function __construct( &$data, $key = null, $parent_instance = null ) {
 		$this->data   =& $data;
 		$this->key    = $key;
-		$this->parent = $parent;
+		$this->parent = $parent_instance;
 	}
 
 	/**

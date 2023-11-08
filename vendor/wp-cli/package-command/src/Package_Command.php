@@ -188,6 +188,13 @@ class Package_Command extends WP_CLI_Command {
 	 * When installing a .zip file, WP-CLI extracts the package to
 	 * `~/.wp-cli/packages/local/<package-name>`.
 	 *
+	 * If Github token authorization is required, a GitHub Personal Access Token
+	 * (https://github.com/settings/tokens) can be used. The following command
+	 * will add a GitHub Personal Access Token to Composer's global configuration:
+	 * composer config -g github-oauth.github.com <GITHUB_TOKEN>
+	 * Once this has been added, the value used for <GITHUB_TOKEN> will be used
+	 * for future authorization requests.
+	 *
 	 * ## OPTIONS
 	 *
 	 * <name|git|path|zip>
@@ -237,13 +244,15 @@ class Package_Command extends WP_CLI_Command {
 			// Download the remote ZIP file to a temp directory
 			$temp = false;
 			if ( false !== strpos( $package_name, '://' ) ) {
-				$temp     = Utils\get_temp_dir() . uniqid( 'wp-cli-package_', true /*more_entropy*/ ) . '.zip';
-				$options  = [
+				$temp         = Utils\get_temp_dir() . uniqid( 'wp-cli-package_', true /*more_entropy*/ ) . '.zip';
+				$options      = [
 					'timeout'  => 600,
 					'filename' => $temp,
 					'insecure' => $insecure,
 				];
-				$response = Utils\http_request( 'GET', $package_name, null, [], $options );
+				$gitlab_token = getenv( 'GITLAB_TOKEN' ); // Use GITLAB_TOKEN if available to avoid authorization failures or rate-limiting.
+				$headers      = $gitlab_token && strpos( $package_name, '://gitlab.com/' ) !== false ? [ 'PRIVATE-TOKEN' => $gitlab_token ] : [];
+				$response     = Utils\http_request( 'GET', $package_name, null, $headers, $options );
 				if ( 20 !== (int) substr( $response->status_code, 0, 2 ) ) {
 					@unlink( $temp ); // @codingStandardsIgnoreLine
 					WP_CLI::error( sprintf( "Couldn't download package from '%s' (HTTP code %d).", $package_name, $response->status_code ) );
@@ -783,7 +792,7 @@ class Package_Command extends WP_CLI_Command {
 		}
 
 		$list = array_map(
-			function( $package ) {
+			function ( $package ) {
 				$package['version'] = implode( ', ', $package['version'] );
 				return $package;
 			},
@@ -835,6 +844,16 @@ class Package_Command extends WP_CLI_Command {
 		$url          = "https://github.com/{$package_name}.git";
 		$github_token = getenv( 'GITHUB_TOKEN' ); // Use GITHUB_TOKEN if available to avoid authorization failures or rate-limiting.
 		$headers      = $github_token ? [ 'Authorization' => 'token ' . $github_token ] : [];
+		$response     = Utils\http_request( 'GET', $url, null /*data*/, $headers, $options );
+		if ( 20 === (int) substr( $response->status_code, 0, 2 ) ) {
+			return $url;
+		}
+
+		// Fall back to GitLab URL if we had no match yet.
+		$url          = "https://gitlab.com/{$package_name}.git";
+		$gitlab_token = getenv( 'GITLAB_TOKEN' ); // Use GITLAB_TOKEN if available to avoid authorization failures or rate-limiting.
+		$headers      = $github_token ? [ 'Authorization' => 'token ' . $github_token ] : [];
+		$headers      = $gitlab_token && strpos( $package_name, '://gitlab.com/' ) !== false ? [ 'PRIVATE-TOKEN' => $gitlab_token ] : [];
 		$response     = Utils\http_request( 'GET', $url, null /*data*/, $headers, $options );
 		if ( 20 === (int) substr( $response->status_code, 0, 2 ) ) {
 			return $url;
@@ -1154,7 +1173,9 @@ class Package_Command extends WP_CLI_Command {
 	 */
 	private function check_git_package_name( $package_name, $url = '', $version = '', $insecure = false ) {
 		if ( $url && ( strpos( $url, '://gitlab.com/' ) !== false ) || ( strpos( $url, 'git@gitlab.com:' ) !== false ) ) {
-			return $this->check_gitlab_package_name( $package_name, $version, $insecure );
+			$matches = [];
+			preg_match( '#gitlab.com[:/](.*?)\.git#', $url, $matches );
+			return $this->check_gitlab_package_name( $matches[1], $version, $insecure );
 		}
 
 		return $this->check_github_package_name( $package_name, $version, $insecure );
@@ -1168,24 +1189,27 @@ class Package_Command extends WP_CLI_Command {
 	 * @param bool   $insecure     Optional. Whether to insecurely retry downloads that failed TLS handshake. Defaults
 	 *                             to false.
 	 */
-	private function check_gitlab_package_name( $package_name, $version = '', $insecure = false ) {
-		// Generate raw git URL of composer.json file.
-		$raw_content_public_url  = 'https://gitlab.com/' . $package_name . '/-/raw/' . $this->get_raw_git_version( $version ) . '/composer.json';
-		$raw_content_private_url = 'https://gitlab.com/api/v4/projects/' . rawurlencode( $package_name ) . '/repository/files/composer.json/raw?ref=' . $this->get_raw_git_version( $version );
-
+	private function check_gitlab_package_name( $project_name, $version = '', $insecure = false ) {
 		$options = [ 'insecure' => $insecure ];
+		// Generate raw git URL of composer.json file.
+		$raw_content_public_url  = 'https://gitlab.com/' . $project_name . '/-/raw/' . $this->get_raw_git_version( $version ) . '/composer.json';
+		$raw_content_private_url = 'https://gitlab.com/api/v4/projects/' . rawurlencode( $project_name ) . '/repository/files/composer.json/raw?ref=' . $this->get_raw_git_version( $version );
 
-		$response = Utils\http_request( 'GET', $raw_content_public_url, null /*data*/, [], $options );
-		if ( $response->status_code < 200 || $response->status_code >= 300 ) {
+		$matches = [];
+		preg_match( '#([^:\/]+\/[^\/]+$)#', $project_name, $matches );
+		$package_name = $matches[1];
+
+		$gitlab_token = getenv( 'GITLAB_TOKEN' ); // Use GITLAB_TOKEN if available to avoid authorization failures or rate-limiting.
+		$response     = Utils\http_request( 'GET', $raw_content_public_url, null /*data*/, [], $options );
+		if ( ! $gitlab_token && ( $response->status_code < 200 || $response->status_code >= 300 ) ) {
 			// Could not get composer.json. Possibly private so warn and return best guess from input (always xxx/xxx).
 			WP_CLI::warning( sprintf( "Couldn't download composer.json file from '%s' (HTTP code %d). Presuming package name is '%s'.", $raw_content_public_url, $response->status_code, $package_name ) );
 			return $package_name;
 		}
 
 		if ( strpos( $response->headers['content-type'], 'text/html' ) === 0 ) {
-			$gitlab_token = getenv( 'GITLAB_TOKEN' ); // Use GITLAB_TOKEN if available to avoid authorization failures or rate-limiting.
-			$headers      = $gitlab_token ? [ 'PRIVATE-TOKEN' => $gitlab_token ] : [];
-			$response     = Utils\http_request( 'GET', $raw_content_private_url, null /*data*/, $headers, $options );
+			$headers  = $gitlab_token ? [ 'PRIVATE-TOKEN' => $gitlab_token ] : [];
+			$response = Utils\http_request( 'GET', $raw_content_private_url, null /*data*/, $headers, $options );
 
 			if ( $response->status_code < 200 || $response->status_code >= 300 ) {
 				// Could not get composer.json. Possibly private so warn and return best guess from input (always xxx/xxx).

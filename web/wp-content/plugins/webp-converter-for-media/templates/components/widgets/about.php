@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<p>
 			<?php
 			echo wp_kses_post(
-				__( 'When a browser tries to download an image file, the server checks if it supports the AVIF format (if enabled in the plugin settings). If so, the browser will receive the equivalent of the original image in the AVIF format. If it does not support AVIF, but supports the WebP format, the browser will receive the equivalent of the original image in WebP format. In case the browser does not support either WebP or AVIF, the original image is loaded. This means full support for all browsers.', 'webp-converter-for-media' )
+				__( 'When a browser tries to download an image file, the plugin checks if it supports the AVIF format (if enabled in the plugin settings). If so, the browser will receive the equivalent of the original image in the AVIF format. If it does not support AVIF, but supports the WebP format, the browser will receive the equivalent of the original image in WebP format. In case the browser does not support either WebP or AVIF, the original image is loaded. This means full support for all browsers.', 'webp-converter-for-media' )
 			);
 			?>
 		</p>

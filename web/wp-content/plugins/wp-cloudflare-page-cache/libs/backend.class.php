@@ -100,11 +100,11 @@ class SWCFPC_Backend
 
         $wp_scripts = wp_scripts();
 
-        wp_register_style('swcfpc_sweetalert_css', SWCFPC_PLUGIN_URL . 'assets/css/sweetalert2.min.css', array(), '11.0.18');
-        wp_register_style('swcfpc_admin_css', SWCFPC_PLUGIN_URL . 'assets/css/style.css', array('swcfpc_sweetalert_css'), $css_version);
+        wp_register_style('swcfpc_sweetalert_css', SWCFPC_PLUGIN_URL . 'assets/css/sweetalert2.min.css', array(), '11.7.20');
+        wp_register_style('swcfpc_admin_css', SWCFPC_PLUGIN_URL . 'assets/css/style.min.css', array('swcfpc_sweetalert_css'), $css_version);
 
-        wp_register_script('swcfpc_sweetalert_js', SWCFPC_PLUGIN_URL . 'assets/js/sweetalert2.min.js', array(), '11.0.18', true);
-        wp_register_script('swcfpc_admin_js', SWCFPC_PLUGIN_URL . 'assets/js/backend.js', array('swcfpc_sweetalert_js'), $js_version, true);
+        wp_register_script('swcfpc_sweetalert_js', SWCFPC_PLUGIN_URL . 'assets/js/sweetalert2.min.js', array(), '11.7.20', true);
+        wp_register_script('swcfpc_admin_js', SWCFPC_PLUGIN_URL . 'assets/js/backend.min.js', array('swcfpc_sweetalert_js'), $js_version, true);
 
         // Making sure we are not adding the following scripts for AMP endpoints as they are not gonna work anyway and will be striped out by the AMP system
         if(
@@ -196,7 +196,7 @@ class SWCFPC_Backend
     function instantpage_wp_enqueue_scripts() {
         if( !( ( function_exists('amp_is_request') && amp_is_request() ) || ( function_exists('ampforwp_is_amp_endpoint') && ampforwp_is_amp_endpoint() ) || is_customize_preview() ) ) {
 
-            wp_enqueue_script( 'swcfpc_instantpage', SWCFPC_PLUGIN_URL . 'assets/js/instantpage.min.js', array(), null, true );
+            wp_enqueue_script( 'swcfpc_instantpage', SWCFPC_PLUGIN_URL . 'assets/js/instantpage.min.js', array(), '5.2.0', true );
         }
 
     }
@@ -335,7 +335,7 @@ class SWCFPC_Backend
 
         //$this->objects = $this->main_instance->get_objects();
 
-        if( $post->post_type !== 'shop_order' ) {
+        if( !in_array( $post->post_type, [ 'shop_order', 'shop_subscription' ] ) ) {
             $actions['swcfpc_single_purge'] = '<a class="swcfpc_action_row_single_post_cache_purge" data-post_id="'.$post->ID.'" href="#" target="_blank">'.__('Purge CF Cache', 'wp-cloudflare-page-cache').'</a>';
         }
 

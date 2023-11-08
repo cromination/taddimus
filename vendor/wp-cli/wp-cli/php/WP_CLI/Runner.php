@@ -91,11 +91,15 @@ class Runner {
 	 * @param Subcommand $command
 	 */
 	public function register_early_invoke( $when, $command ) {
-		$cmd_path                      = array_slice( Dispatcher\get_path( $command ), 1 );
+		$cmd_path     = array_slice( Dispatcher\get_path( $command ), 1 );
+		$command_name = implode( ' ', $cmd_path );
+		WP_CLI::debug( "Attaching command '{$command_name}' to hook {$when}", 'bootstrap' );
 		$this->early_invoke[ $when ][] = $cmd_path;
 		if ( $command->get_alias() ) {
 			array_pop( $cmd_path );
-			$cmd_path[]                    = $command->get_alias();
+			$cmd_path[] = $command->get_alias();
+			$alias_name = implode( ' ', $cmd_path );
+			WP_CLI::debug( "Attaching command alias '{$alias_name}' to hook {$when}", 'bootstrap' );
 			$this->early_invoke[ $when ][] = $cmd_path;
 		}
 	}
@@ -106,6 +110,7 @@ class Runner {
 	 * @param string $when Named execution hook
 	 */
 	private function do_early_invoke( $when ) {
+		WP_CLI::debug( "Executing hook: {$when}", 'hooks' );
 		if ( ! isset( $this->early_invoke[ $when ] ) ) {
 			return;
 		}
@@ -189,7 +194,7 @@ class Runner {
 				static $wp_load_count = 0;
 				$wp_load_path         = $dir . DIRECTORY_SEPARATOR . 'wp-load.php';
 				if ( file_exists( $wp_load_path ) ) {
-					++ $wp_load_count;
+					++$wp_load_count;
 				}
 				return $wp_load_count > 1;
 			}
@@ -551,7 +556,7 @@ class Runner {
 		$escaped_command = '';
 
 		// Set default values.
-		foreach ( [ 'scheme', 'user', 'host', 'port', 'path', 'key' ] as $bit ) {
+		foreach ( [ 'scheme', 'user', 'host', 'port', 'path', 'key', 'proxyjump' ] as $bit ) {
 			if ( ! isset( $bits[ $bit ] ) ) {
 				$bits[ $bit ] = null;
 			}
@@ -640,9 +645,19 @@ class Runner {
 				$bits['host'] = $bits['user'] . '@' . $bits['host'];
 			}
 
+			if ( ! empty( $this->alias ) ) {
+				$alias_config = isset( $this->aliases[ $this->alias ] ) ? $this->aliases[ $this->alias ] : false;
+
+				if ( is_array( $alias_config ) ) {
+					$bits['proxyjump'] = isset( $alias_config['proxyjump'] ) ? $alias_config['proxyjump'] : '';
+					$bits['key']       = isset( $alias_config['key'] ) ? $alias_config['key'] : '';
+				}
+			}
+
 			$command_args = [
+				$bits['proxyjump'] ? sprintf( '-J %s ', escapeshellarg( $bits['proxyjump'] ) ) : '',
 				$bits['port'] ? '-p ' . (int) $bits['port'] . ' ' : '',
-				$bits['key'] ? sprintf( '-i %s', $bits['key'] ) : '',
+				$bits['key'] ? sprintf( '-i %s', escapeshellarg( $bits['key'] ) ) : '',
 				$is_tty ? '-t' : '-T',
 			];
 
@@ -1267,7 +1282,6 @@ class Runner {
 		$this->load_wordpress();
 
 		$this->run_command_and_exit();
-
 	}
 
 	/**
@@ -1352,7 +1366,7 @@ class Runner {
 		}
 
 		// Fix memory limit. See https://core.trac.wordpress.org/ticket/14889
-		// phpcs:ignore WordPress.PHP.IniSet.memory_limit_Blacklisted -- This is perfectly fine for CLI usage.
+		// phpcs:ignore WordPress.PHP.IniSet.memory_limit_Disallowed -- This is perfectly fine for CLI usage.
 		ini_set( 'memory_limit', -1 );
 
 		// Load all the admin APIs, for convenience
@@ -1373,7 +1387,6 @@ class Runner {
 
 		WP_CLI::debug( 'Loaded WordPress', 'bootstrap' );
 		WP_CLI::do_hook( 'after_wp_load' );
-
 	}
 
 	private static function fake_current_site_blog( $url_parts ) {
@@ -1531,7 +1544,7 @@ class Runner {
 		// Use our own debug mode handling instead of WP core
 		WP_CLI::add_wp_hook(
 			'enable_wp_debug_mode_checks',
-			static function ( $ret ) {
+			static function ( $ret ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- WP core hook.
 				Utils\wp_debug_mode();
 				return false;
 			}
@@ -1785,6 +1798,12 @@ class Runner {
 			add_filter( $hook, $wp_cli_filter_active_theme, 999 );
 		}
 
+		// Noop memoization added in WP 6.4.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WordPress core global.
+		$GLOBALS['wp_stylesheet_path'] = null;
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WordPress core global.
+		$GLOBALS['wp_template_path'] = null;
+
 		// Remove theme-related actions not directly tied into the theme lifecycle.
 		if ( WP_CLI::get_runner()->config['skip-themes'] ) {
 			$theme_related_actions = [
@@ -1804,6 +1823,11 @@ class Runner {
 				foreach ( $hooks as $hook ) {
 					remove_filter( $hook, $wp_cli_filter_active_theme, 999 );
 				}
+				// Noop memoization added in WP 6.4 again.
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WordPress core global.
+				$GLOBALS['wp_stylesheet_path'] = null;
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- WordPress core global.
+				$GLOBALS['wp_template_path'] = null;
 			},
 			0
 		);
@@ -1954,6 +1978,6 @@ class Runner {
 			// Don't enable E_DEPRECATED as old versions of WP use PHP 4 style constructors and the mysql extension.
 			error_reporting( E_ALL & ~E_DEPRECATED );
 		}
-		ini_set( 'display_errors', 'stderr' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Blacklisted
+		ini_set( 'display_errors', 'stderr' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Disallowed
 	}
 }

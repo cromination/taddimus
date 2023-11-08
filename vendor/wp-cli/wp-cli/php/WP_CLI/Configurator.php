@@ -57,6 +57,8 @@ class Configurator {
 		'path',
 		'ssh',
 		'http',
+		'proxyjump',
+		'key',
 	];
 
 	/**
@@ -391,5 +393,4 @@ class Configurator {
 			$path = $base . DIRECTORY_SEPARATOR . $path;
 		}
 	}
-
 }

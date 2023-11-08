@@ -1,5 +1,17 @@
 == Changelog ==
 
+= 5.11.2 (2023-10-16) =
+* `[Added]` Button to expand/collapse list of directories to optimize in Bulk Optimization of Images section
+* `[Added]` Notification about plugin requirements in WordPress Playground environment
+
+= 5.11.1 (2023-10-02) =
+* `[Fixed]` Duplicated rewrite rules for .jpeg files
+* `[Changed]` Error message for rewrites_not_executed error in server configuration
+
+= 5.11.0 (2023-09-27) =
+* `[Added]` Ability to manually optimize selected images in Media Library
+* `[Added]` Ability to manually undo optimization of selected images in Media Library
+
 = 5.10.1 (2023-09-10) =
 * `[Fixed]` Detection of bypassing_apache error in server configuration
 

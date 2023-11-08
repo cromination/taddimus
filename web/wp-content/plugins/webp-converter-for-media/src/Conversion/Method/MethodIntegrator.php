@@ -7,6 +7,7 @@ use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\PluginData;
 use WebpConverter\Service\StatsManager;
 use WebpConverter\Settings\Option\ConversionMethodOption;
+use WebpConverter\Settings\Option\ImagesQualityOption;
 use WebpConverter\Settings\Option\OutputFormatsOption;
 
 /**
@@ -41,10 +42,11 @@ class MethodIntegrator {
 	 * @param string[] $paths              Server paths for source images.
 	 * @param bool     $regenerate_force   .
 	 * @param bool     $skip_server_errors .
+	 * @param int      $quality_level      .
 	 *
 	 * @return mixed[]|null Results data of conversion.
 	 */
-	public function init_conversion( array $paths, bool $regenerate_force, bool $skip_server_errors = false ) {
+	public function init_conversion( array $paths, bool $regenerate_force, bool $skip_server_errors = false, int $quality_level = null ) {
 		if ( ! $skip_server_errors && apply_filters( 'webpc_server_errors', [], true ) ) {
 			return null;
 		}
@@ -54,10 +56,15 @@ class MethodIntegrator {
 			return null;
 		}
 
+		$plugin_settings = $this->plugin_data->get_plugin_settings();
+		if ( $quality_level !== null ) {
+			$plugin_settings[ ImagesQualityOption::OPTION_NAME ] = $quality_level;
+		}
+
 		$this->stats_manager->set_images_webp_unconverted();
 		$this->stats_manager->set_images_avif_unconverted();
 
-		$method->convert_paths( $paths, $this->plugin_data->get_plugin_settings(), $regenerate_force );
+		$method->convert_paths( $paths, $plugin_settings, $regenerate_force );
 		return [
 			'is_fatal_error' => $method->is_fatal_error(),
 			'errors'         => apply_filters( 'webpc_convert_errors', $method->get_errors() ),

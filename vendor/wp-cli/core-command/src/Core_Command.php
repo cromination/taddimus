@@ -652,9 +652,7 @@ class Core_Command extends WP_CLI_Command {
 		}
 
 		$public   = true;
-		$password = empty( $args['admin_password'] )
-			? wp_generate_password( 18 )
-			: $args['admin_password'];
+		$password = $args['admin_password'];
 
 		if ( ! is_email( $args['admin_email'] ) ) {
 			WP_CLI::error( "The '{$args['admin_email']}' email address is invalid." );
@@ -795,8 +793,14 @@ EOT;
 	}
 
 	// copied from populate_network()
-	private static function create_initial_blog( $network_id, $blog_id, $domain, $path,
-		$subdomain_install, $site_user ) {
+	private static function create_initial_blog(
+		$network_id,
+		$blog_id,
+		$domain,
+		$path,
+		$subdomain_install,
+		$site_user
+	) {
 		global $wpdb, $current_site, $wp_rewrite;
 
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- This is meant to replace Core functionality.
@@ -1140,10 +1144,8 @@ EOT;
 					WP_CLI::success( 'WordPress is at the latest minor release.' );
 					return;
 				}
-			} else {
-				if ( ! empty( $from_api->updates ) ) {
+			} elseif ( ! empty( $from_api->updates ) ) {
 					list( $update ) = $from_api->updates;
-				}
 			}
 		} elseif ( Utils\wp_version_compare( $assoc_args['version'], '<' )
 			|| 'nightly' === $assoc_args['version']
@@ -1264,7 +1266,7 @@ EOT;
 			$total         = 0;
 			$site_ids      = [];
 			foreach ( $it as $blog ) {
-				$total++;
+				++$total;
 				$site_ids[] = $blog->site_id;
 				$url        = $blog->domain . $blog->path;
 				$cmd        = "--url={$url} core update-db";
@@ -1287,7 +1289,7 @@ EOT;
 						$message = "Database upgraded successfully on {$url}";
 					}
 					WP_CLI::log( $message );
-					$success++;
+					++$success;
 				} else {
 					WP_CLI::warning( "Database failed to upgrade on {$url}" );
 				}
@@ -1508,7 +1510,7 @@ EOT;
 				if ( file_exists( ABSPATH . $file ) ) {
 					unlink( ABSPATH . $file );
 					WP_CLI::log( "File removed: {$file}" );
-					$count++;
+					++$count;
 				}
 			}
 
@@ -1564,5 +1566,4 @@ EOT;
 			WP_CLI::error( 'ZipArchive failed to open ZIP file.' );
 		}
 	}
-
 }

@@ -110,21 +110,6 @@
     bottom: 0;
 }
 
-#debug {
-    width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    margin-bottom: 40px;
-    box-sizing: border-box;
-    overflow-x: scroll;
-    border: 2px dotted #585858;
-}
-
-#debug h2 {
-    font-size: 20px;
-    line-height: 25px;
-}
-
 .swcfpc_plugin_active {
     background: #47a700;
     float: right;
