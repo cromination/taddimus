@@ -211,7 +211,7 @@ Feature: Manage translation files for a WordPress install
       """
     And the return code should be 0
 
-  @require-wp-latest @require-php-5.6 @less-than-php-7.0
+  @require-php-5.6 @less-than-php-7.0
   Scenario Outline: Core translation update
     Given an empty directory
     And WP files
@@ -297,22 +297,32 @@ Feature: Manage translation files for a WordPress install
     And STDOUT should be empty
     And the return code should be 0
 
-  @require-wp-4.0
+  # This test downgrades to WordPress 5.4.1, but the SQLite plugin requires 6.0+
+  @require-wp-4.0 @require-mysql
   Scenario: Ensure correct language is installed for WP version
     Given a WP install
+    And I try `wp theme install twentytwentyone`
     And I run `wp theme activate twentytwentyone`
     And an empty cache
     And I run `wp core download --version=4.5.3 --force`
 
-    When I run `wp language core install nl_NL`
+    # PHP 8.2+ will show a warning for old WordPress core version.
+    When I try `wp language core install nl_NL`
     Then STDOUT should contain:
       """
       Downloading translation from https://downloads.wordpress.org/translation/core/4.5.3
       """
+    And STDOUT should contain:
+      """
+      Success: Installed 1 of 1 languages.
+      """
+    And the return code should be 0
 
-  @require-wp-4.0
+  # This test downgrades to WordPress 5.4.1, but the SQLite plugin requires 6.0+
+  @require-wp-4.0 @require-mysql
   Scenario: Ensure upgrader output is in English
     Given a WP install
+    And I try `wp theme install twentytwentyone`
     And I run `wp theme activate twentytwentyone`
     And an empty cache
     And I run `wp core download --version=5.4.1 --force`

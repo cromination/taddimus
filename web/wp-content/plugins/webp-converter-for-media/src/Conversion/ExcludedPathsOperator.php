@@ -33,6 +33,7 @@ class ExcludedPathsOperator implements HookableInterface {
 		'__MACOSX',
 		'ShortpixelBackups',
 		'backup',
+		'wio_backup',
 	];
 
 	/**

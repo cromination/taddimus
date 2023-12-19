@@ -193,7 +193,10 @@ class autoptimizeMain
                 // And disable Jetpack's site accelerator if JS or CSS opt. are active.
                 if ( class_exists( 'Jetpack' ) && apply_filters( 'autoptimize_filter_main_disable_jetpack_cdn', true ) && ( $conf->get( 'autoptimize_js' ) || $conf->get( 'autoptimize_css' ) || autoptimizeImages::imgopt_active() ) ) {
                     add_filter( 'jetpack_force_disable_site_accelerator', '__return_true' ); // this does not seemt to work any more?
-                    add_filter( 'jetpack_photon_skip_for_url', '__return_true' );
+                    if ( true === autoptimizeImages::imgopt_active() ) {
+                        // only disable photon if AO is optimizing images.
+                        add_filter( 'jetpack_photon_skip_for_url', '__return_true' );
+                    }
                 }
 
                 // Add "no cache found" notice.
@@ -257,10 +260,12 @@ class autoptimizeMain
 
     public function maybe_run_ao_compat()
     {
+        $conf = autoptimizeConfig::instance();
+
         // Condtionally loads the compatibility-class to ensure more out-of-the-box compatibility with big players.
         $_run_compat = true;
 
-        if ( autoptimizeOptionWrapper::get_option( 'autoptimize_installed_before_compatibility', false ) ) {
+        if ( 'on' === $conf->get( 'autoptimize_installed_before_compatibility' ) ) {
             // If AO was already running before Compatibility logic was added, don't run compat by default
             // because it can be assumed everything works and we want to avoid (perf) regressions that
             // could occur due to compatibility code.

@@ -63,11 +63,9 @@ class RewritesCachedNotice implements NoticeInterface {
 							__( 'this header should be able to disable caching for static files on the CDN server or proxy server', 'webp-converter-for-media' )
 						),
 						sprintf(
-						/* translators: %1$s: open anchor tag, %2$s: close anchor tag, %3$s: title of question */
-							__( '- the website is running on the Nginx server without support for .htaccess files and not all the steps described in %1$sthe plugin FAQ%2$s (in the question: %3$s) have been followed correctly', 'webp-converter-for-media' ),
-							'<a href="https://url.mattplugins.com/converter-error-rewrites-cached-faq" target="_blank">',
-							'</a>',
-							'Configuration for Nginx'
+						/* translators: %s: anchor tag */
+							__( '- the website is running on the Nginx server without support for .htaccess files and not all the steps described in our instruction (%s) have been followed correctly', 'webp-converter-for-media' ),
+							'<a href="https://url.mattplugins.com/converter-error-rewrites-cached-nginx-instruction" target="_blank">https://url.mattplugins.com/converter-error-rewrites-cached-nginx-instruction</a>'
 						),
 					]
 				) . '</em>',

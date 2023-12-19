@@ -162,10 +162,10 @@ class WpCliManager implements HookableInterface {
 						return;
 					}
 
-					$size_before     += $response['size']['before'];
-					$size_after      += $response['size']['after'];
-					$files_all       += $response['files']['webp_available'] + $response['files']['avif_available'];
-					$files_converted += $response['files']['webp_converted'] + $response['files']['avif_converted'];
+					$size_before     = $response['size']['before'];
+					$size_after      = $response['size']['after'];
+					$files_all       = $response['files']['webp_available'] + $response['files']['avif_available'];
+					$files_converted = $response['files']['webp_converted'] + $response['files']['avif_converted'];
 				}
 
 				$progress->tick();

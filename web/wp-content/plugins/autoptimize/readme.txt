@@ -5,7 +5,7 @@ Donate link: http://blog.futtta.be/2013/10/21/do-not-donate-to-me/
 Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 5.6
-Stable tag: 3.1.9
+Stable tag: 3.1.10
 
 Autoptimize speeds up your website by optimizing JS, CSS, images (incl. lazy-load), HTML and Google Fonts, asyncing JS, removing emoji cruft and more.
 
@@ -318,6 +318,13 @@ You can get help on the [wordpress.org support forum](http://wordpress.org/suppo
 Just [fork Autoptimize on Github](https://github.com/futtta/autoptimize) and code away!
 
 == Changelog ==
+
+= 3.1.10 =
+* improvement: with "don't aggregate but defer" and "also defer inline JS" on, also defer JS that had the async flag to avoid the (previously) asynced JS from executing before the inline JS has ran.
+* improvement: show option to disable the default on "compatibility logic".
+* fix for regression in  3.1.9 which caused JetPack Image optimization not working even if image optimization was off in AO.
+* API: some extra hooks in critical CSS to enable others (and AOPro) to act on changes in critical CSS rules
+* some other minor changes/ improvements/ filters, see the [GitHub commit log](https://github.com/futtta/autoptimize/commits/beta).
 
 = 3.1.9 =
 * improvement: activate JS, CSS & HTML optimization upon plugin activation (hat tip to Adam Silverstein (developer relations engineer at Google))

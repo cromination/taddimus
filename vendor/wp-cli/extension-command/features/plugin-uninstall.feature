@@ -80,8 +80,6 @@ Feature: Uninstall a WordPress plugin
       """
     And the return code should be 0
 
-
-
   Scenario: Excluding a missing plugin should not throw an error
     Given a WP install
     And I run `wp plugin uninstall --all --exclude=missing-plugin`

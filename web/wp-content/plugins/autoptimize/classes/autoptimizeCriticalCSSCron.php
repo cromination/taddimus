@@ -80,6 +80,13 @@ class autoptimizeCriticalCSSCron {
             $queue = $this->criticalcss->get_option( 'queue' );
             $rtimelimit = $this->criticalcss->get_option( 'rtimelimit' );
 
+            // make sure we have the queue and bail if not.
+            if ( empty( $queue ) || ! is_array( $queue ) ) {
+                $this->criticalcss->log( 'Job processing cannot work on an empty queue, aborting.', 3 );
+                unlink( AO_CCSS_LOCK );
+                return;
+            }
+
             // Initialize counters.
             if ( 0 == $rtimelimit ) {
                 // no time limit set, let's go with 1000 seconds.
@@ -761,6 +768,9 @@ class autoptimizeCriticalCSSCron {
             update_option( 'autoptimize_ccss_rules', $rules_raw );
             $this->criticalcss->flush_options();
             $this->criticalcss->log( 'Target rule <' . $srule . '> of type <' . $rtype . '> was ' . $action . ' for job id <' . $ljid . '>', 3 );
+            
+            // and trigger action for whoever needs to be aware.
+            do_action( 'autoptimize_action_ccss_cron_rule_updated', $srule, $file, '' );
         } else {
             $this->criticalcss->log( 'No rule action required', 3 );
         }

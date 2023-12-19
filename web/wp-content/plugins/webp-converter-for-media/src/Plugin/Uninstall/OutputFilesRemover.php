@@ -64,7 +64,7 @@ class OutputFilesRemover {
 		}
 
 		$regex = sprintf(
-			'/((jpe?g|png|gif|png2)\.(%1$s)(\.(%2$s))?|\.htaccess)$/i',
+			'/((jpe?g|png|gif|png2|webp)\.(%1$s)(\.(%2$s))?|\.htaccess)$/i',
 			implode(
 				'|',
 				$file_formats ?: [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ]

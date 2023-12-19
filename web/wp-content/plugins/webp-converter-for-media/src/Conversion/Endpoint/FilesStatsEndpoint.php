@@ -7,6 +7,7 @@ use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\PluginData;
+use WebpConverter\Settings\Option\OutputFormatsOption;
 
 /**
  * Generated tree of files that can be optimized.
@@ -46,8 +47,14 @@ class FilesStatsEndpoint extends EndpointAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_route_response( \WP_REST_Request $request ) {
+		$plugin_settings = $this->plugin_data->get_plugin_settings();
+		$allowed_formats = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
+		if ( ! in_array( AvifFormat::FORMAT_EXTENSION, $allowed_formats ) ) {
+			$allowed_formats[] = AvifFormat::FORMAT_EXTENSION;
+		}
+
 		$stats_data = ( new FilesTreeFinder( $this->plugin_data, $this->format_factory ) )
-			->get_tree( [ WebpFormat::FORMAT_EXTENSION, AvifFormat::FORMAT_EXTENSION ] );
+			->get_tree( $allowed_formats );
 
 		return new \WP_REST_Response(
 			[

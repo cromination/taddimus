@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Orbit Fox Companion 2.10.26\n"
+"Project-Id-Version: Orbit Fox Companion 2.10.27\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/Codeinwp/themeisle-companion/issues\n"
-"POT-Creation-Date: 2023-06-29 06:42:11+00:00\n"
+"POT-Creation-Date: 2023-12-18 20:51:18+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -166,7 +166,7 @@ msgid "Got it!"
 msgstr ""
 
 #: core/app/views/partials/module-tile-tpl.php:67
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:199
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:200
 msgid "Activate"
 msgstr ""
 
@@ -2080,7 +2080,7 @@ msgid ""
 msgstr ""
 
 #: obfx_modules/header-footer-scripts/init.php:37
-#: obfx_modules/header-footer-scripts/init.php:131
+#: obfx_modules/header-footer-scripts/init.php:181
 msgid "Header scripts"
 msgstr ""
 
@@ -2090,7 +2090,7 @@ msgid "Output before the closing %s tag, after sitewide header scripts."
 msgstr ""
 
 #: obfx_modules/header-footer-scripts/init.php:46
-#: obfx_modules/header-footer-scripts/init.php:161
+#: obfx_modules/header-footer-scripts/init.php:211
 msgid "Footer scripts"
 msgstr ""
 
@@ -2099,20 +2099,20 @@ msgstr ""
 msgid "Output before the closing %s tag, after sitewide footer scripts."
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:104
+#: obfx_modules/header-footer-scripts/init.php:154
 msgid "Header/Footer scripts"
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:116
-#: obfx_modules/header-footer-scripts/init.php:146
-#: obfx_modules/header-footer-scripts/init.php:302
-#: obfx_modules/header-footer-scripts/init.php:335
+#: obfx_modules/header-footer-scripts/init.php:166
+#: obfx_modules/header-footer-scripts/init.php:196
+#: obfx_modules/header-footer-scripts/init.php:352
+#: obfx_modules/header-footer-scripts/init.php:385
 #. translators: %s is placeholder value
 msgid "Enter your scripts here"
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:134
-#: obfx_modules/header-footer-scripts/init.php:164
+#: obfx_modules/header-footer-scripts/init.php:184
+#: obfx_modules/header-footer-scripts/init.php:214
 #. translators: %s is head tag
 #. translators: %s is body tag
 msgid ""
@@ -2120,7 +2120,7 @@ msgid ""
 "source."
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:181
+#: obfx_modules/header-footer-scripts/init.php:231
 msgid "Scripts"
 msgstr ""
 
@@ -3610,15 +3610,15 @@ msgstr ""
 msgid "About Us"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:190
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:191
 msgid "About us"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:191
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:192
 msgid "Our Story"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:192
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:193
 msgid ""
 "Themeisle was founded in 2012 by a group of passionate developers who "
 "wanted to create beautiful and functional WordPress themes and plugins. "
@@ -3626,7 +3626,7 @@ msgid ""
 "who are committed to delivering the best possible products to our customers."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:193
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:194
 msgid ""
 "At Themeisle, we offer a wide range of WordPress themes and plugins that "
 "are designed to meet the needs of both beginners and advanced users. Our "
@@ -3634,67 +3634,150 @@ msgid ""
 "beautiful and functional websites."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:194
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:195
 msgid "Our team in WCEU2022 in Portugal"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:195
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:196
 msgid "Stay connected for news & updates!"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:196
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:197
 msgid "Your email address"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:197
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:198
 msgid "Sign me up"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:198
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:199
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:239
 msgid "Install Now"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:200
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:201
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:240
 msgid "Learn More"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:201
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:202
 msgid "Installed"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:202
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:203
 msgid "Not Installed"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:203
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:204
 msgid "Active"
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:222
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:235
+msgid "Build innovative layouts with Otter Blocks and Gutenberg"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:236
+msgid ""
+"Otter is a lightweight, dynamic collection of page building blocks and "
+"templates for the WordPress block editor."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:238
+msgid "Install Otter - It's free!"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:244
+msgid "Advanced Features"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:245
+msgid ""
+"Add features such as Custom CSS, Animations & Visibility Conditions to all "
+"blocks."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:246
+msgid "Lightweight and Fast"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:247
+msgid ""
+"Otter enhances WordPress site building experience without impacting site "
+"speed."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:248
+msgid "Mobile-Friendly"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:249
+msgid ""
+"Each block can be tweaked to provide a consistent experience across all "
+"devices."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:253
+msgid "A Better Page Building Experience"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:254
+msgid ""
+"Otter can be used to build everything from a personal blog to an e-commerce "
+"site without losing the personal touch. Otter’s ease of use transforms "
+"basic blocks into expressive layouts in seconds."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:256
+msgid "A New Collection of Patterns"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:257
+msgid ""
+"A New Patterns Library, containing a range of different elements in a "
+"variety of styles to help you build great pages. All of your website’s most "
+"important areas are covered: headers, testimonials, pricing tables, "
+"sections and more."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:259
+msgid "Advanced Blocks"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:260
+msgid ""
+"Enhance your website’s design with powerful blocks, like the Add to Cart, "
+"Business Hours, Review Comparison, and dozens of WooCommerce blocks."
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:263
+msgid "Trusted by more than 300K website owners"
+msgstr ""
+
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:311
 msgid ""
 "A fast, lightweight, customizable WordPress theme offering responsive "
 "design, speed, and flexibility for various website types."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:245
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:334
 msgid ""
 "Turn WordPress into a landing page powerhouse with Landing Kit, map domains "
 "to pages or any other published resource."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:255
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:344
 msgid ""
 "Extend your store functionality with 8 ultra-performant features like "
 "product comparisons, variation swatches, wishlist, and more."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:261
+#: vendor/codeinwp/themeisle-sdk/src/Modules/About_us.php:350
 msgid ""
-"Ultimate Free Templates Cloud for WordPress, for blocks, patters of full "
-"pages."
+"Design, save, and revisit your templates anytime with your personal vault "
+"on Templates Cloud."
 msgstr ""
 
-#: vendor/codeinwp/themeisle-sdk/src/Modules/Promotions.php:585
+#: vendor/codeinwp/themeisle-sdk/src/Modules/Promotions.php:608
 #. translators: %s is the product name.
 msgid "Recommended by %s"
 msgstr ""

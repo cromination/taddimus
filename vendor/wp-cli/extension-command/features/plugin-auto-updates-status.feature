@@ -100,7 +100,6 @@ Feature: Show the status of auto-updates for WordPress plugins
 
   @require-wp-5.5
   Scenario: Formatting options work
-
     When I run `wp plugin auto-updates status --all --format=json`
     Then STDOUT should be:
       """

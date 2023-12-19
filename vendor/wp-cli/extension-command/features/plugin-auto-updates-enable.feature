@@ -33,10 +33,13 @@ Feature: Enable auto-updates for WordPress plugins
 
   @require-wp-5.5
   Scenario: Enable auto-updates for all plugins
+    When I run `wp plugin list --status=inactive --format=count`
+    Then save STDOUT as {PLUGIN_COUNT}
+
     When I run `wp plugin auto-updates enable --all`
     Then STDOUT should be:
       """
-      Success: Enabled 3 of 3 plugin auto-updates.
+      Success: Enabled {PLUGIN_COUNT} of {PLUGIN_COUNT} plugin auto-updates.
       """
     And the return code should be 0
 
@@ -56,10 +59,13 @@ Feature: Enable auto-updates for WordPress plugins
   @require-wp-5.5
   Scenario: Filter when enabling auto-updates for already enabled plugins
     When I run `wp plugin auto-updates enable hello`
-    And I run `wp plugin auto-updates enable --all --disabled-only`
+    And I run `wp plugin list --status=inactive --auto_update=off --format=count`
+    Then save STDOUT as {PLUGIN_COUNT}
+
+    When I run `wp plugin auto-updates enable --all --disabled-only`
     Then STDOUT should be:
       """
-      Success: Enabled 2 of 2 plugin auto-updates.
+      Success: Enabled {PLUGIN_COUNT} of {PLUGIN_COUNT} plugin auto-updates.
       """
     And the return code should be 0
 

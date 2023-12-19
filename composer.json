@@ -20,7 +20,7 @@
     "require": {
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6",
-        "johnpbloch/wordpress": "^6.3",
+        "johnpbloch/wordpress": "^6.4",
         "wpackagist-plugin/autoptimize": "^3.0",
         "wpackagist-plugin/w3-total-cache": "^2.4",
         "wpackagist-plugin/wp-cloudflare-page-cache": "^4.6",
@@ -30,7 +30,7 @@
         "wpackagist-theme/twentyseventeen": "^3.0",
         "wpackagist-theme/twentynineteen": "^2.2",
         "wpackagist-theme/twentytwenty": "^2.1",
-        "wpackagist-theme/twentytwentyone": "^1.7",
+        "wpackagist-theme/twentytwentyone": "^2.0",
         "wpackagist-theme/hestia": "^3.0",
         "wpackagist-plugin/webp-converter-for-media": "^5.2",
         "wp-cli/wp-cli-bundle": "*",
