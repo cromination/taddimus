@@ -8,6 +8,7 @@ use WebpConverter\Conversion\PathsFinder;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
+use WebpConverter\Settings\Option\ServiceModeOption;
 
 /**
  * Manages automatic conversion of images.
@@ -106,7 +107,7 @@ class CronInitiator {
 	 */
 	public function init_async_conversion( bool $upload_request = false ) {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
-		$service_mode    = in_array( ExtraFeaturesOption::OPTION_VALUE_SERVICE_MODE, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] );
+		$service_mode    = ( $plugin_settings[ ServiceModeOption::OPTION_NAME ] === 'yes' );
 
 		$headers = [
 			CronConversionEndpoint::ROUTE_NONCE_HEADER => CronConversionEndpoint::get_route_nonce(),

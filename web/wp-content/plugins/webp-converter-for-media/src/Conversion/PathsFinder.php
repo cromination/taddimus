@@ -10,6 +10,7 @@ use WebpConverter\Service\StatsManager;
 use WebpConverter\Settings\Option\ConversionMethodOption;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
 use WebpConverter\Settings\Option\OutputFormatsOption;
+use WebpConverter\Settings\Option\ServiceModeOption;
 use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 
 /**
@@ -166,7 +167,7 @@ class PathsFinder {
 		$plugin_settings        = $this->plugin_data->get_plugin_settings();
 		$allowed_output_formats = $allowed_output_formats ?: $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
 		$force_convert_deleted  = ( ! in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
-		$force_convert_crashed  = ( in_array( ExtraFeaturesOption::OPTION_VALUE_SERVICE_MODE, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
+		$force_convert_crashed  = ( $plugin_settings[ ServiceModeOption::OPTION_NAME ] === 'yes' );
 
 		foreach ( $source_dirs as $dir_name => $dir_data ) {
 			foreach ( $dir_data['files'] as $path_index => $source_file ) {

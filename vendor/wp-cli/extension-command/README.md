@@ -386,6 +386,8 @@ These fields are optionally available:
 * file
 * auto_update
 * author
+* wporg_status
+* wporg_last_updated
 
 **EXAMPLES**
 
@@ -407,6 +409,17 @@ These fields are optionally available:
     | akismet | active-network | none   | 3.1.11  |                |
     | hello   | inactive       | none   | 1.6     | 1.7.2          |
     +---------+----------------+--------+---------+----------------+
+
+    # Check whether plugins are still active on WordPress.org
+    $ wp plugin list --format=csv --fields=name,wporg_status,wporg_last_updated
+    +--------------------+--------------+--------------------+
+    | name               | wporg_status | wporg_last_updated |
+    +--------------------+--------------+--------------------+
+    | akismet            | active       | 2023-12-11         |
+    | user-switching     | active       | 2023-11-17         |
+    | wordpress-importer | active       | 2023-04-28         |
+    | local              |              |                    |
+    +--------------------+--------------+--------------------+
 
 
 
@@ -1351,7 +1364,7 @@ wp theme status [<theme>]
 Updates one or more themes.
 
 ~~~
-wp theme update [<theme>...] [--all] [--exclude=<theme-names>] [--format=<format>] [--version=<version>] [--dry-run] [--insecure]
+wp theme update [<theme>...] [--all] [--exclude=<theme-names>] [--minor] [--patch] [--format=<format>] [--version=<version>] [--dry-run] [--insecure]
 ~~~
 
 **OPTIONS**
@@ -1364,6 +1377,12 @@ wp theme update [<theme>...] [--all] [--exclude=<theme-names>] [--format=<format
 
 	[--exclude=<theme-names>]
 		Comma separated list of theme names that should be excluded from updating.
+
+	[--minor]
+		Only perform updates for minor releases (e.g. from 1.3 to 1.4 instead of 2.0)
+
+	[--patch]
+		Only perform updates for patch releases (e.g. from 1.3 to 1.3.3 instead of 1.4)
 
 	[--format=<format>]
 		Render output in a particular format.

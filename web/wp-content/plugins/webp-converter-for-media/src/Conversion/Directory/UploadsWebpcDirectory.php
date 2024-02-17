@@ -7,6 +7,7 @@ namespace WebpConverter\Conversion\Directory;
  */
 class UploadsWebpcDirectory extends DirectoryAbstract {
 
+	const DIRECTORY_NAME = 'uploads-webpc';
 	const DIRECTORY_TYPE = 'webp';
 	const DIRECTORY_PATH = '%s/uploads-webpc';
 

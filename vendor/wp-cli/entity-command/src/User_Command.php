@@ -1,7 +1,6 @@
 <?php
 
 use WP_CLI\CommandWithDBObject;
-use WP_CLI\Entity\Utils as EntityUtils;
 use WP_CLI\Fetchers\User as UserFetcher;
 use WP_CLI\Formatter;
 use WP_CLI\Iterators\CSV as CsvIterator;
@@ -692,26 +691,39 @@ class User_Command extends CommandWithDBObject {
 	 * <user>
 	 * : User ID, user email, or user login.
 	 *
-	 * <role>
-	 * : Add the specified role to the user.
+	 * [<role>...]
+	 * : Add the specified role(s) to the user.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp user add-role 12 author
 	 *     Success: Added 'author' role for johndoe (12).
 	 *
+	 *     $ wp user add-role 12 author editor
+	 *     Success: Added 'author', 'editor' roles for johndoe (12).
+	 *
 	 * @subcommand add-role
 	 */
 	public function add_role( $args, $assoc_args ) {
 		$user = $this->fetcher->get_check( $args[0] );
 
-		$role = $args[1];
+		$roles = $args;
+		array_shift( $roles );
 
-		self::validate_role( $role );
+		if ( empty( $roles ) ) {
+			WP_CLI::error( 'Please specify at least one role to add.' );
+		}
 
-		$user->add_role( $role );
+		foreach ( $roles as $role ) {
+			self::validate_role( $role );
+		}
 
-		WP_CLI::success( "Added '{$role}' role for {$user->user_login} ({$user->ID})." );
+		foreach ( $roles as $role ) {
+			$user->add_role( $role );
+		}
+		$message = implode( "', '", $roles );
+		$label   = count( $roles ) > 1 ? 'roles' : 'role';
+		WP_CLI::success( "Added '{$message}' {$label} for {$user->user_login} ({$user->ID})." );
 	}
 
 	/**
@@ -722,13 +734,16 @@ class User_Command extends CommandWithDBObject {
 	 * <user>
 	 * : User ID, user email, or user login.
 	 *
-	 * [<role>]
-	 * : A specific role to remove.
+	 * [<role>...]
+	 * : Remove the specified role(s) from the user.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp user remove-role 12 author
 	 *     Success: Removed 'author' role for johndoe (12).
+	 *
+	 *     $ wp user remove-role 12 author editor
+	 *     Success: Removed 'author', 'editor' roles for johndoe (12).
 	 *
 	 * @subcommand remove-role
 	 */
@@ -736,13 +751,19 @@ class User_Command extends CommandWithDBObject {
 		$user = $this->fetcher->get_check( $args[0] );
 
 		if ( isset( $args[1] ) ) {
-			$role = $args[1];
+			$roles = $args;
+			array_shift( $roles );
 
-			self::validate_role( $role );
+			foreach ( $roles as $role ) {
+				self::validate_role( $role );
+			}
 
-			$user->remove_role( $role );
-
-			WP_CLI::success( "Removed '{$role}' role for {$user->user_login} ({$user->ID})." );
+			foreach ( $roles as $role ) {
+				$user->remove_role( $role );
+			}
+			$message = implode( "', '", $roles );
+			$label   = count( $roles ) > 1 ? 'roles' : 'role';
+			WP_CLI::success( "Removed '{$message}' {$label} from {$user->user_login} ({$user->ID})." );
 		} else {
 			// Multisite
 			if ( function_exists( 'remove_user_from_blog' ) ) {
@@ -849,6 +870,19 @@ class User_Command extends CommandWithDBObject {
 	 *   - yaml
 	 * ---
 	 *
+	 * [--origin=<origin>]
+	 * : Render output in a particular format.
+	 * ---
+	 * default: all
+	 * options:
+	 *   - all
+	 *   - user
+	 *   - role
+	 * ---
+	 *
+	 * [--exclude-role-names]
+	 * : Exclude capabilities that match role names from output.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     $ wp user list-caps 21
@@ -858,37 +892,69 @@ class User_Command extends CommandWithDBObject {
 	 * @subcommand list-caps
 	 */
 	public function list_caps( $args, $assoc_args ) {
-		$user = $this->fetcher->get_check( $args[0] );
+		$user               = $this->fetcher->get_check( $args[0] );
+		$exclude_role_names = Utils\get_flag_value( $assoc_args, 'exclude-role-names' );
 
-		if ( $user ) {
-			$user->get_role_caps();
+		$active_user_cap_list = [];
 
-			$user_caps_list = $user->allcaps;
+		$user_roles = $user->roles;
 
-			$active_user_cap_list = [];
+		switch ( $assoc_args['origin'] ) {
+			case 'all':
+				$user->get_role_caps();
+				$user_caps_list = $user->allcaps;
 
-			foreach ( $user_caps_list as $cap => $active ) {
-				if ( $active ) {
-					$active_user_cap_list[] = $cap;
+				foreach ( $user_caps_list as $capability => $active ) {
+					if ( $exclude_role_names && in_array( $capability, $user_roles, true ) ) {
+						continue;
+					}
+					if ( $active ) {
+						$active_user_cap_list[] = $capability;
+					}
 				}
+				break;
+			case 'user':
+				// Get the user's capabilities
+				$user_capabilities = get_user_meta( $user->ID, 'wp_capabilities', true );
+
+				// Loop through each capability and only return the non-inherited ones
+				foreach ( $user_capabilities as $capability => $active ) {
+					if ( true === $active && ! in_array( $capability, $user_roles, true ) ) {
+						$active_user_cap_list[] = $capability;
+					}
+				}
+				break;
+			case 'role':
+				// Get the user's capabilities
+				$user_capabilities = get_user_meta( $user->ID, 'wp_capabilities', true );
+
+				// Loop through each capability and only return the inherited ones (including the role name)
+				foreach ( $user->get_role_caps() as $capability => $active ) {
+					if ( true === $active && ! isset( $user_capabilities[ $capability ] ) ) {
+						$active_user_cap_list[] = $capability;
+					}
+					if ( true === $active && ! $exclude_role_names && in_array( $capability, $user_roles, true ) ) {
+						$active_user_cap_list[] = $capability;
+					}
+				}
+				break;
+		}
+
+		if ( 'list' === $assoc_args['format'] ) {
+			foreach ( $active_user_cap_list as $cap ) {
+				WP_CLI::line( $cap );
 			}
+		} else {
+			$output_caps = [];
+			foreach ( $active_user_cap_list as $cap ) {
+				$output_cap = new stdClass();
 
-			if ( 'list' === $assoc_args['format'] ) {
-				foreach ( $active_user_cap_list as $cap ) {
-					WP_CLI::line( $cap );
-				}
-			} else {
-				$output_caps = [];
-				foreach ( $active_user_cap_list as $cap ) {
-					$output_cap = new stdClass();
+				$output_cap->name = $cap;
 
-					$output_cap->name = $cap;
-
-					$output_caps[] = $output_cap;
-				}
-				$formatter = new Formatter( $assoc_args, $this->cap_fields );
-				$formatter->display_items( $output_caps );
+				$output_caps[] = $output_cap;
 			}
+			$formatter = new Formatter( $assoc_args, $this->cap_fields );
+			$formatter->display_items( $output_caps );
 		}
 	}
 
@@ -942,7 +1008,7 @@ class User_Command extends CommandWithDBObject {
 				WP_CLI::error( "Couldn't access remote CSV file (HTTP {$response_code} response)." );
 			}
 		} elseif ( '-' === $filename ) {
-			if ( ! EntityUtils::has_stdin() ) {
+			if ( ! Utils\has_stdin() ) {
 				WP_CLI::error( 'Unable to read content from STDIN.' );
 			}
 		} elseif ( ! file_exists( $filename ) ) {

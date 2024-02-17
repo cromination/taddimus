@@ -13,11 +13,11 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
+        '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
         'ac949ce40a981819ba132473518a9a31' => __DIR__ . '/..' . '/wp-cli/wp-config-transformer/src/WPConfigTransformer.php',
         '8a0ad02df6a5087f2c380f8fd52db273' => __DIR__ . '/..' . '/wp-cli/cache-command/cache-command.php',
         'b66d29757fcb2fb7a9608d068e3716b0' => __DIR__ . '/..' . '/wp-cli/checksum-command/checksum-command.php',
@@ -64,6 +64,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php81\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Polyfill\\Php73\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
@@ -76,6 +77,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\Filesystem\\' => 29,
             'Symfony\\Component\\Console\\' => 26,
+            'Seld\\Signal\\' => 12,
             'Seld\\PharUtils\\' => 15,
             'Seld\\JsonLint\\' => 14,
         ),
@@ -110,6 +112,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
             'Composer\\Pcre\\' => 14,
             'Composer\\MetadataMinifier\\' => 26,
             'Composer\\Installers\\' => 20,
+            'Composer\\ClassMapGenerator\\' => 27,
             'Composer\\CaBundle\\' => 18,
             'Composer\\' => 9,
         ),
@@ -139,6 +142,10 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'WP_CLI\\Embeds\\' => 
         array (
             0 => __DIR__ . '/..' . '/wp-cli/embed-command/src',
+        ),
+        'Symfony\\Polyfill\\Php81\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php81',
         ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
@@ -187,6 +194,10 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Seld\\Signal\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/seld/signal-handler/src',
         ),
         'Seld\\PharUtils\\' => 
         array (
@@ -252,6 +263,10 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         array (
             0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
         ),
+        'Composer\\ClassMapGenerator\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/class-map-generator/src',
+        ),
         'Composer\\CaBundle\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/ca-bundle/src',
@@ -302,6 +317,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
 
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'CURLStringFile' => __DIR__ . '/..' . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
         'Cache_Command' => __DIR__ . '/..' . '/wp-cli/cache-command/src/Cache_Command.php',
         'Capabilities_Command' => __DIR__ . '/..' . '/wp-cli/role-command/src/Capabilities_Command.php',
         'Checksum_Base_Command' => __DIR__ . '/..' . '/wp-cli/checksum-command/src/Checksum_Base_Command.php',
@@ -342,6 +358,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'Post_Meta_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Post_Meta_Command.php',
         'Post_Term_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Post_Term_Command.php',
         'Post_Type_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Post_Type_Command.php',
+        'ReturnTypeWillChange' => __DIR__ . '/..' . '/symfony/polyfill-php81/Resources/stubs/ReturnTypeWillChange.php',
         'Rewrite_Command' => __DIR__ . '/..' . '/wp-cli/rewrite-command/src/Rewrite_Command.php',
         'Role_Command' => __DIR__ . '/..' . '/wp-cli/role-command/src/Role_Command.php',
         'Scaffold_Command' => __DIR__ . '/..' . '/wp-cli/scaffold-command/src/Scaffold_Command.php',
@@ -380,9 +397,6 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'WP_CLI\\Core\\NonDestructiveCoreUpgrader' => __DIR__ . '/..' . '/wp-cli/core-command/src/WP_CLI/Core/NonDestructiveCoreUpgrader.php',
         'WP_CLI\\DestructivePluginUpgrader' => __DIR__ . '/..' . '/wp-cli/extension-command/src/WP_CLI/DestructivePluginUpgrader.php',
         'WP_CLI\\DestructiveThemeUpgrader' => __DIR__ . '/..' . '/wp-cli/extension-command/src/WP_CLI/DestructiveThemeUpgrader.php',
-        'WP_CLI\\Entity\\NonExistentKeyException' => __DIR__ . '/..' . '/wp-cli/entity-command/src/WP_CLI/Entity/NonExistentKeyException.php',
-        'WP_CLI\\Entity\\RecursiveDataStructureTraverser' => __DIR__ . '/..' . '/wp-cli/entity-command/src/WP_CLI/Entity/RecursiveDataStructureTraverser.php',
-        'WP_CLI\\Entity\\Utils' => __DIR__ . '/..' . '/wp-cli/entity-command/src/WP_CLI/Entity/Utils.php',
         'WP_CLI\\Fetchers\\Plugin' => __DIR__ . '/..' . '/wp-cli/extension-command/src/WP_CLI/Fetchers/Plugin.php',
         'WP_CLI\\Fetchers\\Theme' => __DIR__ . '/..' . '/wp-cli/extension-command/src/WP_CLI/Fetchers/Theme.php',
         'WP_CLI\\Fetchers\\UnfilteredPlugin' => __DIR__ . '/..' . '/wp-cli/checksum-command/src/WP_CLI/Fetchers/UnfilteredPlugin.php',

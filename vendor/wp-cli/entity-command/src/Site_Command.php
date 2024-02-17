@@ -7,6 +7,7 @@ use WP_CLI\Iterators\Query as QueryIterator;
 use WP_CLI\Iterators\Table as TableIterator;
 use WP_CLI\Utils;
 use WP_CLI\Formatter;
+use WP_CLI\Fetchers\User as UserFetcher;
 
 /**
  * Creates, deletes, empties, moderates, and lists one or more sites on a multisite installation.
@@ -52,8 +53,8 @@ class Site_Command extends CommandWithDBObject {
 			wp_cache_delete( $comment_id, 'comment' );
 			wp_cache_delete( $comment_id, 'comment_meta' );
 		}
-		$wpdb->query( "TRUNCATE $wpdb->comments" );
-		$wpdb->query( "TRUNCATE $wpdb->commentmeta" );
+		$wpdb->query( "TRUNCATE TABLE $wpdb->comments" );
+		$wpdb->query( "TRUNCATE TABLE $wpdb->commentmeta" );
 	}
 
 	/**
@@ -80,8 +81,8 @@ class Site_Command extends CommandWithDBObject {
 
 			$posts->next();
 		}
-		$wpdb->query( "TRUNCATE $wpdb->posts" );
-		$wpdb->query( "TRUNCATE $wpdb->postmeta" );
+		$wpdb->query( "TRUNCATE TABLE $wpdb->posts" );
+		$wpdb->query( "TRUNCATE TABLE $wpdb->postmeta" );
 	}
 
 	/**
@@ -110,11 +111,11 @@ class Site_Command extends CommandWithDBObject {
 			wp_cache_delete( 'get', $taxonomy );
 			delete_option( "{$taxonomy}_children" );
 		}
-		$wpdb->query( "TRUNCATE $wpdb->terms" );
-		$wpdb->query( "TRUNCATE $wpdb->term_taxonomy" );
-		$wpdb->query( "TRUNCATE $wpdb->term_relationships" );
+		$wpdb->query( "TRUNCATE TABLE $wpdb->terms" );
+		$wpdb->query( "TRUNCATE TABLE $wpdb->term_taxonomy" );
+		$wpdb->query( "TRUNCATE TABLE $wpdb->term_relationships" );
 		if ( ! empty( $wpdb->termmeta ) ) {
-			$wpdb->query( "TRUNCATE $wpdb->termmeta" );
+			$wpdb->query( "TRUNCATE TABLE $wpdb->termmeta" );
 		}
 	}
 
@@ -143,7 +144,7 @@ class Site_Command extends CommandWithDBObject {
 		}
 
 		// Empty the table once link related cache and term is removed.
-		$wpdb->query( "TRUNCATE {$wpdb->links}" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->links}" );
 	}
 
 	/**
@@ -332,7 +333,11 @@ class Site_Command extends CommandWithDBObject {
 		}
 
 		if ( isset( $assoc_args['slug'] ) ) {
-			$blog = get_blog_details( trim( $assoc_args['slug'], '/' ) );
+			$blog_id = get_id_from_blogname( $assoc_args['slug'] );
+			if ( null === $blog_id ) {
+				WP_CLI::error( sprintf( 'Could not find site with slug \'%s\'.', $assoc_args['slug'] ) );
+			}
+			$blog = get_blog_details( $blog_id );
 		} else {
 			if ( empty( $args ) ) {
 				WP_CLI::error( 'Need to specify a blog id.' );
@@ -435,7 +440,7 @@ class Site_Command extends CommandWithDBObject {
 			$email        = '';
 			if ( ! empty( $super_admins ) && is_array( $super_admins ) ) {
 				// Just get the first one
-				$super_login = $super_admins[0];
+				$super_login = reset( $super_admins );
 				$super_user  = get_user_by( 'login', $super_login );
 				if ( $super_user ) {
 					$email = $super_user->user_email;
@@ -522,6 +527,9 @@ class Site_Command extends CommandWithDBObject {
 	 * [--site__in=<value>]
 	 * : Only list the sites with these blog_id values (comma-separated).
 	 *
+	 * [--site_user=<value>]
+	 * : Only list the sites with this user.
+	 *
 	 * [--field=<field>]
 	 * : Prints the value of a single field for each site.
 	 *
@@ -605,6 +613,26 @@ class Site_Command extends CommandWithDBObject {
 
 		if ( isset( $assoc_args['network'] ) ) {
 			$where['site_id'] = $assoc_args['network'];
+		}
+
+		if ( isset( $assoc_args['site_user'] ) ) {
+			$user = ( new UserFetcher() )->get_check( $assoc_args['site_user'] );
+
+			if ( $user ) {
+				$blogs = get_blogs_of_user( $user->ID );
+
+				foreach ( $blogs as $blog ) {
+					$where['blog_id'][] = $blog->userblog_id;
+				}
+			}
+
+			if ( ! isset( $where['blog_id'] ) || empty( $where['blog_id'] ) ) {
+				$formatter = new Formatter( $assoc_args, [], 'site' );
+				$formatter->display_items( [] );
+				return;
+			}
+
+			$append = 'ORDER BY FIELD( blog_id, ' . implode( ',', array_map( 'intval', $where['blog_id'] ) ) . ' )';
 		}
 
 		$iterator_args = [
@@ -978,11 +1006,11 @@ class Site_Command extends CommandWithDBObject {
 		$slug = Utils\get_flag_value( $assoc_args, 'slug', false );
 
 		if ( $slug ) {
-			$blog = get_blog_details( trim( $slug, '/' ) );
-			if ( ! $blog ) {
+			$blog_id = get_id_from_blogname( trim( $slug, '/' ) );
+			if ( null === $blog_id ) {
 				WP_CLI::error( sprintf( 'Could not find site with slug \'%s\'.', $slug ) );
 			}
-			return [ $blog->blog_id ];
+			return [ $blog_id ];
 		}
 
 		return $args;

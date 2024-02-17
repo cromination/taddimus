@@ -372,6 +372,11 @@ class Runner {
 					$child       = array_pop( $cmd_path );
 					$parent_name = implode( ' ', $cmd_path );
 					$suggestion  = $this->get_subcommand_suggestion( $child, $command );
+
+					if ( 'network' === $parent_name && 'option' === $child ) {
+						$suggestion = 'meta';
+					}
+
 					return sprintf(
 						"'%s' is not a registered subcommand of '%s'. See 'wp help %s' for available subcommands.%s",
 						$child,
@@ -564,7 +569,10 @@ class Runner {
 			WP_CLI::debug( 'SSH ' . $bit . ': ' . $bits[ $bit ], 'bootstrap' );
 		}
 
-		$is_tty = function_exists( 'posix_isatty' ) && posix_isatty( STDOUT );
+		$is_tty             = function_exists( 'posix_isatty' ) && posix_isatty( STDOUT );
+		$docker_compose_cmd = ! empty( Process::create( Utils\esc_cmd( 'docker compose %s', 'version' ) )->run()->stdout )
+								? 'docker compose'
+								: 'docker-compose';
 
 		if ( 'docker' === $bits['scheme'] ) {
 			$command = 'docker exec %s%s%s sh -c %s';
@@ -579,10 +587,11 @@ class Runner {
 		}
 
 		if ( 'docker-compose' === $bits['scheme'] ) {
-			$command = 'docker-compose exec %s%s%s sh -c %s';
+			$command = '%s exec %s%s%s sh -c %s';
 
 			$escaped_command = sprintf(
 				$command,
+				$docker_compose_cmd,
 				$bits['user'] ? '--user ' . escapeshellarg( $bits['user'] ) . ' ' : '',
 				$is_tty ? '' : '-T ',
 				escapeshellarg( $bits['host'] ),
@@ -591,10 +600,11 @@ class Runner {
 		}
 
 		if ( 'docker-compose-run' === $bits['scheme'] ) {
-			$command = 'docker-compose run %s%s%s %s';
+			$command = '%s run %s%s%s %s';
 
 			$escaped_command = sprintf(
 				$command,
+				$docker_compose_cmd,
 				$bits['user'] ? '--user ' . escapeshellarg( $bits['user'] ) . ' ' : '',
 				$is_tty ? '' : '-T ',
 				escapeshellarg( $bits['host'] ),
@@ -639,7 +649,7 @@ class Runner {
 
 		// Default scheme is SSH.
 		if ( 'ssh' === $bits['scheme'] || null === $bits['scheme'] ) {
-			$command = 'ssh -q %s %s %s';
+			$command = 'ssh %s %s %s';
 
 			if ( $bits['user'] ) {
 				$bits['host'] = $bits['user'] . '@' . $bits['host'];
@@ -655,10 +665,11 @@ class Runner {
 			}
 
 			$command_args = [
-				$bits['proxyjump'] ? sprintf( '-J %s ', escapeshellarg( $bits['proxyjump'] ) ) : '',
-				$bits['port'] ? '-p ' . (int) $bits['port'] . ' ' : '',
+				$bits['proxyjump'] ? sprintf( '-J %s', escapeshellarg( $bits['proxyjump'] ) ) : '',
+				$bits['port'] ? sprintf( '-p %d', (int) $bits['port'] ) : '',
 				$bits['key'] ? sprintf( '-i %s', escapeshellarg( $bits['key'] ) ) : '',
 				$is_tty ? '-t' : '-T',
+				WP_CLI::get_config( 'debug' ) ? '-vvv' : '-q',
 			];
 
 			$escaped_command = sprintf(

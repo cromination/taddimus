@@ -6,7 +6,7 @@ Author URI:     https://themeisle.com
 Tested up to:   5.8.2
 Requires PHP:   5.4.0
 Description:    Hestia is a modern WordPress theme for professionals. It fits creative business, small businesses (restaurants, wedding planners, sport/medical shops), startups, corporate businesses, online agencies and firms, portfolios, ecommerce (WooCommerce), and freelancers. It has a multipurpose one-page design, widgetized footer, blog/news page and a clean look, is compatible with: Flat Parallax Slider, Photo Gallery, Travel Map and Elementor Page Builder . The theme is responsive, WPML, Retina ready, SEO friendly, and uses Material Kit for design.
-Version:        3.1.0
+Version:        3.1.3
 License:        GNU General Public License v2 or later
 License URI:    http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:    hestia
@@ -1172,6 +1172,16 @@ body.menu-open {
   color: #e91e63;
 }
 
+.hestia-blogs article .category a:not(:last-child)::after,
+.related.products ul li .category a:not(:last-child)::after,
+.woocommerce.archive .blog-post .products li .category a:not(:last-child)::after,
+.woocommerce .products li .category a:not(:last-child)::after,
+.shop-item .category a:not(:last-child)::after,
+.related-posts div .category a:not(:last-child)::after {
+  content: ', ';
+  color: inherit;
+}
+
 .hestia-blogs article:nth-of-type(6n) .card-body .btn {
   background-color: #4caf50;
 }
@@ -1555,28 +1565,28 @@ input#searchsubmit,
 .navbar .navbar-nav > li > a.btn.btn-twitter:focus,
 .navbar .navbar-nav > li > a.btn.btn-twitter:active {
   color: #fff;
-  background-color: #55acee;
+  background-color: #000;
 }
 
 .btn.btn-twitter,
 .navbar .navbar-nav > li > a.btn.btn-twitter {
-  -webkit-box-shadow: 0 2px 2px 0 rgba(85, 172, 238, 0.14), 0 3px 1px -2px rgba(85, 172, 238, 0.2), 0 1px 5px 0 rgba(85, 172, 238, 0.12);
-  -moz-box-shadow: 0 2px 2px 0 rgba(85, 172, 238, 0.14), 0 3px 1px -2px rgba(85, 172, 238, 0.2), 0 1px 5px 0 rgba(85, 172, 238, 0.12);
-  box-shadow: 0 2px 2px 0 rgba(85, 172, 238, 0.14), 0 3px 1px -2px rgba(85, 172, 238, 0.2), 0 1px 5px 0 rgba(85, 172, 238, 0.12);
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  -moz-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
 .btn.btn-twitter:hover, .btn.btn-twitter:focus, .btn.btn-twitter:active,
 .navbar .navbar-nav > li > a.btn.btn-twitter:hover,
 .navbar .navbar-nav > li > a.btn.btn-twitter:focus,
 .navbar .navbar-nav > li > a.btn.btn-twitter:active {
-  -webkit-box-shadow: 0 14px 26px -12px rgba(85, 172, 238, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(85, 172, 238, 0.2);
-  -moz-box-shadow: 0 14px 26px -12px rgba(85, 172, 238, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(85, 172, 238, 0.2);
-  box-shadow: 0 14px 26px -12px rgba(85, 172, 238, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(85, 172, 238, 0.2);
+  -webkit-box-shadow: 0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 14px 26px -12px rgba(0, 0, 0, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
 .btn.btn-twitter.btn-simple,
 .navbar .navbar-nav > li > a.btn.btn-twitter.btn-simple {
-  color: #55acee;
+  color: #000;
   background-color: transparent;
 }
 
@@ -4410,7 +4420,7 @@ table > tbody > tr:last-child,
 .hestia-team .footer a[href*="twitter.com"],
 .team .footer a[href*="twitter.com"],
 .footer-menu a[href*="twitter.com"] {
-  color: #55acee;
+  color: #000;
 }
 
 .hestia-team .footer a[href*="pinterest.com"],
@@ -6984,4 +6994,11 @@ body:not(.home) .wrapper .content-area {
   .form-horizontal .form-group .control-label {
     text-align: right;
   }
+}
+
+/*--------------------------------------------------------------
+## Otter blocks
+--------------------------------------------------------------*/
+.wp-block-themeisle-blocks-tabs .wp-block-themeisle-blocks-tabs__header_item.hidden {
+  display: block !important;
 }

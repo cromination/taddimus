@@ -14,6 +14,7 @@ use WebpConverter\Service\ViewLoader;
 class PageIntegrator implements HookableInterface {
 
 	const SETTINGS_MENU_PAGE = 'webpc_admin_page';
+	const SETTINGS_PAGE_TYPE = 'action';
 	const UPLOAD_MENU_PAGE   = 'webpc_optimization_page';
 
 	/**
@@ -51,7 +52,7 @@ class PageIntegrator implements HookableInterface {
 	 */
 	private function get_current_page() {
 		$page_name = $_GET['page'] ?? null; // phpcs:ignore WordPress.Security
-		$tab_name  = $_GET['action'] ?? null; // phpcs:ignore WordPress.Security
+		$tab_name  = $_GET[ self::SETTINGS_PAGE_TYPE ] ?? null; // phpcs:ignore WordPress.Security
 
 		foreach ( $this->pages as $page ) {
 			if ( ( $page->get_menu_parent() === $page_name ) && ( $page->get_slug() === $tab_name ) ) {
@@ -89,7 +90,7 @@ class PageIntegrator implements HookableInterface {
 		}
 
 		if ( $action !== null ) {
-			$page_url .= '&action=' . $action;
+			$page_url .= '&' . self::SETTINGS_PAGE_TYPE . '=' . $action;
 		}
 		return $page_url;
 	}
@@ -164,7 +165,12 @@ class PageIntegrator implements HookableInterface {
 								'is_active' => ( $settings_page === $page ),
 							];
 						},
-						$this->pages
+						array_filter(
+							$this->pages,
+							function ( $page ) {
+								return ( $page->is_available() );
+							}
+						)
 					),
 				]
 			)

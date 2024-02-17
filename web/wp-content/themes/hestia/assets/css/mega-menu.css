@@ -11,7 +11,7 @@
 @media (min-width: 769px) {
   .navbar .hestia-mega-menu > .dropdown-menu {
     width: 750px;
-    left: 50%;
+    left: 50% !important;
     transform: translateX(-50%);
   }
   /* one item */

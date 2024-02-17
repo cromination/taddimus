@@ -59,6 +59,7 @@ class WebpConverter {
 			->set_page_integration( new Page\CdnSettingsPage( $plugin_info, $plugin_data, $token_repository, $format_factory ) )
 			->set_page_integration( new Page\DebugPage( $plugin_info, $plugin_data ) )
 			->set_page_integration( new Page\BulkOptimizationPage( $plugin_info, $plugin_data, $token_repository, $format_factory ) )
+			->set_page_integration( new Page\ExpertSettingsPage( $plugin_info, $plugin_data, $token_repository, $format_factory ) )
 			->init_hooks();
 		( new Service\BackupExcluder( $plugin_data ) )->init_hooks();
 		( new Service\CacheIntegrator( $plugin_info ) )->init_hooks();

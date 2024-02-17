@@ -154,6 +154,13 @@ jQuery( window ).on( 'load', function () {
                 }
             }
         );
+
+		/**
+		 * Close editor when the user clicks on customizer shortcut.
+		 */
+		customize.previewer.bind( 'trigger-close-editor', function () {
+			WPEditorWidget.hideEditor();
+		} );
     }
 
 	/**

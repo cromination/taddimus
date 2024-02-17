@@ -1,9 +1,8 @@
 <?php
 
-use WP_CLI\Entity\RecursiveDataStructureTraverser;
 use WP_CLI\Formatter;
+use WP_CLI\Traverser\RecursiveDataStructureTraverser;
 use WP_CLI\Utils;
-use WP_CLI\Entity\Utils as EntityUtils;
 
 /**
  * Adds, updates, deletes, and lists site options in a multisite installation.
@@ -73,7 +72,7 @@ class Site_Option_Command extends WP_CLI_Command {
 	 * : The name of the site option to add.
 	 *
 	 * [<value>]
-	 * : The value of the site option to add. If ommited, the value is read from STDIN.
+	 * : The value of the site option to add. If omitted, the value is read from STDIN.
 	 *
 	 * [--format=<format>]
 	 * : The serialization format for the value.
@@ -148,7 +147,7 @@ class Site_Option_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # List all site options begining with "i2f_"
+	 *     # List all site options beginning with "i2f_"
 	 *     $ wp site option list --search="i2f_*"
 	 *     +-------------+--------------+
 	 *     | meta_key    | meta_value   |
@@ -215,7 +214,7 @@ class Site_Option_Command extends WP_CLI_Command {
 	 * : The name of the site option to update.
 	 *
 	 * [<value>]
-	 * : The new value. If ommited, the value is read from STDIN.
+	 * : The new value. If omitted, the value is read from STDIN.
 	 *
 	 * [--format=<format>]
 	 * : The serialization format for the value.
@@ -372,7 +371,7 @@ class Site_Option_Command extends WP_CLI_Command {
 		if ( 'delete' === $action ) {
 			$patch_value = null;
 		} else {
-			$stdin_value = EntityUtils::has_stdin()
+			$stdin_value = Utils\has_stdin()
 				? trim( WP_CLI::get_value_from_arg_or_stdin( $args, -1 ) )
 				: null;
 			$patch_value = ! empty( $stdin_value )

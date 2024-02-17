@@ -341,6 +341,32 @@ These fields are optionally available:
     | 29         | 2013-03-14 11:56:08 | Jane Doe       |
     +------------+---------------------+----------------+
 
+    # List unapproved comments.
+    $ wp comment list --number=3 --status=hold --fields=ID,comment_date,comment_author
+    +------------+---------------------+----------------+
+    | comment_ID | comment_date        | comment_author |
+    +------------+---------------------+----------------+
+    | 8          | 2023-11-10 13:13:06 | John Doe       |
+    | 7          | 2023-11-10 13:09:55 | Mr WordPress   |
+    | 9          | 2023-11-10 11:22:31 | Jane Doe       |
+    +------------+---------------------+----------------+
+
+    # List comments marked as spam.
+    $ wp comment list --status=spam --fields=ID,comment_date,comment_author
+    +------------+---------------------+----------------+
+    | comment_ID | comment_date        | comment_author |
+    +------------+---------------------+----------------+
+    | 2          | 2023-11-10 11:22:31 | Jane Doe       |
+    +------------+---------------------+----------------+
+
+    # List comments in trash.
+    $ wp comment list --status=trash --fields=ID,comment_date,comment_author
+    +------------+---------------------+----------------+
+    | comment_ID | comment_date        | comment_author |
+    +------------+---------------------+----------------+
+    | 3          | 2023-11-10 11:22:31 | John Doe       |
+    +------------+---------------------+----------------+
+
 
 
 ### wp comment meta
@@ -1643,7 +1669,7 @@ Errors if the option already exists.
 		The name of the option to add.
 
 	[<value>]
-		The value of the option to add. If ommited, the value is read from STDIN.
+		The value of the option to add. If omitted, the value is read from STDIN.
 
 	[--format=<format>]
 		The serialization format for the value.
@@ -1957,7 +1983,7 @@ wp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
 		The name of the option to update.
 
 	[<value>]
-		The new value. If ommited, the value is read from STDIN.
+		The new value. If omitted, the value is read from STDIN.
 
 	[--autoload=<autoload>]
 		Requires WP 4.2. Should this option be automatically loaded.
@@ -2006,6 +2032,44 @@ wp option update <key> [<value>] [--autoload=<autoload>] [--format=<format>]
     # Set the timezone string.
     $ wp option update timezone_string "America/New_York"
     Success: Updated 'timezone_string' option.
+
+
+
+### wp option set-autoload
+
+Sets the 'autoload' value for an option.
+
+~~~
+wp option set-autoload <key> <autoload>
+~~~
+
+**OPTIONS**
+
+	<key>
+		The name of the option to set 'autoload' for.
+
+	<autoload>
+		Should this option be automatically loaded.
+		---
+		options:
+		  - 'yes'
+		  - 'no'
+		---
+
+
+
+### wp option get-autoload
+
+Gets the 'autoload' value for an option.
+
+~~~
+wp option get-autoload <key>
+~~~
+
+**OPTIONS**
+
+	<key>
+		The name of the option to get 'autoload' of.
 
 
 
@@ -2144,7 +2208,7 @@ wp post create [--post_author=<post_author>] [--post_date=<post_date>] [--post_d
 **EXAMPLES**
 
     # Create post and schedule for future
-    $ wp post create --post_type=page --post_title='A future post' --post_status=future --post_date='2020-12-01 07:00:00'
+    $ wp post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
     Success: Created post 1921.
 
     # Create post with content from given file
@@ -3085,6 +3149,27 @@ wp post update <id>... [--post_author=<post_author>] [--post_date=<post_date>] [
 
 
 
+### wp post url-to-id
+
+Gets the post ID for a given URL.
+
+~~~
+wp post url-to-id <url>
+~~~
+
+**OPTIONS**
+
+	<url>
+		The URL of the post to get.
+
+**EXAMPLES**
+
+    # Get post ID by URL
+    $ wp post url-to-id https://example.com/?p=1
+    1
+
+
+
 ### wp post-type
 
 Retrieves details on the site's registered post types.
@@ -3457,7 +3542,7 @@ WP_CLI::add_hook( 'after_invoke:site empty', function(){
 Lists all sites in a multisite installation.
 
 ~~~
-wp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
+wp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--site_user=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
@@ -3471,6 +3556,9 @@ wp site list [--network=<id>] [--<field>=<value>] [--site__in=<value>] [--field=
 
 	[--site__in=<value>]
 		Only list the sites with these blog_id values (comma-separated).
+
+	[--site_user=<value>]
+		Only list the sites with this user.
 
 	[--field=<field>]
 		Prints the value of a single field for each site.
@@ -4611,7 +4699,7 @@ wp user add-cap <user> <cap>
 Adds a role for a user.
 
 ~~~
-wp user add-role <user> <role>
+wp user add-role <user> [<role>...]
 ~~~
 
 **OPTIONS**
@@ -4619,13 +4707,16 @@ wp user add-role <user> <role>
 	<user>
 		User ID, user email, or user login.
 
-	<role>
-		Add the specified role to the user.
+	[<role>...]
+		Add the specified role(s) to the user.
 
 **EXAMPLES**
 
     $ wp user add-role 12 author
     Success: Added 'author' role for johndoe (12).
+
+    $ wp user add-role 12 author editor
+    Success: Added 'author', 'editor' roles for johndoe (12).
 
 
 
@@ -4955,7 +5046,7 @@ These fields are optionally available:
 Lists all capabilities for a user.
 
 ~~~
-wp user list-caps <user> [--format=<format>]
+wp user list-caps <user> [--format=<format>] [--origin=<origin>] [--exclude-role-names]
 ~~~
 
 **OPTIONS**
@@ -4975,6 +5066,19 @@ wp user list-caps <user> [--format=<format>]
 		  - count
 		  - yaml
 		---
+
+	[--origin=<origin>]
+		Render output in a particular format.
+		---
+		default: all
+		options:
+		  - all
+		  - user
+		  - role
+		---
+
+	[--exclude-role-names]
+		Exclude capabilities that match role names from output.
 
 **EXAMPLES**
 
@@ -5331,7 +5435,7 @@ wp user remove-cap <user> <cap>
 Removes a user's role.
 
 ~~~
-wp user remove-role <user> [<role>]
+wp user remove-role <user> [<role>...]
 ~~~
 
 **OPTIONS**
@@ -5339,13 +5443,16 @@ wp user remove-role <user> [<role>]
 	<user>
 		User ID, user email, or user login.
 
-	[<role>]
-		A specific role to remove.
+	[<role>...]
+		Remove the specified role(s) from the user.
 
 **EXAMPLES**
 
     $ wp user remove-role 12 author
     Success: Removed 'author' role for johndoe (12).
+
+    $ wp user remove-role 12 author editor
+    Success: Removed 'author', 'editor' roles for johndoe (12).
 
 
 

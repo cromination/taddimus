@@ -106,7 +106,7 @@ class Hestia_Subscribe_Info extends WP_Customize_Control {
 		$sib_account    = false;
 
 		if ( $this->state === 'install' || $this->state === 'activate' ) {
-			$text           = esc_html__( 'Here is where you must add the "SendinBlue Newsletter" widget.', 'hestia' );
+			$text           = esc_html__( 'Here is where you must add the "Brevo Newsletter" widget.', 'hestia' );
 			$display_button = true;
 			$sib_account    = false;
 		}
@@ -118,7 +118,7 @@ class Hestia_Subscribe_Info extends WP_Customize_Control {
 				sprintf(
 					/* translators: %s Path in plugin*/
 					'<a target="_blank" href="' . admin_url( 'admin.php?page=sib_page_home' ) . '"><b>%s</b></a>',
-					esc_html__( 'SendinBlue > Home', 'hestia' )
+					esc_html__( 'Brevo > Home', 'hestia' )
 				)
 			);
 			$display_button = false;
@@ -127,7 +127,7 @@ class Hestia_Subscribe_Info extends WP_Customize_Control {
 
 		if ( $this->state === 'configure' ) {
 			$text           = sprintf(
-				esc_html__( 'Here is where you must add the "SendinBlue Newsletter" widget.', 'hestia' ) . ' %s',
+				esc_html__( 'Here is where you must add the "Brevo Newsletter" widget.', 'hestia' ) . ' %s',
 				sprintf(
 					'<a target="_blank" href="https://docs.themeisle.com/article/879-how-to-integrate-sendinblue-wordpress-plugin-to-your-website">%s</a>',
 					esc_html__( 'Read full documentation', 'hestia' )
@@ -152,7 +152,7 @@ class Hestia_Subscribe_Info extends WP_Customize_Control {
 
 		if ( $sib_account === true ) {
 			echo '<br/>';
-			echo '<a target="_blank" href="http://bit.ly/sibwp2" class="button" style="margin-top: 8px">' . esc_html__( 'Create SendinBlue Account', 'hestia' ) . '</a>';
+			echo '<a target="_blank" href="http://bit.ly/sibwp2" class="button" style="margin-top: 8px">' . esc_html__( 'Create Brevo Account', 'hestia' ) . '</a>';
 		}
 	}
 

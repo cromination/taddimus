@@ -45,6 +45,11 @@ class OptionsAggregator {
 
 		$this->set_option( new CloudflareZoneIdOption() );
 		$this->set_option( new CloudflareApiTokenOption() );
+
+		$this->set_option( new ServiceModeOption() );
+		$this->set_option( new HtaccessRewriteRootOption() );
+		$this->set_option( new HtaccessRewritePathOption() );
+		$this->set_option( new HtaccessRewriteOutputOption() );
 	}
 
 	/**

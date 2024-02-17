@@ -51,7 +51,7 @@ class Hestia_Subscribe_Controls extends Hestia_Front_Page_Section_Controls_Abstr
 							'label' => esc_html__( 'General Settings', 'hestia' ),
 						),
 						'sendinblue' => array(
-							'label' => esc_html__( 'SendinBlue plugin', 'hestia' ),
+							'label' => esc_html__( 'Brevo plugin', 'hestia' ),
 						),
 					),
 					'controls' => array(

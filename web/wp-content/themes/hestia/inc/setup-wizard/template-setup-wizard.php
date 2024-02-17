@@ -8,6 +8,7 @@
 $skip_wizard         = add_query_arg(
 	array(
 		'action' => 'hestia_dismiss_wizard',
+		'nonce'  => wp_create_nonce( 'hestia_dismiss_wizard' ),
 	),
 	admin_url( 'admin.php' )
 );
@@ -168,7 +169,7 @@ $wp_orbit_fox_active = is_plugin_active( 'themeisle-companion/themeisle-companio
 												</div>
 											</div>
 											<p class="p<?php echo ! empty( $custom_logo ) ? ' hidden' : ''; ?>"><?php esc_html_e( 'No logo?', 'hestia' ); ?> <a href="javascript:;" class="hestia-use-demo-logo" data-default_img="<?php echo esc_url( get_template_directory_uri() . '/assets/img/hestia-demo-logo.png' ); ?>" data-ajax_nonce="<?php echo esc_attr( wp_create_nonce( 'hestia-media-upload' ) ); ?>"><?php esc_html_e( 'Click here', 'hestia' ); ?></a> <?php esc_html_e( 'to use demo logo', 'hestia' ); ?></p>
-										</div> 
+										</div>
 									</div>
 									<div class="form-footer">
 										<button class="hestia-btn btn-primary<?php echo empty( $custom_logo ) ? ' disabled' : ''; ?>" data-action="site_logo">
@@ -220,7 +221,7 @@ $wp_orbit_fox_active = is_plugin_active( 'themeisle-companion/themeisle-companio
 												</div>
 											</div>
 											<p class="p"><?php esc_html_e( 'No Icon?', 'hestia' ); ?> <a href="javascript:;" class="hestia-use-demo-logo" data-default_img="<?php echo esc_url( get_template_directory_uri() . '/assets/img/hestia-siteicon.png' ); ?>" data-ajax_nonce="<?php echo esc_attr( wp_create_nonce( 'hestia-media-upload' ) ); ?>"><?php esc_html_e( 'Click here', 'hestia' ); ?></a> <?php esc_html_e( 'to use demo icon', 'hestia' ); ?></p>
-										</div>  
+										</div>
 									</div>
 									<div class="form-footer">
 										<button class="hestia-btn btn-primary<?php echo ! $site_icon_id ? ' disabled' : ''; ?>" data-action="site_icon">

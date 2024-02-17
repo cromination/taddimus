@@ -70,6 +70,7 @@ class Hestia_Contact_Controls extends Hestia_Front_Page_Section_Controls_Abstrac
 							'hestia_contact_info'        => array(),
 							'hestia_contact_content_new' => array(),
 							'hestia_contact_form_shortcode' => array(),
+							'hestia_contact_content_new' => array(),
 						),
 					),
 				),

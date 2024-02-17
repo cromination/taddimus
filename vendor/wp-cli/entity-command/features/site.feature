@@ -98,6 +98,43 @@ Feature: Manage sites in a multisite installation
       {SCHEME}://example.com/first/
       """
 
+  Scenario: Filter site list by user
+    Given a WP multisite install
+
+    When I run `wp site create --slug=first --porcelain`
+    Then STDOUT should be a number
+    And save STDOUT as {SITE_ID}
+    And I run `wp site list --blog_id={SITE_ID} --field=url`
+    And save STDOUT as {SITE_URL}
+    And I run `wp user create newuser newuser@example.com --porcelain --url={SITE_URL}`
+    Then STDOUT should be a number
+    And save STDOUT as {USER_ID}
+    And I run `wp user get {USER_ID} --field=user_login`
+    And save STDOUT as {USER_LOGIN}
+
+    When I run `wp site list --field=url --site_user={USER_LOGIN}`
+    Then STDOUT should be:
+      """
+      {SITE_URL}
+      """
+
+    When I try `wp site list --site_user=invalid_user`
+    Then the return code should be 1
+    And STDERR should be:
+      """
+      Error: Invalid user ID, email or login: 'invalid_user'
+      """
+
+    When I run `wp user remove-role {USER_LOGIN} --url={SITE_URL}`
+    Then STDOUT should contain:
+      """
+      Success: Removed
+      """
+
+    When I run `wp site list --field=url --site_user={USER_LOGIN}`
+    Then STDOUT should be empty
+
+
   Scenario: Delete a site by slug
     Given a WP multisite install
 
@@ -119,6 +156,55 @@ Feature: Manage sites in a multisite installation
 
     When I try the previous command again
     Then the return code should be 1
+
+    When I run `wp site create --slug=42`
+    Then STDOUT should contain:
+      """
+      Success: Site 3 created: http
+      """
+    And STDOUT should contain:
+      """
+      ://example.com/42/
+      """
+
+    When I run `wp site delete --slug=42 --yes`
+    Then STDOUT should contain:
+      """
+      ://example.com/42/' was deleted.
+      """
+
+    When I try the previous command again
+    Then STDERR should contain:
+      """
+      Error: Could not find site with slug '42'.
+      """
+    And the return code should be 1
+
+  Scenario: Archive a site by a numeric slug
+    Given a WP multisite install
+
+    When I run `wp site create --slug=42`
+    Then STDOUT should contain:
+      """
+      Success: Site 2 created: http
+      """
+    And STDOUT should contain:
+      """
+      ://example.com/42/
+      """
+
+    When I run `wp site archive --slug=42`
+    Then STDOUT should contain:
+      """
+      Success: Site 2 archived.
+      """
+
+    When I try `wp site archive --slug=43`
+    Then STDERR should contain:
+      """
+      Error: Could not find site with slug '43'.
+      """
+    And the return code should be 1
 
   Scenario: Get site info
     Given a WP multisite install

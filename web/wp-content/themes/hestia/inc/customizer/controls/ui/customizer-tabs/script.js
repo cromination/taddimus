@@ -57,15 +57,27 @@ wp.customize.controlConstructor['interface-tabs'] = wp.customize.Control.extend(
 				$_GET[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1]);
 			}
 
+            /**
+             * Autofocus of a control on customizer load.
+             * @param mutationsList
+             */
+            var mutationCallback = function(mutationsList) {
+                mutationsList.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        Array.prototype.forEach.call(mutation.addedNodes, function(node) {
+                            if (node.id && node.id.startsWith('customize-control-sidebars_widgets')) {
+                                var control = $_GET['autofocus[control]'];
+                                if (typeof control !== 'undefined' && control !== '') {
+                                    document.querySelector('.hestia-customizer-tab > label.' + control).click();
+                                }
+                            }
+                        });
+                    }
+                });
+            };
 
-
-
-			if( typeof $_GET['autofocus[control]'] !== 'undefined' && $_GET['autofocus[control]'] !== ''){
-				jQuery('li[id^="customize-control-sidebars_widgets"]').on(
-					'DOMNodeInserted', function () {
-						jQuery('.hestia-customizer-tab > label.' + $_GET['autofocus[control]']).trigger('click');
-				});
-			}
+            var observer = new MutationObserver(mutationCallback);
+            observer.observe(document, { subtree: true, childList: true });
         } );
 
         this.init();
@@ -76,17 +88,20 @@ wp.customize.controlConstructor['interface-tabs'] = wp.customize.Control.extend(
 		var control = this;
 		var section = control.section();
 
-        /**
-         * This timeout is required because widget controls are rendered async and need some time.
-         */
-        setTimeout( function() {
-            jQuery('li[id^="customize-control-hestia_"]').each(function () {
-                jQuery(this).on(
-                    'DOMNodeInserted', function () {
-                        jQuery('.hestia-customizer-tab.active > label').trigger('click');
+        var observerOptions = { subtree: true, childList: true };
+        var mutationCallback = function(mutationsList) {
+            mutationsList.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    Array.prototype.forEach.call(mutation.addedNodes, function(node) {
+                        if (node.id && node.id.startsWith('customize-control-hestia_')) {
+                            document.querySelector('.hestia-customizer-tab.active > label').click();
+                        }
                     });
+                }
             });
-        }, 100 );
+        };
+        var observer = new MutationObserver(mutationCallback);
+        observer.observe(document, observerOptions);
 
         wp.customize.bind('ready',function () {
             control.hideAllControls(section);
@@ -120,7 +135,7 @@ wp.customize.controlConstructor['interface-tabs'] = wp.customize.Control.extend(
                 if ( controlFields.length > 0 ) {
                     var controlFieldsLabel = controlFields.find( 'label, span.customize-control-title' );
                     var hasLockedIcon = controlFieldsLabel.find( '.dashicons-lock' );
-                    if ( hasLockedIcon.length === 0 ) {    
+                    if ( hasLockedIcon.length === 0 ) {
                         controlFieldsLabel.html( controlFieldsLabel.html() + ' <span class="dashicons dashicons-lock"></span>' );
                     }
                 }
@@ -175,6 +190,20 @@ wp.customize.controlConstructor['interface-tabs'] = wp.customize.Control.extend(
                 }
 			}
 		}
+    },
+
+    /**
+     * Make the upgrade links to open the link. By default, external links do not work.
+     */
+    unlockUpgradeLinks: function() {
+        var upgradeLinks = document.querySelectorAll('.customize-control[id*="hestia"][id*="_upgrade"] a');
+        upgradeLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                window.open(link.href, link.target);
+            } );
+        });
     }
 });
 

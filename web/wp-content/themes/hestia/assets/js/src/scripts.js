@@ -499,13 +499,44 @@
 		 * Add view cart button in its place after adding a product in cart.
 		 */
 		'addViewCart': function () {
-			$( document ).on(
-				'DOMNodeInserted', '.added_to_cart', function () {
-					if ( !($( this ).parent().hasClass( 'hestia-view-cart-wrapper' ) ) ) {
-						$( this ).wrap( '<div class="hestia-view-cart-wrapper"></div>' );
+
+			/**
+			 * Mutation observer for cart button.
+			 * 
+			 * @param {MutationRecord[]} mutationsList List of mutations
+			 */
+			var mutationCallback = function(mutationsList) {
+				for (var i = 0; i < mutationsList.length; i++) {
+					var mutation = mutationsList[i];
+					if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+						Array.prototype.forEach.call(
+							mutation.addedNodes, 
+							function(
+								/**
+								 * Node that had a mutation in DOM.
+								 * 
+								 * @type {Node}
+								 */
+								node
+							) {
+
+							if ( typeof node.classList === 'undefined' || typeof node.parentElement === 'undefined' ) {
+								return;
+							}
+
+							if (node.classList.contains('added_to_cart') && !node.parentElement.classList.contains('hestia-view-cart-wrapper')) {
+								var wrapper = document.createElement('div');
+								wrapper.classList.add('hestia-view-cart-wrapper');
+								node.parentNode.insertBefore(wrapper, node);
+								wrapper.appendChild(node);
+							}
+						});
 					}
 				}
-			);
+			};
+
+			var observer = new MutationObserver(mutationCallback);
+			observer.observe(document, { subtree: true, childList: true });
 		},
 
 		/**

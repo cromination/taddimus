@@ -1389,7 +1389,7 @@ input#searchsubmit,
 .navbar .navbar-nav > li > a.btn.btn-twitter:focus,
 .navbar .navbar-nav > li > a.btn.btn-twitter:active {
   color: #fff;
-  background-color: #55acee;
+  background-color: #000;
 }
 
 .btn.btn-twitter,
@@ -1409,7 +1409,7 @@ input#searchsubmit,
 
 .btn.btn-twitter.btn-simple,
 .navbar .navbar-nav > li > a.btn.btn-twitter.btn-simple {
-  color: #55acee;
+  color: #000;
   background-color: transparent;
 }
 
@@ -3854,7 +3854,7 @@ table > tbody > tr:last-child,
 .hestia-team .footer a[href*="twitter.com"],
 .team .footer a[href*="twitter.com"],
 .footer-menu a[href*="twitter.com"] {
-  color: #55acee;
+  color: #000;
 }
 
 .hestia-team .footer a[href*="pinterest.com"],

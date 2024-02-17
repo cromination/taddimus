@@ -60,8 +60,7 @@ endif;
  */
 function hestia_woocommerce_header_add_to_cart_fragment( $fragments ) {
 	global $woocommerce;
-
-	$fragments['a.cart-contents'] = '<a class="cart-contents btn btn-white pull-right" href="' . esc_url( wc_get_cart_url() ) . '" title="' . esc_attr__( 'View your shopping cart', 'hestia' ) . '">';
+	$fragments['a.nav-cart-icon'] = '<a class="nav-cart-icon" href="' . esc_url( wc_get_cart_url() ) . '" title="' . esc_attr__( 'View your shopping cart', 'hestia' ) . '">';
 	if ( get_theme_mod( 'hestia_cart_icon_status', true ) ) {
 		$cart_icon   = get_theme_mod( 'hestia_cart_icon', 'shopping-cart' );
 		$custom_icon = get_theme_mod( 'hestia_cart_custom_icon', false );
@@ -71,23 +70,10 @@ function hestia_woocommerce_header_add_to_cart_fragment( $fragments ) {
 			$cart_icon = get_theme_mod( 'hestia_cart_icon', 'shopping-cart' );
 			$icon      = sprintf( '<i class="fas fa-%s"></i>', esc_attr( $cart_icon ) );
 		}
-		$fragments['a.cart-contents'] .= $icon;
+		$fragments['a.nav-cart-icon'] .= $icon;
 	}
-	$fragments['a.cart-contents'] .= sprintf(
-		/* translators: %d is number of items */
-		_n( '%d item', '%d items', absint( $woocommerce->cart->cart_contents_count ), 'hestia' ),
-		absint( $woocommerce->cart->cart_contents_count )
-	);
-	$fragments['a.cart-contents'] .= ' - ';
-	$fragments['a.cart-contents'] .= wp_kses(
-		$woocommerce->cart->get_cart_total(),
-		array(
-			'span' => array(
-				'class' => array(),
-			),
-		)
-	);
-	$fragments['a.cart-contents'] .= '</a>';
+	$fragments['a.nav-cart-icon'] .= sprintf( '<span>%d</span>', absint( $woocommerce->cart->cart_contents_count ) );
+	$fragments['a.nav-cart-icon'] .= '</a>';
 	return $fragments;
 }
 
@@ -239,7 +225,7 @@ function hestia_woocommerce_template_loop_product_title() {
 	<div class="content">
 		<?php
 		$product_categories = get_the_terms( $post->ID, 'product_cat' );
-		$i                  = false;
+
 		if ( ! empty( $product_categories ) && apply_filters( 'hestia_show_category_on_product_card', true ) ) {
 			/**
 			 * Show only the first $nb_of_cat words. If the value is modified in hestia_shop_category_words filter with
@@ -256,11 +242,7 @@ function hestia_woocommerce_template_loop_product_title() {
 						$product_cat_id   = $product_category->term_id;
 						$product_cat_name = $product_category->name;
 						if ( ! empty( $product_cat_id ) && ! empty( $product_cat_name ) ) {
-							if ( $i ) {
-								echo ' , ';
-							}
 							echo '<a href="' . esc_url( get_term_link( $product_cat_id, 'product_cat' ) ) . '">' . esc_html( $product_cat_name ) . '</a>';
-							$i = true;
 						}
 						$index ++;
 					}
@@ -431,7 +413,7 @@ if ( ! function_exists( 'hestia_cart_link_after_primary_navigation' ) ) {
 		?>
 		<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" title="<?php esc_attr_e( 'View cart', 'hestia' ); ?>"
 				class="nav-cart-icon">
-			<?php echo wp_kses_post( $icon ); ?><?php echo trim( ( WC()->cart->get_cart_contents_count() > 0 ) ? '<span>' . WC()->cart->get_cart_contents_count() . '</span>' : '' ); ?></span>
+			<?php echo wp_kses_post( $icon ); ?><?php echo trim( ( WC()->cart->get_cart_contents_count() > 0 ) ? '<span class="hestia-mini-cart-count">' . WC()->cart->get_cart_contents_count() . '</span>' : '' ); ?></span>
 		</a>
 		<?php
 	}

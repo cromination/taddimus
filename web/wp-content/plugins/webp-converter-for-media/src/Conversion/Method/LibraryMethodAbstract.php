@@ -18,7 +18,7 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 		$output_formats = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
 		foreach ( $output_formats as $output_format ) {
 			foreach ( $paths as $path ) {
-				$this->files_available[ $output_format ]++;
+				$this->files_statuses[ $output_format ][ $path ] = false;
 				$this->convert_path( $path, $output_format, $plugin_settings );
 			}
 		}
@@ -47,13 +47,13 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 			$this->convert_image_to_output( $image, $source_path, $output_path, $format, $plugin_settings );
 			do_action( 'webpc_after_conversion', $output_path, $source_path );
 
-			$this->files_converted[ $format ]++;
-
 			$this->skip_crashed->delete_crashed_file( $output_path );
 			$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
 			$this->update_conversion_stats( $source_path, $output_path, $format );
+
+			$this->files_statuses[ $format ][ $path ] = true;
 		} catch ( LargerThanOriginalException $e ) {
-			$this->files_converted[ $format ]--;
+			return;
 		} catch ( ExceptionInterface $e ) {
 			$this->save_conversion_error( $e->getMessage(), $plugin_settings );
 		} catch ( \Exception $e ) {

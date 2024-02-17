@@ -37,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "2.9.x-dev"
+            "dev-main": "2.10.x-dev"
         }
     },
     "autoload": {
@@ -56,9 +56,6 @@
         "bin/wp.bat"
     ],
     "scripts": {
-        "post-install-cmd": [
-            "./utils/git-setup-pre-commit-hook"
-        ],
         "behat": "run-behat-tests",
         "behat-rerun": "rerun-behat-tests",
         "lint": "run-linter-tests",

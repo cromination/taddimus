@@ -3,7 +3,9 @@
 namespace WebpConverter\Conversion\Method;
 
 use WebpConverter\Conversion\CrashedFilesOperator;
+use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\FormatFactory;
+use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\LargerFilesOperator;
 use WebpConverter\Exception\ExceptionInterface;
 use WebpConverter\Exception\FilesizeOversizeException;
@@ -125,7 +127,9 @@ class RemoteMethod extends MethodAbstract {
 					continue;
 				}
 
-				$this->files_available[ $output_format ] += count( $file_paths );
+				foreach ( $file_paths as $file_path ) {
+					$this->files_statuses[ $output_format ][ $file_path ] = false;
+				}
 
 				$output_paths[ $output_format ] = $this->get_output_paths( $file_paths, $output_format );
 				$source_paths[ $output_format ] = $file_paths;
@@ -142,7 +146,7 @@ class RemoteMethod extends MethodAbstract {
 						unset( $source_paths[ $output_format ][ $path_index ] );
 						unset( $output_paths[ $output_format ][ $path_index ] );
 
-						$this->files_available[ $output_format ]--;
+						unset( $this->files_statuses[ $output_format ][ $extensions_path ] );
 					}
 				}
 			}
@@ -184,8 +188,13 @@ class RemoteMethod extends MethodAbstract {
 					$this->skip_crashed->delete_crashed_file( $output_path );
 					$this->skip_larger->remove_image_if_is_larger( $output_path, $source_path, $plugin_settings );
 					$this->update_conversion_stats( $source_path, $output_path, $output_format );
+
+					$this->files_statuses[ $output_format ][ $source_path ] = true;
+					if ( ( $output_format === AvifFormat::FORMAT_EXTENSION ) && isset( $this->files_statuses[ WebpFormat::FORMAT_EXTENSION ][ $source_path ] ) ) {
+						$this->files_statuses[ WebpFormat::FORMAT_EXTENSION ][ $source_path ] = true;
+					}
 				} catch ( LargerThanOriginalException $e ) {
-					$this->files_converted[ $output_format ]--;
+					continue;
 				}
 			}
 		}
@@ -289,8 +298,6 @@ class RemoteMethod extends MethodAbstract {
 				if ( ( $http_code === 200 ) && ( strlen( $response ) > 10 ) ) {
 					$values[ $output_format ]                 = $values[ $output_format ] ?? [];
 					$values[ $output_format ][ $resource_id ] = $response;
-
-					$this->files_converted[ $output_format ]++;
 				} else {
 					$this->handle_request_error(
 						$source_paths[ $output_format ][ $resource_id ],

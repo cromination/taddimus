@@ -60,6 +60,11 @@ class MakePotCommand extends WP_CLI_Command {
 	protected $main_file_data = [];
 
 	/**
+	 * @var string
+	 */
+	protected $main_file_path;
+
+	/**
 	 * @var bool
 	 */
 	protected $skip_js = false;
@@ -297,10 +302,10 @@ class MakePotCommand extends WP_CLI_Command {
 		}
 
 		if ( ! PotGenerator::toFile( $translations, $this->destination ) ) {
-			WP_CLI::error( 'Could not generate a POT file!' );
+			WP_CLI::error( 'Could not generate a POT file.' );
 		}
 
-		WP_CLI::success( 'POT file successfully generated!' );
+		WP_CLI::success( 'POT file successfully generated.' );
 	}
 
 	/**
@@ -331,7 +336,7 @@ class MakePotCommand extends WP_CLI_Command {
 		$ignore_domain = Utils\get_flag_value( $assoc_args, 'ignore-domain', false );
 
 		if ( ! $this->source || ! is_dir( $this->source ) ) {
-			WP_CLI::error( 'Not a valid source directory!' );
+			WP_CLI::error( 'Not a valid source directory.' );
 		}
 
 		$this->main_file_data = $this->get_main_file_data();
@@ -371,12 +376,8 @@ class MakePotCommand extends WP_CLI_Command {
 
 		WP_CLI::debug( sprintf( 'Destination: %s', $this->destination ), 'make-pot' );
 
-		// Two is_dir() checks in case of a race condition.
-		if ( ! is_dir( dirname( $this->destination ) )
-			&& ! mkdir( dirname( $this->destination ), 0777, true )
-			&& ! is_dir( dirname( $this->destination ) )
-		) {
-			WP_CLI::error( 'Could not create destination directory!' );
+		if ( ! is_dir( dirname( $this->destination ) ) && ! mkdir( dirname( $this->destination ), 0777, true ) ) {
+			WP_CLI::error( 'Could not create destination directory.' );
 		}
 
 		if ( isset( $assoc_args['merge'] ) ) {
@@ -481,7 +482,8 @@ class MakePotCommand extends WP_CLI_Command {
 					WP_CLI::log( 'Theme stylesheet detected.' );
 					WP_CLI::debug( sprintf( 'Theme stylesheet: %s', $file->getRealPath() ), 'make-pot' );
 
-					$this->project_type = 'theme';
+					$this->project_type   = 'theme';
+					$this->main_file_path = $file->getRealPath();
 
 					return $theme_data;
 				}
@@ -502,7 +504,8 @@ class MakePotCommand extends WP_CLI_Command {
 					WP_CLI::log( 'Theme stylesheet detected.' );
 					WP_CLI::debug( sprintf( 'Theme stylesheet: %s', $file->getRealPath() . '/style.css' ), 'make-pot' );
 
-					$this->project_type = 'theme';
+					$this->project_type   = 'theme';
+					$this->main_file_path = $file->getRealPath();
 
 					return $theme_data;
 				}
@@ -523,7 +526,8 @@ class MakePotCommand extends WP_CLI_Command {
 					WP_CLI::log( 'Plugin file detected.' );
 					WP_CLI::debug( sprintf( 'Plugin file: %s', $file->getRealPath() ), 'make-pot' );
 
-					$this->project_type = 'plugin';
+					$this->project_type   = 'plugin';
+					$this->main_file_path = $file->getRealPath();
 
 					return $plugin_data;
 				}
@@ -620,6 +624,12 @@ class MakePotCommand extends WP_CLI_Command {
 				$translation->addExtractedComment( sprintf( '%s of the theme', $header ) );
 			} else {
 				$translation->addExtractedComment( sprintf( '%s of the plugin', $header ) );
+			}
+
+			if ( $this->main_file_path && $this->location ) {
+				$translation->addReference(
+					str_replace( "$this->source/", '', $this->main_file_path )
+				);
 			}
 
 			$translations[] = $translation;

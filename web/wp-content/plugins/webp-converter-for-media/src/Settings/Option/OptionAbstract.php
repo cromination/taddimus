@@ -18,6 +18,7 @@ abstract class OptionAbstract implements OptionInterface {
 	const FORM_TYPE_ADVANCED     = 'settings_advanced';
 	const FORM_TYPE_CDN          = 'settings_cdn';
 	const FORM_TYPE_SIDEBAR      = 'settings_sidebar';
+	const FORM_TYPE_EXPERT       = 'settings_expert';
 
 	/**
 	 * {@inheritdoc}

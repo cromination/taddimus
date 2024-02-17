@@ -24,7 +24,7 @@
 					<i data-type="iconpicker-item" title=".fa-google-plus-square" class="fab fa-google-plus-square"></i>
 					<i data-type="iconpicker-item" title=".fa-linkedin-in" class="fab fa-linkedin-in"></i>
 					<i data-type="iconpicker-item" title=".fa-linkedin" class="fab fa-linkedin"></i>
-					<i data-type="iconpicker-item" title=".fa-twitter" class="fab fa-twitter"></i>
+					<i data-type="iconpicker-item" title=".fa-x-twitter" class="fab fa-x-twitter"></i>
 					<i data-type="iconpicker-item" title=".fa-twitter-square" class="fab fa-twitter-square"></i>
 					<i data-type="iconpicker-item" title=".fa-vimeo-v" class="fab fa-vimeo-v"></i>
 					<i data-type="iconpicker-item" title=".fa-vimeo-square" class="fab fa-vimeo-square"></i>

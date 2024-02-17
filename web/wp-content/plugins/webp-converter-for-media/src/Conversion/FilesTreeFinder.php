@@ -10,6 +10,7 @@ use WebpConverter\PluginData;
 use WebpConverter\Service\ServerConfigurator;
 use WebpConverter\Service\StatsManager;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
+use WebpConverter\Settings\Option\ServiceModeOption;
 use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
 
@@ -84,7 +85,7 @@ class FilesTreeFinder {
 
 		$plugin_settings       = $this->plugin_data->get_plugin_settings();
 		$force_convert_deleted = ( ! in_array( ExtraFeaturesOption::OPTION_VALUE_ONLY_SMALLER, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
-		$force_convert_crashed = ( in_array( ExtraFeaturesOption::OPTION_VALUE_SERVICE_MODE, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) );
+		$force_convert_crashed = ( $plugin_settings[ ServiceModeOption::OPTION_NAME ] === 'yes' );
 
 		$values = [];
 		foreach ( $plugin_settings[ SupportedDirectoriesOption::OPTION_NAME ] as $dir_name ) {

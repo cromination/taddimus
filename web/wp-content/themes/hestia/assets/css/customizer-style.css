@@ -1905,3 +1905,51 @@ select.is-pro-option + span.dashicons-lock {
   opacity: .4;
   pointer-events: none;
 }
+
+ul:where([id*="hestia_footer"], [id*="hestia_buttons_style"], [id*="hestia_top_bar"]) [id*="upsell"] {
+  opacity: .4;
+  pointer-events: none;
+}
+
+ul:where([id*="hestia_footer"], [id*="hestia_buttons_style"], [id*="hestia_top_bar"]) [id*="upsell"]:not([id*="top_bar"][id*="color"]) .customize-control-title::after,
+ul:where([id*="hestia_footer"], [id*="hestia_buttons_style"], [id*="hestia_top_bar"]) [id*="upsell"] :where(.customize-control-content:has(.wp-picker-container), li > .wp-picker-container)::after {
+  content: "\f160";
+  font-family: "dashicons";
+  line-height: 0;
+  font-size: 16px;
+  margin-left: 2px;
+  vertical-align: -2px;
+}
+
+ul:where([id*="hestia_footer"], [id*="hestia_buttons_style"], [id*="hestia_top_bar"]) [id*="upsell"] :is(.customize-control-content:has(.wp-picker-container), li > .wp-picker-container)::after {
+  font-size: 19px;
+  vertical-align: -9px;
+}
+
+[id*="hestia"][id*="_text_upgrade"] {
+  margin-top: 10px;
+}
+
+[id*="hestia"][id*="_text_upgrade"] span.upgrade-links {
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+[id*="hestia"][id*="_text_upgrade"] span.upgrade-links a.button {
+  width: fit-content;
+}
+
+[id*="hestia"][id*="_text_upgrade"]:not(:last-child) span.upgrade-links::after,
+[id*="hestia"][id*="_text_upgrade"]:last-child span.upgrade-links::before {
+  content: '';
+  display: block;
+  border-top: 1px solid #ddd;
+  margin-left: -12px;
+  width: 98%;
+}
+
+[id*="hestia"][id*="_text_upgrade"]:last-child span.upgrade-links::before {
+  margin-top: 10px;
+}

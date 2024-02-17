@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+    'CURLStringFile' => $vendorDir . '/symfony/polyfill-php81/Resources/stubs/CURLStringFile.php',
     'Cache_Command' => $vendorDir . '/wp-cli/cache-command/src/Cache_Command.php',
     'Capabilities_Command' => $vendorDir . '/wp-cli/role-command/src/Capabilities_Command.php',
     'Checksum_Base_Command' => $vendorDir . '/wp-cli/checksum-command/src/Checksum_Base_Command.php',
@@ -47,6 +48,7 @@ return array(
     'Post_Meta_Command' => $vendorDir . '/wp-cli/entity-command/src/Post_Meta_Command.php',
     'Post_Term_Command' => $vendorDir . '/wp-cli/entity-command/src/Post_Term_Command.php',
     'Post_Type_Command' => $vendorDir . '/wp-cli/entity-command/src/Post_Type_Command.php',
+    'ReturnTypeWillChange' => $vendorDir . '/symfony/polyfill-php81/Resources/stubs/ReturnTypeWillChange.php',
     'Rewrite_Command' => $vendorDir . '/wp-cli/rewrite-command/src/Rewrite_Command.php',
     'Role_Command' => $vendorDir . '/wp-cli/role-command/src/Role_Command.php',
     'Scaffold_Command' => $vendorDir . '/wp-cli/scaffold-command/src/Scaffold_Command.php',
@@ -85,9 +87,6 @@ return array(
     'WP_CLI\\Core\\NonDestructiveCoreUpgrader' => $vendorDir . '/wp-cli/core-command/src/WP_CLI/Core/NonDestructiveCoreUpgrader.php',
     'WP_CLI\\DestructivePluginUpgrader' => $vendorDir . '/wp-cli/extension-command/src/WP_CLI/DestructivePluginUpgrader.php',
     'WP_CLI\\DestructiveThemeUpgrader' => $vendorDir . '/wp-cli/extension-command/src/WP_CLI/DestructiveThemeUpgrader.php',
-    'WP_CLI\\Entity\\NonExistentKeyException' => $vendorDir . '/wp-cli/entity-command/src/WP_CLI/Entity/NonExistentKeyException.php',
-    'WP_CLI\\Entity\\RecursiveDataStructureTraverser' => $vendorDir . '/wp-cli/entity-command/src/WP_CLI/Entity/RecursiveDataStructureTraverser.php',
-    'WP_CLI\\Entity\\Utils' => $vendorDir . '/wp-cli/entity-command/src/WP_CLI/Entity/Utils.php',
     'WP_CLI\\Fetchers\\Plugin' => $vendorDir . '/wp-cli/extension-command/src/WP_CLI/Fetchers/Plugin.php',
     'WP_CLI\\Fetchers\\Theme' => $vendorDir . '/wp-cli/extension-command/src/WP_CLI/Fetchers/Theme.php',
     'WP_CLI\\Fetchers\\UnfilteredPlugin' => $vendorDir . '/wp-cli/checksum-command/src/WP_CLI/Fetchers/UnfilteredPlugin.php',

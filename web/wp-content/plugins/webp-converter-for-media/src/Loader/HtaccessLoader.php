@@ -9,6 +9,9 @@ use WebpConverter\Service\PathsGenerator;
 use WebpConverter\Settings\Option\CloudflareApiTokenOption;
 use WebpConverter\Settings\Option\CloudflareZoneIdOption;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
+use WebpConverter\Settings\Option\HtaccessRewriteOutputOption;
+use WebpConverter\Settings\Option\HtaccessRewritePathOption;
+use WebpConverter\Settings\Option\HtaccessRewriteRootOption;
 use WebpConverter\Settings\Option\RewriteInheritanceOption;
 use WebpConverter\Settings\Option\SupportedExtensionsOption;
 
@@ -30,8 +33,11 @@ class HtaccessLoader extends LoaderAbstract {
 	 * {@inheritdoc}
 	 */
 	public function init_admin_hooks() {
-		add_filter( 'webpc_htaccess_rewrite_root', [ $this, 'modify_document_root_path' ] );
-		add_filter( 'webpc_htaccess_rewrite_output', [ $this, 'modify_output_root_path' ], 10, 2 );
+		add_filter( 'webpc_htaccess_rewrite_root', [ $this, 'modify_document_root_path' ], 0 );
+		add_filter( 'webpc_htaccess_rewrite_output', [ $this, 'modify_output_root_path' ], 0, 2 );
+		add_filter( 'webpc_htaccess_rewrite_root', [ $this, 'overwrite_htaccess_rewrite_root' ] );
+		add_filter( 'webpc_htaccess_rewrite_path', [ $this, 'overwrite_htaccess_rewrite_path' ] );
+		add_filter( 'webpc_htaccess_rewrite_output', [ $this, 'overwrite_htaccess_rewrite_output' ] );
 		add_filter( 'webpc_debug_image_url', [ $this, 'update_image_urls_to_bunny_cdn' ] );
 	}
 
@@ -92,6 +98,47 @@ class HtaccessLoader extends LoaderAbstract {
 		}
 
 		return $output_path;
+	}
+
+	/**
+	 * @param string $path .
+	 *
+	 * @return string
+	 * @internal
+	 */
+	public function overwrite_htaccess_rewrite_root( string $path ): string {
+		$settings = $this->plugin_data->get_plugin_settings();
+		$terms    = [
+			'ABSPATH' => ABSPATH,
+		];
+
+		return ( $settings[ HtaccessRewriteRootOption::OPTION_NAME ] !== '' )
+			? str_replace( array_keys( $terms ), array_values( $terms ), $settings[ HtaccessRewriteRootOption::OPTION_NAME ] )
+			: $path;
+	}
+
+	/**
+	 * @param string $path .
+	 *
+	 * @return string
+	 * @internal
+	 */
+	public function overwrite_htaccess_rewrite_path( string $path ): string {
+		$settings = $this->plugin_data->get_plugin_settings();
+
+		return ( $settings[ HtaccessRewritePathOption::OPTION_NAME ] !== '' ) ? $settings[ HtaccessRewritePathOption::OPTION_NAME ] : $path;
+	}
+
+	/**
+	 * @param string $path .
+	 *
+	 * @return string
+	 * @internal
+	 */
+	public function overwrite_htaccess_rewrite_output( string $path ): string {
+		$settings = $this->plugin_data->get_plugin_settings();
+
+		return ( $settings[ HtaccessRewriteOutputOption::OPTION_NAME ] !== '' ) ? $settings[ HtaccessRewriteOutputOption::OPTION_NAME ] : $path;
 	}
 
 	/**

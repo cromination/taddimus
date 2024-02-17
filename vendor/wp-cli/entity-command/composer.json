@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "wp-cli/wp-cli": "^2.5"
+        "wp-cli/wp-cli": "^2.10"
     },
     "require-dev": {
         "wp-cli/cache-command": "^1 || ^2",
@@ -92,6 +92,8 @@
             "option patch",
             "option pluck",
             "option update",
+            "option set-autoload",
+            "option get-autoload",
             "post",
             "post create",
             "post delete",
@@ -115,6 +117,7 @@
             "post term remove",
             "post term set",
             "post update",
+            "post url-to-id",
             "post-type",
             "post-type get",
             "post-type list",

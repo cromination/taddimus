@@ -88,6 +88,11 @@ final class Admin implements Context {
 	 * To make this work across WordPress versions, we use the actual file and
 	 * modify it on-the-fly.
 	 *
+	 * @global string $hook_suffix
+	 * @global string $pagenow
+	 * @global int    $wp_db_version
+	 * @global array  $_wp_submenu_nopriv
+	 *
 	 * @return void
 	 */
 	private function load_admin_environment() {
@@ -114,7 +119,7 @@ final class Admin implements Context {
 		$admin_php_file = preg_replace( '/\s+\?>$/', '', $admin_php_file );
 
 		// Then we remove the loading of either wp-config.php or wp-load.php.
-		$admin_php_file = preg_replace( '/^\s*(?:include|require).*[\'"]\/?wp-(?:load|config)\.php[\'"]\s*\)?;$/m', '', $admin_php_file );
+		$admin_php_file = preg_replace( '/^\s*(?:include|require).*[\'"]\/?wp-(?:load|config)\.php[\'"]\s*\)?;\s*$/m', '', $admin_php_file );
 
 		// We also remove the authentication redirect.
 		$admin_php_file = preg_replace( '/^\s*auth_redirect\(\);$/m', '', $admin_php_file );

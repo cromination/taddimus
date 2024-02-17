@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Service;
 
+use WebpConverter\Conversion\Directory\UploadsWebpcDirectory;
 use WebpConverter\HookableInterface;
 use WebpConverter\PluginData;
 use WebpConverter\Settings\Option\ExtraFeaturesOption;
@@ -10,8 +11,6 @@ use WebpConverter\Settings\Option\ExtraFeaturesOption;
  * Excludes saving converted images in the backup.
  */
 class BackupExcluder implements HookableInterface {
-
-	const OUTPUT_DIRECTORY = 'uploads-webpc';
 
 	/**
 	 * @var PluginData
@@ -43,7 +42,7 @@ class BackupExcluder implements HookableInterface {
 	 * @internal
 	 */
 	public function ai1wm_exclude_content_from_export( $exclude_dirs ) {
-		$exclude_dirs[] = self::OUTPUT_DIRECTORY;
+		$exclude_dirs[] = UploadsWebpcDirectory::DIRECTORY_NAME;
 		return $exclude_dirs;
 	}
 
@@ -55,7 +54,7 @@ class BackupExcluder implements HookableInterface {
 	 * @internal
 	 */
 	public function updraftplus_exclude_directory( $status, $directory ) {
-		return ( $directory === self::OUTPUT_DIRECTORY ) ? true : $status;
+		return ( $directory === UploadsWebpcDirectory::DIRECTORY_NAME ) ? true : $status;
 	}
 
 	/**
@@ -65,7 +64,7 @@ class BackupExcluder implements HookableInterface {
 	 * @internal
 	 */
 	public function backwpup_content_exclude_dirs( $exclude_dirs ) {
-		$exclude_dirs[] = self::OUTPUT_DIRECTORY;
+		$exclude_dirs[] = UploadsWebpcDirectory::DIRECTORY_NAME;
 		return $exclude_dirs;
 	}
 }

@@ -176,18 +176,18 @@ class About_Us extends Abstract_Module {
 		$links         = isset( $this->about_data['page_menu'] ) ? $this->about_data['page_menu'] : [];
 		$product_pages = isset( $this->about_data['product_pages'] ) ? $this->about_data['product_pages'] : [];
 		return [
-			'links'             => $links,
-			'logoUrl'           => $this->about_data['logo'],
-			'productPages'      => $this->get_product_pages_data( $product_pages ),
-			'products'          => $this->get_other_products_data(),
-			'homeUrl'           => esc_url( home_url() ),
-			'pageSlug'          => $this->get_about_page_slug(),
-			'currentProduct'    => [
+			'links'              => $links,
+			'logoUrl'            => $this->about_data['logo'],
+			'productPages'       => $this->get_product_pages_data( $product_pages ),
+			'products'           => $this->get_other_products_data(),
+			'homeUrl'            => esc_url( home_url() ),
+			'pageSlug'           => $this->get_about_page_slug(),
+			'currentProduct'     => [
 				'slug' => $this->product->get_key(),
 				'name' => $this->product->get_name(),
 			],
-			'teamImage'         => $this->get_sdk_uri() . 'assets/images/team.jpg',
-			'strings'           => [
+			'teamImage'          => $this->get_sdk_uri() . 'assets/images/team.jpg',
+			'strings'            => [
 				'aboutUs'          => __( 'About us', 'hestia' ),
 				'heroHeader'       => __( 'Our Story', 'hestia' ),
 				'heroTextFirst'    => __( 'Themeisle was founded in 2012 by a group of passionate developers who wanted to create beautiful and functional WordPress themes and plugins. Since then, we have grown into a team of over 20 dedicated professionals who are committed to delivering the best possible products to our customers.', 'hestia' ),
@@ -203,7 +203,8 @@ class About_Us extends Abstract_Module {
 				'notInstalled'     => __( 'Not Installed', 'hestia' ),
 				'active'           => __( 'Active', 'hestia' ),
 			],
-			'canInstallPlugins' => current_user_can( 'install_plugins' ),
+			'canInstallPlugins'  => current_user_can( 'install_plugins' ),
+			'canActivatePlugins' => current_user_can( 'activate_plugins' ),
 		];
 	}
 
@@ -345,8 +346,8 @@ class About_Us extends Abstract_Module {
 				'condition'   => class_exists( 'WooCommerce', false ),
 			],
 			'templates-patterns-collection'       => [
-				'name'        => 'Template Cloud',
-				'description' => __( 'Ultimate Free Templates Cloud for WordPress, for blocks, patters of full pages.', 'hestia' ),
+				'name'        => 'Templates Cloud',
+				'description' => __( 'Design, save, and revisit your templates anytime with your personal vault on Templates Cloud.', 'hestia' ),
 			],
 		];
 

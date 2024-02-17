@@ -1,7 +1,6 @@
 <?php
 
 use WP_CLI\CommandWithDBObject;
-use WP_CLI\Entity\Utils as EntityUtils;
 use WP_CLI\Fetchers\Post as PostFetcher;
 use WP_CLI\Fetchers\User as UserFetcher;
 use WP_CLI\Utils;
@@ -148,7 +147,7 @@ class Post_Command extends CommandWithDBObject {
 	 * ## EXAMPLES
 	 *
 	 *     # Create post and schedule for future
-	 *     $ wp post create --post_type=page --post_title='A future post' --post_status=future --post_date='2020-12-01 07:00:00'
+	 *     $ wp post create --post_type=post --post_title='A future post' --post_status=future --post_date='2030-12-01 07:00:00'
 	 *     Success: Created post 1921.
 	 *
 	 *     # Create post with content from given file
@@ -795,7 +794,7 @@ class Post_Command extends CommandWithDBObject {
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'post_content' ) ) {
-			if ( ! EntityUtils::has_stdin() ) {
+			if ( ! Utils\has_stdin() ) {
 				WP_CLI::error( 'The parameter `post_content` reads from STDIN.' );
 			}
 
@@ -879,13 +878,41 @@ class Post_Command extends CommandWithDBObject {
 		}
 	}
 
+	/**
+	 * Gets the post ID for a given URL.
+	 *
+	 * ## OPTIONS
+	 *
+	 * <url>
+	 * : The URL of the post to get.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     # Get post ID by URL
+	 *     $ wp post url-to-id https://example.com/?p=1
+	 *     1
+	 *
+	 * @subcommand url-to-id
+	 */
+	public function url_to_id( $args, $assoc_args ) {
+		$post_id = url_to_postid( $args[0] );
+
+		$post = get_post( $post_id );
+
+		if ( null === $post ) {
+			WP_CLI::error( "Could not get post with url $args[0]." );
+		}
+
+		WP_CLI::print_value( $post_id, $assoc_args );
+	}
+
 	private function maybe_make_child() {
 		// 50% chance of making child post.
 		return ( wp_rand( 1, 2 ) === 1 );
 	}
 
 	private function maybe_reset_depth() {
-		// 10% chance of reseting to root depth,
+		// 10% chance of resetting to root depth,
 		return ( wp_rand( 1, 10 ) === 7 );
 	}
 

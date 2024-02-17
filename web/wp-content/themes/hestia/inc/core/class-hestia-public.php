@@ -752,7 +752,7 @@ class Hestia_Public {
 
 		global $wp_styles;
 		foreach ( $wp_styles->queue as $style ) {
-			if ( strstr( $wp_styles->registered[ $style ]->src, 'font-awesome.min.css' ) ) {
+			if ( isset( $wp_styles->registered[ $style ] ) && strstr( $wp_styles->registered[ $style ]->src, 'font-awesome.min.css' ) ) {
 				update_option( 'hestia_load_shim', 'yes' );
 				return true;
 			}

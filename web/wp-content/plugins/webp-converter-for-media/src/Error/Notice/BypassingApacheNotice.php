@@ -30,7 +30,7 @@ class BypassingApacheNotice implements NoticeInterface {
 				[
 					sprintf(
 					/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
-						__( 'Please check %1$sour instruction%2$s which should help you solve your problem. This will allow the plugin to function properly.', 'webp-converter-for-media' ),
+						'<strong>' . __( 'Please check %1$sour instruction%2$s which should help you solve your problem. This will allow the plugin to function properly.', 'webp-converter-for-media' ) . '</strong>',
 						'<a href="https://url.mattplugins.com/converter-error-bypassing-apache-instruction" target="_blank">',
 						'</a>'
 					),

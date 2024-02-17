@@ -76,19 +76,11 @@ abstract class MethodAbstract implements MethodInterface {
 	protected $size_after = 0;
 
 	/**
-	 * @var int[]
+	 * @var mixed[]
 	 */
-	protected $files_available = [
-		WebpFormat::FORMAT_EXTENSION => 0,
-		AvifFormat::FORMAT_EXTENSION => 0,
-	];
-
-	/**
-	 * @var int[]
-	 */
-	protected $files_converted = [
-		WebpFormat::FORMAT_EXTENSION => 0,
-		AvifFormat::FORMAT_EXTENSION => 0,
+	protected $files_statuses = [
+		WebpFormat::FORMAT_EXTENSION => [],
+		AvifFormat::FORMAT_EXTENSION => [],
 	];
 
 	/**
@@ -123,14 +115,21 @@ abstract class MethodAbstract implements MethodInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_files_available( string $output_format ): int {
-		return $this->files_available[ $output_format ];
+		return count( $this->files_statuses[ $output_format ] );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function get_files_converted( string $output_format ): int {
-		return $this->files_converted[ $output_format ];
+		return count(
+			array_filter(
+				$this->files_statuses[ $output_format ],
+				function ( $value ) {
+					return ( $value === true );
+				}
+			)
+		);
 	}
 
 	/**

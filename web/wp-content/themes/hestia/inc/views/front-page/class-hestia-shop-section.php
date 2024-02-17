@@ -218,7 +218,7 @@ class Hestia_Shop_Section extends Hestia_Abstract_Main {
 									$categories   = explode( ',', $product_categories );
 									$nb_of_cat    = apply_filters( 'hestia_shop_category_words', 2 );
 									$nb_of_cat    = intval( $nb_of_cat );
-									$cat          = $nb_of_cat > -1 ? hestia_limit_content( $categories, $nb_of_cat, ',', false ) : $product_categories;
+									$cat          = $nb_of_cat > -1 ? hestia_limit_content( $categories, $nb_of_cat, '', false ) : $product_categories;
 									$allowed_html = array(
 										'a' => array(
 											'href' => array(),

@@ -31,6 +31,7 @@ class Search_Replace_Command extends WP_CLI_Command {
 	private $log_prefixes       = array( '< ', '> ' );
 	private $log_colors;
 	private $log_encoding;
+	private $start_time;
 
 	/**
 	 * Searches/replaces strings in the database.
@@ -582,6 +583,12 @@ class Search_Replace_Command extends WP_CLI_Command {
 				$value = $replacer->run( $col_value );
 
 				if ( $value === $col_value ) {
+					continue;
+				}
+
+				// In case a needed re-serialization was unsuccessful, we should not update the value,
+				// as this implies we hit an exception while processing.
+				if ( gettype( $value ) !== gettype( $col_value ) ) {
 					continue;
 				}
 

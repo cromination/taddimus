@@ -7,15 +7,15 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/elementor-extra-widgets.git",
-                "reference": "58ac60adaf54f482cf56a494cdd03ca62b55603c"
+                "reference": "bf962882386c08ddc103611cb3cf78779ee85cc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/elementor-extra-widgets/zipball/58ac60adaf54f482cf56a494cdd03ca62b55603c",
-                "reference": "58ac60adaf54f482cf56a494cdd03ca62b55603c",
+                "url": "https://api.github.com/repos/Codeinwp/elementor-extra-widgets/zipball/bf962882386c08ddc103611cb3cf78779ee85cc2",
+                "reference": "bf962882386c08ddc103611cb3cf78779ee85cc2",
                 "shasum": ""
             },
-            "time": "2023-05-22T21:26:12+00:00",
+            "time": "2024-01-15T14:56:51+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -124,23 +124,23 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.11",
-            "version_normalized": "3.3.11.0",
+            "version": "3.3.13",
+            "version_normalized": "3.3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "583c474d8b5a8d12592f4a78ab8fa335aaf42fc0"
+                "reference": "2209cdf402e8f97def8d699bb8447dc67585cc95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/583c474d8b5a8d12592f4a78ab8fa335aaf42fc0",
-                "reference": "583c474d8b5a8d12592f4a78ab8fa335aaf42fc0",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/2209cdf402e8f97def8d699bb8447dc67585cc95",
+                "reference": "2209cdf402e8f97def8d699bb8447dc67585cc95",
                 "shasum": ""
             },
             "require-dev": {
                 "codeinwp/phpcs-ruleset": "dev-main"
             },
-            "time": "2023-12-12T10:06:27+00:00",
+            "time": "2024-02-01T14:10:46+00:00",
             "type": "library",
             "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
@@ -161,7 +161,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.11"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.13"
             },
             "install-path": "../codeinwp/themeisle-sdk"
         }

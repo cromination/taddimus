@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'codeinwp/themeisle-companion',
-        'pretty_version' => 'v2.10.27',
-        'version' => '2.10.27.0',
-        'reference' => '2a4a65f3162542f94c314f0fd84b904da84b5bd7',
+        'pretty_version' => 'v2.10.30',
+        'version' => '2.10.30.0',
+        'reference' => '8123090dd74b876eb668009634bce55239557bbf',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'codeinwp/elementor-extra-widgets' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '58ac60adaf54f482cf56a494cdd03ca62b55603c',
+            'reference' => 'bf962882386c08ddc103611cb3cf78779ee85cc2',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/elementor-extra-widgets',
             'aliases' => array(
@@ -31,9 +31,9 @@
             'dev_requirement' => false,
         ),
         'codeinwp/themeisle-companion' => array(
-            'pretty_version' => 'v2.10.27',
-            'version' => '2.10.27.0',
-            'reference' => '2a4a65f3162542f94c314f0fd84b904da84b5bd7',
+            'pretty_version' => 'v2.10.30',
+            'version' => '2.10.30.0',
+            'reference' => '8123090dd74b876eb668009634bce55239557bbf',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -49,9 +49,9 @@
             'dev_requirement' => false,
         ),
         'codeinwp/themeisle-sdk' => array(
-            'pretty_version' => '3.3.11',
-            'version' => '3.3.11.0',
-            'reference' => '583c474d8b5a8d12592f4a78ab8fa335aaf42fc0',
+            'pretty_version' => '3.3.13',
+            'version' => '3.3.13.0',
+            'reference' => '2209cdf402e8f97def8d699bb8447dc67585cc95',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/themeisle-sdk',
             'aliases' => array(),

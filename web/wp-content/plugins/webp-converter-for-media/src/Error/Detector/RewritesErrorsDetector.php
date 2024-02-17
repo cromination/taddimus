@@ -21,8 +21,6 @@ use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
 use WebpConverter\Service\FileLoader;
 use WebpConverter\Settings\Option\LoaderTypeOption;
-use WebpConverter\Settings\Option\OutputFormatsOption;
-use WebpConverter\Settings\Option\SupportedDirectoriesOption;
 
 /**
  * Checks for configuration errors about non-working HTTP rewrites.
@@ -80,12 +78,6 @@ class RewritesErrorsDetector implements DetectorInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_error() {
-		$plugin_settings = $this->plugin_data->get_plugin_settings();
-		if ( ! $plugin_settings[ SupportedDirectoriesOption::OPTION_NAME ]
-			|| ! $plugin_settings[ OutputFormatsOption::OPTION_NAME ] ) {
-			return null;
-		}
-
 		$this->convert_images_for_debug();
 
 		do_action( LoaderAbstract::ACTION_NAME, true, true );

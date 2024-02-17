@@ -964,7 +964,7 @@ class Hestia_Compatibility_Style {
 				  content: "";
 				}
 				.hestia-top-bar li a[href*="twitter.com"]:hover:before {
-				  color: #55acee;
+				  color: #000;
 				}
 				
 				.hestia-top-bar li a[href*="pinterest.com"] {
@@ -1159,7 +1159,7 @@ class Hestia_Compatibility_Style {
 				    color: #3b5998;
 				}
 				.footer-big .footer-menu li a[href*="twitter.com"]:hover:before {
-				    color: #55acee;
+				    color: #000;
 				}
 				.footer-big .footer-menu li a[href*="pinterest.com"]:hover:before {
 				    color: #cc2127;

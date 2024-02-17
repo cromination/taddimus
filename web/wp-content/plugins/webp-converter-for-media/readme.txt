@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.4
 Requires PHP: 7.0
-Stable tag: 5.11.5
+Stable tag: 5.12.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,10 +58,10 @@ If you would like to appreciate it, you can try [the PRO version](https://url.ma
 
 == Installation ==
 
-1. Upload the plugin files to `/wp-content/plugins/webp-converter-for-media` directory, or install the plugin through the WordPress plugins screen directly.
-2. Activate the plugin through `Plugins` screen in WordPress Admin Panel.
-3. Use `Settings -> Settings -> Converter for Media` screen to configure the plugin.
-4. Click on the button `Start Bulk Optimization` and wait.
+1. Upload the plugin files to the `/wp-content/plugins/webp-converter-for-media` directory, or install the plugin through the WordPress plugins screen directly.
+2. Activate the plugin through the `Plugins` screen in WordPress Admin Panel.
+3. Use the `Settings -> Settings -> Converter for Media` screen to configure the plugin.
+4. Click on the `Start Bulk Optimization` button and wait.
 5. Check if everything works fine using [this tutorial](https://url.mattplugins.com/converter-readme-installation-instruction).
 
 That's all! Your website is already loading faster!
@@ -303,6 +303,16 @@ Current list of supported CDN servers:
 
 == Changelog ==
 
+= 5.12.1 (2024-02-15) =
+* `[Fixed]` Verification of rewrites_not_executed server configuration error when there is also a problem with the Gd or Imagick libraries
+* `[Changed]` Error message for bypassing_apache error in server configuration
+* `[Added]` Possibility to add directory paths in the Excluded directories field in Advanced Settings
+
+= 5.12.0 (2024-01-18) =
+* `[Changed]` Statistics about bulk optimization process
+* `[Added]` Expert settings to overwrite paths for rewrite rules
+* `[Added]` Improvement in verifying operation of redirections
+
 = 5.11.5 (2023-12-07) =
 * `[Added]` Compatibility with PHP 8.3
 * `[Changed]` Error message for rewrites_not_executed error in server configuration
@@ -330,16 +340,6 @@ Current list of supported CDN servers:
 = 5.11.0 (2023-09-27) =
 * `[Added]` Ability to manually optimize selected images in Media Library
 * `[Added]` Ability to manually undo optimization of selected images in Media Library
-
-= 5.10.1 (2023-09-10) =
-* `[Fixed]` Detection of bypassing_apache error in server configuration
-
-= 5.10.0 (2023-09-09) =
-* `[Fixed]` Removing files from /uploads-webpc directory after uninstalling plugin
-* `[Changed]` Error message for rewrites_not_working error in server configuration
-* `[Changed]` Verification of correct operation of rewrites from .htaccess file
-* `[Added]` Changes to improve performance of plugin
-* `[Added]` Changes to improve loading time of plugin settings
 
 See [changelog.txt](https://url.mattplugins.com/converter-readme-changelog) for previous versions.
 

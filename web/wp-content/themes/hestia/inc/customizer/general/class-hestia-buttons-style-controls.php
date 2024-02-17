@@ -119,5 +119,64 @@ class Hestia_Buttons_Style_Controls extends Hestia_Register_Customizer_Controls 
 			)
 		);
 
+		if ( ! class_exists( 'Hestia_Addon_Manager' ) ) {
+			$this->add_buttons_additional_controls_upsell();
+		}
+	}
+
+	/**
+	 * Add upsell for buttons style additional controls.
+	 */
+	private function add_buttons_additional_controls_upsell() {
+		/**
+		 * Hover effect
+		 */
+		$this->add_control(
+			new Hestia_Customizer_Control(
+				'hestia_buttons_hover_effect_upsell',
+				array(
+					'default'           => 'shadow',
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				array(
+					'type'     => 'select',
+					'label'    => esc_html__( 'Hover effect', 'hestia' ),
+					'section'  => 'hestia_buttons_style',
+					'priority' => 25,
+					'choices'  => array(
+						'shadow' => esc_html__( 'Shadow', 'hestia' ),
+						'color'  => esc_html__( 'Color', 'hestia' ),
+					),
+				)
+			)
+		);
+
+		$this->add_control(
+			new Hestia_Customizer_Control(
+				'hestia_buttons_text_upgrade',
+				array(
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				array(
+					'container_class' => 'upgrade-links',
+					'text_before'     => sprintf(
+						/* translators: %1$s is the Learn more link, %2$s is the section title */
+						__( 'More Options Available for %1$s in the Pro version.', 'hestia' ),
+						esc_html__( 'Button', 'hestia' )
+					),
+					'link'            => tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'buttons' ),
+					'button_text'     => __( 'Upgrade Now', 'hestia' ),
+					'new_tab'         => true,
+					'is_button'       => false,
+					'shortcut'        => false,
+					'section'         => 'hestia_top_bar',
+					'focus_type'      => '',
+					'priority'        => 30,
+					'section'         => 'hestia_buttons_style',
+					'button_class'    => 'button button-primary',
+				),
+				'Hestia_Button'
+			)
+		);
 	}
 }

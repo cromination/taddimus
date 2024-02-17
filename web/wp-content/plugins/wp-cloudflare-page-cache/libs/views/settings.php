@@ -195,6 +195,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
         <form method="post" action="">
 
+            <?php wp_nonce_field('swcfpc_index_nonce', 'swcfpc_index_nonce'); ?>
             <!-- GENERAL TAB -->
             <div class="swcfpc_tab <?php if(!$tab_active || $tab_active == 'general') echo 'active'; ?>" id="general">
 

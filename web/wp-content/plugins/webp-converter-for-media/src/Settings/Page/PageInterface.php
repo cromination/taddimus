@@ -13,6 +13,11 @@ interface PageInterface {
 	public function get_slug();
 
 	/**
+	 * @return bool
+	 */
+	public function is_available(): bool;
+
+	/**
 	 * @return string
 	 */
 	public function get_menu_parent(): string;
