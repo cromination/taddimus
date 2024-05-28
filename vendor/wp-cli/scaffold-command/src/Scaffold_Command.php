@@ -8,18 +8,18 @@ use WP_CLI\Inflector;
  *
  * ## EXAMPLES
  *
- *     # Generate a new plugin with unit tests
+ *     # Generate a new plugin with unit tests.
  *     $ wp scaffold plugin sample-plugin
  *     Success: Created plugin files.
  *     Success: Created test files.
  *
- *     # Generate theme based on _s
+ *     # Generate theme based on _s.
  *     $ wp scaffold _s sample-theme --theme_name="Sample Theme" --author="John Doe"
  *     Success: Created theme 'Sample Theme'.
  *
- *     # Generate code for post type registration in given theme
+ *     # Generate code for post type registration in given theme.
  *     $ wp scaffold post-type movie --label=Movie --theme=simple-life
- *     Success: Created /var/www/example.com/public_html/wp-content/themes/simple-life/post-types/movie.php
+ *     Success: Created '/var/www/example.com/public_html/wp-content/themes/simple-life/post-types/movie.php'.
  *
  * @package wp-cli
  */
@@ -206,9 +206,9 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *
 	 * **Warning: `wp scaffold block` is deprecated.**
 	 *
-	 * The official script to generate a block is the [@wordpress/create-block](https://developer.wordpress.org/block-editor/designers-developers/developers/packages/packages-create-block/) package.
+	 * The official script to generate a block is the [@wordpress/create-block](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-create-block/) package.
 	 *
-	 * See the [Create a Block tutorial](https://developer.wordpress.org/block-editor/getting-started/create-block/) for a complete walk-through.
+	 * See the [Create a Block tutorial](https://developer.wordpress.org/block-editor/getting-started/tutorial/) for a complete walk-through.
 	 *
 	 * ## OPTIONS
 	 *
@@ -608,6 +608,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * options:
 	 *   - circle
 	 *   - gitlab
+	 *   - github
 	 * ---
 	 *
 	 * [--activate]
@@ -710,7 +711,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * * `tests/test-sample.php` is a sample file containing the actual tests.
 	 * * `.phpcs.xml.dist` is a collection of PHP_CodeSniffer rules.
 	 *
-	 * Learn more from the [plugin unit tests documentation](https://make.wordpress.org/cli/handbook/plugin-unit-tests/).
+	 * Learn more from the [plugin unit tests documentation](https://make.wordpress.org/cli/handbook/misc/plugin-unit-tests/).
 	 *
 	 * ## ENVIRONMENT
 	 *
@@ -733,6 +734,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - circle
 	 *   - gitlab
 	 *   - bitbucket
+	 *   - github
 	 * ---
 	 *
 	 * [--force]
@@ -762,7 +764,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 * * `tests/test-sample.php` is a sample file containing the actual tests.
 	 * * `.phpcs.xml.dist` is a collection of PHP_CodeSniffer rules.
 	 *
-	 * Learn more from the [plugin unit tests documentation](https://make.wordpress.org/cli/handbook/plugin-unit-tests/).
+	 * Learn more from the [plugin unit tests documentation](https://make.wordpress.org/cli/handbook/misc/plugin-unit-tests/).
 	 *
 	 * ## ENVIRONMENT
 	 *
@@ -785,6 +787,7 @@ class Scaffold_Command extends WP_CLI_Command {
 	 *   - circle
 	 *   - gitlab
 	 *   - bitbucket
+	 *   - github
 	 * ---
 	 *
 	 * [--force]
@@ -866,9 +869,33 @@ class Scaffold_Command extends WP_CLI_Command {
 		$wp_versions_to_test[] = 'latest';
 		$wp_versions_to_test[] = 'trunk';
 
+		$main_file = "{$slug}.php";
+
+		if ( 'plugin' === $type ) {
+			if ( ! function_exists( 'get_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			$all_plugins = get_plugins();
+
+			if ( ! empty( $all_plugins ) ) {
+				$filtered = array_filter(
+					array_keys( $all_plugins ),
+					static function ( $item ) use ( $slug ) {
+						return ( false !== strpos( $item, "{$slug}/" ) );
+					}
+				);
+
+				if ( ! empty( $filtered ) ) {
+					$main_file = basename( reset( $filtered ) );
+				}
+			}
+		}
+
 		$template_data = [
-			"{$type}_slug"    => $slug,
-			"{$type}_package" => $package,
+			"{$type}_slug"      => $slug,
+			"{$type}_package"   => $package,
+			"{$type}_main_file" => $main_file,
 		];
 
 		$force           = Utils\get_flag_value( $assoc_args, 'force' );
@@ -882,6 +909,8 @@ class Scaffold_Command extends WP_CLI_Command {
 			$files_to_create[ "{$target_dir}/.gitlab-ci.yml" ] = self::mustache_render( 'plugin-gitlab.mustache' );
 		} elseif ( 'bitbucket' === $assoc_args['ci'] ) {
 			$files_to_create[ "{$target_dir}/bitbucket-pipelines.yml" ] = self::mustache_render( 'plugin-bitbucket.mustache' );
+		} elseif ( 'github' === $assoc_args['ci'] ) {
+			$files_to_create[ "{$target_dir}/.github/workflows/testing.yml" ] = self::mustache_render( 'plugin-github.mustache' );
 		}
 
 		$files_written = $this->create_files( $files_to_create, $force );
@@ -948,6 +977,12 @@ class Scaffold_Command extends WP_CLI_Command {
 			}
 
 			$wp_filesystem->mkdir( dirname( $filename ) );
+
+			// Create multi-level folders.
+			if ( false === $wp_filesystem->exists( dirname( $filename ) ) ) {
+				$wp_filesystem->mkdir( dirname( dirname( $filename ) ) );
+				$wp_filesystem->mkdir( dirname( $filename ) );
+			}
 
 			if ( ! $wp_filesystem->put_contents( $filename, $contents ) ) {
 				WP_CLI::error( "Error creating file: {$filename}" );

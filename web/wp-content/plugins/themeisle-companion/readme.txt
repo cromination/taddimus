@@ -2,7 +2,7 @@
 Contributors: themeisle, codeinwp, rodicaelena, baicusandrei, hardeepasrani
 Tags: widget, admin, widgets, sharing, sections, themes, stock photos, custom icons, icons, menu icons, stock, templates, header, footer, scripts, custom fonts
 Requires at least: 4.7
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 5.6
 Stable tag: trunk
 License: GPLv2 or later
@@ -106,6 +106,57 @@ Activating the Orbit Fox plugin is just like any other plugin. If you've uploade
 5. Social Sharing Module
 
 == Changelog ==
+
+##### [Version 2.10.36](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.35...v2.10.36) (2024-04-17)
+
+### Improvements
+​- **Updated internal dependencies:​​** Enhanced performance, security and compatibility with Elementor.
+
+
+
+
+##### [Version 2.10.35](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.34...v2.10.35) (2024-03-26)
+
+### Improvements
+- Update dependencies
+- Updated icon for X (former Twitter)
+
+
+
+
+##### [Version 2.10.34](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.33...v2.10.34) (2024-03-21)
+
+### Bug Fixes
+- Updated internal dependencies
+
+
+
+
+##### [Version 2.10.33](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.32...v2.10.33) (2024-03-06)
+
+### Bug Fixes
+- Updated internal dependencies
+- Enhanced security
+
+
+
+
+##### [Version 2.10.32](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.31...v2.10.32) (2024-02-23)
+
+### Bug Fixes
+- Updated internal dependencies
+
+
+
+
+##### [Version 2.10.31](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.30...v2.10.31) (2024-02-20)
+
+### Fixes:
+- Improved security
+- Updated internal dependencies
+
+
+
 
 ##### [Version 2.10.30](https://github.com/Codeinwp/themeisle-companion/compare/v2.10.29...v2.10.30) (2024-02-01)
 

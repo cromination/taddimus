@@ -44,6 +44,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</td>
 	</tr>
 	<tr>
+		<td class="e">get_option <em>(upload_path)</em></td>
+		<td class="v">
+			<?php echo esc_html( get_option( 'upload_path' ) ?: '-' ); ?>
+		</td>
+	</tr>
+	<tr>
 		<td class="e">wp_upload_dir <em>(basedir)</em></td>
 		<td class="v">
 			<?php echo esc_html( wp_upload_dir()['basedir'] ); ?>

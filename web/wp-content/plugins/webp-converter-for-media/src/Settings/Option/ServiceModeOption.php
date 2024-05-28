@@ -43,7 +43,7 @@ class ServiceModeOption extends OptionAbstract {
 	public function get_info(): string {
 		return sprintf(
 			'%1$s (%2$s)',
-			__( 'Enable the service mode', 'webp-converter-for-media' ),
+			__( 'Service mode', 'webp-converter-for-media' ),
 			__( 'only upon the request from plugin\'s technical support', 'webp-converter-for-media' )
 		);
 	}

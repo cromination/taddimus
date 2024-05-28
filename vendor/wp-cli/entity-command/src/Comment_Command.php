@@ -21,10 +21,10 @@ use WP_CLI\Utils;
  *     $ wp comment delete 1337 --force
  *     Success: Deleted comment 1337.
  *
- *     # Delete all spam comments.
+ *     # Trash all spam comments.
  *     $ wp comment delete $(wp comment list --status=spam --format=ids)
- *     Success: Deleted comment 264.
- *     Success: Deleted comment 262.
+ *     Success: Trashed comment 264.
+ *     Success: Trashed comment 262.
  *
  * @package wp-cli
  */
@@ -672,12 +672,11 @@ class Comment_Command extends CommandWithDBObject {
 	 */
 	public function recount( $args ) {
 		foreach ( $args as $id ) {
-			wp_update_comment_count( $id );
-			$post = get_post( $id );
-			if ( $post ) {
+			if ( wp_update_comment_count( $id ) ) {
+				$post = get_post( $id );
 				WP_CLI::log( "Updated post {$post->ID} comment count to {$post->comment_count}." );
 			} else {
-				WP_CLI::warning( "Post {$post->ID} doesn't exist." );
+				WP_CLI::warning( "Post {$id} doesn't exist." );
 			}
 		}
 	}

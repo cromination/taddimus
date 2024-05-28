@@ -205,19 +205,21 @@ Determines whether WordPress is installed by checking if the standard
 database tables are installed. Doesn't produce output; uses exit codes
 to communicate whether WordPress is installed.
 
+**OPTIONS**
+
 	[--network]
 		Check if this is a multisite installation.
 
 **EXAMPLES**
 
-    # Bash script for checking if WordPress is not installed
+    # Bash script for checking if WordPress is not installed.
 
     if ! wp core is-installed 2>/dev/null; then
         # WP is not installed. Let's try installing it.
         wp core install
     fi
 
-    # Bash script for checking if WordPress is installed, with fallback
+    # Bash script for checking if WordPress is installed, with fallback.
 
     if wp core is-installed 2>/dev/null; then
         # WP is installed. Let's do some things we should only do in a confirmed WP environment.
@@ -379,15 +381,10 @@ update isn't actually running.
     No files found that need cleaning up
     Success: WordPress updated successfully.
 
-    # Update WordPress to latest version of 3.8 release
-    $ wp core update --version=3.8 ../latest.zip
-    Updating to version 3.8 ()...
+    # Update WordPress using zip file.
+    $ wp core update ../latest.zip
+    Starting update...
     Unpacking the update...
-    Cleaning up files...
-    File removed: wp-admin/js/tags-box.js
-    ...
-    File removed: wp-admin/js/updates.min.
-    377 files cleaned up
     Success: WordPress updated successfully.
 
     # Update WordPress to 3.1 forcefully
@@ -408,6 +405,8 @@ Runs the WordPress database update procedure.
 wp core update-db [--network] [--dry-run]
 ~~~
 
+**OPTIONS**
+
 	[--network]
 		Update databases for all sites on a network
 
@@ -416,14 +415,14 @@ wp core update-db [--network] [--dry-run]
 
 **EXAMPLES**
 
-    # Update the WordPress database
+    # Update the WordPress database.
     $ wp core update-db
     Success: WordPress database upgraded successfully from db version 36686 to 35700.
 
-    # Update databases for all sites on a network
+    # Update databases for all sites on a network.
     $ wp core update-db --network
     WordPress database upgraded successfully from db version 35700 to 29630 on example.com/
-    Success: WordPress database upgraded on 123/123 sites
+    Success: WordPress database upgraded on 123/123 sites.
 
 
 

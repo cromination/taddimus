@@ -20,6 +20,7 @@ use WP_CLI\Utils;
  *     Theme installed successfully.
  *     Activating 'twentysixteen'...
  *     Success: Switched to 'Twenty Sixteen' theme.
+ *     Success: Installed 1 of 1 themes.
  *
  *     # Get details of an installed theme
  *     $ wp theme get twentysixteen --fields=name,title,version
@@ -478,6 +479,7 @@ class Theme_Command extends CommandWithUpgrade {
 	 *     Theme installed successfully.
 	 *     Activating 'twentysixteen'...
 	 *     Success: Switched to 'Twenty Sixteen' theme.
+	 *     Success: Installed 1 of 1 themes.
 	 *
 	 *     # Install from a local zip file
 	 *     $ wp theme install ../my-theme.zip
@@ -486,6 +488,10 @@ class Theme_Command extends CommandWithUpgrade {
 	 *     $ wp theme install http://s3.amazonaws.com/bucketname/my-theme.zip?AWSAccessKeyId=123&Expires=456&Signature=abcdef
 	 */
 	public function install( $args, $assoc_args ) {
+		if ( count( $args ) > 1 && Utils\get_flag_value( $assoc_args, 'activate', false ) ) {
+			WP_CLI::warning( sprintf( 'Only this single theme will be activated: %s', end( $args ) ) );
+			reset( $args );
+		}
 
 		$theme_root = get_theme_root();
 		if ( $theme_root && ! is_dir( $theme_root ) ) {
@@ -860,6 +866,7 @@ class Theme_Command extends CommandWithUpgrade {
 	 * * update
 	 * * version
 	 * * update_version
+	 * * auto_update
 	 *
 	 * These fields are optionally available:
 	 *
@@ -867,15 +874,14 @@ class Theme_Command extends CommandWithUpgrade {
 	 * * update_id
 	 * * title
 	 * * description
-	 * * auto_update
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # List themes
+	 *     # List inactive themes.
 	 *     $ wp theme list --status=inactive --format=csv
-	 *     name,status,update,version,update_version
-	 *     twentyfourteen,inactive,none,1.7,
-	 *     twentysixteen,inactive,available,1.1,
+	 *     name,status,update,version,update_version,auto_update
+	 *     twentyfourteen,inactive,none,3.8,,off
+	 *     twentysixteen,inactive,available,3.0,3.1,off
 	 *
 	 * @subcommand list
 	 */

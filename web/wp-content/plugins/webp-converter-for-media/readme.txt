@@ -3,9 +3,9 @@ Contributors: mateuszgbiorczyk
 Donate link: https://url.mattplugins.com/converter-readme-donate-link
 Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.0
-Stable tag: 5.12.1
+Stable tag: 5.12.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -302,6 +302,22 @@ Current list of supported CDN servers:
 5. Ability to manually undo optimization of selected image
 
 == Changelog ==
+
+= 5.12.5 (2024-04-15) =
+* `[Fixed]` Modification of plugin settings via filters
+
+= 5.12.4 (2024-04-12) =
+* `[Fixed]` Support for changed upload directory path based on absolute path from upload_path option
+* `[Fixed]` UX of plugin settings page
+* `[Changed]` Error message for rewrites_not_executed error in server configuration
+
+= 5.12.3 (2024-03-19) =
+* `[Fixed]` Support for changed upload directory path based on upload_path option
+
+= 5.12.2 (2024-03-14) =
+* `[Changed]` Verification of rewrites_not_executed server configuration error
+* `[Added]` Support for changed upload directory path based on upload_path option
+* `[Added]` Support for WordPress 6.5
 
 = 5.12.1 (2024-02-15) =
 * `[Fixed]` Verification of rewrites_not_executed server configuration error when there is also a problem with the Gd or Imagick libraries

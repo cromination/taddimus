@@ -18,6 +18,7 @@ use Elementor\Core\Schemes\Color;
 use Elementor\Core\Schemes\Typography;
 use Elementor\Widget_Base;
 use Elementor\Repeater;
+use ThemeIsle\ElementorExtraWidgets\Traits\Sanitization;
 
 /**
  * Class Pricing_Table
@@ -25,6 +26,7 @@ use Elementor\Repeater;
  * @package ThemeIsle\ElementorExtraWidgets
  */
 class Pricing_Table extends Widget_Base {
+	use Sanitization;
 
 	/**
 	 * Widget title.
@@ -1014,7 +1016,7 @@ class Pricing_Table extends Widget_Base {
 		$this->add_render_attribute( 'subtitle', 'class', 'obfx-pricing-table-subtitle' );
 		$this->add_render_attribute( 'button', 'class', 'obfx-pricing-table-button' );
 //		$this->add_render_attribute( 'button_icon', 'class', $settings['button_icon'] );
-		$this->add_render_attribute( 'button_icon_align', 'class', 'obfx-button-icon-align-' . $settings['button_icon_align'] );
+		$this->add_render_attribute( 'button_icon_align', 'class', 'obfx-button-icon-align-' . esc_attr( $settings['button_icon_align'] ) );
 		if ( ! empty( $settings['button_link']['url'] ) ) {
 			$this->add_render_attribute( 'button', 'href', esc_url( $settings['button_link']['url'] ) );
 
@@ -1033,24 +1035,26 @@ class Pricing_Table extends Widget_Base {
 		if ( ! empty( $settings['title'] ) || ! empty( $settings['subtitle'] ) ) {
 			$output .= '<div class="obfx-title-wrapper">';
 			if ( ! empty( $settings['title'] ) ) {
+				$title_tag = $this->sanitize_tag( $settings['title_tag'], 'h3' );
 				// Start of title tag.
-				$output .= '<' . esc_html( $settings['title_tag'] ) . ' ' . $this->get_render_attribute_string( 'title' ) . '>';
+				$output .= '<' . esc_html( $title_tag ) . ' ' . $this->get_render_attribute_string( 'title' ) . '>';
 
 				// Title string.
 				$output .= esc_html( $settings['title'] );
 
 				// End of title tag.
-				$output .= '</' . esc_html( $settings['title_tag'] ) . '>';
+				$output .= '</' . esc_html( $title_tag ) . '>';
 			}
 			if ( ! empty( $settings['subtitle'] ) ) {
+				$subtitle_tag = $this->sanitize_tag( $settings['subtitle_tag'], 'p' );
 				// Start of subtitle tag.
-				$output .= '<' . esc_html( $settings['subtitle_tag'] ) . ' ' . $this->get_render_attribute_string( 'subtitle' ) . '>';
+				$output .= '<' . esc_html( $subtitle_tag ) . ' ' . $this->get_render_attribute_string( 'subtitle' ) . '>';
 
 				// Subtitle string.
 				$output .= esc_html( $settings['subtitle'] );
 
 				// End of subtitle tag.
-				$output .= '</' . esc_html( $settings['subtitle_tag'] ) . '>';
+				$output .= '</' . esc_html( $subtitle_tag ) . '>';
 
 			}
 

@@ -7,18 +7,18 @@ use WP_CLI\Fetchers\User as UserFetcher;
  *
  * ## EXAMPLES
  *
- *     # List user with super-admin capabilities
+ *     # List user with super-admin capabilities.
  *     $ wp super-admin list
  *     supervisor
  *     administrator
  *
  *     # Grant super-admin privileges to the user.
  *     $ wp super-admin add superadmin2
- *     Success: Granted super-admin capabilities.
+ *     Success: Granted super-admin capabilities to 1 user.
  *
- *     # Revoke super-admin privileges to the user.
+ *     # Revoke super-admin privileges from the user.
  *     $ wp super-admin remove superadmin2
- *     Success: Revoked super-admin capabilities.
+ *     Success: Revoked super-admin capabilities from 1 user.
  *
  * @package wp-cli
  */
@@ -49,12 +49,13 @@ class Super_Admin_Command extends WP_CLI_Command {
 	 *   - csv
 	 *   - json
 	 *   - count
+	 *   - ids
 	 *   - yaml
 	 * ---
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # List user with super-admin capabilities
+	 *     # List user with super-admin capabilities.
 	 *     $ wp super-admin list
 	 *     supervisor
 	 *     administrator
@@ -77,8 +78,20 @@ class Super_Admin_Command extends WP_CLI_Command {
 
 				$output_users[] = $output_user;
 			}
-			$formatter = new \WP_CLI\Formatter( $assoc_args, $this->fields );
-			$formatter->display_items( $output_users );
+
+			if ( ! empty( $assoc_args['format'] ) && 'ids' === $assoc_args['format'] ) {
+				$formatter = new \WP_CLI\Formatter( $assoc_args );
+
+				$user_ids = [];
+				foreach ( $super_admins as $user_login ) {
+					$user_obj   = get_user_by( 'login', $user_login );
+					$user_ids[] = $user_obj->ID;
+				}
+				$formatter->display_items( $user_ids );
+			} else {
+				$formatter = new \WP_CLI\Formatter( $assoc_args, $this->fields );
+				$formatter->display_items( $output_users );
+			}
 		}
 	}
 
@@ -92,8 +105,9 @@ class Super_Admin_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Grant super-admin privileges to the user.
 	 *     $ wp super-admin add superadmin2
-	 *     Success: Granted super-admin capabilities.
+	 *     Success: Granted super-admin capabilities to 1 user.
 	 */
 	public function add( $args, $_ ) {
 
@@ -156,8 +170,9 @@ class Super_Admin_Command extends WP_CLI_Command {
 	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Revoke super-admin privileges from the user.
 	 *     $ wp super-admin remove superadmin2
-	 *     Success: Revoked super-admin capabilities.
+	 *     Success: Revoked super-admin capabilities from 1 user.
 	 */
 	public function remove( $args, $_ ) {
 		$users             = $this->fetcher->get_many( $args );

@@ -17,7 +17,8 @@ use WP_CLI\Utils;
  *
  *     # Import a local image and set it to be the featured image for a post.
  *     $ wp media import ~/Downloads/image.png --post_id=123 --title="A downloaded picture" --featured_image
- *     Success: Imported file '/home/person/Downloads/image.png' as attachment ID 1753 and attached to post 123 as featured image.
+ *     Imported file '/home/person/Downloads/image.png' as attachment ID 1753 and attached to post 123 as featured image.
+ *     Success: Imported 1 of 1 images.
  *
  *     # List all registered image sizes
  *     $ wp media image-size
@@ -31,6 +32,11 @@ use WP_CLI\Utils;
  *     | medium                    | 300   | 300    | soft  |
  *     | thumbnail                 | 150   | 150    | hard  |
  *     +---------------------------+-------+--------+-------+
+ *
+ *     # Fix orientation for specific images.
+ *     $ wp media fix-orientation 63
+ *     1/1 Fixing orientation for "Portrait_6" (ID 63).
+ *     Success: Fixed 1 of 1 images.
  *
  * @package wp-cli
  */
@@ -154,12 +160,12 @@ class Media_Command extends WP_CLI_Command {
 		$successes = 0;
 		$errors    = 0;
 		$skips     = 0;
-		foreach ( $images->posts as $post ) {
+		foreach ( $images->posts as $post_id ) {
 			++$number;
 			if ( 0 === $number % self::WP_CLEAR_OBJECT_CACHE_INTERVAL ) {
 				Utils\wp_clear_object_cache();
 			}
-			$this->process_regeneration( $post->ID, $skip_delete, $only_missing, $image_size, $number . '/' . $count, $successes, $errors, $skips );
+			$this->process_regeneration( $post_id, $skip_delete, $only_missing, $image_size, $number . '/' . $count, $successes, $errors, $skips );
 		}
 
 		if ( $image_size ) {
@@ -624,12 +630,6 @@ class Media_Command extends WP_CLI_Command {
 		}
 
 		$metadata = wp_generate_attachment_metadata( $id, $fullsizepath );
-		if ( is_wp_error( $metadata ) ) {
-			WP_CLI::warning( sprintf( '%s (ID %d)', $metadata->get_error_message(), $id ) );
-			WP_CLI::log( "$progress Couldn't regenerate thumbnails for $att_desc." );
-			++$errors;
-			return;
-		}
 
 		// Note it's possible for no metadata to be generated for PDFs if restricted to a specific image size.
 		if ( empty( $metadata ) && ! ( $is_pdf && $image_size ) ) {
@@ -947,70 +947,105 @@ class Media_Command extends WP_CLI_Command {
 		$mime_types = array_merge( array( 'image' ), $additional_mime_types );
 
 		$query_args = array(
-			'post_type'      => 'attachment',
-			'post__in'       => $args,
-			'post_mime_type' => $mime_types,
-			'post_status'    => 'any',
-			'posts_per_page' => -1,
+			'post_type'              => 'attachment',
+			'post__in'               => $args,
+			'post_mime_type'         => $mime_types,
+			'post_status'            => 'any',
+			'posts_per_page'         => -1,
+			'fields'                 => 'ids',
+			'update_post_meta_cache' => false,
+			'update_post_term_cache' => false,
 		);
 
 		return new WP_Query( $query_args );
 	}
 
 	/**
-	 * Get the metadata for the passed intermediate image size.
-	 *
-	 * @param string $size The image size to get the metadata for.
-	 *
-	 * @return array The image size metadata.
-	 */
-	private function get_intermediate_size_metadata( $size ) {
-		$width  = intval( get_option( "{$size}_size_w" ) );
-		$height = intval( get_option( "{$size}_size_h" ) );
-		$crop   = get_option( "{$size}_crop" );
-
-		return array(
-			'name'   => $size,
-			'width'  => $width,
-			'height' => $height,
-			'crop'   => false !== $crop ? 'hard' : 'soft',
-			'ratio'  => false !== $crop ? $this->get_ratio( $width, $height ) : 'N/A',
-		);
-	}
-
-	/**
 	 * Get all the registered image sizes along with their dimensions.
-	 *
-	 * @global array $_wp_additional_image_sizes The additional image sizes to parse.
-	 *
-	 * @link https://wordpress.stackexchange.com/a/251602 Original solution.
 	 *
 	 * @return array $image_sizes The image sizes
 	 */
 	private function get_registered_image_sizes() {
-		global $_wp_additional_image_sizes;
+		$image_sizes = array();
 
-		$image_sizes         = array();
-		$default_image_sizes = get_intermediate_image_sizes();
+		$all_sizes = $this->wp_get_registered_image_subsizes();
 
-		foreach ( $default_image_sizes as $size ) {
-			$image_sizes[] = $this->get_intermediate_size_metadata( $size );
-		}
+		foreach ( $all_sizes as $size => $size_args ) {
+			$crop = filter_var( $size_args['crop'], FILTER_VALIDATE_BOOLEAN );
 
-		if ( is_array( $_wp_additional_image_sizes ) ) {
-			foreach ( $_wp_additional_image_sizes as $size => $size_args ) {
-				$crop          = filter_var( $size_args['crop'], FILTER_VALIDATE_BOOLEAN );
-				$image_sizes[] = array(
-					'name'   => $size,
-					'width'  => $size_args['width'],
-					'height' => $size_args['height'],
-					'crop'   => empty( $crop ) || is_array( $size_args['crop'] ) ? 'soft' : 'hard',
-					'ratio'  => empty( $crop ) || is_array( $size_args['crop'] ) ? 'N/A' : $this->get_ratio( $size_args['width'], $size_args['height'] ),
-				);
-			}
+			$image_sizes[] = array(
+				'name'   => $size,
+				'width'  => $size_args['width'],
+				'height' => $size_args['height'],
+				'crop'   => empty( $crop ) || is_array( $size_args['crop'] ) ? 'soft' : 'hard',
+				'ratio'  => empty( $crop ) || is_array( $size_args['crop'] ) ? 'N/A' : $this->get_ratio( $size_args['width'], $size_args['height'] ),
+			);
 		}
 
 		return $image_sizes;
+	}
+
+	/**
+	* Returns a normalized list of all currently registered image sub-sizes.
+	*
+	* If exists, uses output of wp_get_registered_image_subsizes() function (introduced in WP 5.3).
+	* Definition of this method is modified version of core function wp_get_registered_image_subsizes().
+	*
+	* @global array $_wp_additional_image_sizes
+	*
+	* @return array[] Associative array of arrays of image sub-size information, keyed by image size name.
+	*/
+	private function wp_get_registered_image_subsizes() {
+		if ( Utils\wp_version_compare( '5.3', '>=' ) ) {
+			return wp_get_registered_image_subsizes();
+		}
+
+		global $_wp_additional_image_sizes;
+
+		$additional_sizes = $_wp_additional_image_sizes ? $_wp_additional_image_sizes : array();
+
+		$all_sizes = array();
+
+		foreach ( get_intermediate_image_sizes() as $size_name ) {
+			$size_data = array(
+				'width'  => 0,
+				'height' => 0,
+				'crop'   => false,
+			);
+
+			if ( isset( $additional_sizes[ $size_name ]['width'] ) ) {
+				// For sizes added by plugins and themes.
+				$size_data['width'] = (int) $additional_sizes[ $size_name ]['width'];
+			} else {
+				// For default sizes set in options.
+				$size_data['width'] = (int) get_option( "{$size_name}_size_w" );
+			}
+
+			if ( isset( $additional_sizes[ $size_name ]['height'] ) ) {
+				$size_data['height'] = (int) $additional_sizes[ $size_name ]['height'];
+			} else {
+				$size_data['height'] = (int) get_option( "{$size_name}_size_h" );
+			}
+
+			if ( empty( $size_data['width'] ) && empty( $size_data['height'] ) ) {
+				// This size isn't set.
+				continue;
+			}
+
+			if ( isset( $additional_sizes[ $size_name ]['crop'] ) ) {
+				$size_data['crop'] = $additional_sizes[ $size_name ]['crop'];
+			} else {
+				$size_data['crop'] = get_option( "{$size_name}_crop" );
+			}
+
+			if ( ! is_array( $size_data['crop'] ) || empty( $size_data['crop'] ) ) {
+				$size_data['crop'] = (bool) $size_data['crop'];
+			}
+
+			$all_sizes[ $size_name ] = $size_data;
+		}
+
+		return $all_sizes;
 	}
 
 	/**
@@ -1065,12 +1100,12 @@ class Media_Command extends WP_CLI_Command {
 		$number    = 0;
 		$successes = 0;
 		$errors    = 0;
-		foreach ( $images->posts as $post ) {
+		foreach ( $images->posts as $post_id ) {
 			++$number;
 			if ( 0 === $number % self::WP_CLEAR_OBJECT_CACHE_INTERVAL ) {
 				Utils\wp_clear_object_cache();
 			}
-			$this->process_orientation_fix( $post->ID, "{$number}/{$count}", $successes, $errors, $dry_run );
+			$this->process_orientation_fix( $post_id, "{$number}/{$count}", $successes, $errors, $dry_run );
 		}
 
 		if ( Utils\get_flag_value( $assoc_args, 'dry-run' ) ) {

@@ -56,6 +56,15 @@ class ExcludedPathsOperator implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
+		add_action( 'init', [ $this, 'load_excluded_directories_from_plugin_settings' ] );
+		add_filter( 'webpc_supported_source_directory', [ $this, 'skip_excluded_directory' ], 0, 3 );
+	}
+
+	/**
+	 * @return void
+	 * @internal
+	 */
+	public function load_excluded_directories_from_plugin_settings() {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		$saved_dirs      = ( $plugin_settings[ ExcludedDirectoriesOption::OPTION_NAME ] !== '' )
 			? explode( ',', $plugin_settings[ ExcludedDirectoriesOption::OPTION_NAME ] )
@@ -68,8 +77,6 @@ class ExcludedPathsOperator implements HookableInterface {
 				$this->excluded_dirs[] = $saved_dir;
 			}
 		}
-
-		add_filter( 'webpc_supported_source_directory', [ $this, 'skip_excluded_directory' ], 0, 3 );
 	}
 
 	/**

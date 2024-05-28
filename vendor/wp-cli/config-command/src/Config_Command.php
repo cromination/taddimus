@@ -6,6 +6,60 @@ use WP_CLI\WpOrgApi;
 
 /**
  * Generates and reads the wp-config.php file.
+ *
+ * ## EXAMPLES
+ *
+ *     # Create standard wp-config.php file.
+ *     $ wp config create --dbname=testing --dbuser=wp --dbpass=securepswd --locale=ro_RO
+ *     Success: Generated 'wp-config.php' file.
+ *
+ *     # List constants and variables defined in wp-config.php file.
+ *     $ wp config list
+ *     +------------------+------------------------------------------------------------------+----------+
+ *     | key              | value                                                            | type     |
+ *     +------------------+------------------------------------------------------------------+----------+
+ *     | table_prefix     | wp_                                                              | variable |
+ *     | DB_NAME          | wp_cli_test                                                      | constant |
+ *     | DB_USER          | root                                                             | constant |
+ *     | DB_PASSWORD      | root                                                             | constant |
+ *     | AUTH_KEY         | r6+@shP1yO&$)1gdu.hl[/j;7Zrvmt~o;#WxSsa0mlQOi24j2cR,7i+QM/#7S:o^ | constant |
+ *     | SECURE_AUTH_KEY  | iO-z!_m--YH$Tx2tf/&V,YW*13Z_HiRLqi)d?$o-tMdY+82pK$`T.NYW~iTLW;xp | constant |
+ *     +------------------+------------------------------------------------------------------+----------+
+ *
+ *     # Get wp-config.php file path.
+ *     $ wp config path
+ *     /home/person/htdocs/project/wp-config.php
+ *
+ *     # Get the table_prefix as defined in wp-config.php file.
+ *     $ wp config get table_prefix
+ *     wp_
+ *
+ *     # Set the WP_DEBUG constant to true.
+ *     $ wp config set WP_DEBUG true --raw
+ *     Success: Updated the constant 'WP_DEBUG' in the 'wp-config.php' file with the raw value 'true'.
+ *
+ *     # Delete the COOKIE_DOMAIN constant from the wp-config.php file.
+ *     $ wp config delete COOKIE_DOMAIN
+ *     Success: Deleted the constant 'COOKIE_DOMAIN' from the 'wp-config.php' file.
+ *
+ *     # Launch system editor to edit wp-config.php file.
+ *     $ wp config edit
+ *
+ *     # Check whether the DB_PASSWORD constant exists in the wp-config.php file.
+ *     $ wp config has DB_PASSWORD
+ *     $ echo $?
+ *     0
+ *
+ *     # Assert if MULTISITE is true.
+ *     $ wp config is-true MULTISITE
+ *     $ echo $?
+ *     0
+ *
+ *     # Get new salts for your wp-config.php file.
+ *     $ wp config shuffle-salts
+ *     Success: Shuffled the salt keys.
+ *
+ * @package wp-cli
  */
 class Config_Command extends WP_CLI_Command {
 
@@ -582,6 +636,7 @@ class Config_Command extends WP_CLI_Command {
 	 *
 	 *     # Set the WP_DEBUG constant to true.
 	 *     $ wp config set WP_DEBUG true --raw
+	 *     Success: Updated the constant 'WP_DEBUG' in the 'wp-config.php' file with the raw value 'true'.
 	 *
 	 * @when before_wp_load
 	 */
@@ -685,6 +740,7 @@ class Config_Command extends WP_CLI_Command {
 	 *
 	 *     # Delete the COOKIE_DOMAIN constant from the wp-config.php file.
 	 *     $ wp config delete COOKIE_DOMAIN
+	 *     Success: Deleted the constant 'COOKIE_DOMAIN' from the 'wp-config.php' file.
 	 *
 	 * @when before_wp_load
 	 */
@@ -815,28 +871,36 @@ class Config_Command extends WP_CLI_Command {
 	 *
 	 *     # Add a cache key salt to the wp-config.php file
 	 *     $ wp config shuffle-salts WP_CACHE_KEY_SALT --force
+	 *     Success: Shuffled the salt keys.
 	 *
 	 * @subcommand shuffle-salts
 	 * @when before_wp_load
 	 */
 	public function shuffle_salts( $args, $assoc_args ) {
-
 		$keys  = $args;
 		$force = Utils\get_flag_value( $assoc_args, 'force', false );
+
+		$has_keys = ( ! empty( $keys ) ) ? true : false;
 
 		if ( empty( $keys ) ) {
 			$keys = self::DEFAULT_SALT_CONSTANTS;
 		}
 
+		$successes = 0;
+		$errors    = 0;
+		$skipped   = 0;
+
 		$secret_keys = [];
 
 		try {
 			foreach ( $keys as $key ) {
+				$unique_key = self::unique_key();
 				if ( ! $force && ! in_array( $key, self::DEFAULT_SALT_CONSTANTS, true ) ) {
 					WP_CLI::warning( "Could not shuffle the unknown key '{$key}'." );
+					++$skipped;
 					continue;
 				}
-				$secret_keys[ $key ] = trim( self::unique_key() );
+				$secret_keys[ $key ] = trim( $unique_key );
 			}
 		} catch ( Exception $ex ) {
 			foreach ( $keys as $key ) {
@@ -846,6 +910,7 @@ class Config_Command extends WP_CLI_Command {
 					} else {
 						WP_CLI::warning( "Could not shuffle the unknown key '{$key}'." );
 					}
+					++$skipped;
 				}
 			}
 
@@ -866,14 +931,23 @@ class Config_Command extends WP_CLI_Command {
 		try {
 			$config_transformer = new WPConfigTransformer( $path );
 			foreach ( $secret_keys as $key => $value ) {
-				$config_transformer->update( 'constant', $key, (string) $value );
+				$is_updated = $config_transformer->update( 'constant', $key, (string) $value );
+				if ( $is_updated ) {
+					++$successes;
+				} else {
+					++$errors;
+				}
 			}
 		} catch ( Exception $exception ) {
 			$wp_config_file_name = basename( $path );
 			WP_CLI::error( "Could not process the '{$wp_config_file_name}' transformation.\nReason: {$exception->getMessage()}" );
 		}
 
-		WP_CLI::success( 'Shuffled the salt keys.' );
+		if ( $has_keys ) {
+			Utils\report_batch_operation_results( 'salt', 'shuffle', count( $keys ), $successes, $errors, $skipped );
+		} else {
+			WP_CLI::success( 'Shuffled the salt keys.' );
+		}
 	}
 
 	/**

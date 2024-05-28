@@ -1,5 +1,7 @@
 /**
  * Main customize js file
+ * 
+ * This is running inside the Customizer iframe.
  *
  * @package Hestia
  */
@@ -1069,7 +1071,6 @@
         var result = 'rgba(' + x + ',' + y + ',' + z + ',' + opacity / 100 + ')';
         return result;
     }
-
 } )( jQuery );
 
 /**
@@ -1198,6 +1199,3 @@ function hestiaSetCss( settings, to ){
         jQuery( settings.selectors ).css( settings.cssProperty, to + 'px' );
     }
 }
-
-
-

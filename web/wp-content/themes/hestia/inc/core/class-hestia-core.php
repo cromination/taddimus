@@ -173,6 +173,7 @@ class Hestia_Core {
 		add_action( 'init', array( $admin, 'do_about_page' ), 999 );
 		add_filter( 'after_switch_theme', array( $admin, 'maybe_switched_from_zerif' ) );
 		add_filter( 'admin_init', array( $admin, 'add_zerif_frontpage_import' ) );
+		add_filter( 'admin_enqueue_scripts', array( $admin, 'hestia_options_init' ) );
 
 		$front_end = new Hestia_Public();
 		add_filter( 'frontpage_template', array( $front_end, 'filter_front_page_template' ) );

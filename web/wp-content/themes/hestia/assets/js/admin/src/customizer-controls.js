@@ -8,6 +8,36 @@
 
 /* global imageObject */
 
+/**
+ * Check if we have a sale event and try to add a banner to the WP Customizer.
+ * 
+ * The position of the banner is right before the "Themes" section.
+ * 
+ * @returns {undefined} 
+ */
+function tryAddSaleBanner () {
+	if (typeof window.hestiaSaleEvents === 'undefined' || typeof window.hestiaSaleEvents.customizerBannerUrl === 'undefined' || ! window.hestiaSaleEvents.customizerBannerUrl ) {
+		return;
+	}
+
+	var sectionStart = document.querySelector('#accordion-section-themes');
+
+	if ( ! sectionStart ) {
+		return;
+	}
+	
+	var saleLink = document.createElement('a');
+	saleLink.href = window.hestiaSaleEvents.customizerBannerStoreUrl;
+	saleLink.target = '_blank';
+	
+	var bannerImg = document.createElement('img');
+	bannerImg.src = window.hestiaSaleEvents.customizerBannerUrl;
+	bannerImg.style.width = '100%'; // Make sure the image is responsive.
+
+	saleLink.appendChild(bannerImg);
+	sectionStart.parentNode.insertBefore(saleLink, sectionStart.nextSibling);
+}
+
 jQuery( document ).ready(
 	function () {
 		'use strict';
@@ -258,5 +288,7 @@ jQuery( document ).ready(
         	} );
         	jQuery( 'input:checkbox:checked', control.container ).trigger( 'change' );
         } );
+		
+		tryAddSaleBanner();
 	}
 );

@@ -86,6 +86,18 @@ wp plugin activate [<plugin>...] [--all] [--exclude=<name>] [--network]
     Plugin 'hello' network activated.
     Success: Network activated 1 of 1 plugins.
 
+    # Activate plugins that were recently active.
+    $ wp plugin activate $(wp plugin list --recently-active --field=name)
+    Plugin 'bbpress' activated.
+    Plugin 'buddypress' activated.
+    Success: Activated 2 of 2 plugins.
+
+    # Activate plugins that were recently active on a multisite.
+    $ wp plugin activate $(wp plugin list --recently-active --field=name) --network
+    Plugin 'bbpress' network activated.
+    Plugin 'buddypress' network activated.
+    Success: Activated 2 of 2 plugins.
+
 
 
 ### wp plugin deactivate
@@ -197,10 +209,28 @@ wp plugin get <plugin> [--field=<field>] [--fields=<fields>] [--format=<format>]
 		  - yaml
 		---
 
+**AVAILABLE FIELDS**
+
+These fields will be displayed by default for the plugin:
+
+* name
+* title
+* author
+* version
+* description
+* status
+
+These fields are optionally available:
+
+* requires_wp
+* requires_php
+* requires_plugins
+
 **EXAMPLES**
 
+    # Get plugin details.
     $ wp plugin get bbpress --format=json
-    {"name":"bbpress","title":"bbPress","author":"The bbPress Contributors","version":"2.6-alpha","description":"bbPress is forum software with a twist from the creators of WordPress.","status":"active"}
+    {"name":"bbpress","title":"bbPress","author":"The bbPress Contributors","version":"2.6.9","description":"bbPress is forum software with a twist from the creators of WordPress.","status":"active"}
 
 
 
@@ -322,7 +352,7 @@ Returns exit code 0 when installed, 1 when uninstalled.
 Gets a list of plugins.
 
 ~~~
-wp plugin list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--status=<status>] [--skip-update-check]
+wp plugin list [--<field>=<value>] [--field=<field>] [--fields=<fields>] [--format=<format>] [--status=<status>] [--skip-update-check] [--recently-active]
 ~~~
 
 Displays a list of the plugins installed on the site with activation
@@ -367,6 +397,9 @@ Use `--status=dropin` to list installed dropins (e.g. `object-cache.php`).
 	[--skip-update-check]
 		If set, the plugin update check will be skipped.
 
+	[--recently-active]
+		If set, only recently active plugins will be shown and the status filter will be ignored.
+
 **AVAILABLE FIELDS**
 
 These fields will be displayed by default for each plugin:
@@ -376,6 +409,7 @@ These fields will be displayed by default for each plugin:
 * update
 * version
 * update_version
+* auto_update
 
 These fields are optionally available:
 
@@ -384,8 +418,8 @@ These fields are optionally available:
 * title
 * description
 * file
-* auto_update
 * author
+* tested_up_to
 * wporg_status
 * wporg_last_updated
 
@@ -393,25 +427,25 @@ These fields are optionally available:
 
     # List active plugins on the site.
     $ wp plugin list --status=active --format=json
-    [{"name":"dynamic-hostname","status":"active","update":"none","version":"0.4.2","update_version": ""},{"name":"tinymce-templates","status":"active","update":"none","version":"4.4.3","update_version": ""},{"name":"wp-multibyte-patch","status":"active","update":"none","version":"2.4","update_version": ""},{"name":"wp-total-hacks","status":"active","update":"none","version":"2.0.1","update_version": ""}]
+    [{"name":"dynamic-hostname","status":"active","update":"none","version":"0.4.2","update_version":"","auto_update":"off"},{"name":"tinymce-templates","status":"active","update":"none","version":"4.8.1","update_version":"","auto_update":"off"},{"name":"wp-multibyte-patch","status":"active","update":"none","version":"2.9","update_version":"","auto_update":"off"},{"name":"wp-total-hacks","status":"active","update":"none","version":"4.7.2","update_version":"","auto_update":"off"}]
 
     # List plugins on each site in a network.
     $ wp site list --field=url | xargs -I % wp plugin list --url=%
-    +---------+----------------+--------+---------+----------------+
-    | name    | status         | update | version | update_version |
-    +---------+----------------+--------+---------+----------------+
-    | akismet | active-network | none   | 3.1.11  |                |
-    | hello   | inactive       | none   | 1.6     | 1.7.2          |
-    +---------+----------------+--------+---------+----------------+
-    +---------+----------------+--------+---------+----------------+
-    | name    | status         | update | version | update_version |
-    +---------+----------------+--------+---------+----------------+
-    | akismet | active-network | none   | 3.1.11  |                |
-    | hello   | inactive       | none   | 1.6     | 1.7.2          |
-    +---------+----------------+--------+---------+----------------+
+    +---------+----------------+-----------+---------+-----------------+------------+
+    | name    | status         | update    | version | update_version | auto_update |
+    +---------+----------------+-----------+---------+----------------+-------------+
+    | akismet | active-network | none      | 5.3.1   |                | on          |
+    | hello   | inactive       | available | 1.6     | 1.7.2          | off         |
+    +---------+----------------+-----------+---------+----------------+-------------+
+    +---------+----------------+-----------+---------+----------------+-------------+
+    | name    | status         | update    | version | update_version | auto_update |
+    +---------+----------------+-----------+---------+----------------+-------------+
+    | akismet | active-network | none      | 5.3.1   |                | on          |
+    | hello   | inactive       | available | 1.6     | 1.7.2          | off         |
+    +---------+----------------+-----------+---------+----------------+-------------+
 
     # Check whether plugins are still active on WordPress.org
-    $ wp plugin list --format=csv --fields=name,wporg_status,wporg_last_updated
+    $ wp plugin list --fields=name,wporg_status,wporg_last_updated
     +--------------------+--------------+--------------------+
     | name               | wporg_status | wporg_last_updated |
     +--------------------+--------------+--------------------+
@@ -420,6 +454,10 @@ These fields are optionally available:
     | wordpress-importer | active       | 2023-04-28         |
     | local              |              |                    |
     +--------------------+--------------+--------------------+
+
+    # List recently active plugins on the site.
+    $ wp plugin list --recently-active --field=name --format=json
+    ["akismet","bbpress","buddypress"]
 
 
 
@@ -763,6 +801,7 @@ See the WordPress [Theme Handbook](https://developer.wordpress.org/themes/) deve
     Theme installed successfully.
     Activating 'twentysixteen'...
     Success: Switched to 'Twenty Sixteen' theme.
+    Success: Installed 1 of 1 themes.
 
     # Get details of an installed theme
     $ wp theme get twentysixteen --fields=name,title,version
@@ -987,6 +1026,7 @@ wp theme install <theme|zip|url>... [--version=<version>] [--force] [--activate]
     Theme installed successfully.
     Activating 'twentysixteen'...
     Success: Switched to 'Twenty Sixteen' theme.
+    Success: Installed 1 of 1 themes.
 
     # Install from a local zip file
     $ wp theme install ../my-theme.zip
@@ -1072,6 +1112,7 @@ These fields will be displayed by default for each theme:
 * update
 * version
 * update_version
+* auto_update
 
 These fields are optionally available:
 
@@ -1079,15 +1120,14 @@ These fields are optionally available:
 * update_id
 * title
 * description
-* auto_update
 
 **EXAMPLES**
 
-    # List themes
+    # List inactive themes.
     $ wp theme list --status=inactive --format=csv
-    name,status,update,version,update_version
-    twentyfourteen,inactive,none,1.7,
-    twentysixteen,inactive,available,1.1,
+    name,status,update,version,update_version,auto_update
+    twentyfourteen,inactive,none,3.8,,off
+    twentysixteen,inactive,available,3.0,3.1,off
 
 
 
@@ -1103,7 +1143,7 @@ wp theme mod
 
     # Set the 'background_color' theme mod to '000000'.
     $ wp theme mod set background_color 000000
-    Success: Theme mod background_color set to 000000
+    Success: Theme mod background_color set to 000000.
 
     # Get single theme mod in JSON format.
     $ wp theme mod get background_color --format=json
@@ -1198,7 +1238,7 @@ wp theme mod set <mod> <value>
 
     # Set theme mod
     $ wp theme mod set background_color 000000
-    Success: Theme mod background_color set to 000000
+    Success: Theme mod background_color set to 000000.
 
 
 

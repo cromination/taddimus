@@ -18,6 +18,51 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 == Changelog ==
 
+##### [Version 3.1.8](https://github.com/Codeinwp/hestia-pro/compare/v3.1.7...v3.1.8) (2024-04-05)
+
+### Improvements
+- Updated internal dependencies
+
+
+
+
+##### [Version 3.1.7](https://github.com/Codeinwp/hestia-pro/compare/v3.1.6...v3.1.7) (2024-04-01)
+
+### Improvements
+- **Updated internal dependencies**
+
+
+
+
+##### [Version 3.1.6](https://github.com/Codeinwp/hestia-pro/compare/v3.1.5...v3.1.6) (2024-03-29)
+
+### Fixes
+- Updated internal dependencies
+
+
+
+
+##### [Version 3.1.5](https://github.com/Codeinwp/hestia-pro/compare/v3.1.4...v3.1.5) (2024-03-28)
+
+### Improvements
+- Updated internal dependencies
+
+
+
+
+##### [Version 3.1.4](https://github.com/Codeinwp/hestia-pro/compare/v3.1.3...v3.1.4) (2024-02-27)
+
+### Bug Fixes
+- Fixed WPML compatibility with custom layouts
+
+### Improvements
+- Updated dependencies
+- Added NPS Survey
+- Preparation for future BF campaign
+
+
+
+
 ##### [Version 3.1.3](https://github.com/Codeinwp/hestia-pro/compare/v3.1.2...v3.1.3) (2024-02-06)
 
 ### Fixes

@@ -399,6 +399,29 @@ entirely.
     | 2 | home | http://wordpress-develop.dev | yes |
     +---+------+------------------------------+-----+
 
+**MULTISITE USAGE**
+
+Please note that the global `--url` parameter will have no effect on this command.
+In order to query for data in a site other than your primary site,
+you will need to manually modify the table names to use the prefix that includes the site's ID.
+
+For example, to get the `home` option for your second site, modify the example above like so:
+
+    $ wp db query 'SELECT option_value FROM wp_2_options WHERE option_name="home"' --skip-column-names
+    +----------------------+
+    | https://example2.com |
+    +----------------------+
+
+To confirm the ID for the site you want to query, you can use the `wp site list` command:
+
+    # wp site list --fields=blog_id,url
+    +---------+-----------------------+
+    | blog_id | url                   |
+    +---------+-----------------------+
+    | 1       | https://example1.com/ |
+    | 2       | https://example2.com/ |
+    +---------+-----------------------+
+
 
 
 ### wp db export
@@ -537,7 +560,7 @@ defined in the SQL.
 Finds a string in the database.
 
 ~~~
-wp db search <search> [<tables>...] [--network] [--all-tables-with-prefix] [--all-tables] [--before_context=<num>] [--after_context=<num>] [--regex] [--regex-flags=<regex-flags>] [--regex-delimiter=<regex-delimiter>] [--table_column_once] [--one_line] [--matches_only] [--stats] [--table_column_color=<color_code>] [--id_color=<color_code>] [--match_color=<color_code>]
+wp db search <search> [<tables>...] [--network] [--all-tables-with-prefix] [--all-tables] [--before_context=<num>] [--after_context=<num>] [--regex] [--regex-flags=<regex-flags>] [--regex-delimiter=<regex-delimiter>] [--table_column_once] [--one_line] [--matches_only] [--stats] [--table_column_color=<color_code>] [--id_color=<color_code>] [--match_color=<color_code>] [--fields=<fields>] [--format=<format>]
 ~~~
 
 Searches through all of the text columns in a selection of database tables for a given string, Outputs colorized references to the string.
@@ -602,6 +625,12 @@ Defaults to searching through all tables registered to $wpdb. On multisite, this
 
 	[--match_color=<color_code>]
 		Percent color code to use for the match (unless both before and after context are 0, when no color code is used). For a list of available percent color codes, see below. Default '%3%k' (black on a mustard background).
+
+	[--fields=<fields>]
+		Get a specific subset of the fields.
+
+	[--format=<format>]
+		Render output in a particular format.
 
 The percent color codes available are:
 
@@ -670,6 +699,21 @@ They can be concatenated. For instance, the default match color of black on a mu
 
     # SQL search and delete records from database table 'wp_options' where 'option_name' match 'foo'
     wp db query "DELETE from wp_options where option_id in ($(wp db query "SELECT GROUP_CONCAT(option_id SEPARATOR ',') from wp_options where option_name like '%foo%';" --silent --skip-column-names))"
+
+    # Search for a string and print the result as a table
+    $ wp db search https://localhost:8889 --format=table --fields=table,column,match
+    +------------+--------------+-----------------------------+
+    | table      | column       | match                       |
+    +------------+--------------+-----------------------------+
+    | wp_options | option_value | https://localhost:8889      |
+    | wp_options | option_value | https://localhost:8889      |
+    | wp_posts   | guid         | https://localhost:8889/?p=1 |
+    | wp_users   | user_url     | https://localhost:8889      |
+    +------------+--------------+-----------------------------+
+
+    # Search for a string and get only the IDs (only works for a single table)
+    $ wp db search https://localhost:8889 wp_options --format=ids
+    1 2
 
 
 

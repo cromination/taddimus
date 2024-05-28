@@ -77,16 +77,18 @@ class Core_Command extends WP_CLI_Command {
 	 * @subcommand check-update
 	 */
 	public function check_update( $_, $assoc_args ) {
+		$format = Utils\get_flag_value( $assoc_args, 'format', 'table' );
 
 		$updates = $this->get_updates( $assoc_args );
-		if ( $updates ) {
+
+		if ( $updates || 'table' !== $format ) {
 			$updates   = array_reverse( $updates );
 			$formatter = new Formatter(
 				$assoc_args,
 				[ 'version', 'update_type', 'package_url' ]
 			);
 			$formatter->display_items( $updates );
-		} elseif ( empty( $assoc_args['format'] ) || 'table' === $assoc_args['format'] ) {
+		} else {
 			WP_CLI::success( 'WordPress is at the latest version.' );
 		}
 	}
@@ -346,19 +348,21 @@ class Core_Command extends WP_CLI_Command {
 	 * database tables are installed. Doesn't produce output; uses exit codes
 	 * to communicate whether WordPress is installed.
 	 *
+	 * ## OPTIONS
+	 *
 	 * [--network]
 	 * : Check if this is a multisite installation.
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # Bash script for checking if WordPress is not installed
+	 *     # Bash script for checking if WordPress is not installed.
 	 *
 	 *     if ! wp core is-installed 2>/dev/null; then
 	 *         # WP is not installed. Let's try installing it.
 	 *         wp core install
 	 *     fi
 	 *
-	 *     # Bash script for checking if WordPress is installed, with fallback
+	 *     # Bash script for checking if WordPress is installed, with fallback.
 	 *
 	 *     if wp core is-installed 2>/dev/null; then
 	 *         # WP is installed. Let's do some things we should only do in a confirmed WP environment.
@@ -367,7 +371,6 @@ class Core_Command extends WP_CLI_Command {
 	 *         # Fallback if WP is not installed.
 	 *         echo 'Hey Friend, you are in the wrong spot. Move in to your WordPress directory and try again.'
 	 *     fi
-
 	 *
 	 * @subcommand is-installed
 	 */
@@ -1077,15 +1080,10 @@ EOT;
 	 *     No files found that need cleaning up
 	 *     Success: WordPress updated successfully.
 	 *
-	 *     # Update WordPress to latest version of 3.8 release
-	 *     $ wp core update --version=3.8 ../latest.zip
-	 *     Updating to version 3.8 ()...
+	 *     # Update WordPress using zip file.
+	 *     $ wp core update ../latest.zip
+	 *     Starting update...
 	 *     Unpacking the update...
-	 *     Cleaning up files...
-	 *     File removed: wp-admin/js/tags-box.js
-	 *     ...
-	 *     File removed: wp-admin/js/updates.min.
-	 *     377 files cleaned up
 	 *     Success: WordPress updated successfully.
 	 *
 	 *     # Update WordPress to 3.1 forcefully
@@ -1223,6 +1221,8 @@ EOT;
 	/**
 	 * Runs the WordPress database update procedure.
 	 *
+	 * ## OPTIONS
+	 *
 	 * [--network]
 	 * : Update databases for all sites on a network
 	 *
@@ -1231,14 +1231,14 @@ EOT;
 	 *
 	 * ## EXAMPLES
 	 *
-	 *     # Update the WordPress database
+	 *     # Update the WordPress database.
 	 *     $ wp core update-db
 	 *     Success: WordPress database upgraded successfully from db version 36686 to 35700.
 	 *
-	 *     # Update databases for all sites on a network
+	 *     # Update databases for all sites on a network.
 	 *     $ wp core update-db --network
 	 *     WordPress database upgraded successfully from db version 35700 to 29630 on example.com/
-	 *     Success: WordPress database upgraded on 123/123 sites
+	 *     Success: WordPress database upgraded on 123/123 sites.
 	 *
 	 * @subcommand update-db
 	 */

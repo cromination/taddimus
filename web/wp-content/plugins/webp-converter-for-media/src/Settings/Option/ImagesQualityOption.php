@@ -95,7 +95,7 @@ class ImagesQualityOption extends OptionAbstract {
 			return '95';
 		} elseif ( ! array_key_exists( $current_value, $available_values ?: [] )
 			|| in_array( $current_value, $disabled_values ?: [] ) ) {
-			return null;
+			return $this->get_default_value();
 		}
 
 		return $current_value;

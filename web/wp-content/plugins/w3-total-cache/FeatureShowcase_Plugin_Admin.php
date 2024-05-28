@@ -240,10 +240,26 @@ class FeatureShowcase_Plugin_Admin {
 
 		return array(
 			'new' => array(
+				'remove-cssjs' => array(
+					'title'      => esc_html__( 'Remove Unused CSS/JS', 'w3-total-cache' ),
+					'icon'       => 'dashicons-editor-strikethrough',
+					'text'       => esc_html__( 'Removes specified CSS/JS tags from the homepage or on a per page basis. Can be used to eliminate unused CSS/JS on pages that do not require them.', 'w3-total-cache' ),
+					'button'     => '<button class="button" onclick="window.location=\'' . (
+						UserExperience_Remove_CssJs_Extension::is_enabled() ?
+							esc_url( Util_Ui::admin_url( 'admin.php?page=w3tc_userexperience#remove-cssjs' ) ) :
+							esc_url( Util_Ui::admin_url( 'admin.php?page=w3tc_general#userexperience' ) )
+						) . '\'">' .
+						__( 'Settings', 'w3-total-cache' ) . '</button>',
+					'link'       => '<a target="_blank" href="' . esc_url( 'https://www.boldgrid.com/support/w3-total-cache/remove-cssjs/?utm_source=w3tc&utm_medium=feature_showcase&utm_campaign=remove-cssjs' ) .
+						'">' . __( 'More info', 'w3-total-cache' ) . '<span class="dashicons dashicons-external"></span></a>',
+					'is_premium' => true,
+					'is_new'     => true,
+					'version'    => '2.7.0',
+				),
 				'preload-requests' => array(
 					'title'      => esc_html__( 'Preload Requests', 'w3-total-cache' ),
 					'icon'       => 'dashicons-controls-repeat',
-					'text'       => esc_html__( 'DNS prefetching, preconnecting, and preloading are essential web optimization techniques that enhance website performance by proactively resolving network-related tasks.', 'w3-total-cache' ),
+					'text'       => esc_html__( 'DNS prefetching, pre-connecting, and preloading are essential web optimization techniques that enhance website performance by proactively resolving network-related tasks.', 'w3-total-cache' ),
 					'button'     => '<button class="button" onclick="window.location=\'' . (
 						UserExperience_Preload_Requests_Extension::is_enabled() ?
 							esc_url( Util_Ui::admin_url( 'admin.php?page=w3tc_userexperience#preload-requests' ) ) :
@@ -254,6 +270,7 @@ class FeatureShowcase_Plugin_Admin {
 						'">' . __( 'More info', 'w3-total-cache' ) . '<span class="dashicons dashicons-external"></span></a>',
 					'is_premium' => true,
 					'is_new'     => true,
+					'version'    => '2.6.1',
 				),
 				'defer-scripts'    => array(
 					'title'      => esc_html__( 'Delay Scripts', 'w3-total-cache' ),
@@ -269,6 +286,7 @@ class FeatureShowcase_Plugin_Admin {
 						'">' . __( 'More info', 'w3-total-cache' ) . '<span class="dashicons dashicons-external"></span></a>',
 					'is_premium' => true,
 					'is_new'     => true,
+					'version'    => '2.6.1',
 				),
 			),
 			'old' => array(

@@ -1430,6 +1430,8 @@ class SWCFPC_Backend
         $partners['hosting']['list'][] = array('title' => 'Cloudways', 'link' => 'https://www.cloudways.com/', 'img' => SWCFPC_PLUGIN_URL. 'assets/img/partners/cloudways.png', 'description' => 'Test');
         $partners['hosting']['list'][] = array('title' => 'Cloudways', 'link' => 'https://www.cloudways.com/', 'img' => SWCFPC_PLUGIN_URL. 'assets/img/partners/cloudways.png', 'description' => 'Test');
 
+        $this->load_survey();
+
         require_once SWCFPC_PLUGIN_PATH . 'libs/views/settings.php';
 
     }
@@ -1548,5 +1550,64 @@ class SWCFPC_Backend
 
     }
 
+    /**
+     * Get the survey metadata.
+     * 
+     * @return array The survey metadata.
+     */
+    function get_survey_metadata() {
+        $install_date     = get_option( 'wp_cloudflare_super_page_cache_install', false );
+        $install_category = 0;
 
+        if ( false !== $install_date ) {
+            $days_since_install = round( ( time() - $install_date ) / DAY_IN_SECONDS );
+
+            if ( 0 === $days_since_install || 1 === $days_since_install ) {
+                $install_category = 0;
+            } elseif ( 1 < $days_since_install && 8 > $days_since_install ) {
+                $install_category = 7;
+            } elseif ( 8 <= $days_since_install && 31 > $days_since_install ) {
+                $install_category = 30;
+            } elseif ( 30 < $days_since_install && 90 > $days_since_install ) {
+                $install_category = 90;
+            } elseif ( 90 <= $days_since_install ) {
+                $install_category = 91;
+            }
+        }
+       
+        $plugin_data    = get_plugin_data( SWCFPC_BASEFILE, false, false );
+        $plugin_version = '';
+        if ( ! empty( $plugin_data['Version'] ) ) {
+            $plugin_version = $plugin_data['Version'];
+        }
+
+        $user_id = 'swcfpc_' . preg_replace( '/[^\w\d]*/', '', get_site_url() ); // Use a normalized version of the site URL as a user ID.
+
+        return array(
+            'userId' => $user_id,
+            'attributes' => array(
+				'days_since_install' => $install_category,
+                'plugin_version'     => $plugin_version,
+            )
+        );
+    }
+
+
+    /**
+     * Load the survey script.
+     * 
+     * @return void
+     */
+    function load_survey() {
+        $survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
+		if ( empty( $survey_handler ) ) {
+			return;
+		}
+
+        $metadata = $this->get_survey_metadata();
+
+		do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
+		wp_enqueue_script( 'swcfpc_survey', SWCFPC_PLUGIN_URL . 'assets/js/survey.js', array( $survey_handler ), $metadata['attributes']['plugin_version'], true );
+		wp_localize_script( 'swcfpc_survey', 'swcfpcSurveyData', $metadata );
+    }
 }

@@ -1,5 +1,21 @@
 == Changelog ==
 
+= 5.12.5 (2024-04-15) =
+* `[Fixed]` Modification of plugin settings via filters
+
+= 5.12.4 (2024-04-12) =
+* `[Fixed]` Support for changed upload directory path based on absolute path from upload_path option
+* `[Fixed]` UX of plugin settings page
+* `[Changed]` Error message for rewrites_not_executed error in server configuration
+
+= 5.12.3 (2024-03-19) =
+* `[Fixed]` Support for changed upload directory path based on upload_path option
+
+= 5.12.2 (2024-03-14) =
+* `[Changed]` Verification of rewrites_not_executed server configuration error
+* `[Added]` Support for changed upload directory path based on upload_path option
+* `[Added]` Support for WordPress 6.5
+
 = 5.12.1 (2024-02-15) =
 * `[Fixed]` Verification of rewrites_not_executed server configuration error when there is also a problem with the Gd or Imagick libraries
 * `[Changed]` Error message for bypassing_apache error in server configuration

@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'codeinwp/themeisle-companion',
-        'pretty_version' => 'v2.10.30',
-        'version' => '2.10.30.0',
-        'reference' => '8123090dd74b876eb668009634bce55239557bbf',
+        'pretty_version' => 'v2.10.36',
+        'version' => '2.10.36.0',
+        'reference' => '81db3e9df8dd4fb0651c9a6d83860115ebede162',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'codeinwp/elementor-extra-widgets' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'bf962882386c08ddc103611cb3cf78779ee85cc2',
+            'reference' => '3dbe12d2ba79edda78402b8f27c4b7b60e87b70e',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/elementor-extra-widgets',
             'aliases' => array(
@@ -31,9 +31,9 @@
             'dev_requirement' => false,
         ),
         'codeinwp/themeisle-companion' => array(
-            'pretty_version' => 'v2.10.30',
-            'version' => '2.10.30.0',
-            'reference' => '8123090dd74b876eb668009634bce55239557bbf',
+            'pretty_version' => 'v2.10.36',
+            'version' => '2.10.36.0',
+            'reference' => '81db3e9df8dd4fb0651c9a6d83860115ebede162',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -42,16 +42,18 @@
         'codeinwp/themeisle-content-forms' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '0c9b18cc7e5e8cf48fc030a1f3bead8a5152015d',
+            'reference' => '5489008fb3354940e878cc4db5f0300a4853fa39',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/themeisle-content-forms',
-            'aliases' => array(),
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
             'dev_requirement' => false,
         ),
         'codeinwp/themeisle-sdk' => array(
-            'pretty_version' => '3.3.13',
-            'version' => '3.3.13.0',
-            'reference' => '2209cdf402e8f97def8d699bb8447dc67585cc95',
+            'pretty_version' => '3.3.20',
+            'version' => '3.3.20.0',
+            'reference' => 'd1b92f3ab74f1b3f0afad7e23ddb1c058d66c03c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/themeisle-sdk',
             'aliases' => array(),

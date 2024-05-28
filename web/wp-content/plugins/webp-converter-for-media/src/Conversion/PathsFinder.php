@@ -255,6 +255,10 @@ class PathsFinder {
 			return self::PATHS_PER_REQUEST_LOCAL;
 		}
 
+		if ( $settings[ ServiceModeOption::OPTION_NAME ] === 'yes' ) {
+			return self::PATHS_PER_REQUEST_REMOTE_LARGE;
+		}
+
 		$output_formats       = count( $settings[ OutputFormatsOption::OPTION_NAME ] ) ?: 1;
 		$images_count         = $paths_count * $output_formats;
 		$images_limit         = $this->token_repository->get_token()->get_images_limit();

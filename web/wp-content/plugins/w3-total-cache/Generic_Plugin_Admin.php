@@ -56,9 +56,13 @@ class Generic_Plugin_Admin {
 		$this->is_w3tc_page = Util_Admin::is_w3tc_admin_page();
 
 		add_action( 'admin_init', array( $this, 'admin_init' ) );
+		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Generic_WidgetAccount', 'admin_init_w3tc_dashboard' ) );
+		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Generic_WidgetSettings', 'admin_init_w3tc_dashboard' ) );
+		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Generic_WidgetPartners', 'admin_init_w3tc_dashboard' ) );
 		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Generic_WidgetServices', 'admin_init_w3tc_dashboard' ) );
-		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Generic_WidgetCommunity', 'admin_init_w3tc_dashboard' ) );
 		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Generic_WidgetBoldGrid', 'admin_init_w3tc_dashboard' ) );
+		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Generic_WidgetStats', 'admin_init_w3tc_dashboard' ) );
+		add_action( 'admin_init_w3tc_dashboard', array( '\W3TC\Extension_ImageService_Widget', 'admin_init_w3tc_dashboard' ) );
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'admin_print_styles-toplevel_page_w3tc_dashboard', array( '\W3TC\Generic_Page_Dashboard', 'admin_print_styles_w3tc_dashboard' ) );
@@ -384,18 +388,6 @@ class Generic_Plugin_Admin {
 			}
 		}
 
-		if ( 'w3tc_dashboard' === $page ) {
-			?>
-			<script type="text/javascript">
-				jQuery( function() {
-					jQuery('#normal-sortables').masonry( {
-						itemSelector: '.postbox'
-					} );
-				} );
-			</script>
-			<?php
-		}
-
 		if ( $this->_config->get_boolean( 'common.track_usage' ) && $this->is_w3tc_page ) {
 
 			$current_user = wp_get_current_user();
@@ -631,6 +623,38 @@ class Generic_Plugin_Admin {
 					W3TC_VERSION,
 					true
 				);
+				// No break.
+			case 'w3tc_userexperience':
+				if ( UserExperience_Remove_CssJs_Extension::is_enabled() ) {
+					wp_register_script( 'w3tc_remove_cssjs', plugins_url( 'UserExperience_Remove_CssJs_Page_View.js', W3TC_FILE ), array( 'jquery' ), W3TC_VERSION, true );
+
+					wp_localize_script(
+						'w3tc_remove_cssjs',
+						'W3TCRemoveCssJsData',
+						array(
+							'lang' => array(
+								'singlesPrompt'                     => __( 'Enter target CSS/JS match pattern.', 'w3-total-cache' ),
+								'singlesNoEntries'                  => __( 'No CSS/JS entries added.', 'w3-total-cache' ),
+								'singlesExists'                     => __( 'Entry already exists!', 'w3-total-cache' ),
+								'singlesPathLabel'                  => __( 'Target CSS/JS:', 'w3-total-cache' ),
+								'singlesDelete'                     => __( 'Delete', 'w3-total-cache' ),
+								'singlesBehaviorLabel'              => __( 'Behavior:', 'w3-total-cache' ),
+								'singlesBehaviorExcludeText'        => __( 'Exclude', 'w3-total-cache' ),
+								'singlesBehaviorIncludeText'        => __( 'Include', 'w3-total-cache' ),
+								'singlesBehaviorDescription'        => __( 'Exclude will only remove match(es) from the specified URLs.', 'w3-total-cache' ),
+								'singlesBehaviorDescription2'       => __( 'Include will NOT remove match(es) from the specified URLs but will remove it everywhere else.', 'w3-total-cache' ),
+								'singlesIncludesLabelExclude'       => __( 'Exclude on these pages:', 'w3-total-cache' ),
+								'singlesIncludesLabelInclude'       => __( 'Include on these pages:', 'w3-total-cache' ),
+								'singlesIncludesDescriptionExclude' => __( 'Specify the relative or absolute page URLs from which the above match(es) should be excluded. Include one entry per line.', 'w3-total-cache' ),
+								'singlesIncludesDescriptionInclude' => __( 'Specify the relative or absolute page URLs from which the above match(es) should be included. Include one entry per line.', 'w3-total-cache' ),
+								'singlesEmptyUrl'                   => __( 'Empty match pattern!', 'w3-total-cache' ),
+								'singlesDeleteConfirm'              => __( 'Are you sure want to delete this entry?', 'w3-total-cache' ),
+							),
+						)
+					);
+
+					wp_enqueue_script( 'w3tc_remove_cssjs' );
+				}
 				// No break.
 			case 'w3tc_cdn':
 				wp_enqueue_script( 'jquery-ui-sortable' );

@@ -235,14 +235,14 @@ class RewritesErrorsDetector implements DetectorInterface {
 	 * @return bool
 	 */
 	private function if_htaccess_can_be_overwritten(): bool {
-		$file_size = $this->file_loader->get_file_size_by_url(
+		$file_status = $this->file_loader->get_file_status_by_url(
 			$this->plugin_info->get_plugin_directory_url() . self::URL_DEBUG_HTACCESS_FILE,
 			true,
 			$this->test_version,
 			__FUNCTION__
 		);
 
-		return ( $file_size === 0 );
+		return ( in_array( $file_status, [ 403, 404 ] ) );
 	}
 
 	/**

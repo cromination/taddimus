@@ -451,6 +451,37 @@ class Hestia_Admin {
 				'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 			)
 		);
+
+		if ( defined( 'HESTIA_PRO_FLAG' ) ) {
+			return;
+		}
+
+		$sdk_announcements = apply_filters( 'themeisle_sdk_announcements', array() );
+
+		if ( is_array( $sdk_announcements ) && ! empty( $sdk_announcements ) ) {
+
+			$events_assets = array();
+
+			foreach ( $sdk_announcements as $announcement => $event_data ) {
+				if (
+					strpos( $announcement, 'black_friday' ) !== false &&
+					! empty( $event_data ) &&
+					is_array( $event_data ) &&
+					! empty( $event_data['active'] ) &&
+					! empty( $event_data['hestia_customizer_url'] )
+				) {
+					$events_assets['customizerBannerUrl']      = esc_url_raw( get_template_directory_uri() . '/assets/img/black-friday-customizer.png' );
+					$events_assets['customizerBannerStoreUrl'] = esc_url_raw( $event_data['hestia_customizer_url'] );
+				}
+			}
+
+			wp_localize_script(
+				'hestia_customize_controls',
+				'hestiaSaleEvents',
+				$events_assets
+			);
+		}
+
 	}
 
 	/**
@@ -596,5 +627,103 @@ class Hestia_Admin {
 			$this->should_show_welcome = true;
 			Themeisle_Onboarding::instance();
 		}
+	}
+
+	/**
+	 * Get the plan category for the product plan ID.
+	 *
+	 * @param object $license_data The license data.
+	 * @return int
+	 */
+	private function plan_category( $license_data ) {
+
+		if ( ! isset( $license_data->plan ) || ! is_numeric( $license_data->plan ) ) {
+			return 0; // Free
+		}
+
+		$plan             = (int) $license_data->plan;
+		$current_category = -1; // Unknown category.
+
+		$categories = array(
+			'1' => array( 1, 2, 3, 8, 9, 14 ), // Personal
+			'2' => array( 4, 5, 10, 11, 15 ), // Business
+			'3' => array( 6, 7, 12, 13, 16 ), // Agency
+		);
+
+		foreach ( $categories as $category => $plans ) {
+			if ( in_array( $plan, $plans, true ) ) {
+				$current_category = (int) $category;
+				break;
+			}
+		}
+
+		return $current_category;
+	}
+
+	/**
+	 * Get the data used for the survey.
+	 *
+	 * @return array
+	 * @see survey.js
+	 */
+	public function get_survery_metadata() {
+
+		$user_id       = 'hestia_';
+		$license_saved = get_option( 'hestia_pro_license_data', array() );
+
+		if ( ! empty( $license_saved->key ) ) {
+			$user_id .= $license_saved->key;
+		} else {
+			$user_id .= preg_replace( '/[^\w\d]*/', '', get_site_url() ); // Use a normalized version of the site URL as a user ID for free users.
+		}
+
+		$days_since_install = round( ( time() - get_option( 'hestia_pro_install', 0 ) ) / DAY_IN_SECONDS );
+		$install_category   = 0;
+		if ( 0 === $days_since_install || 1 === $days_since_install ) {
+			$install_category = 0;
+		} elseif ( 1 < $days_since_install && 8 > $days_since_install ) {
+			$install_category = 7;
+		} elseif ( 8 <= $days_since_install && 31 > $days_since_install ) {
+			$install_category = 30;
+		} elseif ( 30 < $days_since_install && 90 > $days_since_install ) {
+			$install_category = 90;
+		} elseif ( 90 <= $days_since_install ) {
+			$install_category = 91;
+		}
+
+		return array(
+			'userId'     => $user_id,
+			'attributes' => array(
+				'license_status'     => ! empty( $license_saved->license ) ? $license_saved->license : 'invalid',
+				'days_since_install' => $install_category,
+				'version'            => HESTIA_VERSION,
+				'plan'               => $this->plan_category( $license_saved ),
+			),
+		);
+	}
+
+	/**
+	 * Register the survey script.
+	 */
+	public function register_survey() {
+
+		$survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
+		if ( ! empty( $survey_handler ) ) {
+			do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
+			wp_enqueue_script( 'hestia_survey', get_template_directory_uri() . '/assets/js/survey.js', array( $survey_handler ), HESTIA_VENDOR_VERSION, true );
+			wp_localize_script( 'hestia_survey', 'hestiaSurveyData', $this->get_survery_metadata() );
+		}
+	}
+
+	/**
+	 * Initialize dependencies for Hestia Options.
+	 */
+	public function hestia_options_init() {
+		$screen = get_current_screen();
+		if ( false === strpos( $screen->base, 'appearance_page_hestia-welcome' ) ) {
+			return;
+		}
+
+		$this->register_survey();
 	}
 }

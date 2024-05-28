@@ -76,6 +76,8 @@ class RewritesNotExecutedNotice implements NoticeInterface {
 			return 'WP Engine';
 		} elseif ( strpos( strtolower( $_SERVER['SERVER_SOFTWARE'] ?? '' ), 'nginx' ) !== false ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			return 'Nginx';
+		} elseif ( strpos( strtolower( $_SERVER['SERVER_SOFTWARE'] ?? '' ), 'flywheel' ) !== false ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			return 'Flywheel';
 		}
 
 		return null;

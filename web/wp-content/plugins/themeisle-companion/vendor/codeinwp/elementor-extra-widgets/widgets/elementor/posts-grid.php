@@ -17,6 +17,7 @@ use Elementor\Group_Control_Typography;
 use Elementor\Core\Schemes\Color;
 use Elementor\Core\Schemes\Typography;
 use Elementor\Widget_Base;
+use ThemeIsle\ElementorExtraWidgets\Traits\Sanitization;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package ThemeIsle\ElementorExtraWidgets
  */
 class Posts_Grid extends Widget_Base {
+	use Sanitization;
 
 	/**
 	 * Widget title.
@@ -1457,9 +1459,13 @@ class Posts_Grid extends Widget_Base {
 		// Get settings.
 		$settings = $this->get_settings();
 
+        $grid_columns_mobile = ! empty( $settings['grid_columns_mobile'] ) ? ' obfx-grid-mobile-' . $this->sanitize_numeric( $settings['grid_columns_mobile'], 1 ) : '';
+        $grid_columns_tablet = ! empty( $settings['grid_columns_tablet'] ) ? ' obfx-grid-tablet-' . $this->sanitize_numeric( $settings['grid_columns_tablet'], 2 ) : '';
+        $grid_columns = ! empty( $settings['grid_columns'] ) ? ' obfx-grid-desktop-' . $this->sanitize_numeric( $settings['grid_columns'], 3 ) : '';
+
 		// Output.
 		echo '<div class="obfx-grid">';
-		echo '<div class="obfx-grid-container' . ( ! empty( $settings['grid_style'] ) && $settings['grid_style'] == 'list' ? ' obfx-grid-style-' . $settings['grid_style'] : '' ) . ( ! empty( $settings['grid_columns_mobile'] ) ? ' obfx-grid-mobile-' . $settings['grid_columns_mobile'] : '' ) . ( ! empty( $settings['grid_columns_tablet'] ) ? ' obfx-grid-tablet-' . $settings['grid_columns_tablet'] : '' ) . ( ! empty( $settings['grid_columns'] ) ? ' obfx-grid-desktop-' . $settings['grid_columns'] : '' ) . '">';
+		echo '<div class="obfx-grid-container' . ( ! empty( $settings['grid_style'] ) && $settings['grid_style'] == 'list' ? ' obfx-grid-style-' . esc_attr( $settings['grid_style'] ) : '' ) . $grid_columns_mobile . $grid_columns_tablet . $grid_columns . '">';
 
 		// Arguments for query.
 		$args = array();
@@ -1632,8 +1638,10 @@ class Posts_Grid extends Widget_Base {
 	protected function renderTitle() {
 		$settings = $this->get_settings();
 
-		if ( $settings['grid_title_hide'] !== 'yes' ) { ?>
-			<<?php echo $settings['grid_title_tag']; ?> class="entry-title obfx-grid-title">
+		if ( $settings['grid_title_hide'] !== 'yes' ) {
+			$grid_title_tag = $this->sanitize_tag( $settings['grid_title_tag'], 'h3' );
+            ?>
+			<<?php echo $grid_title_tag; ?> class="entry-title obfx-grid-title">
 			<?php if ( $settings['grid_title_link'] == 'yes' ) { ?>
 				<a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>">
 					<?php the_title(); ?>
@@ -1642,7 +1650,7 @@ class Posts_Grid extends Widget_Base {
 			} else {
 				the_title();
 			} ?>
-			</<?php echo $settings['grid_title_tag']; ?>>
+			</<?php echo $grid_title_tag; ?>>
 			<?php
 		}
 	}

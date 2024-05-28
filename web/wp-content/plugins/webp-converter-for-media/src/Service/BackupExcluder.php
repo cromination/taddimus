@@ -25,6 +25,14 @@ class BackupExcluder implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
+		add_action( 'init', [ $this, 'init_hooks_after_setup' ] );
+	}
+
+	/**
+	 * @return void
+	 * @internal
+	 */
+	public function init_hooks_after_setup() {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		if ( in_array( ExtraFeaturesOption::OPTION_VALUE_BACKUP_ENABLED, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
 			return;

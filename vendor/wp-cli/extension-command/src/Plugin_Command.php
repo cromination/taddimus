@@ -4,6 +4,8 @@ use WP_CLI\ParsePluginNameInput;
 use WP_CLI\Utils;
 use WP_CLI\WpOrgApi;
 
+use function WP_CLI\Utils\normalize_path;
+
 /**
  * Manages plugins, including installs, activations, and updates.
  *
@@ -50,6 +52,9 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	protected $check_wporg       = [
 		'status'       => false,
 		'last_updated' => false,
+	];
+	protected $check_headers     = [
+		'tested_up_to' => false,
 	];
 
 	protected $obj_fields = array(
@@ -265,6 +270,7 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 				'description'        => $mu_description,
 				'file'               => $file,
 				'auto_update'        => false,
+				'tested_up_to'       => '',
 				'wporg_status'       => $wporg_info['status'],
 				'wporg_last_updated' => $wporg_info['last_updated'],
 			);
@@ -286,6 +292,7 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 				'file'               => $name,
 				'auto_update'        => false,
 				'author'             => $item_data['Author'],
+				'tested_up_to'       => '',
 				'wporg_status'       => '',
 				'wporg_last_updated' => '',
 			];
@@ -322,6 +329,18 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *     $ wp plugin activate hello --network
 	 *     Plugin 'hello' network activated.
 	 *     Success: Network activated 1 of 1 plugins.
+	 *
+	 *     # Activate plugins that were recently active.
+	 *     $ wp plugin activate $(wp plugin list --recently-active --field=name)
+	 *     Plugin 'bbpress' activated.
+	 *     Plugin 'buddypress' activated.
+	 *     Success: Activated 2 of 2 plugins.
+	 *
+	 *     # Activate plugins that were recently active on a multisite.
+	 *     $ wp plugin activate $(wp plugin list --recently-active --field=name) --network
+	 *     Plugin 'bbpress' network activated.
+	 *     Plugin 'buddypress' network activated.
+	 *     Success: Activated 2 of 2 plugins.
 	 */
 	public function activate( $args, $assoc_args = array() ) {
 		$network_wide = Utils\get_flag_value( $assoc_args, 'network', false );
@@ -711,6 +730,12 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 			$auto_updates = [];
 		}
 
+		$recently_active = is_network_admin() ? get_site_option( 'recently_activated' ) : get_option( 'recently_activated' );
+
+		if ( false === $recently_active ) {
+			$recently_active = [];
+		}
+
 		foreach ( $this->get_all_plugins() as $file => $details ) {
 			$all_update_info = $this->get_update_info();
 			$update_info     = ( isset( $all_update_info->response[ $file ] ) && null !== $all_update_info->response[ $file ] ) ? (array) $all_update_info->response[ $file ] : null;
@@ -735,9 +760,39 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 				'file'               => $file,
 				'auto_update'        => in_array( $file, $auto_updates, true ),
 				'author'             => $details['Author'],
+				'tested_up_to'       => '',
 				'wporg_status'       => $wporg_info['status'],
 				'wporg_last_updated' => $wporg_info['last_updated'],
+				'recently_active'    => in_array( $file, array_keys( $recently_active ), true ),
 			];
+
+			if ( $this->check_headers['tested_up_to'] ) {
+				$plugin_readme = normalize_path( dirname( WP_PLUGIN_DIR . '/' . $file ) . '/readme.txt' );
+
+				if ( file_exists( $plugin_readme ) && is_readable( $plugin_readme ) ) {
+					$readme_obj = new SplFileObject( $plugin_readme );
+					$readme_obj->setFlags( SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY );
+					$readme_line = 0;
+
+					// Reading the whole file can exhaust the memory, so only read the first 100 lines of the file,
+					// as the "Tested up to" header should be near the top.
+					while ( $readme_line < 100 && ! $readme_obj->eof() ) {
+						$line = $readme_obj->fgets();
+
+						// Similar to WP.org, it matches for both "Tested up to" and "Tested" header in the readme file.
+						preg_match( '/^tested(:| up to:) (.*)$/i', strtolower( $line ), $matches );
+
+						if ( isset( $matches[2] ) && ! empty( $matches[2] ) ) {
+							$items[ $file ]['tested_up_to'] = $matches[2];
+							break;
+						}
+
+						++$readme_line;
+					}
+
+					$file_obj = null;
+				}
+			}
 
 			if ( null === $update_info ) {
 				// Get info for all plugins that don't have an update.
@@ -941,29 +996,58 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *   - yaml
 	 * ---
 	 *
+	 * ## AVAILABLE FIELDS
+	 *
+	 * These fields will be displayed by default for the plugin:
+	 *
+	 * * name
+	 * * title
+	 * * author
+	 * * version
+	 * * description
+	 * * status
+	 *
+	 * These fields are optionally available:
+	 *
+	 * * requires_wp
+	 * * requires_php
+	 * * requires_plugins
+	 *
 	 * ## EXAMPLES
 	 *
+	 *     # Get plugin details.
 	 *     $ wp plugin get bbpress --format=json
-	 *     {"name":"bbpress","title":"bbPress","author":"The bbPress Contributors","version":"2.6-alpha","description":"bbPress is forum software with a twist from the creators of WordPress.","status":"active"}
+	 *     {"name":"bbpress","title":"bbPress","author":"The bbPress Contributors","version":"2.6.9","description":"bbPress is forum software with a twist from the creators of WordPress.","status":"active"}
 	 */
 	public function get( $args, $assoc_args ) {
+		$default_fields = array(
+			'name',
+			'title',
+			'author',
+			'version',
+			'description',
+			'status',
+		);
+
 		$plugin = $this->fetcher->get_check( $args[0] );
 		$file   = $plugin->file;
 
 		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $file, false, false );
 
 		$plugin_obj = (object) [
-			'name'        => Utils\get_plugin_name( $file ),
-			'title'       => $plugin_data['Name'],
-			'author'      => $plugin_data['Author'],
-			'version'     => $plugin_data['Version'],
-			'description' => wordwrap( $plugin_data['Description'] ),
-			'status'      => $this->get_status( $file ),
+			'name'             => Utils\get_plugin_name( $file ),
+			'title'            => $plugin_data['Name'],
+			'author'           => $plugin_data['Author'],
+			'version'          => $plugin_data['Version'],
+			'description'      => wordwrap( $plugin_data['Description'] ),
+			'status'           => $this->get_status( $file ),
+			'requires_wp'      => ! empty( $plugin_data['RequiresWP'] ) ? $plugin_data['RequiresWP'] : '',
+			'requires_php'     => ! empty( $plugin_data['RequiresPHP'] ) ? $plugin_data['RequiresPHP'] : '',
+			'requires_plugins' => ! empty( $plugin_data['RequiresPlugins'] ) ? $plugin_data['RequiresPlugins'] : '',
 		];
 
 		if ( empty( $assoc_args['fields'] ) ) {
-			$plugin_array         = get_object_vars( $plugin_obj );
-			$assoc_args['fields'] = array_keys( $plugin_array );
+			$assoc_args['fields'] = $default_fields;
 		}
 
 		$formatter = $this->get_formatter( $assoc_args );
@@ -1241,6 +1325,9 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * [--skip-update-check]
 	 * : If set, the plugin update check will be skipped.
 	 *
+	 * [--recently-active]
+	 * : If set, only recently active plugins will be shown and the status filter will be ignored.
+	 *
 	 * ## AVAILABLE FIELDS
 	 *
 	 * These fields will be displayed by default for each plugin:
@@ -1250,6 +1337,7 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * * update
 	 * * version
 	 * * update_version
+	 * * auto_update
 	 *
 	 * These fields are optionally available:
 	 *
@@ -1258,8 +1346,8 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 * * title
 	 * * description
 	 * * file
-	 * * auto_update
 	 * * author
+	 * * tested_up_to
 	 * * wporg_status
 	 * * wporg_last_updated
 	 *
@@ -1267,25 +1355,25 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *
 	 *     # List active plugins on the site.
 	 *     $ wp plugin list --status=active --format=json
-	 *     [{"name":"dynamic-hostname","status":"active","update":"none","version":"0.4.2","update_version": ""},{"name":"tinymce-templates","status":"active","update":"none","version":"4.4.3","update_version": ""},{"name":"wp-multibyte-patch","status":"active","update":"none","version":"2.4","update_version": ""},{"name":"wp-total-hacks","status":"active","update":"none","version":"2.0.1","update_version": ""}]
+	 *     [{"name":"dynamic-hostname","status":"active","update":"none","version":"0.4.2","update_version":"","auto_update":"off"},{"name":"tinymce-templates","status":"active","update":"none","version":"4.8.1","update_version":"","auto_update":"off"},{"name":"wp-multibyte-patch","status":"active","update":"none","version":"2.9","update_version":"","auto_update":"off"},{"name":"wp-total-hacks","status":"active","update":"none","version":"4.7.2","update_version":"","auto_update":"off"}]
 	 *
 	 *     # List plugins on each site in a network.
 	 *     $ wp site list --field=url | xargs -I % wp plugin list --url=%
-	 *     +---------+----------------+--------+---------+----------------+
-	 *     | name    | status         | update | version | update_version |
-	 *     +---------+----------------+--------+---------+----------------+
-	 *     | akismet | active-network | none   | 3.1.11  |                |
-	 *     | hello   | inactive       | none   | 1.6     | 1.7.2          |
-	 *     +---------+----------------+--------+---------+----------------+
-	 *     +---------+----------------+--------+---------+----------------+
-	 *     | name    | status         | update | version | update_version |
-	 *     +---------+----------------+--------+---------+----------------+
-	 *     | akismet | active-network | none   | 3.1.11  |                |
-	 *     | hello   | inactive       | none   | 1.6     | 1.7.2          |
-	 *     +---------+----------------+--------+---------+----------------+
+	 *     +---------+----------------+-----------+---------+-----------------+------------+
+	 *     | name    | status         | update    | version | update_version | auto_update |
+	 *     +---------+----------------+-----------+---------+----------------+-------------+
+	 *     | akismet | active-network | none      | 5.3.1   |                | on          |
+	 *     | hello   | inactive       | available | 1.6     | 1.7.2          | off         |
+	 *     +---------+----------------+-----------+---------+----------------+-------------+
+	 *     +---------+----------------+-----------+---------+----------------+-------------+
+	 *     | name    | status         | update    | version | update_version | auto_update |
+	 *     +---------+----------------+-----------+---------+----------------+-------------+
+	 *     | akismet | active-network | none      | 5.3.1   |                | on          |
+	 *     | hello   | inactive       | available | 1.6     | 1.7.2          | off         |
+	 *     +---------+----------------+-----------+---------+----------------+-------------+
 	 *
 	 *     # Check whether plugins are still active on WordPress.org
-	 *     $ wp plugin list --format=csv --fields=name,wporg_status,wporg_last_updated
+	 *     $ wp plugin list --fields=name,wporg_status,wporg_last_updated
 	 *     +--------------------+--------------+--------------------+
 	 *     | name               | wporg_status | wporg_last_updated |
 	 *     +--------------------+--------------+--------------------+
@@ -1295,6 +1383,10 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 	 *     | local              |              |                    |
 	 *     +--------------------+--------------+--------------------+
 	 *
+	 *     # List recently active plugins on the site.
+	 *     $ wp plugin list --recently-active --field=name --format=json
+	 *     ["akismet","bbpress","buddypress"]
+	 *
 	 * @subcommand list
 	 */
 	public function list_( $_, $assoc_args ) {
@@ -1303,6 +1395,8 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 			$fields                            = explode( ',', $fields );
 			$this->check_wporg['status']       = in_array( 'wporg_status', $fields, true );
 			$this->check_wporg['last_updated'] = in_array( 'wporg_last_updated', $fields, true );
+
+			$this->check_headers['tested_up_to'] = in_array( 'tested_up_to', $fields, true );
 		}
 
 		$field = Utils\get_flag_value( $assoc_args, 'field' );
@@ -1311,6 +1405,8 @@ class Plugin_Command extends \WP_CLI\CommandWithUpgrade {
 		} elseif ( 'wporg_last_updated' === $field ) {
 			$this->check_wporg['last_updated'] = true;
 		}
+
+		$this->check_headers['tested_up_to'] = 'tested_up_to' === $field || $this->check_headers['tested_up_to'];
 
 		parent::_list( $_, $assoc_args );
 	}
