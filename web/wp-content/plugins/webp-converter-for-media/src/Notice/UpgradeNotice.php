@@ -11,7 +11,7 @@ use WebpConverter\Settings\Option\AccessTokenOption;
  */
 class UpgradeNotice extends NoticeAbstract implements NoticeInterface {
 
-	const NOTICE_OPTION    = 'webpc_notice_upgrade';
+	const NOTICE_OPTION    = 'webpc_notice_pro_version';
 	const NOTICE_VIEW_PATH = 'components/notices/upgrade.php';
 
 	/**
@@ -54,6 +54,10 @@ class UpgradeNotice extends NoticeAbstract implements NoticeInterface {
 		}
 
 		$option_value = OptionsAccessManager::get_option( $this->get_option_name() );
+		if ( $option_value === null ) {
+			NoticeIntegrator::set_default_value( self::NOTICE_OPTION, self::get_default_value() );
+		}
+
 		return ( ( $option_value !== null ) && ( $option_value < time() ) );
 	}
 

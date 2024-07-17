@@ -42,8 +42,8 @@ class RegenerateAttachmentEndpoint extends EndpointAbstract {
 						return in_array(
 							$value,
 							array_merge(
-								apply_filters( 'webpc_option_quality_levels', [ '75', '80', '85', '90', '95' ] ),
-								[ '0' ]
+								apply_filters( 'webpc_option_quality_levels', [ 75, 80, 85, 90, 95 ] ),
+								[ 0 ]
 							)
 						);
 					},

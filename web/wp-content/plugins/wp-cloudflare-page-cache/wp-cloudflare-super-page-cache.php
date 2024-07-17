@@ -3,7 +3,7 @@
  * Plugin Name:  Super Page Cache for Cloudflare
  * Plugin URI:   https://wordpress.org/plugins/wp-cloudflare-page-cache/
  * Description:  Speed up your website by enabling page caching on a Cloudflare free plans.
- * Version:      4.7.10
+ * Version:      4.7.12
  * Author:       Optimole
  * Author URI:   https://optimole.com/
  * License:      GPLv2 or later
@@ -44,8 +44,8 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
     class SW_CLOUDFLARE_PAGECACHE {
 
         private $config   = false;
-        private $objects  = array();
-        private $version  = '4.7.10';
+        private $modules  = array();
+        private $version  = '4.7.12';
 
         // Sorting Tool: https://onlinestringtools.com/sort-strings
         // Duplicate Finder: https://www.mynikko.com/tools/tool_duplicateremover.html
@@ -534,10 +534,10 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
         function include_libs()
         {
 
-            if( count($this->objects) > 0 )
+            if( count($this->modules) > 0 )
                 return;
 
-            $this->objects = array();
+            $this->modules = array();
 
             include_once(ABSPATH . 'wp-includes/pluggable.php');
 
@@ -558,39 +558,28 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             $log_file_path = $this->get_plugin_wp_content_directory().'/debug.log';
             $log_file_url = $this->get_plugin_wp_content_directory_url().'/debug.log';
 
-            $this->objects = apply_filters( 'swcfpc_include_libs_early', $this->objects );
+            $this->modules = apply_filters( 'swcfpc_include_libs_early', $this->modules );
 
             if( $this->get_single_config('log_enabled', 0) > 0 )
-                $this->objects['logs'] = new SWCFPC_Logs( $log_file_path, $log_file_url, true, $this->get_single_config('log_max_file_size', 2), $this );
+                $this->modules['logs'] = new SWCFPC_Logs( $log_file_path, $log_file_url, true, $this->get_single_config('log_max_file_size', 2), $this );
             else
-                $this->objects['logs'] = new SWCFPC_Logs( $log_file_path, $log_file_url, false, $this->get_single_config('log_max_file_size', 2), $this );
+                $this->modules['logs'] = new SWCFPC_Logs( $log_file_path, $log_file_url, false, $this->get_single_config('log_max_file_size', 2), $this );
 
-            $this->objects['logs']->set_verbosity( $this->get_single_config('log_verbosity', SWCFPC_LOGS_STANDARD_VERBOSITY) );
+            $this->modules['logs']->set_verbosity( $this->get_single_config('log_verbosity', SWCFPC_LOGS_HIGH_VERBOSITY) );
 
-            $this->objects['cloudflare'] = new SWCFPC_Cloudflare(
-                $this->get_single_config('cf_auth_mode'),
-                $this->get_cloudflare_api_key(),
-                $this->get_cloudflare_api_email(),
-                $this->get_cloudflare_api_token(),
-                $this->get_cloudflare_api_zone_id(),
-                $this->get_cloudflare_worker_mode(),
-                $this->get_cloudflare_worker_content(),
-                $this->get_cloudflare_worker_id(),
-                $this->get_cloudflare_worker_route_id(),
-                $this
-            );
+            $this->modules['cloudflare'] = new SWCFPC_Cloudflare( $this );
 
-            $this->objects['fallback_cache'] = new SWCFPC_Fallback_Cache( $this );
-            $this->objects['html_cache'] = new SWCFPC_Html_Cache( $this );
-            $this->objects['cache_controller'] = new SWCFPC_Cache_Controller( SWCFPC_CACHE_BUSTER, $this );
-            $this->objects['varnish'] = new SWCFPC_Varnish( $this );
-            $this->objects['backend'] = new SWCFPC_Backend( $this );
+            $this->modules['fallback_cache'] = new SWCFPC_Fallback_Cache( $this );
+            $this->modules['html_cache'] = new SWCFPC_Html_Cache( $this );
+            $this->modules['cache_controller'] = new SWCFPC_Cache_Controller( SWCFPC_CACHE_BUSTER, $this );
+            $this->modules['varnish'] = new SWCFPC_Varnish( $this );
+            $this->modules['backend'] = new SWCFPC_Backend( $this );
 
-            if( ( !defined( 'WP_CLI' ) || (defined('WP_CLI') && WP_CLI === false) ) && isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 && !is_admin() && !$this->is_login_page() && $this->get_single_config('cf_fallback_cache', 0) > 0 && $this->objects['cache_controller']->is_cache_enabled() ) {
-                $this->objects['fallback_cache']->fallback_cache_retrive_current_page();
+            if( ( !defined( 'WP_CLI' ) || (defined('WP_CLI') && WP_CLI === false) ) && isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 && !is_admin() && !$this->is_login_page() && $this->get_single_config('cf_fallback_cache', 0) > 0 && $this->modules['cache_controller']->is_cache_enabled() ) {
+                $this->modules['fallback_cache']->fallback_cache_retrive_current_page();
             }
 
-            $this->objects = apply_filters( 'swcfpc_include_libs_lately', $this->objects );
+            $this->modules = apply_filters( 'swcfpc_include_libs_lately', $this->modules );
 
             // Inizializzo qui la classe del preloader in quanto questo metodo viene richiamato all'evento plugin_loaded. Dopodiche' posso stanziare l'oggetto anche in chiamate Ajax
             new SWCFPC_Preloader_Process( $this );
@@ -687,6 +676,10 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             //$config['cf_bypass_post']                   = 0;
             $config['cf_bypass_query_var']              = 0;
             $config['cf_bypass_wp_json_rest']           = 0;
+
+            // Ruleset
+            $config['cf_cache_settings_ruleset_id']      = '';
+            $config['cf_cache_settings_ruleset_rule_id'] = '';
 
             // Varnish
             $config['cf_varnish_support']               = 0;
@@ -879,10 +872,10 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
                     if( version_compare( $current_version, '4.5', '<') ) {
 
-                        if ( count($this->objects) == 0 )
+                        if ( count($this->modules) == 0 )
                             $this->include_libs();
 
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.5');
+                        $this->modules['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.5');
 
                         $this->set_single_config('cf_auto_purge_on_upgrader_process_complete', 0);
                         $this->set_single_config('cf_bypass_wp_json_rest', 0);
@@ -918,7 +911,7 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
                             global $sw_cloudflare_pagecache;
 
-                            $objects = $sw_cloudflare_pagecache->get_objects();
+                            $objects = $sw_cloudflare_pagecache->get_modules();
 
                             if( $sw_cloudflare_pagecache->get_single_config('cf_woker_enabled', 0) > 0 ) {
 
@@ -937,19 +930,19 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
                     if( version_compare( $current_version, '4.5.6', '<' ) ) {
 
-                        if ( count($this->objects) == 0 )
+                        if ( count($this->modules) == 0 )
                             $this->include_libs();
 
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.5.6');
+                        $this->modules['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.5.6');
 
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Initiating the removal of double serialization for swcfpc_config');
+                        $this->modules['logs']->add_log('swcfpc::update_plugin', 'Initiating the removal of double serialization for swcfpc_config');
 
                         // Get the serialized version of the swcfpc_config
                         $serialized_swcfpc_config = get_option( 'swcfpc_config', false );
 
                         if( !$serialized_swcfpc_config ) {
-                            
-                            $this->objects['logs']->add_log('swcfpc::update_plugin', 'Serialized swcfpc_config not present');
+
+                            $this->modules['logs']->add_log('swcfpc::update_plugin', 'Serialized swcfpc_config not present');
 
                         } else {
 
@@ -961,98 +954,98 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
                                 // But this time we won't serialize the data, instead WP will automatically do it.
                                 update_option( 'swcfpc_config', $unserialized_swcfpc_config );
                             } else {
-                                $this->objects['logs']->add_log('swcfpc::update_plugin', 'Unfortunately swcfpc_config did not returned a string. So, we can\'t unserialize it.');
+                                $this->modules['logs']->add_log('swcfpc::update_plugin', 'Unfortunately swcfpc_config did not returned a string. So, we can\'t unserialize it.');
                             }
 
                         }
-                        
 
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Initiating the removal of double serialization for swcfpc_fc_ttl_registry');
+
+                        $this->modules['logs']->add_log('swcfpc::update_plugin', 'Initiating the removal of double serialization for swcfpc_fc_ttl_registry');
 
                         // Get the serialized version of the swcfpc_fc_ttl_registry
                         $serialized_swcfpc_fc_ttl_registry = get_option( 'swcfpc_fc_ttl_registry', false );
 
                         if( !$serialized_swcfpc_fc_ttl_registry ) {
 
-                            $this->objects['logs']->add_log('swcfpc::update_plugin', 'Serialized swcfpc_fc_ttl_registry not present');
+                            $this->modules['logs']->add_log('swcfpc::update_plugin', 'Serialized swcfpc_fc_ttl_registry not present');
 
                         } else {
 
                             if( is_string( $serialized_swcfpc_fc_ttl_registry ) ) {
                                 // Unserialize the data to be further stored
                                 $unserialized_swcfpc_fc_ttl_registry = unserialize( $serialized_swcfpc_fc_ttl_registry );
-    
+
                                 // Now store the same data again to swcfpc_fc_ttl_registry,
                                 // But this time we won't serialize the data, instead WP will automatically do it.
                                 update_option( 'swcfpc_fc_ttl_registry', serialize( $unserialized_swcfpc_fc_ttl_registry ) );
                             } else {
-                                $this->objects['logs']->add_log('swcfpc::update_plugin', 'Unfortunately swcfpc_fc_ttl_registry did not returned a string. So, we can\'t unserialize it.');
+                                $this->modules['logs']->add_log('swcfpc::update_plugin', 'Unfortunately swcfpc_fc_ttl_registry did not returned a string. So, we can\'t unserialize it.');
                             }
                         }
 
                         add_action('shutdown', function() {
 
                             global $sw_cloudflare_pagecache;
-                        
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-                        
+
+                            $objects = $sw_cloudflare_pagecache->get_modules();
+
                             if( $sw_cloudflare_pagecache->get_single_config('cf_woker_enabled', 0) > 0 ) {
-                        
+
                                     $error_msg_cf = '';
-                        
+
                                     $objects['cloudflare']->disable_page_cache($error_msg_cf);
                                     $objects['cloudflare']->enable_page_cache($error_msg_cf);
-                        
+
                             }
-                        
+
                             $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.5.6 complete');
-                        
+
                         }, PHP_INT_MAX);
                     }
 
                     if( version_compare( $current_version, '4.6.1', '<' ) ) {
-                        if ( count($this->objects) == 0 )
+                        if ( count($this->modules) == 0 )
                             $this->include_libs();
 
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.6.1');
+                        $this->modules['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.6.1');
 
                         add_action('shutdown', function() {
 
                             global $sw_cloudflare_pagecache;
-                        
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-                        
+
+                            $objects = $sw_cloudflare_pagecache->get_modules();
+
                             $error_msg_cf = '';
-                    
+
                             // Enable Disable the Page Cache to take effect of the changes
                             $objects['cloudflare']->disable_page_cache($error_msg_cf);
                             $objects['cloudflare']->enable_page_cache($error_msg_cf);
-                        
+
                             $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.6.1 complete');
-                        
+
                         }, PHP_INT_MAX);
                     }
 
                     if( version_compare( $current_version, '4.7.3', '<' ) ) {
-                        if ( count($this->objects) == 0 )
+                        if ( count($this->modules) == 0 )
                             $this->include_libs();
 
-                        $this->objects['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.7.3');
+                        $this->modules['logs']->add_log('swcfpc::update_plugin', 'Updating to v4.7.3');
 
                         add_action('shutdown', function() {
 
                             global $sw_cloudflare_pagecache;
-                        
-                            $objects = $sw_cloudflare_pagecache->get_objects();
-                        
+
+                            $objects = $sw_cloudflare_pagecache->get_modules();
+
                             $error_msg_cf = '';
-                    
+
                             // Enable Disable the Page Cache to take effect of the changes
                             $objects['cloudflare']->disable_page_cache($error_msg_cf);
                             $objects['cloudflare']->enable_page_cache($error_msg_cf);
-                        
+
                             $objects['logs']->add_log('swcfpc::update_plugin', 'Update to v4.7.3 complete');
-                        
+
                         }, PHP_INT_MAX);
                     }
 
@@ -1068,18 +1061,33 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
         function deactivate_plugin() {
 
             if( $this->get_single_config('keep_settings_on_deactivation', 1) > 0 )
-                $this->objects['cache_controller']->reset_all( true );
+                $this->modules['cache_controller']->reset_all( true );
             else
-                $this->objects['cache_controller']->reset_all();
+                $this->modules['cache_controller']->reset_all();
 
             $this->delete_plugin_wp_content_directory();
         }
 
 
-        function get_objects() {
-            return $this->objects;
+        /**
+         * Get the modules.
+         *
+         * @return array
+         */
+        function get_modules() {
+            return $this->modules;
         }
 
+        /**
+         * Get the modules.
+         *
+         * Legacy function to preserve backward compatibility for old `advanced-cache.php` files.
+         *
+         * @return array
+         */
+        function get_objects() {
+            return $this->get_modules();
+        }
 
         function add_plugin_action_links( $links ) {
 
@@ -1110,7 +1118,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
             return $meta_fields;
         }
 
-
+        /**
+         * Get the Zone ID.
+         *
+         * @return string
+         */
         function get_cloudflare_api_zone_id() {
 
             if( defined('SWCFPC_CF_API_ZONE_ID') )
@@ -1120,7 +1132,32 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
+        /**
+         * Get the Zone Name.
+         *
+         * @param string $zone_id The Zone ID.
+         * @return string
+         */
+        function get_cloudflare_api_zone_domain_name( $zone_id ) {
 
+            if( defined('SWCFPC_CF_API_ZONE_NAME') ){
+                return SWCFPC_CF_API_ZONE_NAME;
+            }
+
+            $zone_id_list = $this->get_single_config('cf_zoneid_list', array());
+            foreach( $zone_id_list as $zone_name => $zone_id ) {
+                if( $zone_id == $zone_id )
+                    return $zone_name;
+            }
+
+            return '';
+        }
+
+        /**
+         * Get the API Key.
+         *
+         * @return string
+         */
         function get_cloudflare_api_key() {
 
             if( defined('SWCFPC_CF_API_KEY') )
@@ -1130,7 +1167,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
-
+        /**
+         * Get the API Email.
+         *
+         * @return string
+         */
         function get_cloudflare_api_email() {
 
             if( defined('SWCFPC_CF_API_EMAIL') )
@@ -1140,7 +1181,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
-
+        /**
+         * Get the API Token.
+         *
+         * @return string
+         */
         function get_cloudflare_api_token() {
 
             if( defined('SWCFPC_CF_API_TOKEN') )
@@ -1150,7 +1195,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
-
+        /**
+         * Get Worker status.
+         *
+         * @return string
+         */
         function get_cloudflare_worker_mode() {
 
             if( defined('SWCFPC_CF_WOKER_ENABLED') )
@@ -1160,7 +1209,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
-
+        /**
+         * Get the Worker ID.
+         *
+         * @return string
+         */
         function get_cloudflare_worker_id() {
 
             if( defined('SWCFPC_CF_WOKER_ID') )
@@ -1170,7 +1223,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
-
+        /**
+         * Get the Worker Route ID.
+         *
+         * @return string
+         */
         function get_cloudflare_worker_route_id() {
 
             if( defined('SWCFPC_CF_WOKER_ROUTE_ID') )
@@ -1180,7 +1237,11 @@ if( !class_exists('SW_CLOUDFLARE_PAGECACHE') ) {
 
         }
 
-
+        /**
+         * Get the Worker Content.
+         *
+         * @return string
+         */
         function get_cloudflare_worker_content() {
 
             $worker_content = '';

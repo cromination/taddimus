@@ -15,7 +15,7 @@
             <strong><pre>
     map $upstream_http_x_wp_cf_super_cache_active $wp_cf_super_cache_active {
         default  'no-cache, no-store, must-revalidate, max-age=0';
-        '1' '<?php echo $this->objects['cache_controller']->get_cache_control_value(); ?>';
+        '1' '<?php echo $this->modules['cache_controller']->get_cache_control_value(); ?>';
     }
                         </pre></strong>
 

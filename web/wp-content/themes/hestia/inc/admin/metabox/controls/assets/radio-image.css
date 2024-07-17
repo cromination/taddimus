@@ -72,12 +72,6 @@
     font-size: 14px;
 }
 
-.reset-data:after {
-    content: "Reset to default value";
-    font-size: 12px;
-    vertical-align: middle;
-    line-height: 30px;
-}
 #customize-control-hestia_cart_icon i.fas {
     font-size: 18px;
 }

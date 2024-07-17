@@ -293,10 +293,11 @@ class Announcements extends Abstract_Module {
 		<style>
 			.themeisle-sale {
 				display: flex;
+				align-items: center;
 			}
 		</style>
 		<div class="themeisle-sale notice notice-info is-dismissible" data-announcement="black_friday">
-			<img src="<?php echo esc_url_raw( $this->get_sdk_uri() . 'assets/images/themeisle-logo.svg' ); ?>"/>
+			<img width="24" src="<?php echo esc_url_raw( $this->get_sdk_uri() . 'assets/images/themeisle-logo.png' ); ?>"/>
 			<p>
 				<strong><?php echo esc_html( Loader::$labels['announcements']['sale_live'] ); ?> ></strong>
 				- <?php echo sprintf( esc_html( Loader::$labels['announcements']['max_savings'] ), esc_html( implode( ', ', $product_names ) ) ); ?>

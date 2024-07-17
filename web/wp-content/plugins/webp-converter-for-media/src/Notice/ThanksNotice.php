@@ -47,7 +47,7 @@ class ThanksNotice extends NoticeAbstract implements NoticeInterface {
 	 */
 	public function get_disable_value(): string {
 		$is_permanent = ( isset( $_REQUEST['is_permanently'] ) && $_REQUEST['is_permanently'] ); // phpcs:ignore
-		return (string) strtotime( ( $is_permanent ) ? '+1 year' : '+ 1 month' );
+		return (string) strtotime( ( $is_permanent ) ? '+10 years' : '+ 1 month' );
 	}
 
 	/**

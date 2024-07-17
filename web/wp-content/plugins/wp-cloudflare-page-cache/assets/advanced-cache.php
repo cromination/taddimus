@@ -71,19 +71,19 @@ ob_start( 'swcfpc_fallback_cache_end' );
 
 function swcfpc_is_this_page_cachable() {
 
-    if( 
-        swcfpc_is_api_request() || 
-        ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ) ) ) || 
-        ( isset( $_SERVER['REQUEST_URI'] ) && substr( $_SERVER['REQUEST_URI'], 0, 16 ) == '/wp-register.php' ) || 
-        ( isset( $_SERVER['REQUEST_URI'] ) && substr( $_SERVER['REQUEST_URI'], 0, 13 ) == '/wp-login.php' ) || 
-        ( isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp( $_SERVER['REQUEST_METHOD'], 'GET' ) != 0 ) || 
-        ( !defined('SWCFPC_CACHE_BUSTER' ) && isset( $_GET['swcfpc'] ) ) || 
-        ( defined( 'SWCFPC_CACHE_BUSTER' ) && isset( $_GET[SWCFPC_CACHE_BUSTER] ) ) || 
-        is_admin() || 
-        ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) || 
-        ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || 
-        ( defined( 'WP_CLI' ) && WP_CLI ) || 
-        ( defined( 'DOING_CRON' ) && DOING_CRON ) 
+    if(
+        swcfpc_is_api_request() ||
+        ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ) ) ) ||
+        ( isset( $_SERVER['REQUEST_URI'] ) && substr( $_SERVER['REQUEST_URI'], 0, 16 ) == '/wp-register.php' ) ||
+        ( isset( $_SERVER['REQUEST_URI'] ) && substr( $_SERVER['REQUEST_URI'], 0, 13 ) == '/wp-login.php' ) ||
+        ( isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp( $_SERVER['REQUEST_METHOD'], 'GET' ) != 0 ) ||
+        ( !defined('SWCFPC_CACHE_BUSTER' ) && isset( $_GET['swcfpc'] ) ) ||
+        ( defined( 'SWCFPC_CACHE_BUSTER' ) && isset( $_GET[SWCFPC_CACHE_BUSTER] ) ) ||
+        is_admin() ||
+        ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) ||
+        ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ||
+        ( defined( 'WP_CLI' ) && WP_CLI ) ||
+        ( defined( 'DOING_CRON' ) && DOING_CRON )
     ) {
         return false;
     }
@@ -114,6 +114,11 @@ function swcfpc_is_api_request() {
 
 function swcfpc_fallback_cache_end( $html ) {
 
+    /**
+     * The main plugin class.
+     *
+     * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
+     */
     global $sw_cloudflare_pagecache;
 
     if( strlen( trim($html) ) == 0 )
@@ -122,7 +127,7 @@ function swcfpc_fallback_cache_end( $html ) {
     if( !is_object($sw_cloudflare_pagecache) )
         return $html;
 
-    $swcfpc_objects = $sw_cloudflare_pagecache->get_objects();
+    $swcfpc_objects = $sw_cloudflare_pagecache->get_modules();
 
     if( $sw_cloudflare_pagecache->get_single_config('cf_fallback_cache', 0) == 0 )
         return $html;
@@ -151,7 +156,7 @@ function swcfpc_fallback_cache_end( $html ) {
 
             // Provide a filter to modify the HTML before it is cached
             $html = apply_filters( 'swcfpc_normal_fallback_cache_html', $html );
-            
+
             file_put_contents($cache_path . $cache_key, $html);
 
             // Update TTL
@@ -208,7 +213,7 @@ function swcfpc_fallback_cache_get_current_page_cache_key( $url=null ) {
         $current_uri = substr($current_uri, 0, -1);
 
     if( has_filter( 'swcfpc_fc_modify_current_url' ) ) {
-        
+
         // Modify the current URL by yourself to remove the query string or any other unwanted characters
         $current_uri = apply_filters( 'swcfpc_fc_modify_current_url', $current_uri );
 

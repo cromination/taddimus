@@ -1,3 +1,9 @@
+##### [Version 3.1.9](https://github.com/Codeinwp/hestia-pro/compare/v3.1.8...v3.1.9) (2024-07-15)
+
+- Removed hardcoded CSS string which was not available for translations
+- Fixed image translation issue with WPML/PL
+- Updated dependencies to improve performance
+
 ##### [Version 3.1.8](https://github.com/Codeinwp/hestia-pro/compare/v3.1.7...v3.1.8) (2024-04-05)
 
 ### Improvements

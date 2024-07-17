@@ -42,15 +42,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 				/* translators: %1$s: open strong tag, %2$s: discount value, %3$s: close strong tag, %4$s: coupon code */
 					__( '%1$sOnly now you can get %2$s discount%3$s by using the coupon code: %4$s when placing your order.', 'webp-converter-for-media' ),
 					'<strong>',
-					'10%',
+					'20%',
 					'</strong>',
-					'<code>10D4FD7814</code>'
+					'<code>20D4FD7814</code>'
 				)
 			);
 			?>
 		</p>
 		<div class="webpcContent__buttons">
-			<a href="https://url.mattplugins.com/converter-notice-upgrade-button-read"
+			<a href="https://url.mattplugins.com/converter-notice-pro-version-button-read"
 				target="_blank"
 				class="webpcContent__button webpcButton webpcButton--blue webpcButton--bg"
 			>

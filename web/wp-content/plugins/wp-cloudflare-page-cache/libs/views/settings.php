@@ -126,7 +126,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
         <?php if( $step_settings == 3 ): ?>
 
-            <?php if( ! $this->objects['cache_controller']->is_cache_enabled() ): ?>
+            <?php if( ! $this->modules['cache_controller']->is_cache_enabled() ): ?>
 
                 <div class="step">
 
@@ -635,11 +635,11 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <?php _e('This is a traditional page cache on disk but which follows the same rules of the cache on Cloudflare set with this plugin. It is very useful when Cloudflare on its own initiative decides to invalidate a few pages from its cache. Thanks to this function you will no longer need to use other page caching functions of other plugins.', 'wp-cloudflare-page-cache'); ?>
                     </div>
 
-                    <?php if( ! $this->objects['fallback_cache']->fallback_cache_is_wp_config_writable() ): ?>
+                    <?php if( ! $this->modules['fallback_cache']->fallback_cache_is_wp_config_writable() ): ?>
                         <div class="description_section highlighted"><?php _e('The file wp-config.php is not writable. Please add write permission to activate the fallback cache.', 'wp-cloudflare-page-cache'); ?></div>
                     <?php endif; ?>
 
-                    <?php if( ! $this->objects['fallback_cache']->fallback_cache_is_wp_content_writable() ): ?>
+                    <?php if( ! $this->modules['fallback_cache']->fallback_cache_is_wp_content_writable() ): ?>
                         <div class="description_section highlighted"><?php _e('The directory wp-content is not writable. Please add write permission or you have to use the fallback cache with cURL.', 'wp-cloudflare-page-cache'); ?></div>
                     <?php endif; ?>
 
@@ -917,7 +917,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
-                    <?php if( !$this->objects['cache_controller']->can_i_start_preloader() ): ?>
+                    <?php if( !$this->modules['cache_controller']->can_i_start_preloader() ): ?>
 
                         <div class="main_section preloader">
                             <div class="left_column">
@@ -1589,7 +1589,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                     <div class="main_section_header">
                         <h3>
                             <?php echo __( 'Siteground SuperCacher settings', 'wp-cloudflare-page-cache' ); ?>
-                            <?php if( $this->objects['cache_controller']->is_siteground_supercacher_enabled() ): ?>
+                            <?php if( $this->modules['cache_controller']->is_siteground_supercacher_enabled() ): ?>
                                 <span class="swcfpc_plugin_active"><?php _e('Active plugin', 'wp-cloudflare-page-cache'); ?></span>
                             <?php else: ?>
                                 <span class="swcfpc_plugin_inactive"><?php _e('Inactive plugin', 'wp-cloudflare-page-cache'); ?></span>
@@ -1617,7 +1617,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                     <div class="main_section_header">
                         <h3>
                             <?php echo __( 'WP Engine settings', 'wp-cloudflare-page-cache' ); ?>
-                            <?php if( $this->objects['cache_controller']->can_wpengine_cache_be_purged() ): ?>
+                            <?php if( $this->modules['cache_controller']->can_wpengine_cache_be_purged() ): ?>
                                 <span class="swcfpc_plugin_active"><?php _e('Provider detected', 'wp-cloudflare-page-cache'); ?></span>
                             <?php else: ?>
                                 <span class="swcfpc_plugin_inactive"><?php _e('Provider not detected', 'wp-cloudflare-page-cache'); ?></span>
@@ -1645,7 +1645,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                     <div class="main_section_header">
                         <h3>
                             <?php echo __( 'SpinupWP settings', 'wp-cloudflare-page-cache' ); ?>
-                            <?php if( $this->objects['cache_controller']->can_spinupwp_cache_be_purged() ): ?>
+                            <?php if( $this->modules['cache_controller']->can_spinupwp_cache_be_purged() ): ?>
                                 <span class="swcfpc_plugin_active"><?php _e('Provider detected', 'wp-cloudflare-page-cache'); ?></span>
                             <?php else: ?>
                                 <span class="swcfpc_plugin_inactive"><?php _e('Provider not detected', 'wp-cloudflare-page-cache'); ?></span>
@@ -1673,7 +1673,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                     <div class="main_section_header">
                         <h3>
                             <?php echo __( 'Kinsta settings', 'wp-cloudflare-page-cache' ); ?>
-                            <?php if( $this->objects['cache_controller']->can_kinsta_cache_be_purged() ): ?>
+                            <?php if( $this->modules['cache_controller']->can_kinsta_cache_be_purged() ): ?>
                                 <span class="swcfpc_plugin_active"><?php _e('Provider detected', 'wp-cloudflare-page-cache'); ?></span>
                             <?php else: ?>
                                 <span class="swcfpc_plugin_inactive"><?php _e('Provider not detected', 'wp-cloudflare-page-cache'); ?></span>

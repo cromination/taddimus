@@ -5,8 +5,13 @@ defined( 'ABSPATH' ) || die( 'Cheatin&#8217; uh?' );
 class SWCFPC_Html_Cache
 {
 
+    /**
+     * The main plugin class.
+     *
+     * @var \SW_CLOUDFLARE_PAGECACHE
+     */
     private $main_instance               = null;
-    private $objects                     = false;
+    private $modules                     = false;
     private $current_page_can_be_cached  = false;
 
     function __construct( $main_instance )
@@ -20,7 +25,7 @@ class SWCFPC_Html_Cache
 
 
     function actions() {
-        
+
         if( $this->main_instance->get_single_config('cf_purge_only_html', 0) > 0 && !is_admin() && !$this->main_instance->is_login_page() )
             add_action('shutdown', array($this, 'add_current_url_to_cache'), PHP_INT_MAX);
 
@@ -42,8 +47,8 @@ class SWCFPC_Html_Cache
         );
 
     }
-    
-    
+
+
     function cache_current_page() {
         $this->current_page_can_be_cached = true;
     }
@@ -73,13 +78,13 @@ class SWCFPC_Html_Cache
 
         global $wp_query;
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         // First check for WP CLI as $_SERVER is not available for WP_CLI
         if( defined( 'WP_CLI' ) && WP_CLI === true ) {
 
-            if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
-                $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', 'The URL cannot be cached due to WP CLI.' );
+            if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
+                $this->modules['logs']->add_log('html_cache::add_current_url_to_cache', 'The URL cannot be cached due to WP CLI.' );
 
             return;
 
@@ -90,27 +95,27 @@ class SWCFPC_Html_Cache
 
         if( isset($wp_query) && function_exists('is_404') && is_404() ) {
 
-            if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) 
-                $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached because it returns 404." );
+            if( $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
+                $this->modules['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached because it returns 404." );
 
             return;
-            
+
         }
-        
+
         if( $this->current_page_can_be_cached == false ) {
 
-            if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
-                $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached due to caching rules." );
+            if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
+                $this->modules['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached due to caching rules." );
 
             return;
-            
+
         }
 
         if( strcasecmp($_SERVER['HTTP_HOST'], $parts['host']) != 0 ) {
 
-            if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
-                $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached because the host does not match with the one of home_url() function ({$parts['host']})." );
-            
+            if( $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY )
+                $this->modules['logs']->add_log('html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached because the host does not match with the one of home_url() function ({$parts['host']})." );
+
             return;
 
         }
@@ -127,8 +132,8 @@ class SWCFPC_Html_Cache
 
             if( $current_url_parsed[ 'query' ] === '' ) {
 
-                if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-                    $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "This URL {$current_url} cannot be cached because the URL has no query param but has the question mark at the end of the URL without actually having any query params. It makes no sense to cache this page as the proper version of the URL will be considered for caching." );
+                if( $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                    $this->modules['logs']->add_log('html_cache::add_current_url_to_cache', "This URL {$current_url} cannot be cached because the URL has no query param but has the question mark at the end of the URL without actually having any query params. It makes no sense to cache this page as the proper version of the URL will be considered for caching." );
                 }
 
                 return;
@@ -170,9 +175,10 @@ class SWCFPC_Html_Cache
 
         // Time to add the URL to HTML cache
         $filename = $this->add_url_to_cache( $current_url );
+		error_log($filename);
 
-        if( $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('html_cache::add_current_url_to_cache', "Created the file {$filename} for the URL {$current_url}" );
+        if( $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('html_cache::add_current_url_to_cache', "Created the file {$filename} for the URL {$current_url}" );
         }
 
 

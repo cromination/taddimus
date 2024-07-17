@@ -5,6 +5,12 @@ defined( 'ABSPATH' ) || die( 'Cheatin&#8217; uh?' );
 class SWCFPC_Varnish
 {
 
+
+    /**
+     * The main plugin class.
+     *
+     * @var \SW_CLOUDFLARE_PAGECACHE
+     */
     private $main_instance       = null;
     private $objects             = false;
     private $hostname            = 'localhost';
@@ -55,7 +61,7 @@ class SWCFPC_Varnish
 
     function purge_single_url_cache( $url, &$error, $purge_all=false ) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
 
         if( $this->hostname == null || $this->port == null ) {
             $this->objects['logs']->add_log('varnish::purge_single_url_cache', 'Invalid hostname or port' );

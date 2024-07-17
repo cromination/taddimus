@@ -322,6 +322,16 @@ class MediaStatusViewer implements HookableInterface {
 			$rows = array_slice( $rows, 0, 1 );
 		}
 
+		$quality_levels = apply_filters( 'webpc_option_quality_levels', [ 75, 80, 85, 90, 95 ] );
+		$quality_levels = [
+			intval( $quality_levels[0] ?? 75 ),
+			intval( $quality_levels[1] ?? 80 ),
+			intval( $quality_levels[2] ?? 85 ),
+			intval( $quality_levels[3] ?? 90 ),
+			intval( $quality_levels[4] ?? 95 ),
+			0,
+		];
+
 		$rows[] = sprintf(
 			'<select id="webpc-attachment-trigger-%1$s" onchange="webpcConvertAttachment(this,%1$s);" data-api-path="%2$s|%3$s">%4$s</select><span id="webpc-attachment-trigger-%1$s-spinner" class="spinner no-float" hidden></span>',
 			$post_id,
@@ -338,8 +348,8 @@ class MediaStatusViewer implements HookableInterface {
 					),
 					sprintf(
 						'<option value="%1$s" %2$s>%3$s</option>',
-						75,
-						( $strategy_level === 75 ) ? 'selected' : '',
+						$quality_levels[0],
+						( $strategy_level === $quality_levels[0] ) ? 'selected' : '',
 						sprintf(
 						/* translators: %s: strategy level */
 							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
@@ -348,8 +358,8 @@ class MediaStatusViewer implements HookableInterface {
 					),
 					sprintf(
 						'<option value="%1$s" %2$s>%3$s</option>',
-						80,
-						( $strategy_level === 80 ) ? 'selected' : '',
+						$quality_levels[1],
+						( $strategy_level === $quality_levels[1] ) ? 'selected' : '',
 						sprintf(
 						/* translators: %s: strategy level */
 							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
@@ -358,8 +368,8 @@ class MediaStatusViewer implements HookableInterface {
 					),
 					sprintf(
 						'<option value="%1$s" %2$s>%3$s</option>',
-						85,
-						( $strategy_level === 85 ) ? 'selected' : '',
+						$quality_levels[2],
+						( $strategy_level === $quality_levels[2] ) ? 'selected' : '',
 						sprintf(
 						/* translators: %s: strategy level */
 							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
@@ -368,8 +378,8 @@ class MediaStatusViewer implements HookableInterface {
 					),
 					sprintf(
 						'<option value="%1$s" %2$s>%3$s</option>',
-						90,
-						( $strategy_level === 90 ) ? 'selected' : '',
+						$quality_levels[3],
+						( $strategy_level === $quality_levels[3] ) ? 'selected' : '',
 						sprintf(
 						/* translators: %s: strategy level */
 							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
@@ -378,8 +388,8 @@ class MediaStatusViewer implements HookableInterface {
 					),
 					sprintf(
 						'<option value="%1$s" %2$s>%3$s</option>',
-						95,
-						( $strategy_level === 95 ) ? 'selected' : '',
+						$quality_levels[4],
+						( $strategy_level === $quality_levels[4] ) ? 'selected' : '',
 						sprintf(
 						/* translators: %s: strategy level */
 							'— ' . __( 'using Strategy %s', 'webp-converter-for-media' ),
@@ -390,8 +400,8 @@ class MediaStatusViewer implements HookableInterface {
 						?
 						sprintf(
 							'<option value="%1$s" %2$s>%3$s</option>',
-							0,
-							( $strategy_level === 0 ) ? 'selected' : '',
+							$quality_levels[5],
+							( $strategy_level === $quality_levels[5] ) ? 'selected' : '',
 							__( 'Restore Originals', 'webp-converter-for-media' )
 						)
 						: '',

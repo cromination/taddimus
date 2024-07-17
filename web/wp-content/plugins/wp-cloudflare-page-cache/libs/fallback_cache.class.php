@@ -5,8 +5,13 @@ defined( 'ABSPATH' ) || die( 'Cheatin&#8217; uh?' );
 class SWCFPC_Fallback_Cache
 {
 
+    /**
+    * The main plugin class.
+    *
+    * @var \SW_CLOUDFLARE_PAGECACHE
+    */
     private $main_instance               = null;
-    private $objects                     = false;
+    private $modules                     = false;
     private $fallback_cache_ttl_registry = false;
     private $fallback_cache              = false;
 
@@ -94,7 +99,7 @@ class SWCFPC_Fallback_Cache
 
     function fallback_cache_advanced_cache_enable($force_wp_cache=false) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
         $this->fallback_cache_init_directory();
 
         $advanced_cache_dest = WP_CONTENT_DIR.'/advanced-cache.php';
@@ -104,13 +109,13 @@ class SWCFPC_Fallback_Cache
             $advanced_cache_source = SWCFPC_PLUGIN_PATH.'assets/advanced-cache.php';
 
             if( file_exists($advanced_cache_dest) && !@unlink($advanced_cache_dest) ) {
-                $this->objects['logs']->add_log('fallback_cache::fallback_cache_advanced_cache_enable', 'Unable to remove the old advanced-cache.php from wp-content directory' );
+                $this->modules['logs']->add_log('fallback_cache::fallback_cache_advanced_cache_enable', 'Unable to remove the old advanced-cache.php from wp-content directory' );
                 return false;
             }
 
             if( file_put_contents($advanced_cache_dest, file_get_contents($advanced_cache_source)) === false ) {
             //if ( !copy($advanced_cache_source, $advanced_cache_dest) ) {
-                $this->objects['logs']->add_log('fallback_cache::fallback_cache_advanced_cache_enable', 'Unable to copy advanced-cache.php to wp-content directory' );
+                $this->modules['logs']->add_log('fallback_cache::fallback_cache_advanced_cache_enable', 'Unable to copy advanced-cache.php to wp-content directory' );
                 return false;
             }
 
@@ -165,15 +170,15 @@ class SWCFPC_Fallback_Cache
 
     function fallback_cache_add_define_cache_wp_config( $turn_it_on = true ) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         if( $turn_it_on && defined( 'WP_CACHE' ) && WP_CACHE ) {
-            $this->objects['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'WP_CACHE already defined' );
+            $this->modules['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'WP_CACHE already defined' );
             return false;
         }
 
         if( defined( 'IS_PRESSABLE' ) && IS_PRESSABLE ) {
-            $this->objects['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'IS_PRESSABLE defined' );
+            $this->modules['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'IS_PRESSABLE defined' );
             return false;
         }
 
@@ -181,12 +186,12 @@ class SWCFPC_Fallback_Cache
         $config_file_path = ABSPATH.'wp-config.php';
 
         if ( ! file_exists($config_file_path) ) {
-            $this->objects['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'Unable to find wp-config.php' );
+            $this->modules['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'Unable to find wp-config.php' );
             return false;
         }
 
         if( ! $this->fallback_cache_is_wp_config_writable() ) {
-            $this->objects['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'wp-config.php is not writable' );
+            $this->modules['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'wp-config.php is not writable' );
             return false;
         }
 
@@ -247,7 +252,7 @@ class SWCFPC_Fallback_Cache
         if ( $is_wp_cache_exist === false ) {
             array_shift( $config_file );
             array_unshift( $config_file, "<?php\r\n", $constant );
-            $this->objects['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'Constant WP_CACHE does not exists. I will try to add in into wp-config.php' );
+            $this->modules['logs']->add_log('fallback_cache::fallback_cache_add_define_cache_wp_config', 'Constant WP_CACHE does not exists. I will try to add in into wp-config.php' );
         }
 
         if( isset($config_file[ $config_file_count-1 ]) && trim($config_file[ $config_file_count-1 ]) == '' )
@@ -295,7 +300,7 @@ class SWCFPC_Fallback_Cache
     /*
     function fallback_cache_start_caching_via_hook() {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
 
         if( $this->objects['cache_controller']->is_cache_enabled() && !$this->objects['cache_controller']->is_url_to_bypass() && !$this->objects['cache_controller']->can_i_bypass_cache() )
             $this->fallback_cache_enable();
@@ -681,7 +686,7 @@ class SWCFPC_Fallback_Cache
 
         if( file_exists($cache_path.$cache_key) && !$this->fallback_cache_is_expired_page( $cache_key ) ) {
 
-            $this->objects = $this->main_instance->get_objects();
+            $this->modules = $this->main_instance->get_modules();
             $stored_headers = $this->fallback_cache_get_stored_headers( $cache_path, $cache_key );
 
             if( $this->main_instance->get_single_config('cf_strip_cookies', 0) > 0 ) {
@@ -691,12 +696,12 @@ class SWCFPC_Fallback_Cache
             header_remove('Pragma');
             header_remove('Expires');
             header_remove('Cache-Control');
-            header('Cache-Control: '.$this->objects['cache_controller']->get_cache_control_value());
+            header('Cache-Control: '.$this->modules['cache_controller']->get_cache_control_value());
             header('X-WP-CF-Super-Cache: cache');
             header('X-WP-CF-Super-Cache-Active: 1');
             header('X-WP-CF-Fallback-Cache: 1');
-            header('X-WP-CF-Super-Cache-Cache-Control: '.$this->objects['cache_controller']->get_cache_control_value());
-            header('X-WP-CF-Super-Cache-Cookies-Bypass: '.$this->objects['cache_controller']->get_cookies_to_bypass_in_worker_mode());
+            header('X-WP-CF-Super-Cache-Cache-Control: '.$this->modules['cache_controller']->get_cache_control_value());
+            header('X-WP-CF-Super-Cache-Cookies-Bypass: '.$this->modules['cache_controller']->get_cookies_to_bypass_in_worker_mode());
 
             if( $stored_headers ) {
 
@@ -871,8 +876,8 @@ class SWCFPC_Fallback_Cache
 
         $this->fallback_cache_purge_all();
 
-        $this->objects = $this->main_instance->get_objects();
-        $this->objects['logs']->add_log('cache_controller::ajax_purge_whole_fallback_page_cache', 'Purge whole fallback page cache' );
+        $this->modules = $this->main_instance->get_modules();
+        $this->modules['logs']->add_log('cache_controller::ajax_purge_whole_fallback_page_cache', 'Purge whole fallback page cache' );
 
         $return_array['success_msg'] = __('Fallback cache purged successfully!', 'wp-cloudflare-page-cache');
 

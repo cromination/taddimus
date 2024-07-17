@@ -5,8 +5,6 @@ defined( 'ABSPATH' ) || die( 'Cheatin&#8217; uh?' );
 class SWCFPC_Logs
 {
 
-    private $main_instance = null;
-
     private $is_logging_enabled  = false;
     private $log_file_path       = false;
     private $log_file_url        = false;
@@ -19,7 +17,6 @@ class SWCFPC_Logs
         $this->log_file_path       = $log_file_path;
         $this->log_file_url        = $log_file_url;
         $this->is_logging_enabled  = $logging_enabled;
-        $this->main_instance       = $main_instance;
 
         // Reset log if it exceeded the max file size
         if( $max_file_size > 0 && file_exists($log_file_path) && ( filesize($log_file_path) / 1024 / 1024 ) >= $max_file_size )

@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'codeinwp/hestia-pro',
-        'pretty_version' => 'v3.1.8',
-        'version' => '3.1.8.0',
-        'reference' => 'd8f2270b7626119592647df34db2160f72b13366',
+        'pretty_version' => 'v3.1.9',
+        'version' => '3.1.9.0',
+        'reference' => '5ca01b17a40ab3f2d5a69fe9776faa69bc132236',
         'type' => 'wordpress-theme',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,18 +11,18 @@
     ),
     'versions' => array(
         'codeinwp/hestia-pro' => array(
-            'pretty_version' => 'v3.1.8',
-            'version' => '3.1.8.0',
-            'reference' => 'd8f2270b7626119592647df34db2160f72b13366',
+            'pretty_version' => 'v3.1.9',
+            'version' => '3.1.9.0',
+            'reference' => '5ca01b17a40ab3f2d5a69fe9776faa69bc132236',
             'type' => 'wordpress-theme',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'codeinwp/themeisle-sdk' => array(
-            'pretty_version' => '3.3.18',
-            'version' => '3.3.18.0',
-            'reference' => '5463d7170ed7b9735223d6715442b8670a477688',
+            'pretty_version' => '3.3.25',
+            'version' => '3.3.25.0',
+            'reference' => '29b7c81f8ccd039f49d62ef7427a4cc06369becc',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/themeisle-sdk',
             'aliases' => array(),
@@ -49,12 +49,14 @@
             'dev_requirement' => false,
         ),
         'codeinwp/ti-white-label' => array(
-            'pretty_version' => '1.0.7',
-            'version' => '1.0.7.0',
-            'reference' => '52d1b0418201b81fda0066d080bae450947b337d',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => 'a856af7a9a5e800515682462f2b8cfc52fd12b48',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/ti-white-label',
-            'aliases' => array(),
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
             'dev_requirement' => false,
         ),
         'wptt/webfont-loader' => array(

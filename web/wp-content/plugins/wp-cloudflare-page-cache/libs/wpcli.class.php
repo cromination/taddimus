@@ -5,6 +5,12 @@ defined( 'ABSPATH' ) || die( 'Cheatin&#8217; uh?' );
 class SWCFPC_WP_CLI extends WP_CLI_Command
 {
 
+
+    /**
+     * The main plugin class.
+     *
+     * @var \SW_CLOUDFLARE_PAGECACHE
+     */
     private $main_instance = null;
     private $objects = false;
 
@@ -35,7 +41,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function purge_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
 
         if ($this->objects['cache_controller']->purge_all())
             WP_CLI::success( __('Cache purged successfully', 'wp-cloudflare-page-cache') );
@@ -53,7 +59,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function purge_cf_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
         $error = '';
 
         if( ! $this->objects['cloudflare']->purge_cache($error) ) {
@@ -73,7 +79,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function purge_varnish_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
         $error = '';
 
         if( ! $this->objects['varnish']->purge_whole_cache($error) ) {
@@ -93,7 +99,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function purge_opcache_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
         $this->objects['cache_controller']->purge_opcache();
 
         WP_CLI::success( __('Cache purged successfully', 'wp-cloudflare-page-cache') );
@@ -109,7 +115,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function purge_fallback_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
         $this->objects['fallback_cache']->fallback_cache_purge_all();
 
         WP_CLI::success( __('Cache purged successfully', 'wp-cloudflare-page-cache') );
@@ -125,7 +131,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function enable_cf_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
         $error = '';
 
         if( ! $this->objects['cloudflare']->enable_page_cache($error) ) {
@@ -145,7 +151,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function disable_cf_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
         $error = '';
 
         if( ! $this->objects['cloudflare']->disable_page_cache($error) ) {
@@ -165,7 +171,7 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
     function test_cf_cache()
     {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->objects = $this->main_instance->get_modules();
         $error_dynamic = '';
         $error_static = '';
 

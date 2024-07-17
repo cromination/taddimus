@@ -37,7 +37,7 @@ final class Loader {
 	/**
 	 * Holds registered products.
 	 *
-	 * @var array The products which use the SDK.
+	 * @var array<Product> The products which use the SDK.
 	 */
 	private static $products = [];
 	/**
@@ -62,6 +62,7 @@ final class Loader {
 		'about_us',
 		'announcements',
 		'featured_plugins',
+		'float_widget',
 	];
 	/**
 	 * Holds the labels for the modules.
@@ -276,6 +277,22 @@ final class Loader {
 				],
 			],
 		],
+		'float_widget'     => [
+			'button' => 'Toggle Help Widget for %s',
+			'panel'  => [
+				'greeting' => 'Thank you for using %s',
+				'title'    => 'How can we help you?',
+				'close'    => 'Close Toggle Help Widget',
+			],
+			'links'  => [
+				'documentation'   => 'Documentation',
+				'support'         => 'Get Support',
+				'wizard'          => 'Run Setup Wizard',
+				'upgrade'         => 'Upgrade to Pro',
+				'feature_request' => 'Suggest a Feature',
+				'rate'            => 'Rate Us',
+			],
+		],
 	];
 
 	/**
@@ -353,7 +370,7 @@ final class Loader {
 	/**
 	 * Get all products using the SDK.
 	 *
-	 * @return array Products available.
+	 * @return array<Product> Products available.
 	 */
 	public static function get_products() {
 		return self::$products;

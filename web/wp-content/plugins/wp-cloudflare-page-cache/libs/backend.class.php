@@ -5,8 +5,13 @@ defined( 'ABSPATH' ) || die( 'Cheatin&#8217; uh?' );
 class SWCFPC_Backend
 {
 
+    /**
+     * The main plugin class.
+     *
+     * @var \SW_CLOUDFLARE_PAGECACHE
+     */
     private $main_instance = null;
-    private $objects       = false;
+    private $modules       = false;
     private $debug_enabled = false;
     private $debug_msg     = '';
 
@@ -48,7 +53,6 @@ class SWCFPC_Backend
         if( $this->main_instance->get_single_config('cf_prefetch_urls_on_hover', 0) > 0 ) {
 
             add_action( 'wp_enqueue_scripts', array($this, 'instantpage_wp_enqueue_scripts') );
-            add_action( 'wp_head', array($this, 'instantpage_add_rel_preload') );
 
         }
 
@@ -85,7 +89,7 @@ class SWCFPC_Backend
 
     function load_custom_wp_admin_styles_and_script() {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $css_version = '1.7.5';
         $js_version = '1.5.3';
@@ -229,14 +233,6 @@ class SWCFPC_Backend
         return $tag;
     }
 
-    function instantpage_add_rel_preload() {
-
-        if( !( ( function_exists('amp_is_request') && amp_is_request() ) || ( function_exists('ampforwp_is_amp_endpoint') && ampforwp_is_amp_endpoint() ) || is_customize_preview() ) ) {
-            // @link: https://developers.google.com/web/updates/2017/12/modulepreload#so_is_link_relmodulepreload_just_link_relpreload_for_modules
-            echo '<link rel="modulepreload" href="' . SWCFPC_PLUGIN_URL . 'assets/js/instantpage.min.js">';
-        }
-    }
-
 
     function add_ajax_nonce_everywhere() {
 
@@ -268,13 +264,13 @@ class SWCFPC_Backend
             is_customize_preview()
         ) return;
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         if( $this->main_instance->get_single_config('cf_remove_purge_option_toolbar', 0) == 0 ) {
 
             $swpfpc_toolbar_container_url_query_arg_admin = [
                 'page' => 'wp-cloudflare-super-page-cache-index',
-                $this->objects['cache_controller']->get_cache_buster() => 1
+                $this->modules['cache_controller']->get_cache_buster() => 1
             ];
 
             if( $this->main_instance->get_single_config('cf_remove_cache_buster', 1) > 0 ) {
@@ -333,7 +329,7 @@ class SWCFPC_Backend
 
     function add_post_row_actions( $actions, $post ) {
 
-        //$this->objects = $this->main_instance->get_objects();
+        //$this->objects = $this->main_instance->get_modules();
 
         if( !in_array( $post->post_type, [ 'shop_order', 'shop_subscription' ] ) ) {
             $actions['swcfpc_single_purge'] = '<a class="swcfpc_action_row_single_post_cache_purge" data-post_id="'.$post->ID.'" href="#" target="_blank">'.__('Purge CF Cache', 'wp-cloudflare-page-cache').'</a>';
@@ -383,7 +379,7 @@ class SWCFPC_Backend
             die( __('Permission denied', 'wp-cloudflare-page-cache') );
         }
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $error_msg      = '';
         $success_msg    = '';
@@ -391,7 +387,7 @@ class SWCFPC_Backend
         $domain_zone_id = '';
         $wizard_active  = true;
 
-        if( $this->main_instance->get_cloudflare_api_zone_id() != '' && $this->objects['cache_controller']->is_cache_enabled() )
+        if( $this->main_instance->get_cloudflare_api_zone_id() != '' && $this->modules['cache_controller']->is_cache_enabled() )
             $wizard_active = false;
 
         $nginx_instructions_page_url = add_query_arg( array('page' => 'wp-cloudflare-super-page-cache-nginx-settings'), admin_url('options-general.php') );
@@ -412,13 +408,13 @@ class SWCFPC_Backend
             $this->main_instance->set_single_config('cf_apitoken_domain', sanitize_text_field( $_POST['swcfpc_cf_apitoken_domain'] ) );
 
             // Force refresh on Cloudflare api class
-            $this->objects['cloudflare']->set_auth_mode( (int) $_POST['swcfpc_cf_auth_mode'] );
-            $this->objects['cloudflare']->set_api_key( sanitize_text_field( $_POST['swcfpc_cf_apikey'] ) );
-            $this->objects['cloudflare']->set_api_email( sanitize_text_field( $_POST['swcfpc_cf_email'] ) );
-            $this->objects['cloudflare']->set_api_token(sanitize_text_field( $_POST['swcfpc_cf_apitoken'] ) );
+            $this->modules['cloudflare']->set_auth_mode( (int) $_POST['swcfpc_cf_auth_mode'] );
+            $this->modules['cloudflare']->set_api_key( sanitize_text_field( $_POST['swcfpc_cf_apikey'] ) );
+            $this->modules['cloudflare']->set_api_email( sanitize_text_field( $_POST['swcfpc_cf_email'] ) );
+            $this->modules['cloudflare']->set_api_token(sanitize_text_field( $_POST['swcfpc_cf_apitoken'] ) );
 
             if( isset($_POST['swcfpc_cf_apitoken_domain']) && strlen(trim($_POST['swcfpc_cf_apitoken_domain'])) > 0 )
-                $this->objects['cloudflare']->set_api_token_domain( sanitize_text_field( $_POST['swcfpc_cf_apitoken_domain'] ) );
+                $this->modules['cloudflare']->set_api_token_domain( sanitize_text_field( $_POST['swcfpc_cf_apitoken_domain'] ) );
 
             // Logs
             $this->main_instance->set_single_config('log_enabled', (int) $_POST['swcfpc_log_enabled']);
@@ -430,13 +426,13 @@ class SWCFPC_Backend
             $this->main_instance->set_single_config('log_verbosity', sanitize_text_field( $_POST['swcfpc_log_verbosity'] ) );
 
             if( $this->main_instance->get_single_config('log_enabled', 0) > 0 )
-                $this->objects['logs']->enable_logging();
+                $this->modules['logs']->enable_logging();
             else
-                $this->objects['logs']->disable_logging();
+                $this->modules['logs']->disable_logging();
 
             // Purge whole cache before passing to html only cache purging, to avoid to unable to purge already cached pages not in list
-            if( $this->objects['cache_controller']->is_cache_enabled() && (int) $_POST['swcfpc_cf_purge_only_html'] > 0 && $this->main_instance->get_single_config('cf_purge_only_html', 0) == 0 )  {
-                $this->objects['cache_controller']->purge_all(false, false, true);
+            if( $this->modules['cache_controller']->is_cache_enabled() && (int) $_POST['swcfpc_cf_purge_only_html'] > 0 && $this->main_instance->get_single_config('cf_purge_only_html', 0) == 0 )  {
+                $this->modules['cache_controller']->purge_all(false, false, true);
             }
 
             // Additional page rule for backend bypassing
@@ -446,7 +442,7 @@ class SWCFPC_Backend
 
                     if( ( (int) $_POST['swcfpc_cf_bypass_backend_page_rule'] > 0 && $this->main_instance->get_single_config('cf_bypass_backend_page_rule', 0) == 0) || ( (int) $_POST['swcfpc_cf_bypass_backend_page_rule'] == 0 && $this->main_instance->get_single_config('cf_bypass_backend_page_rule', 0) > 0) ) {
                         $cf_error = '';
-                        $this->objects['cloudflare']->disable_page_cache($cf_error);
+                        $this->modules['cloudflare']->disable_page_cache($cf_error);
                     }
 
                 }
@@ -460,14 +456,14 @@ class SWCFPC_Backend
 
                 if( ( (int) $_POST['swcfpc_cf_woker_enabled'] == 0 && $this->main_instance->get_single_config('cf_woker_enabled', 0) > 0) || ( (int) $_POST['swcfpc_cf_woker_enabled'] > 0 && $this->main_instance->get_single_config('cf_woker_enabled', 0) == 0) ) {
                     $cf_error = '';
-                    $this->objects['cache_controller']->purge_all(false, false, true);
-                    $this->objects['cloudflare']->disable_page_cache($cf_error);
+                    $this->modules['cache_controller']->purge_all(false, false, true);
+                    $this->modules['cloudflare']->disable_page_cache($cf_error);
                 }
 
                 $this->main_instance->set_single_config('cf_woker_enabled', (int) $_POST['swcfpc_cf_woker_enabled']);
 
                 if( (int) $_POST['swcfpc_cf_woker_enabled'] > 0 )
-                    $this->objects['cloudflare']->enable_worker_mode( $this->main_instance->get_cloudflare_worker_content() );
+                    $this->modules['cloudflare']->enable_worker_mode( $this->main_instance->get_cloudflare_worker_content() );
 
             }
 
@@ -1176,12 +1172,12 @@ class SWCFPC_Backend
             // Enable fallback page cache
             if( isset($_POST['swcfpc_cf_fallback_cache']) ) {
 
-                if( ! $this->objects['cache_controller']->is_cache_enabled() || ($this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 && (int) $_POST['swcfpc_cf_fallback_cache'] == 0) || (int) $_POST['swcfpc_cf_fallback_cache_curl'] > 0 ) {
-                    $this->objects['fallback_cache']->fallback_cache_advanced_cache_disable();
+                if( ! $this->modules['cache_controller']->is_cache_enabled() || ($this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 && (int) $_POST['swcfpc_cf_fallback_cache'] == 0) || (int) $_POST['swcfpc_cf_fallback_cache_curl'] > 0 ) {
+                    $this->modules['fallback_cache']->fallback_cache_advanced_cache_disable();
                 }
 
-                if( $this->objects['cache_controller']->is_cache_enabled() && (int) $_POST['swcfpc_cf_fallback_cache'] > 0 && (int) $_POST['swcfpc_cf_fallback_cache_curl'] == 0 ) {
-                    $this->objects['fallback_cache']->fallback_cache_advanced_cache_enable();
+                if( $this->modules['cache_controller']->is_cache_enabled() && (int) $_POST['swcfpc_cf_fallback_cache'] > 0 && (int) $_POST['swcfpc_cf_fallback_cache_curl'] == 0 ) {
+                    $this->modules['fallback_cache']->fallback_cache_advanced_cache_enable();
                 }
 
                 $this->main_instance->set_single_config('cf_fallback_cache', (int) $_POST['swcfpc_cf_fallback_cache']);
@@ -1338,7 +1334,7 @@ class SWCFPC_Backend
                 $this->main_instance->set_single_config('cf_purge_roles', array());
             }
 
-            if( count( $this->main_instance->get_single_config('cf_zoneid_list', array()) ) == 0 && ($zone_id_list = $this->objects['cloudflare']->get_zone_id_list( $error_msg )) ) {
+            if( count( $this->main_instance->get_single_config('cf_zoneid_list', array()) ) == 0 && ($zone_id_list = $this->modules['cloudflare']->get_zone_id_list( $error_msg )) ) {
 
                 $this->main_instance->set_single_config('cf_zoneid_list', $zone_id_list);
 
@@ -1349,14 +1345,14 @@ class SWCFPC_Backend
             }
 
             // Aggiornamento htaccess
-            $this->objects['cache_controller']->write_htaccess( $error_msg );
+            $this->modules['cache_controller']->write_htaccess( $error_msg );
 
             // Salvataggio configurazioni
             $this->main_instance->update_config();
             $success_msg = __('Settings updated successfully', 'wp-cloudflare-page-cache');
 
             if( $this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 && $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) == 0 )
-                $this->objects['fallback_cache']->fallback_cache_save_config();
+                $this->modules['fallback_cache']->fallback_cache_save_config();
 
         }
 
@@ -1385,7 +1381,7 @@ class SWCFPC_Backend
         }
 
         $cornjob_url_query_arg = [
-            $this->objects['cache_controller']->get_cache_buster() => '1',
+            $this->modules['cache_controller']->get_cache_buster() => '1',
             'swcfpc-purge-all' => '1',
             'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_purge_url_secret_key', wp_generate_password(20, false, false))
         ];
@@ -1400,7 +1396,7 @@ class SWCFPC_Backend
         $cronjob_url = add_query_arg( $cornjob_url_query_arg, site_url() );
 
         $preloader_cronjob_url_query_arg = [
-            $this->objects['cache_controller']->get_cache_buster() => '1',
+            $this->modules['cache_controller']->get_cache_buster() => '1',
             'swcfpc-preloader' => '1',
             'swcfpc-sec-key' => $this->main_instance->get_single_config('cf_preloader_url_secret_key', wp_generate_password(20, false, false))
         ];
@@ -1443,8 +1439,8 @@ class SWCFPC_Backend
             die( __('Permission denied', 'wp-cloudflare-page-cache') );
         }
 
-        $this->objects = $this->main_instance->get_objects();
-        $nginx_lines = $this->objects['cache_controller']->get_nginx_rules();
+        $this->modules = $this->main_instance->get_modules();
+        $nginx_lines = $this->modules['cache_controller']->get_nginx_rules();
 
         require_once SWCFPC_PLUGIN_PATH . 'libs/views/nginx.php';
 
@@ -1496,7 +1492,7 @@ class SWCFPC_Backend
 
         check_ajax_referer( 'ajax-nonce-string', 'security' );
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $return_array = array('status' => 'ok');
 
@@ -1523,7 +1519,7 @@ class SWCFPC_Backend
             die(json_encode($return_array));
         }
 
-        $this->objects['cache_controller']->reset_all();
+        $this->modules['cache_controller']->reset_all();
 
         unset($import_config['cf_zoneid']);
         unset($import_config['cf_zoneid_list']);
@@ -1552,7 +1548,7 @@ class SWCFPC_Backend
 
     /**
      * Get the survey metadata.
-     * 
+     *
      * @return array The survey metadata.
      */
     function get_survey_metadata() {
@@ -1574,7 +1570,7 @@ class SWCFPC_Backend
                 $install_category = 91;
             }
         }
-       
+
         $plugin_data    = get_plugin_data( SWCFPC_BASEFILE, false, false );
         $plugin_version = '';
         if ( ! empty( $plugin_data['Version'] ) ) {
@@ -1595,7 +1591,7 @@ class SWCFPC_Backend
 
     /**
      * Load the survey script.
-     * 
+     *
      * @return void
      */
     function load_survey() {

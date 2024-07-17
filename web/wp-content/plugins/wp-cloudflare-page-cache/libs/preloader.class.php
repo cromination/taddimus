@@ -7,8 +7,14 @@ if( class_exists('WP_Background_Process') ) {
     class SWCFPC_Preloader_Process extends WP_Background_Process
     {
 
-        protected $action = 'swcfpc_cache_preloader_background_process';
+
+        /**
+         * The main plugin class.
+         *
+         * @var \SW_CLOUDFLARE_PAGECACHE
+         */
         private $main_instance = null;
+        protected $action = 'swcfpc_cache_preloader_background_process';
 
         function __construct( $main_instance )
         {
@@ -22,7 +28,7 @@ if( class_exists('WP_Background_Process') ) {
         protected function task($item)
         {
 
-            $objects = $this->main_instance->get_objects();
+            $objects = $this->main_instance->get_modules();
 
             if( !isset($item['url']) ) {
                 $objects['logs']->add_log( 'preloader::task', 'Unable to find a valid URL to preload. Exit.' );
@@ -56,7 +62,7 @@ if( class_exists('WP_Background_Process') ) {
         protected function complete()
         {
 
-            $objects = $this->main_instance->get_objects();
+            $objects = $this->main_instance->get_modules();
 
             // Unlock preloader
             $objects['cache_controller']->unlock_preloader();

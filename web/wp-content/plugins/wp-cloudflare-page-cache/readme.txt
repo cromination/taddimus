@@ -167,33 +167,44 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 == Changelog ==
 
+#####   Version 4.7.12 (2024-07-15)
+
+- Fixed fatal error when calling get_objects() method
+
+
+
+
+#####   Version 4.7.11 (2024-07-10)
+
+- Fixed an issue where the SpinupWP provider detection function wasn't working properly.
+- Removed module preload for instant.page script as it breaks WordPress 6.5 Interactivity API
+- Migrated to the new Page Rules
+
+
+
+
 #####   Version 4.7.10 (2024-04-17)
 
-### Improvements
-- **Updated internal dependencies:** Enhanced performance and security.
+- Updated internal dependencies
 
 
 
 
 #####   Version 4.7.9 (2024-04-01)
 
-### Improvements
-- **Updated internal dependencies**
+- Updated internal dependencies
 
 
 
 
 #####   Version 4.7.8 (2024-03-29)
 
-### Fixes
 - Updated internal dependencies
 
 
 
 
 #####   Version 4.7.7 (2024-03-07)
-
-### Fixes
 
 - NPS Survey added
 - Updated dependencies
@@ -203,7 +214,6 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 #####   Version 4.7.6 (2024-02-15)
 
-### Fixes
 - Enhanced security
 - Updated dependencies
 

@@ -2,23 +2,23 @@
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.18",
-            "version_normalized": "3.3.18.0",
+            "version": "3.3.25",
+            "version_normalized": "3.3.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "5463d7170ed7b9735223d6715442b8670a477688"
+                "reference": "29b7c81f8ccd039f49d62ef7427a4cc06369becc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/5463d7170ed7b9735223d6715442b8670a477688",
-                "reference": "5463d7170ed7b9735223d6715442b8670a477688",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/29b7c81f8ccd039f49d62ef7427a4cc06369becc",
+                "reference": "29b7c81f8ccd039f49d62ef7427a4cc06369becc",
                 "shasum": ""
             },
             "require-dev": {
                 "codeinwp/phpcs-ruleset": "dev-main"
             },
-            "time": "2024-04-05T09:47:58+00:00",
+            "time": "2024-07-08T13:49:14+00:00",
             "type": "library",
             "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
@@ -39,7 +39,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.18"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.25"
             },
             "install-path": "../codeinwp/themeisle-sdk"
         },
@@ -131,17 +131,17 @@
         },
         {
             "name": "codeinwp/ti-white-label",
-            "version": "1.0.7",
-            "version_normalized": "1.0.7.0",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:Codeinwp/ti-white-label.git",
-                "reference": "52d1b0418201b81fda0066d080bae450947b337d"
+                "reference": "a856af7a9a5e800515682462f2b8cfc52fd12b48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/ti-white-label/zipball/52d1b0418201b81fda0066d080bae450947b337d",
-                "reference": "52d1b0418201b81fda0066d080bae450947b337d",
+                "url": "https://api.github.com/repos/Codeinwp/ti-white-label/zipball/a856af7a9a5e800515682462f2b8cfc52fd12b48",
+                "reference": "a856af7a9a5e800515682462f2b8cfc52fd12b48",
                 "shasum": ""
             },
             "require-dev": {
@@ -150,7 +150,8 @@
                 "squizlabs/php_codesniffer": "^3.1",
                 "wp-coding-standards/wpcs": "*"
             },
-            "time": "2020-05-19T20:57:10+00:00",
+            "time": "2024-06-20T11:24:27+00:00",
+            "default-branch": true,
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -180,7 +181,7 @@
             "homepage": "https://github.com/Codeinwp/ti-white-label",
             "support": {
                 "issues": "https://github.com/Codeinwp/ti-white-label/issues",
-                "source": "https://github.com/Codeinwp/ti-white-label/tree/v1.0.7"
+                "source": "https://github.com/Codeinwp/ti-white-label/tree/master"
             },
             "install-path": "../codeinwp/ti-white-label"
         },

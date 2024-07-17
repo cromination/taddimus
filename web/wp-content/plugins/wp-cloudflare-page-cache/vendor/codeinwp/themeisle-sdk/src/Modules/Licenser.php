@@ -139,7 +139,7 @@ class Licenser extends Abstract_Module {
 		$value  = $this->license_key;
 
 		$activate_string   = apply_filters( $this->product->get_key() . '_lc_activate_string', Loader::$labels['licenser']['activate'] );
-		$deactivate_string = apply_filters( $this->product->get_key() . '_lc_deactivate_string', Loader::$labels['licenser']['deactivateactivate'] );
+		$deactivate_string = apply_filters( $this->product->get_key() . '_lc_deactivate_string', Loader::$labels['licenser']['deactivate'] );
 		$valid_string      = apply_filters( $this->product->get_key() . '_lc_valid_string', Loader::$labels['licenser']['valid'] );
 		$invalid_string    = apply_filters( $this->product->get_key() . '_lc_invalid_string', Loader::$labels['licenser']['invalid'] );
 		$license_message   = apply_filters( $this->product->get_key() . '_lc_license_message', Loader::$labels['licenser']['notice'] );

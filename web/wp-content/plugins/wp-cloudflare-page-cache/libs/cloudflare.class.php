@@ -5,37 +5,65 @@ defined( 'ABSPATH' ) || die( 'Cheatin&#8217; uh?' );
 class SWCFPC_Cloudflare
 {
 
-    private $main_instance = null;
+    /**
+     * The main plugin class.
+     *
+     * @var \SW_CLOUDFLARE_PAGECACHE
+     */
+    private $main_instance         = null;
+    private $modules               = false;
+    private $api_key               = '';
+    private $email                 = '';
+    private $api_token             = '';
+    private $auth_mode             = 0;
+    private $zone_id               = '';
+    private $zone_domain_name      = '';
+    //private $subdomain           = '';
+    private $api_token_domain      = '';
+    private $worker_mode           = false;
+    private $worker_content        = '';
+    private $worker_id             = '';
+    private $worker_route_id       = '';
+    private $account_id_list       = array();
 
-    private $objects   = false;
-    private $api_key   = '';
-    private $email     = '';
-    private $api_token = '';
-    private $auth_mode = 0;
-    private $zone_id   = '';
-    //private $subdomain = '';
-    private $api_token_domain = '';
-    private $worker_mode = false;
-    private $worker_content = '';
-    private $worker_id = '';
-    private $worker_route_id = '';
-    private $account_id_list = array();
+    private $cache_ruleset_id                     = ''; // Ruleset related to `http_request_cache_settings` phase.
+    private $cache_ruleset_options                = array();
+    private $cache_ruleset_rule_id                = '';
+    private $cache_rule_description               = '';
+    private $last_cache_ruleset_options_retrieved = array();
 
-    function __construct( $auth_mode, $api_key, $email, $api_token, $zone_id, $worker_mode, $worker_content, $worker_id, $worker_route_id, $main_instance ) {
+    /**
+     * SWCFPC_Cloudflare constructor.
+     *
+     * @param \SW_CLOUDFLARE_PAGECACHE $main_instance Instance of the main plugin class.
+     */
+    function __construct( $main_instance ) {
 
-        $this->auth_mode       = $auth_mode;
-        $this->api_key         = $api_key;
-        $this->email           = $email;
-        $this->api_token       = $api_token;
-        $this->zone_id         = $zone_id;
-        $this->worker_mode     = $worker_mode;
-        $this->worker_content  = $worker_content;
-        $this->worker_id       = $worker_id;
-        $this->worker_route_id = $worker_route_id;
-        $this->main_instance   = $main_instance;
+        $this->main_instance         = $main_instance;
+        $this->auth_mode             = $this->main_instance->get_single_config( 'cf_auth_mode' );
+        $this->api_key               = $this->main_instance->get_cloudflare_api_key();
+        $this->email                 = $this->main_instance->get_cloudflare_api_email();
+        $this->api_token             = $this->main_instance->get_cloudflare_api_token();
+        $this->zone_id               = $this->main_instance->get_cloudflare_api_zone_id();
+        $this->zone_domain_name      = $this->main_instance->get_cloudflare_api_zone_domain_name( $this->zone_id );
+        $this->worker_mode           = $this->main_instance->get_cloudflare_worker_mode();
+        $this->worker_content        = $this->main_instance->get_cloudflare_worker_content();
+        $this->worker_id             = $this->main_instance->get_cloudflare_worker_id();
+        $this->worker_route_id       = $this->main_instance->get_cloudflare_worker_route_id();
+
+        $this->cache_ruleset_id       = $this->main_instance->get_single_config( 'cf_cache_settings_ruleset_id', '' );
+        $this->cache_ruleset_rule_id  = $this->main_instance->get_single_config( 'cf_cache_settings_ruleset_rule_id', '' );
+        $this->cache_rule_description = 'WP Super Page Cache Plugin rules for ' . $this->zone_domain_name;
+
+        $this->cache_ruleset_options = array(
+            'name'        => 'WP Cloudflare Super Page Cache Plugin',
+            'description' => 'Ruleset made with WP Cloudflare Super Page Cache Plugin',
+            'kind'        => 'zone',
+            'phase'       => 'http_request_cache_settings',
+            'rules'       => array()
+        );
 
         $this->actions();
-
     }
 
 
@@ -88,84 +116,58 @@ class SWCFPC_Cloudflare
     }
 
 
-    function get_api_headers($standard_curl=false) {
+    /**
+     * Get the request arguments for the Cloudflare API authorization.
+     *
+     * @param bool $use_standard_curl_format Format the request arguments for standard cURL.
+     * @return array|int[]
+     */
+    function get_api_auth_args( $use_standard_curl_format = false ) {
 
-        $cf_headers = array();
+        $cf_request_args = array(
+            'timeout' => defined('SWCFPC_CURL_TIMEOUT') ? SWCFPC_CURL_TIMEOUT : 10,
+            'headers' => array()
+        );
+
+        $headers = array(
+            'Content-Type' => 'application/json'
+        );
 
         if( $this->auth_mode == SWCFPC_AUTH_MODE_API_TOKEN ) {
-
-            if( $standard_curl ) {
-
-                $cf_headers = array(
-                    'headers' => array(
-                        "Authorization: Bearer {$this->api_token}",
-                        'Content-Type: application/json'
-                    )
-                );
-
-            }
-            else {
-
-                $cf_headers = array(
-                    'headers' => array(
-                        'Authorization' => "Bearer {$this->api_token}",
-                        'Content-Type' => 'application/json'
-                    )
-                );
-
-            }
-
-        }
-        else {
-
-            if( $standard_curl ) {
-
-                $cf_headers = array(
-                    'headers' => array(
-                        "X-Auth-Email: {$this->email}",
-                        "X-Auth-Key: {$this->api_key}",
-                        'Content-Type: application/json'
-                    )
-                );
-
-            }
-            else {
-
-                $cf_headers = array(
-                    'headers' => array(
-                        'X-Auth-Email' => $this->email,
-                        'X-Auth-Key' => $this->api_key,
-                        'Content-Type' => 'application/json'
-                    )
-                );
-
-            }
-
+            $headers["Authorization"] = "Bearer {$this->api_token}";
+        } else {
+            $headers["X-Auth-Email"] = $this->email;
+            $headers["X-Auth-Key"]   = $this->api_key;
         }
 
-        $cf_headers['timeout'] = defined('SWCFPC_CURL_TIMEOUT') ? SWCFPC_CURL_TIMEOUT : 10;
+        if ( $use_standard_curl_format ) {
+            foreach( $headers as $key => $value ) {
+                $cf_request_args['headers'][] = "{$key}: {$value}";
+            }
+        } else {
+            $cf_request_args['headers'] = $headers;
+        }
 
-        return $cf_headers;
-
+        return $cf_request_args;
     }
 
 
     function get_zone_id_list(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $zone_id_list = array();
         $per_page     = 50;
         $current_page = 1;
         $pagination   = false;
-        $cf_headers   = $this->get_api_headers();
+        $cf_headers   = $this->get_api_auth_args();
 
         do {
 
             if( $this->auth_mode == SWCFPC_AUTH_MODE_API_TOKEN && $this->api_token_domain != '' ) {
 
-                if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-                    $this->objects['logs']->add_log('cloudflare::cloudflare_get_zone_ids', "Request for page {$current_page} - URL: ".esc_url_raw( "https://api.cloudflare.com/client/v4/zones?name={$this->api_token_domain}" ) );
+                if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                    $this->modules['logs']->add_log('cloudflare::cloudflare_get_zone_ids', "Request for page {$current_page} - URL: ".esc_url_raw( "https://api.cloudflare.com/client/v4/zones?name={$this->api_token_domain}" ) );
                 }
 
                 $response = wp_remote_get(
@@ -176,8 +178,8 @@ class SWCFPC_Cloudflare
             }
             else {
 
-                if ( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-                    $this->objects['logs']->add_log('cloudflare::cloudflare_get_zone_ids', "Request for page {$current_page} - URL: " . esc_url_raw("https://api.cloudflare.com/client/v4/zones?page={$current_page}&per_page={$per_page}"));
+                if ( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                    $this->modules['logs']->add_log('cloudflare::cloudflare_get_zone_ids', "Request for page {$current_page} - URL: " . esc_url_raw("https://api.cloudflare.com/client/v4/zones?page={$current_page}&per_page={$per_page}"));
                 }
 
                 $response = wp_remote_get(
@@ -189,14 +191,14 @@ class SWCFPC_Cloudflare
 
             if ( is_wp_error( $response ) ) {
                 $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-                $this->objects['logs']->add_log('cloudflare::get_zone_id_list', "Error wp_remote_get: {$error}" );
+                $this->modules['logs']->add_log('cloudflare::get_zone_id_list', "Error wp_remote_get: {$error}" );
                 return false;
             }
 
             $response_body = wp_remote_retrieve_body($response);
 
-            if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-                $this->objects['logs']->add_log('cloudflare::cloudflare_get_zone_ids', "Response for page {$current_page}: {$response_body}" );
+            if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                $this->modules['logs']->add_log('cloudflare::cloudflare_get_zone_ids', "Response for page {$current_page}: {$response_body}" );
             }
 
             $json = json_decode( $response_body, true);
@@ -264,11 +266,11 @@ class SWCFPC_Cloudflare
 
     function get_current_browser_cache_ttl(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
-        $cf_headers = $this->get_api_headers();
+        $this->modules = $this->main_instance->get_modules();
+        $cf_headers = $this->get_api_auth_args();
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::cloudflare_get_browser_cache_ttl', 'Request '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/settings/browser_cache_ttl" ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::cloudflare_get_browser_cache_ttl', 'Request '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/settings/browser_cache_ttl" ) );
         }
 
         $response = wp_remote_get(
@@ -278,14 +280,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::get_current_browser_cache_ttl', "Error wp_remote_get: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::get_current_browser_cache_ttl', "Error wp_remote_get: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::cloudflare_get_browser_cache_ttl', "Response {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::cloudflare_get_browser_cache_ttl', "Response {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -316,15 +318,15 @@ class SWCFPC_Cloudflare
 
     function change_browser_cache_ttl($ttl, &$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
-        $cf_headers           = $this->get_api_headers();
+        $cf_headers           = $this->get_api_auth_args();
         $cf_headers['method'] = 'PATCH';
         $cf_headers['body']   = json_encode( array('value' => $ttl) );
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::cloudflare_set_browser_cache_ttl', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/settings/browser_cache_ttl") );
-            $this->objects['logs']->add_log('cloudflare::cloudflare_set_browser_cache_ttl', 'Request body: ' . json_encode(array('value' => $ttl)) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::cloudflare_set_browser_cache_ttl', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/settings/browser_cache_ttl") );
+            $this->modules['logs']->add_log('cloudflare::cloudflare_set_browser_cache_ttl', 'Request body: ' . json_encode(array('value' => $ttl)) );
         }
 
         $response = wp_remote_post(
@@ -334,14 +336,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::change_browser_cache_ttl', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::change_browser_cache_ttl', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::cloudflare_set_browser_cache_ttl', "Response: {$response_body}");
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::cloudflare_set_browser_cache_ttl', "Response: {$response_body}");
         }
 
         $json = json_decode( $response_body, true);
@@ -364,16 +366,23 @@ class SWCFPC_Cloudflare
 
     }
 
-
+    /**
+     * Delete the Page Rule
+     *
+     * @param string $page_rule_id The page rule id to delete.
+     * @param string $error The error message.
+     *
+     * @return bool
+     */
     function delete_page_rule($page_rule_id, &$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
-        $cf_headers = $this->get_api_headers();
+        $cf_headers = $this->get_api_auth_args();
         $cf_headers['method'] = 'DELETE';
 
         if( $page_rule_id == '' ) {
-            $error = __('There is not page rule to delete', 'wp-cloudflare-page-cache');
+            // $error = __('There is not page rule to delete', 'wp-cloudflare-page-cache');
             return false;
         }
 
@@ -382,8 +391,8 @@ class SWCFPC_Cloudflare
             return false;
         }
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::cloudflare_delete_page_rule', 'Request: '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/pagerules/{$page_rule_id}" ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::cloudflare_delete_page_rule', 'Request: '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/pagerules/{$page_rule_id}" ) );
         }
 
         $response = wp_remote_post(
@@ -393,14 +402,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::delete_page_rule', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::delete_page_rule', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::cloudflare_delete_page_rule', 'Response: '.wp_remote_retrieve_body($response));
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::cloudflare_delete_page_rule', 'Response: '.wp_remote_retrieve_body($response));
         }
 
         $json = json_decode( $response_body, true);
@@ -423,17 +432,25 @@ class SWCFPC_Cloudflare
 
     }
 
+    /**
+     * Add a Page Rule to cache everything
+     *
+     * @param string $error The error message.
+     *
+     * @return bool
+     *
+     * @deprecated Use the new Cache Rules API.
+     */
+    function add_cache_everything_page_rule( &$error ) {
 
-    function add_cache_everything_page_rule(&$error) {
+        $this->modules = $this->main_instance->get_modules();
 
-        $this->objects = $this->main_instance->get_objects();
-
-        $cf_headers = $this->get_api_headers();
+        $cf_headers = $this->get_api_auth_args();
         $url = $this->main_instance->home_url('/*');
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::add_cache_everything_page_rule', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/pagerules") );
-            $this->objects['logs']->add_log('cloudflare::add_cache_everything_page_rule', 'Request Body: '.json_encode(array('targets' => array(array('target' => 'url', 'constraint' => array('operator' => 'matches', 'value' => $url))), 'actions' => array(array('id' => 'cache_level', 'value' => 'cache_everything')), 'priority' => 1, 'status' => 'active')) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::add_cache_everything_page_rule', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/pagerules") );
+            $this->modules['logs']->add_log('cloudflare::add_cache_everything_page_rule', 'Request Body: '.json_encode(array('targets' => array(array('target' => 'url', 'constraint' => array('operator' => 'matches', 'value' => $url))), 'actions' => array(array('id' => 'cache_level', 'value' => 'cache_everything')), 'priority' => 1, 'status' => 'active')) );
         }
 
         $cf_headers['method'] = 'POST';
@@ -446,14 +463,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::add_cache_everything_page_rule', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::add_cache_everything_page_rule', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::add_cache_everything_page_rule', "Response: {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::add_cache_everything_page_rule', "Response: {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -480,17 +497,22 @@ class SWCFPC_Cloudflare
 
     }
 
-
+    /**
+     * Add a Page Rule to bypass cache for backend (admin pages)
+     *
+     * @return bool
+     * @deprecated Use the new Cache Rules API.
+     */
     function add_bypass_cache_backend_page_rule(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
-        $cf_headers = $this->get_api_headers();
+        $cf_headers = $this->get_api_auth_args();
         $url = admin_url('/*');
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/pagerules") );
-            $this->objects['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', 'Request Body: '.json_encode(array('targets' => array(array('target' => 'url', 'constraint' => array('operator' => 'matches', 'value' => $url))), 'actions' => array(array('id' => 'cache_level', 'value' => 'bypass')), 'priority' => 1, 'status' => 'active')) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/pagerules") );
+            $this->modules['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', 'Request Body: '.json_encode(array('targets' => array(array('target' => 'url', 'constraint' => array('operator' => 'matches', 'value' => $url))), 'actions' => array(array('id' => 'cache_level', 'value' => 'bypass')), 'priority' => 1, 'status' => 'active')) );
         }
 
         $cf_headers['method'] = 'POST';
@@ -503,14 +525,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', "Response: {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::add_bypass_cache_backend_page_rule', "Response: {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -540,17 +562,17 @@ class SWCFPC_Cloudflare
 
     function purge_cache(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         do_action('swcfpc_cf_purge_whole_cache_before');
 
-        $cf_headers           = $this->get_api_headers();
+        $cf_headers           = $this->get_api_auth_args();
         $cf_headers['method'] = 'POST';
         $cf_headers['body']   = json_encode( array( 'purge_everything' => true ) );
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::purge_cache', 'Request URL: '. esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/purge_cache") );
-            $this->objects['logs']->add_log('cloudflare::purge_cache', 'Request Body: '. json_encode(array('purge_everything' => true)) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::purge_cache', 'Request URL: '. esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/purge_cache") );
+            $this->modules['logs']->add_log('cloudflare::purge_cache', 'Request Body: '. json_encode(array('purge_everything' => true)) );
         }
 
         $response = wp_remote_post(
@@ -560,14 +582,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::purge_cache', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::purge_cache', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::purge_cache', "Response: {$response_body}");
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::purge_cache', "Response: {$response_body}");
         }
 
         $json = json_decode( $response_body, true);
@@ -595,9 +617,9 @@ class SWCFPC_Cloudflare
 
     private function purge_cache_urls_async($urls) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
-        $cf_headers = $this->get_api_headers( true );
+        $cf_headers = $this->get_api_auth_args( true );
 
         $chunks = array_chunk($urls, 30);
 
@@ -644,8 +666,8 @@ class SWCFPC_Cloudflare
         for($i=0; $i < $curl_index; $i++) {
 
             // Get the content of cURL request $curl_array[$i]
-            if ( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-                $this->objects['logs']->add_log('cloudflare::purge_cache_urls_async', "Response for request {$i}: ".curl_multi_getcontent($curl_array[$i]) );
+            if ( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                $this->modules['logs']->add_log('cloudflare::purge_cache_urls_async', "Response for request {$i}: ".curl_multi_getcontent($curl_array[$i]) );
             }
 
             curl_multi_remove_handle($multi_curl, $curl_array[$i]);
@@ -666,11 +688,11 @@ class SWCFPC_Cloudflare
 
     function purge_cache_urls($urls, &$error, $async=true) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         do_action('swcfpc_cf_purge_cache_by_urls_before', $urls);
 
-        $cf_headers           = $this->get_api_headers();
+        $cf_headers           = $this->get_api_auth_args();
         $cf_headers['method'] = 'POST';
 
         if( count($urls) > 30 ) {
@@ -731,9 +753,9 @@ class SWCFPC_Cloudflare
 
             $cf_headers['body'] = json_encode(array('files' => array_values($urls)));
 
-            if ( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-                $this->objects['logs']->add_log('cloudflare::purge_cache_urls', 'Request URL: ' . esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/purge_cache"));
-                $this->objects['logs']->add_log('cloudflare::purge_cache_urls', 'Request Body: ' . json_encode(array('files' => $urls)));
+            if ( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                $this->modules['logs']->add_log('cloudflare::purge_cache_urls', 'Request URL: ' . esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/purge_cache"));
+                $this->modules['logs']->add_log('cloudflare::purge_cache_urls', 'Request Body: ' . json_encode(array('files' => $urls)));
             }
 
             $response = wp_remote_post(
@@ -743,14 +765,14 @@ class SWCFPC_Cloudflare
 
             if (is_wp_error($response)) {
                 $error = __('Connection error: ', 'wp-cloudflare-page-cache') . $response->get_error_message();
-                $this->objects['logs']->add_log('cloudflare::purge_cache_urls', "Error wp_remote_post: {$error}" );
+                $this->modules['logs']->add_log('cloudflare::purge_cache_urls', "Error wp_remote_post: {$error}" );
                 return false;
             }
 
             $response_body = wp_remote_retrieve_body($response);
 
-            if ( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-                $this->objects['logs']->add_log('cloudflare::purge_cache_urls', "Response: {$response_body}");
+            if ( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                $this->modules['logs']->add_log('cloudflare::purge_cache_urls', "Response: {$response_body}");
             }
 
             $json = json_decode($response_body, true);
@@ -780,13 +802,13 @@ class SWCFPC_Cloudflare
 
     function get_account_ids(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $this->account_id_list = array();
-        $cf_headers      = $this->get_api_headers();
+        $cf_headers      = $this->get_api_auth_args();
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::get_account_ids', 'Request '.esc_url_raw( 'https://api.cloudflare.com/client/v4/accounts?page=1&per_page=20&direction=desc' ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::get_account_ids', 'Request '.esc_url_raw( 'https://api.cloudflare.com/client/v4/accounts?page=1&per_page=20&direction=desc' ) );
         }
 
         $response = wp_remote_get(
@@ -796,14 +818,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::get_account_ids', "Error wp_remote_get: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::get_account_ids', "Error wp_remote_get: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::get_account_ids', "Response: {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::get_account_ids', "Response: {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -850,7 +872,7 @@ class SWCFPC_Cloudflare
             $this->get_account_ids( $error );
 
         if( count($this->account_id_list) == 0 ) {
-            $this->objects['logs']->add_log('cloudflare::get_current_account_id', "Unable to retrive an account ID: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::get_current_account_id', "Unable to retrive an account ID: {$error}" );
             return false;
         }
 
@@ -882,18 +904,18 @@ class SWCFPC_Cloudflare
 
     function worker_get_list(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $workers_id_list = array();
-        $cf_headers      = $this->get_api_headers();
+        $cf_headers      = $this->get_api_auth_args();
         $account_id      = $this->get_current_account_id($error);
 
-        $this->objects['logs']->add_log('cloudflare::worker_get_list', "I'm using the account ID: {$account_id}" );
+        $this->modules['logs']->add_log('cloudflare::worker_get_list', "I'm using the account ID: {$account_id}" );
 
         $cloudflare_request_url = "https://api.cloudflare.com/client/v4/accounts/{$account_id}/workers/scripts";
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_get_list', 'Request '.esc_url_raw( $cloudflare_request_url ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_get_list', 'Request '.esc_url_raw( $cloudflare_request_url ) );
         }
 
         $response = wp_remote_get(
@@ -903,14 +925,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::worker_get_list', "Error wp_remote_get: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_get_list', "Error wp_remote_get: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_get_list', "Response: {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_get_list', "Response: {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -925,7 +947,7 @@ class SWCFPC_Cloudflare
 
             $error = implode(' - ', $error);
 
-            $this->objects['logs']->add_log('cloudflare::worker_get_list', "Error: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_get_list', "Error: {$error}" );
 
             return false;
 
@@ -950,20 +972,20 @@ class SWCFPC_Cloudflare
 
     function worker_upload(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
         $account_id    = $this->get_current_account_id($error);
 
-        $cf_headers                            = $this->get_api_headers();
+        $cf_headers                            = $this->get_api_auth_args();
         $cf_headers['method']                  = 'PUT';
         $cf_headers['headers']['Content-Type'] = 'application/javascript';
         $cf_headers['body']                    = $this->worker_content;
 
-        $this->objects['logs']->add_log('cloudflare::worker_upload', "I'm using the account ID: {$account_id}" );
+        $this->modules['logs']->add_log('cloudflare::worker_upload', "I'm using the account ID: {$account_id}" );
 
         $cloudflare_request_url = "https://api.cloudflare.com/client/v4/accounts/{$account_id}/workers/scripts/{$this->worker_id}";
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_upload', 'Request '.esc_url_raw( $cloudflare_request_url ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_upload', 'Request '.esc_url_raw( $cloudflare_request_url ) );
         }
 
         $response = wp_remote_post(
@@ -973,14 +995,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::worker_upload', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_upload', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_upload', "Response: {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_upload', "Response: {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -1010,18 +1032,18 @@ class SWCFPC_Cloudflare
 
     function worker_delete(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
         $account_id    = $this->get_current_account_id($error);
 
-        $cf_headers           = $this->get_api_headers();
+        $cf_headers           = $this->get_api_auth_args();
         $cf_headers['method'] = 'DELETE';
 
-        $this->objects['logs']->add_log('cloudflare::worker_delete', "I'm using the account ID: {$account_id}" );
+        $this->modules['logs']->add_log('cloudflare::worker_delete', "I'm using the account ID: {$account_id}" );
 
         $cloudflare_request_url = "https://api.cloudflare.com/client/v4/accounts/{$account_id}/workers/scripts/{$this->worker_id}";
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_delete', 'Request '.esc_url_raw( $cloudflare_request_url ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_delete', 'Request '.esc_url_raw( $cloudflare_request_url ) );
         }
 
         $response = wp_remote_post(
@@ -1031,14 +1053,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::worker_delete', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_delete', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_delete', "Response {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_delete', "Response {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -1064,13 +1086,13 @@ class SWCFPC_Cloudflare
 
     function worker_route_create(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
-        $cf_headers = $this->get_api_headers();
+        $cf_headers = $this->get_api_auth_args();
         $url = $this->main_instance->home_url('/*');
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_route_create', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/workers/routes") );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_route_create', 'Request URL: '.esc_url_raw("https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/workers/routes") );
         }
 
         $cf_headers['method'] = 'POST';
@@ -1083,14 +1105,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::worker_route_create', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_route_create', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_route_create', "Response: {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_route_create', "Response: {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -1120,13 +1142,13 @@ class SWCFPC_Cloudflare
 
     function worker_route_get_list(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $routes_list = array();
-        $cf_headers  = $this->get_api_headers();
+        $cf_headers  = $this->get_api_auth_args();
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_route_get_list', 'Request '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/workers/routes" ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_route_get_list', 'Request '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/workers/routes" ) );
         }
 
         $response = wp_remote_get(
@@ -1136,14 +1158,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::worker_route_get_list', "Error wp_remote_get: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_route_get_list', "Error wp_remote_get: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_route_get_list', "Response {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_route_get_list', "Response {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -1158,7 +1180,7 @@ class SWCFPC_Cloudflare
 
             $error = implode(' - ', $error);
 
-            $this->objects['logs']->add_log('cloudflare::worker_route_get_list', "Error: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_route_get_list', "Error: {$error}" );
 
             return false;
 
@@ -1183,18 +1205,18 @@ class SWCFPC_Cloudflare
 
     function worker_route_delete(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
-        $cf_headers           = $this->get_api_headers();
+        $cf_headers           = $this->get_api_auth_args();
         $cf_headers['method'] = 'DELETE';
 
         if( $this->worker_route_id == '' ) {
-            $this->objects['logs']->add_log('cloudflare::worker_route_delete', 'No route to delete' );
+            $this->modules['logs']->add_log('cloudflare::worker_route_delete', 'No route to delete' );
             return false;
         }
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_route_delete', 'Request '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/workers/routes/{$this->worker_route_id}" ) );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_route_delete', 'Request '.esc_url_raw( "https://api.cloudflare.com/client/v4/zones/{$this->zone_id}/workers/routes/{$this->worker_route_id}" ) );
         }
 
         $response = wp_remote_post(
@@ -1204,14 +1226,14 @@ class SWCFPC_Cloudflare
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::worker_route_delete', "Error wp_remote_post: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::worker_route_delete', "Error wp_remote_post: {$error}" );
             return false;
         }
 
         $response_body = wp_remote_retrieve_body($response);
 
-        if( is_object($this->objects['logs']) && $this->objects['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
-            $this->objects['logs']->add_log('cloudflare::worker_route_delete', "Response {$response_body}" );
+        if( is_object($this->modules['logs']) && $this->modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $this->modules['logs']->add_log('cloudflare::worker_route_delete', "Response {$response_body}" );
         }
 
         $json = json_decode( $response_body, true);
@@ -1239,7 +1261,7 @@ class SWCFPC_Cloudflare
 
     function page_cache_test($url, &$error, $test_static=false) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $args = array(
             'timeout'    => defined('SWCFPC_CURL_TIMEOUT') ? SWCFPC_CURL_TIMEOUT : 10,
@@ -1250,21 +1272,21 @@ class SWCFPC_Cloudflare
             )
         );
 
-        $this->objects['logs']->add_log('cloudflare::page_cache_test', "Start test to {$url} with headers ".print_r($args, true) );
+        $this->modules['logs']->add_log('cloudflare::page_cache_test', "Start test to {$url} with headers ".print_r($args, true) );
 
         // First test - Home URL
         $response = wp_remote_get( esc_url_raw( $url ), $args );
 
         if ( is_wp_error( $response ) ) {
             $error = __('Connection error: ', 'wp-cloudflare-page-cache' ).$response->get_error_message();
-            $this->objects['logs']->add_log('cloudflare::page_cache_test', "Error wp_remote_get: {$error}" );
+            $this->modules['logs']->add_log('cloudflare::page_cache_test', "Error wp_remote_get: {$error}" );
             return false;
         }
 
         $headers = wp_remote_retrieve_headers( $response );
 
-        if( is_object($this->objects['logs']) ) {
-            $this->objects['logs']->add_log('cloudflare::page_cache_test', 'Response Headers: '.var_export($headers, true) );
+        if( is_object($this->modules['logs']) ) {
+            $this->modules['logs']->add_log('cloudflare::page_cache_test', 'Response Headers: '.var_export($headers, true) );
         }
 
         if( !$test_static && !isset($headers['X-WP-CF-Super-Cache']) ) {
@@ -1349,7 +1371,7 @@ class SWCFPC_Cloudflare
 
         $error = '';
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         // Reset old browser cache TTL
         if( $this->main_instance->get_single_config('cf_old_bc_ttl', 0) != 0 )
@@ -1360,7 +1382,7 @@ class SWCFPC_Cloudflare
             $worker_route_ids = $this->worker_route_get_list( $error );
 
             if( $worker_route_ids === false || !is_array($worker_route_ids) ) {
-                $this->objects['logs']->add_log('cloudflare::disable_page_cache', 'Unable to retrieve the worker routes list');
+                $this->modules['logs']->add_log('cloudflare::disable_page_cache', 'Unable to retrieve the worker routes list');
                 return false;
             }
 
@@ -1372,7 +1394,7 @@ class SWCFPC_Cloudflare
 
             } else {
 
-                $this->objects['logs']->add_log('cloudflare::disable_page_cache', "Unable to find the route ID {$this->worker_route_id} in Cloudflare routes list, so I don't delete it: ".print_r($worker_route_ids, true) );
+                $this->modules['logs']->add_log('cloudflare::disable_page_cache', "Unable to find the route ID {$this->worker_route_id} in Cloudflare routes list, so I don't delete it: ".print_r($worker_route_ids, true) );
 
             }
 
@@ -1388,9 +1410,9 @@ class SWCFPC_Cloudflare
             else {
 
                 if( is_array($worker_ids) )
-                    $this->objects['logs']->add_log('cloudflare::disable_page_cache', "Unable to find the worker ID {$this->worker_id} in Cloudflare workers list, so I don't delete it: ".print_r($worker_ids, true) );
+                    $this->modules['logs']->add_log('cloudflare::disable_page_cache', "Unable to find the worker ID {$this->worker_id} in Cloudflare workers list, so I don't delete it: ".print_r($worker_ids, true) );
                 else
-                    $this->objects['logs']->add_log('cloudflare::disable_page_cache', 'Unable to find the worker ID to delete' );
+                    $this->modules['logs']->add_log('cloudflare::disable_page_cache', 'Unable to find the worker ID to delete' );
 
             }
 
@@ -1412,24 +1434,27 @@ class SWCFPC_Cloudflare
             $this->main_instance->set_single_config('cf_bypass_backend_page_rule_id', '');
         }
 
+        if( $this->delete_cache_rule() ) {
+            $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_rule_id', '' );
+        }
+        $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_id', '' );
+
         // Purge cache
         $this->purge_cache($error);
 
         // Reset htaccess
-        $this->objects['cache_controller']->reset_htaccess();
+        $this->modules['cache_controller']->reset_htaccess();
 
         $this->main_instance->set_single_config('cf_woker_route_id', '');
         $this->main_instance->set_single_config('cf_cache_enabled', 0);
         $this->main_instance->update_config();
 
         return true;
-
     }
-
 
     function enable_page_cache(&$error) {
 
-        $this->objects = $this->main_instance->get_objects();
+        $this->modules = $this->main_instance->get_modules();
 
         $current_cf_browser_ttl = $this->get_current_browser_cache_ttl( $error );
 
@@ -1444,13 +1469,32 @@ class SWCFPC_Cloudflare
             return false;
         }
 
-        // Step 2 - delete old page rule, if exist
-        if( $this->main_instance->get_single_config('cf_page_rule_id', '') != '' && $this->delete_page_rule( $this->main_instance->get_single_config('cf_page_rule_id', ''), $error_msg ) ) {
+        // Step 2 - Delete the current cache configuration.
+        if ( $this->main_instance->get_single_config('cf_page_rule_id', '') != '' && $this->delete_page_rule( $this->main_instance->get_single_config('cf_page_rule_id', ''), $error_msg ) ) {
+
+
             $this->main_instance->set_single_config('cf_page_rule_id', '');
         }
 
-        if( $this->main_instance->get_single_config('cf_bypass_backend_page_rule_id', '') != '' && $this->delete_page_rule( $this->main_instance->get_single_config('cf_bypass_backend_page_rule_id', ''), $error_msg ) ) {
+        // Delete the legacy Page Rule.
+        if(
+            $this->main_instance->get_single_config('cf_bypass_backend_page_rule_id', '') != '' &&
+            $this->delete_page_rule( $this->main_instance->get_single_config('cf_bypass_backend_page_rule_id', ''), $error_msg )
+        ) {
             $this->main_instance->set_single_config('cf_bypass_backend_page_rule_id', '');
+        }
+
+        // Get existing cache ruleset id.
+        if ( empty( $this->cache_ruleset_id ) ) {
+            $this->cache_ruleset_id = $this->get_ruleset_id_from_api();
+            if ( $this->cache_ruleset_id ) {
+                $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_id', $this->cache_ruleset_id );
+            }
+        }
+
+        // Delete the existing cache rule (stored or fresly retrieved from Ruleset API)
+        if( $this->delete_cache_rule() ) {
+            $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_rule_id', '' );
         }
 
         if( $this->worker_mode == true ) {
@@ -1458,7 +1502,7 @@ class SWCFPC_Cloudflare
             $worker_route_ids = $this->worker_route_get_list( $error );
 
             if( $worker_route_ids === false || !is_array($worker_route_ids) ) {
-                $this->objects['logs']->add_log('cloudflare::enable_page_cache', 'Unable to retrieve the worker routes list');
+                $this->modules['logs']->add_log('cloudflare::enable_page_cache', 'Unable to retrieve the worker routes list');
                 return false;
             }
 
@@ -1467,7 +1511,7 @@ class SWCFPC_Cloudflare
             // Delete existing route
             if( isset($worker_route_ids[$this->worker_route_id]) ) {
 
-                $this->objects['logs']->add_log('cloudflare::enable_page_cache', "I'm deleting existing route ID {$this->worker_route_id}" );
+                $this->modules['logs']->add_log('cloudflare::enable_page_cache', "I'm deleting existing route ID {$this->worker_route_id}" );
 
                 if (!$this->worker_route_delete($error))
                     return false;
@@ -1477,7 +1521,7 @@ class SWCFPC_Cloudflare
             // Delete existing worker
             if( $worker_ids && is_array($worker_ids) && in_array($this->worker_id, $worker_ids) ) {
 
-                $this->objects['logs']->add_log('cloudflare::enable_page_cache', "I'm deleting existing worker ID {$this->worker_id}" );
+                $this->modules['logs']->add_log('cloudflare::enable_page_cache', "I'm deleting existing worker ID {$this->worker_id}" );
 
                 // Delete worker script
                 if( !$this->worker_delete($error) )
@@ -1517,33 +1561,19 @@ class SWCFPC_Cloudflare
         }
         else {
 
-            // Step 3a - create new page rule to force bypass for backend URLs
-            if( $this->main_instance->get_single_config('cf_bypass_backend_page_rule', 0) > 0 ) {
-
-                $bypass_backend_page_rule_id = $this->add_bypass_cache_backend_page_rule( $error );
-
-                if ($bypass_backend_page_rule_id == false) {
-                    $this->main_instance->set_single_config('cf_cache_enabled', 0);
-                    $this->main_instance->update_config();
-                    return false;
+            // Step 3a - create a new cache ruleset if it does not exist.
+            if ( empty( $this->cache_ruleset_id ) ) {
+                $this->cache_ruleset_id = $this->create_ruleset_id( $this->zone_id );
+                if ( ! empty ( $this->cache_ruleset_id ) ) {
+                    $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_id', $this->cache_ruleset_id );
                 }
-
-                $this->main_instance->set_single_config('cf_bypass_backend_page_rule_id', $bypass_backend_page_rule_id);
-
             }
 
-            // Step 3b - create new page rule
-            $cache_everything_page_rule_id = $this->add_cache_everything_page_rule($error);
-
-            if ($cache_everything_page_rule_id == false && $bypass_backend_page_rule_id != '') {
-                $this->delete_page_rule($bypass_backend_page_rule_id, $error);
-                $this->main_instance->set_single_config('cf_cache_enabled', 0);
-                $this->main_instance->update_config();
-                return false;
+            // Setp 3b - create a standard rule for the cache ruleset.
+            if( ! empty( $this->cache_ruleset_id ) ) {
+                $this->cache_ruleset_rule_id = $this->apply_standard_rules();
+                $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_rule_id', $this->cache_ruleset_rule_id );
             }
-
-            $this->main_instance->set_single_config('cf_page_rule_id', $cache_everything_page_rule_id);
-
         }
 
         // Update config data
@@ -1555,7 +1585,7 @@ class SWCFPC_Cloudflare
         $this->main_instance->set_single_config('cf_cache_enabled', 1);
         $this->main_instance->update_config();
 
-        $this->objects['cache_controller']->write_htaccess( $error );
+        $this->modules['cache_controller']->write_htaccess( $error );
 
         return true;
 
@@ -1587,7 +1617,7 @@ class SWCFPC_Cloudflare
 
                 $error .= __( 'Page caching seems not working for both dynamic and static pages.', 'wp-cloudflare-page-cache');
                 $error .= '<br/><br/>';
-	            $error .= sprintf( __( 'Error on dynamic page (%1$s): %2$s', 'wp-cloudflare-page-cache' ), $url_dynamic_resource, $error_dynamic );
+                $error .= sprintf( __( 'Error on dynamic page (%1$s): %2$s', 'wp-cloudflare-page-cache' ), $url_dynamic_resource, $error_dynamic );
                 $error .= '<br/><br/>';
                 $error .= sprintf( __( 'Error on static resource (%1$s): %2$s', 'wp-cloudflare-page-cache'), $url_static_resource, $error_static);
                 $error .= '<br/><br/>';
@@ -1618,4 +1648,357 @@ class SWCFPC_Cloudflare
 
     }
 
+    /**
+     * Get the existing ruleset ID for the current zone.
+     *
+     * @return mixed|string
+     *
+     * @see https://developers.cloudflare.com/api/operations/getZoneEntrypointRuleset
+     */
+    function get_ruleset_id_from_api() {
+        if ( empty( $this->zone_id ) ) {
+            return '';
+        }
+
+        $modules      = $this->main_instance->get_modules();
+        $url          = 'https://api.cloudflare.com/client/v4/zones/' . $this->zone_id . '/rulesets/phases/http_request_cache_settings/entrypoint';
+        $request_args = $this->get_api_auth_args();
+        $response     = wp_remote_get( $url, $request_args );
+
+        if ( is_wp_error( $response ) ) {
+            if( is_object( $this->$modules['logs'] ) ) {
+                $this->modules['logs']->add_log( 'cloudflare::get_ruleset_id_from_api', "Connection error: " . $response->get_error_message() );
+            }
+            return '';
+        }
+
+        $response = json_decode( wp_remote_retrieve_body( $response ), true );
+
+
+        if( isset( $response['success'] ) && ! $response['success'] ) {
+
+            if( is_object( $this->$modules['logs'] ) ) {
+                $this->modules['logs']->add_log( 'cloudflare::get_ruleset_id_from_api', "Could NOT retrieve rulesets ID for zone {$this->zone_id} - URL: ".esc_url_raw( $url ) );
+            }
+            $this->try_log_error( $response );
+
+            return '';
+        }
+
+        if( is_object( $modules['logs'] ) && $modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $modules['logs']->add_log( 'cloudflare::get_ruleset_id_from_api', "Retrieved rulesets ID for zone {$this->zone_id} - URL: ".esc_url_raw( $url ) );
+        }
+
+        if( isset($response['result']['id']) ) {
+            $this->last_cache_ruleset_options_retrieved = $response['result'];
+            return $response['result']['id'];
+        }
+
+        return '';
+    }
+
+    /**
+     * Create a new ruleset ID for the current zone.
+     *
+     * @param string $zone_id The zone ID.
+     * @return mixed|string
+     *
+     * @see https://developers.cloudflare.com/api/operations/createZoneRuleset
+     */
+    function create_ruleset_id( $zone_id ) {
+
+        if ( empty( $zone_id ) ) {
+            return '';
+        }
+
+        $modules              = $this->main_instance->get_modules();
+        $url                  = 'https://api.cloudflare.com/client/v4/zones/' . $zone_id . '/rulesets';
+        $request_args         = $this->get_api_auth_args();
+        $request_args['body'] = json_encode( $this->cache_ruleset_options );
+
+        $response = wp_remote_post( $url, $request_args );
+
+        if ( is_wp_error( $response ) ) {
+            if( is_object( $this->$modules['logs'] ) ) {
+                $this->modules['logs']->add_log( 'cloudflare::create_ruleset_id', "Connection error: " . $response->get_error_message() );
+            }
+            return '';
+        }
+
+        $response   = json_decode( wp_remote_retrieve_body( $response ), true );
+        $is_success = isset( $response['success'] ) && $response['success'];
+
+        if( ! $is_success ) {
+
+            if( is_object( $modules['logs'] ) ) {
+                $modules['logs']->add_log( 'cloudflare::create_ruleset_id', "Could NOT create rulesets ID for zone {$zone_id} - URL: ".esc_url_raw( $url ) );
+            }
+            $this->try_log_error( $response );
+
+            return '';
+        }
+
+        if( is_object( $modules['logs'] ) && $modules['logs']->get_verbosity() === SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $modules['logs']->add_log( 'cloudflare::create_ruleset_id', "Created the rulesets ID for zone {$zone_id} - URL: ".esc_url_raw( $url ) );
+        }
+
+        if( isset($response['result']['id']) ) {
+            $this->last_cache_ruleset_options_retrieved = $response['result'];
+            return $response['result']['id'];
+        }
+
+        return '';
+    }
+
+    /**
+     * Apply the standard WP rules to the ruleset.
+     *
+     * @return string The created rule ID. Empty string if the rule was not created.
+     */
+    function apply_standard_rules() {
+        if ( empty( $this->zone_domain_name ) ) {
+            return '';
+        }
+
+        $modules = $this->main_instance->get_modules();
+
+        if ( is_object( $modules['logs'] ) && $modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+            $modules['logs']->add_log( 'cloudflare::apply_standard_rules', 'Trying to apply on ' . $this->zone_domain_name . ' the standard rules.' );
+        }
+
+        return $this->create_cache_rule( $this->get_cache_rule_expression() );
+    }
+
+    /**
+     * Get the cache rule expression.
+     *
+     * @return string
+     */
+    function get_cache_rule_expression() {
+        // Rule expression reference: https://gist.github.com/isaumya/af10e4855ac83156cc210b7148135fa2
+        $wordpress_links_to_cache  = 'http.host eq "' . $this->zone_domain_name . '"';
+
+        $wordpress_links_to_ignore = '
+            and http.cookie ne "comment_"
+            and not http.cookie contains "auth_"
+            and not http.cookie contains "comment_author"
+            and not http.cookie contains "wordpress_logged_in_"
+            and not http.cookie contains "wordpress_sec_"
+            and not http.cookie contains "wordpresspass_"
+            and not http.cookie contains "wordpressuser_"
+            and not http.cookie contains "wp-resetpass-"
+            and not http.request.uri.path contains ".php"
+            and not http.request.uri.path contains ".xml"
+            and not http.request.uri.path contains ".xsl"
+            and not http.request.uri.path contains "/dashboard/"
+            and not http.request.uri.path contains "/register/"
+            and not http.request.uri.path contains "phs_downloads-mbr"
+            and not http.request.uri.query contains "nocache"
+            and not starts_with(http.request.uri.path, "/wp-json/")
+            and not starts_with(http.request.uri.path, "/wp-login")
+            and not starts_with(http.request.uri.query, "p=")
+            and not starts_with(http.request.uri.query, "s=")
+            and not starts_with(http.request.uri.path, "/wp-admin")
+        ';
+
+        $third_party_links_to_ignore = '
+            and not http.cookie contains "dshack_level"
+            and not http.cookie contains "edd_items_in_cart"
+            and not http.cookie contains "it_exchange_session_"
+            and not http.cookie contains "mp_globalcart_"
+            and not http.cookie contains "mp_session"
+            and not http.cookie contains "noaffiliate_"
+            and not http.cookie contains "upsell_customer"
+            and not http.cookie contains "wishlist_reg"
+            and not http.cookie contains "wlmapi"
+            and not http.cookie contains "woocommerce_"
+            and not http.cookie contains "xf_"
+            and not http.cookie contains "yith_wcwl_products"
+            and not http.request.uri.path contains "/checkout/"
+            and not http.request.uri.path contains "/members-area/"
+            and not http.request.uri.path contains "/wishlist-member/"
+            and not http.request.uri.query contains "nowprocket"
+            and not starts_with(http.request.uri.path, "/edd-api/")
+            and not starts_with(http.request.uri.path, "/mepr/")
+            and not starts_with(http.request.uri.path, "/wc-api/")
+        ';
+
+        // Clean up the expression so that the Cloudflare Expression Builder UI can understand it.
+        $expression = $wordpress_links_to_cache . $wordpress_links_to_ignore . $third_party_links_to_ignore;
+        $expression = str_replace( array( "\n", "\r", "\t" ), '', $expression ); // Remove new lines, tabs.
+        $expression = preg_replace( '/\s+/', ' ', $expression ); // Remove multiple spaces.
+        $expression = '(' . trim( $expression ) . ')';
+
+        return $expression;
+    }
+
+    /**
+     * Create a cache rule in the Cloudflare API.
+     *
+     * @param string $expression The expression for the rule.
+     *
+     * @return string The created rule ID. Empty string if the rule was not created.
+     *
+     * @see https://developers.cloudflare.com/api/operations/createZoneRulesetRule
+     */
+    function create_cache_rule( $expression ) {
+        if ( empty( $this->zone_id ) || empty( $this->cache_ruleset_id ) ) {
+            return false;
+        }
+
+        $rule = array(
+            'action'            => 'set_cache_settings',
+            "action_parameters" => array(
+                "cache" => true
+            ),
+            'description'       => $this->cache_rule_description,
+            'enabled'           => true,
+            'expression'        => $expression,
+        );
+
+        $url                  = 'https://api.cloudflare.com/client/v4/zones/' . $this->zone_id . '/rulesets/' . $this->cache_ruleset_id . '/rules';
+        $request_args         = $this->get_api_auth_args();
+        $request_args['body'] = json_encode( $rule );
+
+        $response = wp_remote_post( $url, $request_args );
+
+        $modules = $this->main_instance->get_modules();
+
+        if ( is_wp_error( $response ) ) {
+            if ( is_object( $modules['logs'] ) ) {
+                $modules['logs']->add_log( 'cloudflare::create_cache_rule', 'Error while creating the rule for ' . $this->zone_domain_name . ': ' . $response->get_error_message() );
+            }
+            return '';
+        }
+
+        $response   = json_decode( wp_remote_retrieve_body( $response ), true );
+        $is_success = isset( $response['success'] ) && $response['success'] && isset( $response['result'] ) && is_array( $response['result'] ) && ! empty( $response['result'] );
+
+        if ( is_object( $modules['logs'] ) ) {
+            if( $is_success && $modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                $modules['logs']->add_log( 'cloudflare::create_cache_rule', 'Rule created for ' . $this->zone_domain_name . ': ' . json_encode( $response ) );
+            } else {
+                $modules['logs']->add_log( 'cloudflare::create_cache_rule', 'Could not create the rule for ' . $this->zone_domain_name . ' on ruleset ' . $this->cache_ruleset_id );
+                $this->try_log_error( $response );
+            }
+        }
+
+        if ( $is_success ) {
+            $this->last_cache_ruleset_options_retrieved = $response['result'];
+
+            $available_rule = $this->find_cache_rule_by_description( $this->last_cache_ruleset_options_retrieved['rules'], $this->cache_rule_description );
+            if( $available_rule ) {
+                return $available_rule['id'];
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Find a cache rule by its description.
+     *
+     * @param array  $rules       The ruleset rules.
+     * @param string $description The description to search for.
+     *
+     * @return array|bool The rule if found, false otherwise.
+     */
+    function find_cache_rule_by_description( $rules, $description ) {
+        if ( empty( $rules ) || empty( $description ) ) {
+            return false;
+        }
+
+        foreach ( $rules as $rule ) {
+            if ( strpos( $rule['description'], $description ) !== false ) {
+                return $rule;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Delete a cache rule in the Cloudflare API.
+     *
+     * If it is empty, it will try to use the last retrieved cache ruleset options.
+     *
+     * @return bool
+     *
+     * @see https://developers.cloudflare.com/api/operations/deleteZoneRulesetRule
+     */
+    function delete_cache_rule() {
+        if ( empty( $this->zone_id ) || empty( $this->cache_ruleset_id ) ) {
+            return false;
+        }
+
+        if(
+            empty( $this->cache_ruleset_rule_id ) &&
+            ! empty( $this->last_cache_ruleset_options_retrieved ) &&
+            ! empty( $this->last_cache_ruleset_options_retrieved['rules'] )
+        ) {
+            $available_rule = $this->find_cache_rule_by_description( $this->last_cache_ruleset_options_retrieved['rules'], $this->cache_rule_description );
+            if( $available_rule ) {
+                $this->cache_ruleset_rule_id = $available_rule['id'];
+            }
+        }
+
+        if ( empty( $this->cache_ruleset_rule_id ) ) {
+            return false;
+        }
+
+        $url                    = 'https://api.cloudflare.com/client/v4/zones/' . $this->zone_id . '/rulesets/' . $this->cache_ruleset_id . '/rules/' . $this->cache_ruleset_rule_id;
+        $request_args           = $this->get_api_auth_args();
+        $request_args['method'] = 'DELETE';
+
+        $response = wp_remote_request( $url, $request_args );
+
+        $modules = $this->main_instance->get_modules();
+
+        if ( is_wp_error( $response ) ) {
+            if ( is_object( $modules['logs'] ) ) {
+                $modules['logs']->add_log( 'cloudflare::delete_cache_rule', 'Error while deleting the rule for ' . $this->zone_domain_name . ': ' . $response->get_error_message() );
+            }
+            return false;
+        }
+
+        $is_success = wp_remote_retrieve_response_code( $response ) == 204;
+
+        if ( is_object( $modules['logs'] ) ) {
+            if( $is_success && $modules['logs']->get_verbosity() == SWCFPC_LOGS_HIGH_VERBOSITY ) {
+                $modules['logs']->add_log( 'cloudflare::delete_cache_rule', 'Rule ' . $this->cache_ruleset_rule_id . ' deleted for ' . $this->zone_domain_name . ': ' . json_encode( $response ) );
+            } else {
+                $modules['logs']->add_log( 'cloudflare::delete_cache_rule', 'Could NOT delete the rule ' . $this->cache_ruleset_rule_id . ' for ' . $this->zone_domain_name . ' on ruleset ' . $this->cache_ruleset_id );
+            }
+        }
+
+        if ( $is_success ) {
+            $this->cache_ruleset_rule_id = '';
+        }
+
+        return $is_success;
+    }
+
+    /**
+     * Try to log out the error message from the Cloudflare API response.
+     *
+     * @param array $response_body The response body of Cloudflare API.
+     * @return void
+     */
+    function try_log_error( $response_body ) {
+        if(
+            ( isset( $response_body['success'] ) && $response_body['success'] ) ||
+            ! isset( $response_body['errors'] ) ||
+            ! is_array( $response_body['errors'] ) ||
+            ! is_object( $this->modules['logs'] )
+        ) {
+            return;
+        }
+
+        $error = array();
+        foreach( $response_body['errors'] as $single_error ) {
+            $error[] = "{$single_error['message']} (err code: {$single_error['code']})";
+        }
+        $error = implode(' - ', $error);
+
+        $this->modules['logs']->add_log('cloudflare::try_log_error', "Cloudflare API Errors: {$error}" );
+    }
 }
