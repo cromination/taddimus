@@ -351,71 +351,74 @@ class SWCFPC_Fallback_Cache
     */
 
 
-    function fallback_cache_add_current_url_to_cache() {
+    function fallback_cache_add_current_url_to_cache( $url = null, $force_cache = false) {
 
-        if( $this->fallback_cache == true && $this->fallback_cache_is_url_to_exclude() == false && isset( $_SERVER['REQUEST_METHOD'] ) && strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') == 0 ) {
-
-            if( isset($_SERVER['HTTP_USER_AGENT']) && strcasecmp($_SERVER['HTTP_USER_AGENT'], 'ua-swcfpc-fc') == 0 )
-                return;
-
-            $cache_path = $this->fallback_cache_init_directory();
-            $cache_key = $this->fallback_cache_get_current_page_cache_key();
-
-            if ( !file_exists($cache_path . $cache_key) || $this->fallback_cache_is_expired_page( $cache_key ) ) {
-
-                // absolute URI in multisite aware environment
-                $parts = parse_url(home_url());
-                $current_uri = "{$parts['scheme']}://{$parts['host']}" . add_query_arg(NULL, NULL);
-
-                $response = wp_remote_get($current_uri, array(
-                    'timeout'    => defined('SWCFPC_CURL_TIMEOUT') ? SWCFPC_CURL_TIMEOUT : 10,
-                    'sslverify'  => false,
-                    'user-agent' => 'ua-swcfpc-fc'
-                ));
-
-                if (!is_wp_error($response)) {
-
-                    $response_code = wp_remote_retrieve_response_code($response);
-
-                    if( $response_code == 200 ) {
-
-                        if ($this->main_instance->get_single_config('cf_fallback_cache_ttl', 0) == 0) {
-                            $ttl = 0;
-                        } else {
-                            $ttl = time() + $this->main_instance->get_single_config('cf_fallback_cache_ttl', 0);
-                        }
-
-                        $body = wp_remote_retrieve_body($response);
-
-                        if( $ttl > 0 ) {
-                            $body .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache via cURL - page generated @ " . date('Y-m-d H:i:s') . ' - fallback cache expiration @ ' . date('Y-m-d H:i:s', $ttl) . " - cache key {$cache_key} -->";
-                        } else {
-                            $body .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache via cURL - page generated @ " . date('Y-m-d H:i:s') . " - fallback cache expiration @ never expires - cache key {$cache_key} -->";
-                        }
-
-                        // Provide a filter to modify the HTML before it is cached
-                        $body = apply_filters('swcfpc_curl_fallback_cache_html', $body);
-
-                        file_put_contents($cache_path . $cache_key, $body);
-
-                        // Update TTL
-                        $this->fallback_cache_set_single_ttl($cache_key, $ttl);
-                        $this->fallback_cache_update_ttl_registry();
-
-                        // Store headers
-                        if( $this->main_instance->get_single_config('cf_fallback_cache_save_headers', 0) > 0 ) {
-                            $this->fallback_cache_save_headers( $cache_path, $cache_key );
-                        }
-
-                    }
-
-                }
-
-
-            }
-
+        if (
+            ! $force_cache &&
+            (
+                ! $this->fallback_cache ||
+                $this->fallback_cache_is_url_to_exclude() ||
+                ! isset( $_SERVER['REQUEST_METHOD'] ) ||
+                0 !== strcasecmp($_SERVER['REQUEST_METHOD'], 'GET') ||
+                ! isset($_SERVER['HTTP_USER_AGENT']) ||
+                0 !== strcasecmp($_SERVER['HTTP_USER_AGENT'], 'ua-swcfpc-fc')
+            )
+        ) {
+            return;
         }
 
+        $cache_path = $this->fallback_cache_init_directory();
+        $cache_key  = $this->fallback_cache_get_current_page_cache_key( $url );
+
+        if ( file_exists($cache_path . $cache_key) && ! $this->fallback_cache_is_expired_page( $cache_key ) ) {
+            return;
+        }
+
+        // absolute URI in multisite aware environment
+        if ( empty( $url ) ) {
+            $parts = parse_url(home_url());
+            $url   = "{$parts['scheme']}://{$parts['host']}" . add_query_arg(NULL, NULL);
+        }
+
+        $response = wp_remote_get( $url, array(
+            'timeout'    => defined('SWCFPC_CURL_TIMEOUT') ? SWCFPC_CURL_TIMEOUT : 10,
+            'sslverify'  => false,
+            'user-agent' => 'ua-swcfpc-fc'
+        ) );
+
+        if ( is_wp_error( $response ) ) {
+            return;
+        }
+
+        $response_code = wp_remote_retrieve_response_code( $response );
+
+        if ( $response_code !== 200 ) {
+            return;
+        }
+
+        $ttl = $this->main_instance->get_single_config('cf_fallback_cache_ttl', 0) !== 0 ? time() + $this->main_instance->get_single_config('cf_fallback_cache_ttl', 0) : 0;
+
+        $body = wp_remote_retrieve_body( $response );
+
+        $body .= "\n<!-- Page retrieved from Super Page Cache fallback cache via cURL - page generated @ " . date('Y-m-d H:i:s') . ' - fallback cache expiration @ ' . ( 0 < $ttl ? date('Y-m-d H:i:s', $ttl) : "never expires" ) . " - cache key {$cache_key} -->";
+
+        // Provide a filter to modify the HTML before it is cached
+        $body = apply_filters('swcfpc_curl_fallback_cache_html', $body);
+
+        if ( ! is_string( $body ) ) {
+            return;
+        }
+
+        file_put_contents($cache_path . $cache_key, $body);
+
+        // Update TTL
+        $this->fallback_cache_set_single_ttl($cache_key, $ttl);
+        $this->fallback_cache_update_ttl_registry();
+
+        // Store headers
+        if( $this->main_instance->get_single_config('cf_fallback_cache_save_headers', 0) > 0 ) {
+            $this->fallback_cache_save_headers( $cache_path, $cache_key );
+        }
     }
 
 
@@ -717,6 +720,20 @@ class SWCFPC_Fallback_Cache
 
         return false;
 
+    }
+
+    /**
+     * Check if the current page is cached and not expired.
+     *
+     * @param string $url The URL to check.
+     *
+     * @return bool
+     */
+    function fallback_cache_check_cached_page( $url ) {
+        $cache_path  = $this->fallback_cache_init_directory();
+        $cache_key   = $this->fallback_cache_get_current_page_cache_key( $url );
+
+        return file_exists( $cache_path . $cache_key ) && !$this->fallback_cache_is_expired_page( $cache_key );
     }
 
 

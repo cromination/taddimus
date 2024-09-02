@@ -2,7 +2,7 @@
 
     <div id="swcfpc_main_content">
 
-        <h1><?php _e('Super Page Cache for Cloudflare - Nginx Settings', 'wp-cloudflare-page-cache'); ?></h1>
+        <h1><?php _e('Super Page Cache - Nginx Settings', 'wp-cloudflare-page-cache'); ?></h1>
 
         <?php if( $this->main_instance->get_single_config('cf_cache_control_htaccess', 0) > 0 ): ?>
 

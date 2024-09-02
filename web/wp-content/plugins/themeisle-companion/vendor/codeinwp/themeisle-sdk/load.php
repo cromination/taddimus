@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 // Current SDK version and path.
-$themeisle_sdk_version = '3.3.20';
+$themeisle_sdk_version = '3.3.29';
 $themeisle_sdk_path    = dirname( __FILE__ );
 
 global $themeisle_sdk_max_version;
@@ -91,6 +91,7 @@ if ( ! function_exists( 'tsdk_utmify' ) ) {
 			$current_page = sanitize_key( str_replace( '.php', '', $current_page ) );
 		}
 		$location        = $location === null ? $current_page : $location;
+		$is_upgrade_url  = strpos( $url, '/upgrade' ) !== false;
 		$content         = sanitize_key(
 			trim(
 				str_replace(
@@ -121,6 +122,26 @@ if ( ! function_exists( 'tsdk_utmify' ) ) {
 				$url
 			)
 		);
+
+		/**
+		 * Check if there is an affiliate URL for this upgrade link, if so use it.
+		 */
+		if ( $is_upgrade_url ) {
+			$option_content_key         = str_replace( '-', '_', $filter_key );
+			$theme_upgrade_option_name  = 'themeisle_af_' . $option_content_key . '_themes_upgrade';
+			$plugin_upgrade_option_name = 'themeisle_af_' . $option_content_key . '_plugins_upgrade';
+
+			$theme_option_url = get_option( $theme_upgrade_option_name, false );
+			if ( ! empty( $theme_option_url ) ) {
+				$utmify_url = esc_url_raw( $theme_option_url );
+			}
+			$plugin_option_url = get_option( $plugin_upgrade_option_name, false );
+			if ( ! empty( $plugin_option_url ) ) {
+				$utmify_url = esc_url_raw( $plugin_option_url );
+			}
+		}
+
+
 
 		return apply_filters( 'tsdk_utmify_url_' . $filter_key, $utmify_url, $url );
 	}

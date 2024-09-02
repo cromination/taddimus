@@ -2,7 +2,7 @@
 
     <div id="swcfpc_main_content">
 
-        <h1><?php _e('Super Page Cache for Cloudflare - Cached HTML pages', 'wp-cloudflare-page-cache'); ?></h1>
+        <h1><?php _e('Super Page Cache - Cached HTML pages', 'wp-cloudflare-page-cache'); ?></h1>
 
 
         <?php if( count($cached_html_pages_list) > 0 ): ?>

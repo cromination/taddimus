@@ -39,6 +39,7 @@ class CLI_Command extends WP_CLI_Command {
 			'name'        => $command->get_name(),
 			'description' => $command->get_shortdesc(),
 			'longdesc'    => $command->get_longdesc(),
+			'hook'        => $command->get_hook(),
 		];
 
 		foreach ( $command->get_subcommands() as $subcommand ) {
@@ -80,7 +81,7 @@ class CLI_Command extends WP_CLI_Command {
 	 * * WP-CLI project config: where the project config YAML file is located.
 	 * * WP-CLI version: currently installed version.
 	 *
-	 * See [config docs](https://wp-cli.org/config/) for more details on global
+	 * See [config docs](https://make.wordpress.org/cli/handbook/references/config/) for more details on global
 	 * and project config YAML files.
 	 *
 	 * ## OPTIONS
@@ -180,7 +181,7 @@ class CLI_Command extends WP_CLI_Command {
 	/**
 	 * Checks to see if there is a newer version of WP-CLI available.
 	 *
-	 * Queries the Github releases API. Returns available versions if there are
+	 * Queries the GitHub releases API. Returns available versions if there are
 	 * updates available, or success message if using the latest release.
 	 *
 	 * ## OPTIONS
@@ -614,6 +615,14 @@ class CLI_Command extends WP_CLI_Command {
 	 *     $ wp cli has-command "foo bar"
 	 *     $ echo $?
 	 *     1
+	 *
+	 *     # Install a WP-CLI package if not already installed
+	 *     $ if ! $(wp cli has-command doctor); then wp package install wp-cli/doctor-command; fi
+	 *     Installing package wp-cli/doctor-command (dev-main || dev-master || dev-trunk)
+	 *     Updating /home/person/.wp-cli/packages/composer.json to require the package...
+	 *     Using Composer to install the package...
+	 *     ---
+	 *     Success: Package installed.
 	 *
 	 * @subcommand has-command
 	 *

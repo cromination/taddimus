@@ -37,7 +37,7 @@ final class Loader {
 	/**
 	 * Holds registered products.
 	 *
-	 * @var array The products which use the SDK.
+	 * @var array<Product> The products which use the SDK.
 	 */
 	private static $products = [];
 	/**
@@ -53,6 +53,7 @@ final class Loader {
 		'licenser',
 		'logger',
 		'translate',
+		'translations',
 		'review',
 		'recommendation',
 		'notification',
@@ -62,6 +63,7 @@ final class Loader {
 		'about_us',
 		'announcements',
 		'featured_plugins',
+		'float_widget',
 	];
 	/**
 	 * Holds the labels for the modules.
@@ -112,8 +114,16 @@ final class Loader {
 			'no_activations'      => 'No more activations left for %s. You need to upgrade your plan in order to use %s on more websites. If you need assistance, please get in touch with %s staff.',
 		],
 		'promotions'       => [
-			'recommended' => 'Recommended by %s',
-			'woo'         => [
+			'recommended'     => 'Recommended by %s',
+			'installActivate' => 'Install & Activate',
+			'preview'         => 'Preview',
+			'installing'      => 'Installing',
+			'activating'      => 'Activating',
+			'connecting'      => 'Connecting to API',
+			'learnmore'       => 'Learn More',
+			'activate'        => 'Activate',
+			'all_set'         => 'Awesome! You are all set!',
+			'woo'             => [
 				'title'        => 'More extensions from Themeisle',
 				'title2'       => 'Recommended extensions',
 				'cta_install'  => 'Install',
@@ -128,22 +138,20 @@ final class Loader {
 				'spark_desc2'  => 'Add a top notification bar on your website to highlight the latest products, offers, or upcoming events.',
 				'spark_desc3'  => 'Enable an advanced review section, enlarging the basic review options with lots of capabilities.',
 			],
-			'optimole'    => [
-				'all_set'           => 'Awesome! You are all set!',
-				'gotodash'          => 'Go to Optimole dashboard',
-				'installing'        => 'Installing',
-				'activating'        => 'Activating',
-				'connecting'        => 'Connecting to API',
-				'start_cta'         => 'Start using Optimole',
-				'dismisscta'        => 'Dismiss this notice.',
-				'gst'               => 'Get Started Free',
-				'heading'           => 'Get more with Optimole',
-				'learnmore'         => 'Learn more',
-				'message1'          => 'Increase this page speed and SEO ranking by optimizing images with Optimole.',
-				'message3'          => 'Save your server space by storing images to Optimole and deliver them optimized from 400 locations around the globe. Unlimited images, Unlimited traffic.',
-				'message4'          => 'This image looks to be too large and would affect your site speed, we recommend you to install Optimole to optimize your images.',
-				'message2'          => 'Leverage Optimole\'s full integration with Elementor to automatically lazyload, resize, compress to AVIF/WebP and deliver from 400 locations around the globe!',
-				'email_placeholder' => 'Email address',
+			'optimole'        => [
+				'installOptimole' => 'Install Optimole',
+				'gotodash'        => 'Go to Optimole dashboard',
+				'dismisscta'      => 'Dismiss this notice.',
+				'message1'        => 'Increase this page speed and SEO ranking by optimizing images with Optimole.',
+				'message3'        => 'Save your server space by storing images to Optimole and deliver them optimized from 400 locations around the globe. Unlimited images, Unlimited traffic.',
+				'message4'        => 'This image looks to be too large and would affect your site speed, we recommend you to install Optimole to optimize your images.',
+				'message2'        => 'Leverage Optimole\'s full integration with Elementor to automatically lazyload, resize, compress to AVIF/WebP and deliver from 400 locations around the globe!',
+			],
+			'redirectionCF7'  => [
+				'gotodash'   => 'Go to Contact Forms',
+				'dismisscta' => 'Dismiss this notice.',
+				'gst'        => 'Get Started Free',
+				'message'    => 'Add URL redirects, spam protection, execute JavaScript after submissions, and more with the Redirection for CF7 free plugin.',
 			],
 		],
 		'welcome'          => [
@@ -276,6 +284,22 @@ final class Loader {
 				],
 			],
 		],
+		'float_widget'     => [
+			'button' => 'Toggle Help Widget for %s',
+			'panel'  => [
+				'greeting' => 'Thank you for using %s',
+				'title'    => 'How can we help you?',
+				'close'    => 'Close Toggle Help Widget',
+			],
+			'links'  => [
+				'documentation'   => 'Documentation',
+				'support'         => 'Get Support',
+				'wizard'          => 'Run Setup Wizard',
+				'upgrade'         => 'Upgrade to Pro',
+				'feature_request' => 'Suggest a Feature',
+				'rate'            => 'Rate Us',
+			],
+		],
 	];
 
 	/**
@@ -353,7 +377,7 @@ final class Loader {
 	/**
 	 * Get all products using the SDK.
 	 *
-	 * @return array Products available.
+	 * @return array<Product> Products available.
 	 */
 	public static function get_products() {
 		return self::$products;

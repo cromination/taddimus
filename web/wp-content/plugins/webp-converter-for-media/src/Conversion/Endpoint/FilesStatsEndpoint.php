@@ -58,10 +58,10 @@ class FilesStatsEndpoint extends EndpointAbstract {
 
 		return new \WP_REST_Response(
 			[
-				'value_webp_all'       => ( $stats_data['files_converted'][ WebpFormat::FORMAT_EXTENSION ] + $stats_data['files_unconverted'][ WebpFormat::FORMAT_EXTENSION ] ),
-				'value_webp_converted' => $stats_data['files_converted'][ WebpFormat::FORMAT_EXTENSION ],
-				'value_avif_all'       => ( $stats_data['files_converted'][ AvifFormat::FORMAT_EXTENSION ] + $stats_data['files_unconverted'][ AvifFormat::FORMAT_EXTENSION ] ),
-				'value_avif_converted' => $stats_data['files_converted'][ AvifFormat::FORMAT_EXTENSION ],
+				'value_webp_all'       => ( ( $stats_data['files_converted'][ WebpFormat::FORMAT_EXTENSION ] ?? 0 ) + ( $stats_data['files_unconverted'][ WebpFormat::FORMAT_EXTENSION ] ?? 0 ) ),
+				'value_webp_converted' => $stats_data['files_converted'][ WebpFormat::FORMAT_EXTENSION ] ?? 0,
+				'value_avif_all'       => ( ( $stats_data['files_converted'][ AvifFormat::FORMAT_EXTENSION ] ?? 0 ) + ( $stats_data['files_unconverted'][ AvifFormat::FORMAT_EXTENSION ] ?? 0 ) ),
+				'value_avif_converted' => $stats_data['files_converted'][ AvifFormat::FORMAT_EXTENSION ] ?? 0,
 				'tree'                 => $stats_data['files_tree'],
 			],
 			200

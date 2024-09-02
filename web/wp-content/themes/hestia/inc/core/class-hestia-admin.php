@@ -645,9 +645,9 @@ class Hestia_Admin {
 		$current_category = -1; // Unknown category.
 
 		$categories = array(
-			'1' => array( 1, 2, 3, 8, 9, 14 ), // Personal
-			'2' => array( 4, 5, 10, 11, 15 ), // Business
-			'3' => array( 6, 7, 12, 13, 16 ), // Agency
+			'1' => array( 1, 4, 9 ), // Personal
+			'2' => array( 2, 5, 8 ), // Business/Developer
+			'3' => array( 3, 6, 7, 10 ), // Agency
 		);
 
 		foreach ( $categories as $category => $plans ) {
@@ -677,7 +677,16 @@ class Hestia_Admin {
 			$user_id .= preg_replace( '/[^\w\d]*/', '', get_site_url() ); // Use a normalized version of the site URL as a user ID for free users.
 		}
 
-		$days_since_install = round( ( time() - get_option( 'hestia_pro_install', 0 ) ) / DAY_IN_SECONDS );
+		$install_time = array_filter(
+			array(
+				get_option( 'hestia_pro_install', 0 ),
+				get_option( 'hestia_install', 0 ),
+			)
+		);
+
+		$install_time = (int) min( $install_time );
+
+		$days_since_install = round( ( time() - $install_time ) / DAY_IN_SECONDS );
 		$install_category   = 0;
 		if ( 0 === $days_since_install || 1 === $days_since_install ) {
 			$install_category = 0;
@@ -720,7 +729,7 @@ class Hestia_Admin {
 	 */
 	public function hestia_options_init() {
 		$screen = get_current_screen();
-		if ( false === strpos( $screen->base, 'appearance_page_hestia-welcome' ) ) {
+		if ( ! in_array( $screen->base, array( 'appearance_page_hestia-welcome', 'appearance_page_hestia-pro-welcome' ), true ) ) {
 			return;
 		}
 

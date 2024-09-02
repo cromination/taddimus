@@ -62,6 +62,13 @@ interface OptionInterface {
 	 *
 	 * @return string[]|null
 	 */
+	public function get_values_warnings( array $settings );
+
+	/**
+	 * @param mixed[] $settings Plugin settings.
+	 *
+	 * @return string[]|null
+	 */
 	public function get_disabled_values( array $settings );
 
 	/**

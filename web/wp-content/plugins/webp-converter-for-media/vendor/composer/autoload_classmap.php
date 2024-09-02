@@ -158,6 +158,7 @@ return array(
     'WebpConverter\\Service\\PathsGenerator' => $baseDir . '/src/Service/PathsGenerator.php',
     'WebpConverter\\Service\\RestApiUnlocker' => $baseDir . '/src/Service/RestApiUnlocker.php',
     'WebpConverter\\Service\\ServerConfigurator' => $baseDir . '/src/Service/ServerConfigurator.php',
+    'WebpConverter\\Service\\SiteHealthDetector' => $baseDir . '/src/Service/SiteHealthDetector.php',
     'WebpConverter\\Service\\StatsManager' => $baseDir . '/src/Service/StatsManager.php',
     'WebpConverter\\Service\\TokenValidator' => $baseDir . '/src/Service/TokenValidator.php',
     'WebpConverter\\Service\\ViewLoader' => $baseDir . '/src/Service/ViewLoader.php',

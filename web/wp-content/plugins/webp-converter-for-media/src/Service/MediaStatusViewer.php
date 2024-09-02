@@ -95,7 +95,7 @@ class MediaStatusViewer implements HookableInterface {
 			return null;
 		}
 
-		return wp_kses( implode( '<br>', $conversion_status ), $this->get_allowed_html_tags() );
+		return wp_kses( implode( PHP_EOL, $conversion_status ), $this->get_allowed_html_tags() );
 	}
 
 	/**
@@ -217,110 +217,129 @@ class MediaStatusViewer implements HookableInterface {
 			return null;
 		}
 
-		$images_stats   = $this->get_images_stats( $source_paths );
-		$size_original  = $images_stats[0]['original_size'];
-		$size_optimized = $images_stats[0]['avif_size'] ?: $images_stats[0]['webp_size'];
-		if ( ! $size_original ) {
+		$images_stats = $this->get_images_stats( $source_paths, $post_id );
+		if ( ! $images_stats ) {
 			return null;
 		}
 
-		$webp_source_size = [];
-		$webp_output_size = [];
-		$avif_source_size = [];
-		$avif_output_size = [];
-		$webp_files_count = 0;
-		$avif_files_count = 0;
-
-		foreach ( $images_stats as $images_stat ) {
-			if ( $images_stat['original_size'] === null ) {
-				continue;
+		$percent_values  = array_filter(
+			array_column( $images_stats, 'optimized_percent' ),
+			function ( $value ) {
+				return ! is_null( $value );
 			}
-
-			if ( $images_stat['webp_size'] !== null ) {
-				$webp_source_size[] = (int) $images_stat['original_size'];
-				$webp_output_size[] = $images_stat['webp_size'];
-			}
-			if ( $images_stat['avif_size'] !== null ) {
-				$avif_source_size[] = (int) $images_stat['original_size'];
-				$avif_output_size[] = $images_stat['avif_size'];
-			}
-			if ( $images_stat['webp_status'] ) {
-				$webp_files_count++;
-			}
-			if ( $images_stat['avif_status'] ) {
-				$avif_files_count++;
-			}
-		}
-
-		$is_optimized = ( $size_optimized || ( $webp_files_count > 0 ) || ( $avif_files_count > 0 ) );
+		);
+		$percent_average = ( $percent_values )
+			? -( 100 - round( array_sum( $percent_values ) / count( $percent_values ) ) )
+			: null;
 
 		$rows = [
 			sprintf(
-			/* translators: %s: file size */
-				__( 'Original file size: %s', 'webp-converter-for-media' ),
-				sprintf( '<strong>%s</strong>', size_format( $size_original ) )
-			),
-			sprintf(
-			/* translators: %s: file size */
-				__( 'Optimized file size: %s', 'webp-converter-for-media' ),
-				( $size_optimized )
+			/* translators: %s: percent value */
+				__( 'Average image size reduction: %s', 'webp-converter-for-media' ),
+				( $percent_average !== null )
 					?
 					sprintf(
-						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
-						size_format( $size_optimized ),
-						esc_attr( __( 'File size reduction of the uploaded image compared to the original one.', 'webp-converter-for-media' ) ),
-						$this->get_percent_value( $size_original, $size_optimized )
+						'<abbr title="%1$s">%2$s</abbr>',
+						esc_html__( 'File size reduction of all thumbnails compared to the original ones.', 'webp-converter-for-media' ),
+						( '<strong>' . ( ( $percent_average > 0 ) ? ( '+' . $percent_average ) : $percent_average ) . '%</strong>' )
 					)
-					: '<strong>-</strong>'
+					: '<strong>—</strong>'
+			),
+			'<br>',
+			'<div class="webpcMediaStat">',
+			sprintf(
+				'<input type="checkbox" class="webpcMediaStat__button" id="stats-webp-converter-for-media-attachment-%s">',
+				$post_id
 			),
 			sprintf(
-			/* translators: %1$s: output format, %2$s: number of images */
-				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
-				'WebP',
-				( $webp_files_count > 0 )
-					?
-					sprintf(
-						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
-						$webp_files_count,
-						esc_attr( __( 'File size reduction of all thumbnails compared to the original ones.', 'webp-converter-for-media' ) ),
-						$this->get_percent_value( $webp_source_size, $webp_output_size )
-					)
-					: '<strong>' . $webp_files_count . '</strong>'
+				'<label for="stats-webp-converter-for-media-attachment-%1$s" class="webpcMediaStat__buttonLabel webpcMediaStat__buttonLabel--unchecked button button-small">%2$s</label>',
+				$post_id,
+				sprintf(
+				/* translators: %s: files count */
+					__( 'Show stats for all thumbnails (%s)', 'webp-converter-for-media' ),
+					count( $images_stats )
+				)
 			),
+			sprintf(
+				'<label for="stats-webp-converter-for-media-attachment-%1$s" class="webpcMediaStat__buttonLabel webpcMediaStat__buttonLabel--checked button button-small">%2$s</label>',
+				$post_id,
+				__( 'Hide stats', 'webp-converter-for-media' )
+			),
+			'<div class="webpcMediaStat__wrapper">',
 		];
 
 		if ( ! $this->token->get_valid_status() ) {
+			$rows[] = '<div class="webpcMediaStat__notice">';
 			$rows[] = sprintf(
-			/* translators: %1$s: output format, %2$s: number of images */
-				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
-				'AVIF',
+			/* translators: %1$s: call to action, %2$s: format name, %3$s: percent value, %4$s: format name */
+				__( '%1$s and convert your images to the %2$s format, making them weigh about %3$s less than images converted only to the %4$s format.', 'webp-converter-for-media' ),
 				sprintf(
-					'<strong>%1$s</strong> <small>(<a href="%2$s">%3$s</a>)</small>',
-					$avif_files_count,
-					esc_attr( PageIntegrator::get_settings_page_url() ),
-					__( 'in the PRO', 'webp-converter-for-media' )
-				)
-			);
-		} else {
-			$rows[] = sprintf(
-			/* translators: %1$s: output format, %2$s: number of images */
-				__( 'Files converted to %1$s: %2$s', 'webp-converter-for-media' ),
+				/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+					__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
+					'<a href="https://url.mattplugins.com/converter-media-stats-notice-upgrade" target="_blank">',
+					' </a>'
+				),
 				'AVIF',
-				( $avif_files_count > 0 )
+				'50%',
+				'WebP'
+			);
+			$rows[] = '</div>';
+		}
+
+		foreach ( $images_stats as $images_stat ) {
+			$percent_value = -( 100 - $images_stat['optimized_percent'] );
+
+			$rows[] = sprintf(
+				'<div class="webpcMediaStat__item">
+					<div class="webpcMediaStat__itemProgress">
+						<div class="webpcMediaStat__itemProgressInner" style="width: %5$s%%;"></div>
+					</div>
+					<a href="%1$s" target="_blank" class="webpcMediaStat__itemLink">%2$s</a>
+					<br>
+					%3$s
+					<br>
+					%4$s
+				</div>',
+				$images_stat['file_url'],
+				basename( $images_stat['file_url'] ),
+				sprintf(
+				/* translators: %s: file size */
+					__( 'Original file size: %s', 'webp-converter-for-media' ),
+					sprintf( '<strong>%s</strong>', size_format( $images_stat['original_size'] ) )
+				),
+				( $images_stat['output_format'] )
 					?
 					sprintf(
-						'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
-						$avif_files_count,
-						esc_attr( __( 'File size reduction of all thumbnails compared to the original ones.', 'webp-converter-for-media' ) ),
-						$this->get_percent_value( $avif_source_size, $avif_output_size )
+					/* translators: %1$s: format name, %2$s: file size */
+						__( 'Optimized file size in the %1$s format: %2$s', 'webp-converter-for-media' ),
+						$images_stat['output_format'],
+						sprintf(
+							'<strong>%1$s <abbr title="%2$s">(%3$s)</abbr></strong>',
+							size_format( $images_stat['optimized_size'] ),
+							sprintf(
+							/* translators: %s: format name */
+								__( 'Image size reduction after conversion to the %s format compared to the original one.', 'webp-converter-for-media' ),
+								$images_stat['output_format']
+							),
+							( $percent_value > 0 )
+								? sprintf( '+%s%%', $percent_value )
+								: sprintf( '%s%%', $percent_value )
+						)
 					)
-					: '<strong>' . $avif_files_count . '</strong>'
+					:
+					sprintf(
+					/* translators: %s: file size */
+						__( 'Optimized file size: %s', 'webp-converter-for-media' ),
+						'<strong>-</strong>'
+					),
+				( $images_stat['output_format'] )
+					? $images_stat['optimized_percent']
+					: 0
 			);
 		}
 
-		if ( ! $is_optimized ) {
-			$rows = array_slice( $rows, 0, 1 );
-		}
+		$rows[] = '</div>';
+		$rows[] = '</div>';
 
 		$quality_levels = apply_filters( 'webpc_option_quality_levels', [ 75, 80, 85, 90, 95 ] );
 		$quality_levels = [
@@ -332,6 +351,7 @@ class MediaStatusViewer implements HookableInterface {
 			0,
 		];
 
+		$rows[] = '<br>';
 		$rows[] = sprintf(
 			'<select id="webpc-attachment-trigger-%1$s" onchange="webpcConvertAttachment(this,%1$s);" data-api-path="%2$s|%3$s">%4$s</select><span id="webpc-attachment-trigger-%1$s-spinner" class="spinner no-float" hidden></span>',
 			$post_id,
@@ -344,7 +364,9 @@ class MediaStatusViewer implements HookableInterface {
 						'<option value="%1$s" %2$s disabled>%3$s</option>',
 						'',
 						( $strategy_level === null ) ? 'selected' : '',
-						__( 'Optimize Now', 'webp-converter-for-media' )
+						( $percent_average !== null )
+							? __( 'Re-optimize Now', 'webp-converter-for-media' )
+							: __( 'Optimize Now', 'webp-converter-for-media' )
 					),
 					sprintf(
 						'<option value="%1$s" %2$s>%3$s</option>',
@@ -396,7 +418,7 @@ class MediaStatusViewer implements HookableInterface {
 							sprintf( '%1$s (%2$s)', '#5', __( 'Lossless', 'webp-converter-for-media' ) )
 						)
 					),
-					( $is_optimized )
+					( $percent_average !== null )
 						?
 						sprintf(
 							'<option value="%1$s" %2$s>%3$s</option>',
@@ -413,36 +435,64 @@ class MediaStatusViewer implements HookableInterface {
 	}
 
 	/**
-	 * @param string[] $source_paths  .
+	 * @param string[]   $source_paths      .
+	 * @param int        $attachment_id     .
 	 *
 	 * @return mixed[] {
-	 * @type int|null  $original_size .
-	 * @type int|null  $webp_size     .
-	 * @type bool      $webp_status   .
-	 * @type int|null  $avif_size     .
-	 * @type bool      $avif_status   .
-	 *                                }
+	 * @type int         $original_size     .
+	 * @type int|null    $optimized_size    .
+	 * @type int|null    $optimized_percent Size of optimized file compared to the original one (from >0 to <=100).
+	 * @type string|null $output_format     .
+	 * @type string      $file_url          .
+	 *                                      }
 	 */
-	private function get_images_stats( array $source_paths ): array {
+	private function get_images_stats( array $source_paths, int $attachment_id ): array {
+		$file_url = wp_get_attachment_url( $attachment_id ) ?: null;
+		if ( $file_url ) {
+			$file_url = dirname( $file_url );
+		}
+
 		$items = [];
 		foreach ( $source_paths as $source_path ) {
+			$filesize_original = ( file_exists( $source_path ) ) ? ( filesize( $source_path ) ?: null ) : null;
+			if ( $filesize_original === null ) {
+				continue;
+			}
+
 			$output_path_webp = $this->output_path->get_path( $source_path, false, WebpFormat::FORMAT_EXTENSION );
 			$output_path_avif = $this->output_path->get_path( $source_path, false, AvifFormat::FORMAT_EXTENSION );
 
-			$filesize_original = ( file_exists( $source_path ) ) ? ( filesize( $source_path ) ?: null ) : null;
-			$filesize_webp     = ( $output_path_webp )
-				? ( ( file_exists( $output_path_webp ) ) ? ( filesize( $output_path_webp ) ?: null ) : null )
-				: null;
-			$filesize_avif     = ( $output_path_avif )
+			$filesize_avif = ( $output_path_avif )
 				? ( ( file_exists( $output_path_avif ) ) ? ( filesize( $output_path_avif ) ?: null ) : null )
 				: null;
+			$filesize_webp = ( $output_path_webp )
+				? ( ( file_exists( $output_path_webp ) ) ? ( filesize( $output_path_webp ) ?: null ) : null )
+				: null;
+
+			$status_avif = ( ( $filesize_avif !== null ) || file_exists( $output_path_avif . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) );
+			$status_webp = ( ( $filesize_webp !== null ) || file_exists( $output_path_webp . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) );
 
 			$items[] = [
-				'original_size' => $filesize_original,
-				'webp_size'     => $filesize_webp,
-				'webp_status'   => ( ( $filesize_webp !== null ) || file_exists( $output_path_webp . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) ),
-				'avif_size'     => $filesize_avif,
-				'avif_status'   => ( ( $filesize_avif !== null ) || file_exists( $output_path_avif . '.' . LargerFilesOperator::DELETED_FILE_EXTENSION ) ),
+				'original_size'     => $filesize_original,
+				'optimized_size'    => ( $filesize_avif !== null )
+					? $filesize_avif
+					: ( ( $filesize_webp !== null )
+						? $filesize_webp
+						: ( ( $status_avif || $status_webp ) ? $filesize_original : null )
+					),
+				'optimized_percent' => ( $filesize_avif !== null )
+					? round( $filesize_avif / $filesize_original * 100 )
+					: ( ( $filesize_webp !== null )
+						? round( $filesize_webp / $filesize_original * 100 )
+						: ( ( $status_avif || $status_webp ) ? 100 : null )
+					),
+				'output_format'     => ( $filesize_avif !== null )
+					? 'AVIF'
+					: ( ( ( $filesize_webp !== null ) || $status_webp )
+						? 'WebP'
+						: null
+					),
+				'file_url'          => sprintf( '%1$s/%2$s', $file_url, basename( $source_path ) ),
 			];
 		}
 
@@ -450,44 +500,51 @@ class MediaStatusViewer implements HookableInterface {
 	}
 
 	/**
-	 * @param int|int[] $source_size .
-	 * @param int|int[] $output_size .
-	 *
-	 * @return string
-	 */
-	private function get_percent_value( $source_size, $output_size ): string {
-		$source_size = ( is_array( $source_size ) ) ? array_sum( $source_size ) : $source_size;
-		$output_size = ( is_array( $output_size ) ) ? array_sum( $output_size ) : $output_size;
-
-		$output_percent = ( $output_size ) ? ( 100 - round( $output_size / $source_size * 100 ) ) : 0;
-		return ( $output_percent >= 0 )
-			? sprintf( '-%s%%', $output_percent )
-			: sprintf( '+%s%%', abs( $output_percent ) );
-	}
-
-	/**
 	 * @return mixed[]
 	 */
 	private function get_allowed_html_tags(): array {
 		return [
-			'br'     => [],
 			'a'      => [
-				'href' => [],
+				'href'   => [],
+				'class'  => [],
+				'target' => [],
 			],
-			'strong' => [],
-			'select' => [
-				'id'            => [],
-				'onchange'      => [],
-				'data-api-path' => [],
+			'abbr'   => [
+				'title' => [],
+			],
+			'br'     => [],
+			'div'    => [
+				'id'    => [],
+				'class' => [],
+				'style' => [],
+			],
+			'input'  => [
+				'id'    => [],
+				'type'  => [],
+				'class' => [],
+			],
+			'label'  => [
+				'for'   => [],
+				'class' => [],
 			],
 			'option' => [
 				'value'    => [],
 				'selected' => [],
 				'disabled' => [],
 			],
+			'select' => [
+				'id'            => [],
+				'onchange'      => [],
+				'data-api-path' => [],
+			],
 			'span'   => [
-				'id'    => [],
-				'class' => [],
+				'id'     => [],
+				'class'  => [],
+				'hidden' => [],
+			],
+			'strong' => [
+				'class'          => [],
+				'titleyik mnb  ' => [],
 			],
 		];
 	}

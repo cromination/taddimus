@@ -18,6 +18,15 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 == Changelog ==
 
+##### [Version 3.1.10](https://github.com/Codeinwp/hestia-pro/compare/v3.1.9...v3.1.10) (2024-08-27)
+
+- Fixed an issue where the Mini Cart option appeared incorrectly in the customizer
+- Fixed an issue with the user survey
+- Fixed an issue with the customizer preview refresh
+
+
+
+
 ##### [Version 3.1.9](https://github.com/Codeinwp/hestia-pro/compare/v3.1.8...v3.1.9) (2024-07-15)
 
 - Removed hardcoded CSS string which was not available for translations

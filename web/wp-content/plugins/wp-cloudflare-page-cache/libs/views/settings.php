@@ -1,13 +1,5 @@
 <?php
 
-$step_settings = 1;
-
-if( $this->main_instance->get_cloudflare_api_zone_id() == '' && count($zone_id_list) > 0 )
-    $step_settings = 2;
-
-if( $this->main_instance->get_cloudflare_api_zone_id() != '' )
-    $step_settings = 3;
-
 $switch_counter  = 0;
 $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : false;
 
@@ -17,7 +9,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
     <div id="swcfpc_main_content" class="width_sidebar" data-cache_enabled="<?php echo $this->main_instance->get_single_config('cf_cache_enabled', 0); ?>">
 
-        <h1><?php _e('Super Page Cache for Cloudflare', 'wp-cloudflare-page-cache'); ?></h1>
+        <h1><?php _e('Super Page Cache', 'wp-cloudflare-page-cache'); ?></h1>
         <?php settings_errors(); ?>
 
         <?php if( !file_exists( $this->main_instance->get_plugin_wp_content_directory() ) ): ?>
@@ -38,253 +30,138 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
         <?php endif; ?>
 
-        <?php if( $step_settings == 1 ): ?>
+        <?php if ( ! $this->modules['cache_controller']->is_cache_enabled() ): ?>
 
+            <!-- WIZARD Enable Page Caching -->
             <div class="step">
+                <h2><?php _e('Enable Page Caching', 'wp-cloudflare-page-cache'); ?></h2>
+                <p style="text-align: center;"><?php _e('A WordPress performance plugin that lets you get Edge Caching enabled on a Cloudflare free plan.', 'wp-cloudflare-page-cache'); ?></p>
 
-                <div class="step_counter">
-                    <div class="step_number step_active"><span>1</span></div>
-                    <div class="step_number"><span>2</span></div>
-                    <div class="step_number"><span>3</span></div>
-                    <div class="clear"></div>
-                </div>
+                <form action="" method="post" id="swcfpc_form_enable_cache">
+                    <p class="submit"><input type="submit" name="swcfpc_submit_enable_page_cache" class="button button-primary green_button" value="<?php _e('Enable Page Caching Now', 'wp-cloudflare-page-cache'); ?>"></p>
+                    <div class="swcfpc-highlight"><?php _e('We strongly recommend disabling all page caching functions of other plugins.', 'wp-cloudflare-page-cache'); ?></div>
+                </form>
+            </div>
 
-                <div class="api_key_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_KEY ) echo 'swcfpc_hide'; ?>">
+        <?php else: ?>
 
-                    <h2><?php echo __( 'Enter your Cloudflare\'s API key and e-mail', 'wp-cloudflare-page-cache' ); ?></h2>
+            <!-- Quick Actions -->
+            <div id="swcfpc_actions">
 
-                    <p><?php _e('You don\'t know how to do it? Follow these simple four steps:', 'wp-cloudflare-page-cache'); ?></p>
+                <h2><?php echo __( 'Quick Actions', 'wp-cloudflare-page-cache' ); ?></h2>
 
-                    <ol>
-                        <li><a href="https://dash.cloudflare.com/login" target="_blank"><?php _e('Log in to your Cloudflare account', 'wp-cloudflare-page-cache'); ?></a> <?php _e('and click on My Profile', 'wp-cloudflare-page-cache'); ?></li>
-                        <li><?php _e('Click on API tokens, scroll to API Keys and click on View beside Global API Key', 'wp-cloudflare-page-cache'); ?></li>
-                        <li><?php _e('Enter your Cloudflare login password and click on View', 'wp-cloudflare-page-cache'); ?></li>
-                        <li><?php _e('Enter both API key and e-mail address into the form below and click on Update settings', 'wp-cloudflare-page-cache'); ?></li>
-                    </ol>
-                    <br/>
-                </div>
+                <form action="" method="post" id="swcfpc_form_disable_cache">
+                    <p class="submit"><input type="submit" name="swcfpc_submit_disable_page_cache" class="button button-primary" value="<?php _e('Disable All Caching', 'wp-cloudflare-page-cache'); ?>"></p>
+                </form>
 
-                <div class="api_token_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_TOKEN ) echo 'swcfpc_hide'; ?>">
+                <form action="" method="post" id="swcfpc_form_purge_cache">
+                    <p class="submit"><input type="submit" name="swcfpc_submit_purge_cache" class="button button-secondary" value="<?php _e('Purge Cache', 'wp-cloudflare-page-cache'); ?>"></p>
+                </form>
 
-                    <h2><?php echo __( 'Enter your Cloudflare\'s API token', 'wp-cloudflare-page-cache' ); ?></h2>
+                <form action="" method="post" id="swcfpc_form_test_cache">
+                    <p class="submit"><input type="submit" name="swcfpc_submit_test_cache" class="button button-secondary" value="<?php _e('Test Cache', 'wp-cloudflare-page-cache'); ?>"></p>
+                </form>
 
-                    <p><?php _e('You don\'t know how to do it? Follow these simple steps:', 'wp-cloudflare-page-cache'); ?></p>
+                <?php if( $this->main_instance->get_single_config('cf_purge_only_html', 0) > 0 ): ?>
+                    <a id="swcfpc_purge_cache_everything" href="#" title="<?php _e('Purge both HTML pages and static assets', 'wp-cloudflare-page-cache'); ?>"><?php _e('Force purge everything', 'wp-cloudflare-page-cache'); ?></a>
+                <?php endif; ?>
 
-                    <ol>
-                        <li><a href="https://dash.cloudflare.com/login" target="_blank"><?php _e('Log in to your Cloudflare account', 'wp-cloudflare-page-cache'); ?></a> <?php _e('and click on My Profile', 'wp-cloudflare-page-cache'); ?></li>
-                        <li><?php _e('Click on API tokens > Create Token > Custom Token > Get started', 'wp-cloudflare-page-cache'); ?></li>
-                        <li><?php _e('Enter a Token name (example: token for example.com)', 'wp-cloudflare-page-cache'); ?></li>
-                        <li><strong><?php _e('Permissions:', 'wp-cloudflare-page-cache'); ?></strong></li>
-                        <ul>
-                            <li>Account - Account Settings - Read</li>
-                            <li>Account - Worker Scripts - Edit</li>
-                            <li>Zone - Cache Purge - Purge</li>
-                            <li>Zone - Page Rules - Edit</li>
-                            <li>Zone - Zone Settings - Edit</li>
-                            <li>Zone - Zone - Edit</li>
-                            <li>Zone - Worker Routes - Edit</li>
-                        </ul>
-
-                        <li><strong><?php _e('Account resources:', 'wp-cloudflare-page-cache'); ?></strong></li>
-                        <ul>
-                            <li>Include - All accounts</li>
-                        </ul>
-
-                        <li><strong><?php _e('Zone resources:', 'wp-cloudflare-page-cache'); ?></strong></li>
-                        <ul>
-                            <li>Include - Specific zone - your domain name</li>
-                        </ul>
-
-                        <li><?php _e('Click on Continue to summary and then on Create token', 'wp-cloudflare-page-cache'); ?></li>
-                        <li><?php _e('Enter the generated token into the form below and click on Update settings', 'wp-cloudflare-page-cache'); ?></li>
-                    </ol>
-
-                </div>
+                <?php if( empty ( $this->main_instance->get_cloudflare_api_zone_id() ) ): ?>
+                <div class="swcfpc-highlight"><?php _e('We recommend you to enable the edge caching by connecting your Cloudflare account. It\'s free.', 'wp-cloudflare-page-cache'); ?></div>
+                <?php endif; ?>
 
             </div>
 
-        <?php endif; ?>
-
-        <?php if( $step_settings == 2 ): ?>
-
-            <div class="step">
-
-                <div class="step_counter">
-                    <div class="step_number"><span>1</span></div>
-                    <div class="step_number step_active"><span>2</span></div>
-                    <div class="step_number"><span>3</span></div>
-                    <div class="clear"></div>
-                </div>
-
-                <h2><?php echo __( 'Select the domain', 'wp-cloudflare-page-cache' ); ?></h2>
-
-                <p style="text-align: center;"><?php _e('Select from the dropdown menu the domain for which you want to enable the cache', 'wp-cloudflare-page-cache'); ?></p>
-
-            </div>
-
-        <?php endif; ?>
-
-        <?php if( $step_settings == 3 ): ?>
-
-            <?php if( ! $this->modules['cache_controller']->is_cache_enabled() ): ?>
-
-                <div class="step">
-
-                    <div class="step_counter">
-                        <div class="step_number"><span>1</span></div>
-                        <div class="step_number"><span>2</span></div>
-                        <div class="step_number step_active"><span>3</span></div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <h2><?php _e('Enable Page Caching', 'wp-cloudflare-page-cache'); ?></h2>
-
-                    <p style="text-align: center;"><?php _e('Now you can configure and enable the page cache to speed up this website', 'wp-cloudflare-page-cache'); ?></p>
-
-                    <form action="" method="post" id="swcfpc_form_enable_cache">
-                        <p class="submit"><input type="submit" name="swcfpc_submit_enable_page_cache" class="button button-primary green_button" value="<?php _e('Enable Page Caching Now', 'wp-cloudflare-page-cache'); ?>"></p>
-                    </form>
-
-                </div>
-
-            <?php else: ?>
-
-                <div id="swcfpc_actions">
-
-                    <h2><?php echo __( 'Cache Actions', 'wp-cloudflare-page-cache' ); ?></h2>
-
-                    <form action="" method="post" id="swcfpc_form_disable_cache">
-                        <p class="submit"><input type="submit" name="swcfpc_submit_disable_page_cache" class="button button-primary" value="<?php _e('Disable Page Cache', 'wp-cloudflare-page-cache'); ?>"></p>
-                    </form>
-
-                    <form action="" method="post" id="swcfpc_form_purge_cache">
-                        <p class="submit"><input type="submit" name="swcfpc_submit_purge_cache" class="button button-secondary" value="<?php _e('Purge Cache', 'wp-cloudflare-page-cache'); ?>"></p>
-                    </form>
-
-                    <form action="" method="post" id="swcfpc_form_test_cache">
-                        <p class="submit"><input type="submit" name="swcfpc_submit_test_cache" class="button button-secondary" value="<?php _e('Test Cache', 'wp-cloudflare-page-cache'); ?>"></p>
-                    </form>
-
-                    <form id="swcfpc_form_reset_all" action="" method="post">
-                        <p class="submit"><input type="submit" name="swcfpc_submit_reset_all" class="button button-secondary" value="<?php _e('Reset All', 'wp-cloudflare-page-cache'); ?>"></p>
-                    </form>
-
-                    <?php if( $this->main_instance->get_single_config('cf_purge_only_html', 0) > 0 ): ?>
-                        <a id="swcfpc_purge_cache_everything" href="#" title="<?php _e('Purge both HTML pages and static assets', 'wp-cloudflare-page-cache'); ?>"><?php _e('Force purge everything', 'wp-cloudflare-page-cache'); ?></a>
-                    <?php endif; ?>
-
-                </div>
-
-            <?php endif; ?>
-
-        <?php endif; ?>
-
-
-        <?php if( $step_settings > 2 ): ?>
-
+            <!-- Dashboard Tabs -->
             <h2 id="swcfpc_tab_links" class="nav-tab-wrapper">
-                <a data-tab="general" class="nav-tab <?php if(!$tab_active || $tab_active == '' || $tab_active == 'general') echo 'nav-tab-active'; ?>"><?php _e('General', 'wp-cloudflare-page-cache'); ?></a>
-                <a data-tab="cache" class="nav-tab <?php if( $tab_active == 'cache') echo 'nav-tab-active'; ?>"><?php _e('Cache', 'wp-cloudflare-page-cache'); ?></a>
+                <a data-tab="cache" class="nav-tab <?php if( !$tab_active || $tab_active == '' ||  $tab_active == 'cache') echo 'nav-tab-active'; ?>"><?php _e('Cache', 'wp-cloudflare-page-cache'); ?></a>
+                <a data-tab="general" class="nav-tab <?php if( $tab_active == 'general') echo 'nav-tab-active'; ?>"><?php _e('Cloudflare (CDN & Edge Caching)', 'wp-cloudflare-page-cache'); ?></a>
                 <a data-tab="advanced" class="nav-tab <?php if( $tab_active == 'advanced') echo 'nav-tab-active'; ?>"><?php _e('Advanced', 'wp-cloudflare-page-cache'); ?></a>
                 <a data-tab="thirdparty" class="nav-tab <?php if( $tab_active == 'thirdparty') echo 'nav-tab-active'; ?>"><?php _e('Third Party', 'wp-cloudflare-page-cache'); ?></a>
                 <a data-tab="other" class="nav-tab <?php if( $tab_active == 'other') echo 'nav-tab-active'; ?>"><?php _e('Other', 'wp-cloudflare-page-cache'); ?></a>
                 <a data-tab="faq" class="nav-tab <?php if( $tab_active == 'faq') echo 'nav-tab-active'; ?>"><?php _e('FAQ', 'wp-cloudflare-page-cache'); ?></a>
             </h2>
 
-        <?php endif; ?>
+            <!-- Dashboard Settings -->
+            <form method="post" action="" id="swcfpc_options">
+                <?php wp_nonce_field('swcfpc_index_nonce', 'swcfpc_index_nonce'); ?>
 
-        <form method="post" action="">
+                <!-- GENERAL/CLOUDFLARE TAB -->
+                <div class="swcfpc_tab <?php if($tab_active == 'general') echo 'active'; ?>" id="general">
 
-            <?php wp_nonce_field('swcfpc_index_nonce', 'swcfpc_index_nonce'); ?>
-            <!-- GENERAL TAB -->
-            <div class="swcfpc_tab <?php if(!$tab_active || $tab_active == 'general') echo 'active'; ?>" id="general">
+                    <div class="main_section_header first_section">
+                        <h3><?php echo __( 'Cloudflare General Settings', 'wp-cloudflare-page-cache' ); ?></h3>
+                    </div>
 
-                <div class="main_section_header first_section">
-                    <h3><?php echo __( 'Cloudflare General Settings', 'wp-cloudflare-page-cache' ); ?></h3>
-                </div>
+                    <?php if( count( $zone_id_list ) === 0 ): ?>
 
-                <div class="main_section">
-                    <div class="left_column">
-                        <label><?php _e('Authentication mode', 'wp-cloudflare-page-cache'); ?></label>
-                        <div class="description"><?php _e('Authentication mode to use to connect to your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
-                    </div>
-                    <div class="right_column">
-                        <select name="swcfpc_cf_auth_mode">
-                            <option value="<?php echo SWCFPC_AUTH_MODE_API_TOKEN; ?>" <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_TOKEN ) echo 'selected'; ?>><?php _e('API Token', 'wp-cloudflare-page-cache'); ?></option>
-                            <option value="<?php echo SWCFPC_AUTH_MODE_API_KEY; ?>" <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_KEY ) echo 'selected'; ?>><?php _e('API Key', 'wp-cloudflare-page-cache'); ?></option>
-                        </select>
-                    </div>
-                    <div class="clear"></div>
-                </div>
+                    <!-- Cloudflare Account Signup -->    
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('You don\'t have a Cloudflare account?', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Cloudflare significantly speeds up your website by leveraging a global network of servers to deliver content faster to your visitors.', 'wp-cloudflare-page-cache'); ?></div>
 
-                <!--<div class="main_section api_key_method <?php //if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_KEY ) echo 'swcfpc_hide'; ?>">-->
-                <div class="main_section">
-                    <div class="left_column">
-                        <label><?php _e('Cloudflare e-mail', 'wp-cloudflare-page-cache'); ?></label>
-                        <div class="description"><?php _e('The email address you use to log in to Cloudflare.', 'wp-cloudflare-page-cache'); ?></div>
-                    </div>
-                    <div class="right_column">
-                        <input type="text" name="swcfpc_cf_email"  value="<?php echo $this->main_instance->get_cloudflare_api_email(); ?>" autocomplete="off" />
-                    </div>
-                    <div class="clear"></div>
-                </div>
-
-                <div class="main_section api_key_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_KEY ) echo 'swcfpc_hide'; ?>">
-                    <div class="left_column">
-                        <label><?php _e('Cloudflare API Key', 'wp-cloudflare-page-cache'); ?></label>
-                        <div class="description"><?php _e('The Global API Key extrapolated from your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
-                    </div>
-                    <div class="right_column">
-                        <input type="password" name="swcfpc_cf_apikey" value="<?php echo $this->main_instance->get_cloudflare_api_key(); ?>" autocomplete="new-password" />
-                    </div>
-                    <div class="clear"></div>
-                </div>
-
-                <div class="main_section api_token_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_TOKEN ) echo 'swcfpc_hide'; ?>">
-                    <div class="left_column">
-                        <label><?php _e('Cloudflare API Token', 'wp-cloudflare-page-cache'); ?></label>
-                        <div class="description"><?php _e('The API Token extrapolated from your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
-                    </div>
-                    <div class="right_column">
-                        <input type="password" name="swcfpc_cf_apitoken" value="<?php echo $this->main_instance->get_cloudflare_api_token(); ?>" autocomplete="new-password" />
-                    </div>
-                    <div class="clear"></div>
-                </div>
-
-                <div class="main_section api_token_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_TOKEN ) echo 'swcfpc_hide'; ?>">
-                    <div class="left_column">
-                        <label><?php _e('Cloudflare Domain Name', 'wp-cloudflare-page-cache'); ?></label>
-                        <div class="description"><?php _e('Select/add the domain name for which you want to enable the cache exactly as reported on Cloudflare, then click on Update settings.', 'wp-cloudflare-page-cache'); ?></div>
-                    </div>
-                    <div class="right_column">
-                        <input type="text" name="swcfpc_cf_apitoken_domain"  value="<?php echo $this->main_instance->get_single_config( 'cf_apitoken_domain', $this->main_instance->get_second_level_domain() ); ?>" autocomplete="off" />
-                    </div>
-                    <div class="clear"></div>
-                </div>
-
-                <div class="main_section">
-                    <div class="left_column">
-                        <label><?php _e('Log mode', 'wp-cloudflare-page-cache'); ?></label>
-                        <div class="description"><?php _e('Enable this option if you want log all communications between Cloudflare and this plugin.', 'wp-cloudflare-page-cache'); ?></div>
-                    </div>
-                    <div class="right_column">
-                        <div class="switch-field">
-                            <input type="radio" data-mainoption="logs" class="conditional_item" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_log_enabled" value="1" <?php if( $this->main_instance->get_single_config('log_enabled', 0) > 0 ) echo 'checked'; ?>/>
-                            <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Enabled', 'wp-cloudflare-page-cache'); ?></label>
-                            <input type="radio" data-mainoption="logs" class="conditional_item" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_log_enabled" value="0" <?php if( $this->main_instance->get_single_config('log_enabled', 0) <= 0 ) echo 'checked'; ?>/>
-                            <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('Disabled', 'wp-cloudflare-page-cache'); ?></label>
+                            <br>
+                            <label><?php _e('Here’s how it works', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Cloudflare stores copies of your site’s content (HTML, images, CSS, and JavaScript files) on multiple servers around the world.', 'wp-cloudflare-page-cache'); ?></div>
+                            <br>
+                            <div class="description"><?php _e('When a visitor accesses your site, Cloudflare serves this content from the server nearest to their location.', 'wp-cloudflare-page-cache'); ?></div>
+                            <br>
+                            <div class="description"><?php _e('This approach, known as edge caching or content delivery network (CDN) service, reduces the distance data needs to travel.', 'wp-cloudflare-page-cache'); ?></div>
+                            <br>
                         </div>
+                        <div class="right_column">
+                            <a href="https://dash.cloudflare.com/sign-up?pt=f" target="_blank" class="button button-secondary" ><?php _e('Sign up for free', 'wp-cloudflare-page-cache'); ?></a>
+                            <br><br>
+                            <div>
+                                <p><?php _e('After creating your account, get your API Keys:', 'wp-cloudflare-page-cache'); ?></p>
+                                <ol>
+                                    <li><a href="https://dash.cloudflare.com/login" target="_blank"><?php _e('Log in to your Cloudflare account', 'wp-cloudflare-page-cache'); ?></a> <?php _e('and click on My Profile', 'wp-cloudflare-page-cache'); ?></li>
+                                    <li><?php _e('Click on API tokens, scroll to API Keys and click on View beside Global API Key', 'wp-cloudflare-page-cache'); ?></li>
+                                    <li><?php _e('Enter your Cloudflare login password and click on View', 'wp-cloudflare-page-cache'); ?></li>
+                                    <li><?php _e('Enter both API key and e-mail address into the form below and click on Update settings', 'wp-cloudflare-page-cache'); ?></li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
                     </div>
-                    <div class="clear"></div>
-                </div>
+                    <?php endif; ?>
 
-                <?php if( $step_settings > 1 ): ?>
+                    <?php
+                    // TODO: Simplify this.
+                    if( ( $this->main_instance->get_cloudflare_api_zone_id() == '' && count($zone_id_list) > 0 ) || $this->main_instance->get_cloudflare_api_zone_id() != '' ):
+                    ?>
+                        <!-- Enable/Disable Cloudflare Cache -->
+                        <?php if( $this->main_instance->get_cloudflare_api_zone_id() != '' ): ?>
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Enable Cloudflare CDN & Caching', 'wp-cloudflare-page-cache'); ?></label>
+                                    <div class="description"><?php _e('Serve cached files from Cloudflare using Cache Rule.', 'wp-cloudflare-page-cache'); ?></div>
+                                </div>
+                                <div class="right_column">
+                                    <div class="switch-field">
+                                        <?php
+                                        $has_ruleset_rule_id = ! empty( $this->main_instance->get_single_config('cf_cache_settings_ruleset_rule_id', '') );
+                                        ?>
+                                        <input type="radio" class="conditional_item" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_enable_cache_rule" value="1" <?php if( $has_ruleset_rule_id ) echo 'checked'; ?> />
+                                        <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Enabled', 'wp-cloudflare-page-cache'); ?></label>
+                                        <input type="radio" class="conditional_item" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_enable_cache_rule" value="0" <?php if( ! $has_ruleset_rule_id ) echo 'checked'; ?> />
+                                        <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('Disabled', 'wp-cloudflare-page-cache'); ?></label>
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                        <?php endif; ?>
 
-                    <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_KEY ): ?>
-
+                        <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_KEY ): ?>
+                            
+                        <!-- Cloudflare Domain Name -->
                         <div class="main_section">
                             <div class="left_column">
-                                <label><?php _e('Cloudflare Domain Name', 'wp-cloudflare-page-cache'); ?></label>
+                                <label>
+                                    <?php _e('Cloudflare Domain Name', 'wp-cloudflare-page-cache'); ?>
+                                    <span class="swcfpc-required">*</span>
+                                </label>
                                 <div class="description"><?php _e('Select the domain for which you want to enable the cache and click on Update settings.', 'wp-cloudflare-page-cache'); ?></div>
                             </div>
                             <div class="right_column">
@@ -293,84 +170,401 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                                     <option value=""><?php _e('Select a Domain Name', 'wp-cloudflare-page-cache'); ?></option>
 
-                                    <?php if( $domain_found ): ?>
+                                    <?php
+                                    
+                                    $selected_zone_id = $this->main_instance->get_cloudflare_api_zone_id();
+                                    if ( empty( $selected_zone_id ) ) {
+                                        $host_domain_name = $this->main_instance->get_second_level_domain();
 
-                                        <option value="<?php echo $domain_zone_id; ?>" <?php if( $domain_zone_id == $this->main_instance->get_cloudflare_api_zone_id() ) echo 'selected'; ?>><?php echo $current_domain; ?></option>
+                                        foreach( $zone_id_list as $zone_id_name => $zone_id ) {
+                                            if ( strpos( $zone_id_name, $host_domain_name ) !== false ) {
+                                                $selected_zone_id = $zone_id;
+                                                break;
+                                            }
+                                        }
+                                    }
 
-                                    <?php else: foreach($zone_id_list as $zone_id_name => $zone_id): ?>
+                                    foreach( $zone_id_list as $zone_id_name => $zone_id ): ?>
 
-                                        <option value="<?php echo $zone_id; ?>" <?php if( $zone_id == $this->main_instance->get_cloudflare_api_zone_id() ) echo 'selected'; ?>><?php echo $zone_id_name; ?></option>
+                                        <option value="<?php echo $zone_id; ?>" <?php if( $zone_id === $selected_zone_id ) echo 'selected'; ?>><?php echo $zone_id_name; ?></option>
 
-                                    <?php endforeach; endif; ?>
+                                    <?php endforeach; ?>
 
                                 </select>
 
                             </div>
+                            <?php if( ! $this->main_instance->get_cloudflare_api_zone_id() != '' ): ?>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <button type="submit" name="swcfpc_submit_general" class="button button-primary green_button"><?php _e('Continue', 'wp-cloudflare-page-cache'); ?></button>
+                            </div>
+                            <?php endif; ?>
                             <div class="clear"></div>
                         </div>
 
-                    <?php else: ?>
+                        <?php else: ?>
 
                         <input type="hidden" name="swcfpc_cf_zoneid" value="<?php echo $this->main_instance->get_cloudflare_api_zone_id(); ?>" />
 
+                        <?php endif; ?>
                     <?php endif; ?>
 
-                <?php endif; ?>
+                    <!-- Authentication Mode -->
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('Authentication mode', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Authentication mode to use to connect to your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
+                        </div>
+                        <div class="right_column">
+                            <select name="swcfpc_cf_auth_mode">
+                                <option value="<?php echo SWCFPC_AUTH_MODE_API_TOKEN; ?>" <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_TOKEN ) echo 'selected'; ?>><?php _e('API Token', 'wp-cloudflare-page-cache'); ?></option>
+                                <option value="<?php echo SWCFPC_AUTH_MODE_API_KEY; ?>" <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_KEY ) echo 'selected'; ?>><?php _e('API Key', 'wp-cloudflare-page-cache'); ?></option>
+                            </select>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--<div class="main_section api_key_method <?php //if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_KEY ) echo 'swcfpc_hide'; ?>">-->
+                    
+                    <!-- Cloudflare e-mail -->
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('Cloudflare e-mail', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('The email address you use to log in to Cloudflare.', 'wp-cloudflare-page-cache'); ?></div>
+                        </div>
+                        <div class="right_column">
+                            <input type="text" name="swcfpc_cf_email"  value="<?php echo $this->main_instance->get_cloudflare_api_email(); ?>" autocomplete="off" />
+                        </div>
+                        <div class="clear"></div>
+                    </div>
 
-            </div>
+                    <!-- Cloudflare API Key -->
+                    <div class="main_section api_key_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_KEY ) echo 'swcfpc_hide'; ?>">
+                        <div class="left_column">
+                            <label><?php _e('Cloudflare API Key', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('The Global API Key extrapolated from your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
+                        </div>
+                        <div class="right_column">
+                            <input type="password" name="swcfpc_cf_apikey" value="<?php echo $this->main_instance->get_cloudflare_api_key(); ?>" autocomplete="new-password" />
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Cloudflare API Token -->
+                    <div class="main_section api_token_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_TOKEN ) echo 'swcfpc_hide'; ?>">
+                        <div class="left_column">
+                            <label><?php _e('Cloudflare API Token', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('The API Token extrapolated from your Cloudflare account.', 'wp-cloudflare-page-cache'); ?></div>
+                        </div>
+                        <div class="right_column">
+                            <input type="password" name="swcfpc_cf_apitoken" value="<?php echo $this->main_instance->get_cloudflare_api_token(); ?>" autocomplete="new-password" />
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Cloudflare Domain Name (API TOKEN) -->
+                    <div class="main_section api_token_method <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) != SWCFPC_AUTH_MODE_API_TOKEN ) echo 'swcfpc_hide'; ?>">
+                        <div class="left_column">
+                            <label><?php _e('Cloudflare Domain Name', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Select/add the domain name for which you want to enable the cache exactly as reported on Cloudflare, then click on Update settings.', 'wp-cloudflare-page-cache'); ?></div>
+                        </div>
+                        <div class="right_column">
+                            <input type="text" name="swcfpc_cf_apitoken_domain"  value="<?php echo $this->main_instance->get_single_config( 'cf_apitoken_domain', $this->main_instance->get_second_level_domain() ); ?>" autocomplete="off" />
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Log Mode -->
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('Log mode', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Enable this option if you want log all communications between Cloudflare and this plugin.', 'wp-cloudflare-page-cache'); ?></div>
+                        </div>
+                        <div class="right_column">
+                            <div class="switch-field">
+                                <input type="radio" data-mainoption="logs" class="conditional_item" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_log_enabled" value="1" <?php if( $this->main_instance->get_single_config('log_enabled', 0) > 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Enabled', 'wp-cloudflare-page-cache'); ?></label>
+                                <input type="radio" data-mainoption="logs" class="conditional_item" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_log_enabled" value="0" <?php if( $this->main_instance->get_single_config('log_enabled', 0) <= 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('Disabled', 'wp-cloudflare-page-cache'); ?></label>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
 
 
-            <?php //if( $step_settings > 2 ): ?>
+                    <?php
+                    // TODO: Simplify this.
+                    if( ( $this->main_instance->get_cloudflare_api_zone_id() == '' && count($zone_id_list) > 0 ) || $this->main_instance->get_cloudflare_api_zone_id() != '' ):
+                    ?>
+                        <?php if( $this->main_instance->get_cloudflare_api_zone_id() != '' ) { ?>
+                            <!-- Cache TTL -->
+                            <div class="main_section_header first_section">
+                                <h3><?php echo __( 'Cache lifetime settings', 'wp-cloudflare-page-cache' ); ?></h3>
+                            </div>
+
+                            <!-- Cloudflare Cache-Control max-age -->
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Cloudflare Cache-Control max-age', 'wp-cloudflare-page-cache'); ?></label>
+                                    <div class="description"><?php _e('Don\'t touch if you don\'t know what is it. Must be greater than zero. Recommended 31536000 (1 year)', 'wp-cloudflare-page-cache'); ?></div>
+                                </div>
+                                <div class="right_column">
+                                    <input type="text" name="swcfpc_maxage"  value="<?php echo $this->main_instance->get_single_config('cf_maxage', ''); ?>" />
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- Browser Cache-Control max-age -->
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Browser Cache-Control max-age', 'wp-cloudflare-page-cache'); ?></label>
+                                    <div class="description"><?php _e('Don\'t touch if you don\'t know what is it. Must be greater than zero. Recommended a value between 60 and 600', 'wp-cloudflare-page-cache'); ?></div>
+                                </div>
+                                <div class="right_column">
+                                    <input type="text" name="swcfpc_browser_maxage"  value="<?php echo $this->main_instance->get_single_config('cf_browser_maxage', ''); ?>" />
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <div class="main_section_header">
+                                <h3><?php echo __( 'Cache behavior settings', 'wp-cloudflare-page-cache' ); ?></h3>
+                            </div>
+
+                            <!-- Automatically purge the Cloudflare's cache -->
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Automatically purge the Cloudflare\'s cache when something changes on the website', 'wp-cloudflare-page-cache'); ?></label>
+                                    <div class="description">
+                                        <strong><?php _e('Example: update/publish a post/page', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'it is recommended to add the browser caching rules that you find', 'wp-cloudflare-page-cache'); ?> <a href="<?php echo $nginx_instructions_page_url; ?>" target="_blank"><?php _e('on this page', 'wp-cloudflare-page-cache'); ?></a> <?php _e('after saving these settings', 'wp-cloudflare-page-cache'); ?>.
+                                    </div>
+                                </div>
+                                <div class="right_column">
+                                    <div><input type="checkbox" name="swcfpc_cf_auto_purge" value="1" <?php echo $this->main_instance->get_single_config('cf_auto_purge', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Purge cache for related pages only', 'wp-cloudflare-page-cache'); ?> - <strong><?php _e('(recommended)', 'wp-cloudflare-page-cache'); ?></strong></div>
+                                    <div><input type="checkbox" name="swcfpc_cf_auto_purge_all" value="1" <?php echo $this->main_instance->get_single_config('cf_auto_purge_all', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Purge whole cache', 'wp-cloudflare-page-cache'); ?></strong></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- Automatically purge the Page cache when Cloudflare cache is purged -->
+                            <div class="main_section fallbackcache">
+                                <div class="left_column">
+                                    <label><?php _e('Automatically purge the Page cache when Cloudflare cache is purged', 'wp-cloudflare-page-cache'); ?></label>
+                                </div>
+                                <div class="right_column">
+                                    <div class="switch-field">
+                                        <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_auto_purge" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_auto_purge', 0) > 0 ) echo 'checked'; ?>/>
+                                        <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                        <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_auto_purge" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_auto_purge', 0) <= 0 ) echo 'checked'; ?> />
+                                        <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- Force cache bypassing for backend with an additional Cloudflare page rule -->
+                            <div class="main_section cfworker_not">
+                                <div class="left_column">
+                                    <label><?php _e('Force cache bypassing for backend with an additional Cloudflare page rule', 'wp-cloudflare-page-cache'); ?></label>
+                                    <div class="description"><?php _e('<strong>Read here:</strong> by default, all back-end URLs are not cached thanks to some response headers, but if for some circumstances your backend pages are still cached, you can enable this option which will add an <strong>additional page rule on Cloudflare</strong> to force cache bypassing for the whole Wordpress backend directly from Cloudflare. This option will be ignored if worker mode is enabled.', 'wp-cloudflare-page-cache'); ?></div>
+                                </div>
+                                <div class="right_column">
+                                    <div class="switch-field">
+                                        <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_bypass_backend_page_rule" value="1" <?php if( $this->main_instance->get_single_config('cf_bypass_backend_page_rule', 0) > 0 ) echo 'checked'; ?>/>
+                                        <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Enabled', 'wp-cloudflare-page-cache'); ?></label>
+                                        <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_bypass_backend_page_rule" value="0" <?php if( $this->main_instance->get_single_config('cf_bypass_backend_page_rule', 0) <= 0 ) echo 'checked'; ?> />
+                                        <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('Disabled', 'wp-cloudflare-page-cache'); ?></label>
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- CF Worker -->
+                            <div class="main_section_header first_section">
+                                <h3><?php echo __( 'Cloudflare Workers', 'wp-cloudflare-page-cache' ); ?></h3>
+                            </div>
+
+                            <div class="description_section">
+                                <?php _e('This is a different way of using Cloudflare as a page caching system. Instead of page rules, you can use Cloudflare workers. This mode is only recommended if there are conflicts with the current web server or other plugins, as it is not 100% free.', 'wp-cloudflare-page-cache'); ?>
+                            </div>
+
+                            <!-- Enable Cloudflare Worker -->
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Worker mode', 'wp-cloudflare-page-cache'); ?></label>
+                                    <div class="description"><?php _e('Use Cloudflare Worker instead of page rule.', 'wp-cloudflare-page-cache'); ?></div>
+                                </div>
+                                <div class="right_column">
+                                    <div class="switch-field">
+                                        <input type="radio" data-mainoption="cfworker" class="conditional_item" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_woker_enabled" value="1" <?php if( $this->main_instance->get_single_config('cf_woker_enabled', 0) > 0 ) echo 'checked'; ?>/>
+                                        <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Enabled', 'wp-cloudflare-page-cache'); ?></label>
+                                        <input type="radio" data-mainoption="cfworker" class="conditional_item" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_woker_enabled" value="0" <?php if( $this->main_instance->get_single_config('cf_woker_enabled', 0) <= 0 ) echo 'checked'; ?> />
+                                        <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('Disabled', 'wp-cloudflare-page-cache'); ?></label>
+                                    </div>
+
+                                    <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_TOKEN): ?>
+
+                                        <br/>
+                                        <div class="description highlighted"><?php echo sprintf( __( 'If you are using an API Token, make sure you have enabled the permissions %1$s and %2$s', 'wp-cloudflare-page-cache' ), '<strong>' . __( 'Zone - Worker Routes - Edit', 'wp-cloudflare-page-cache' ) . '</strong>', '<strong>' . __( 'Account - Worker Scripts - Edit', 'wp-cloudflare-page-cache' ) . '</strong>' ); ?></div>
+                                        <br/>
+                                        <div class="description highlighted"><?php _e( 'After enabled this option, enter to <strong>Workers</strong> section of your domain on Cloudflare, click on Edit near to Worker <strong>swcfpc_worker</strong> than select <strong>Fail open</strong> as <em>Request limit failure mode</em> and click on Save', 'wp-cloudflare-page-cache'); ?></div>
+                                        <br/>
+
+                                    <?php endif; ?>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- CF Worker Bypass Cookies -->
+                            <div class="main_section cfworker">
+                                <div class="left_column">
+                                    <label><?php _e('Bypass cache for the following cookies', 'wp-cloudflare-page-cache'); ?></label>
+                                    <div class="description"><?php _e('One cookie per line.', 'wp-cloudflare-page-cache'); ?></div>
+                                    <br/>
+                                    <div class="description"><strong><?php _e('Read here', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'to apply the changes you will need to purge the cache after saving.', 'wp-cloudflare-page-cache'); ?></div>
+                                </div>
+                                <div class="right_column">
+                                    <textarea name="swcfpc_cf_worker_bypass_cookies"><?php echo ( is_array( $this->main_instance->get_single_config('cf_worker_bypass_cookies', array()) ) && count( $this->main_instance->get_single_config('cf_worker_bypass_cookies', array()) ) > 0 ) ? implode("\n", $this->main_instance->get_single_config('cf_worker_bypass_cookies', '') ) : ''; ?></textarea>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- Other -->
+                            <div class="main_section_header">
+                                <h3>
+                                    <?php echo __( 'Other', 'wp-cloudflare-page-cache' ); ?>
+                                </h3>
+                            </div>
+
+                            <!-- Automatically purge the OPcache when Cloudflare cache is purged -->
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Automatically purge the OPcache when Cloudflare cache is purged', 'wp-cloudflare-page-cache'); ?></label>
+                                </div>
+                                <div class="right_column">
+                                    <div class="switch-field">
+                                        <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_opcache_purge_on_flush" value="1" <?php if( $this->main_instance->get_single_config('cf_opcache_purge_on_flush', 0) > 0 ) echo 'checked'; ?>/>
+                                        <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                        <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_opcache_purge_on_flush" value="0" <?php if( $this->main_instance->get_single_config('cf_opcache_purge_on_flush', 0) <= 0 ) echo 'checked'; ?> />
+                                        <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- Automatically purge the object cache when Cloudflare cache is purged -->
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Automatically purge the object cache when Cloudflare cache is purged', 'wp-cloudflare-page-cache'); ?></label>
+                                </div>
+                                <div class="right_column">
+                                    <div class="switch-field">
+                                        <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_object_cache_purge_on_flush" value="1" <?php if( $this->main_instance->get_single_config('cf_object_cache_purge_on_flush', 0) > 0 ) echo 'checked'; ?>/>
+                                        <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                        <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_object_cache_purge_on_flush" value="0" <?php if( $this->main_instance->get_single_config('cf_object_cache_purge_on_flush', 0) <= 0 ) echo 'checked'; ?> />
+                                        <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                            <!-- Purge the whole Cloudflare cache via Cronjob -->
+                            <div class="main_section">
+                                <div class="left_column">
+                                    <label><?php _e('Purge the whole Cloudflare cache via Cronjob', 'wp-cloudflare-page-cache'); ?></label>
+                                </div>
+                                <div class="right_column">
+                                    <p><?php _e('If you want purge the whole Cloudflare cache at specific intervals decided by you, you can create a cronjob that hits the following URL', 'wp-cloudflare-page-cache'); ?>:</p>
+                                    <p><strong><?php echo $cronjob_url; ?></strong></p>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+
+                        <?php } ?>
+
+                    <?php endif; ?>
+                </div>
 
                 <!-- CACHE TAB -->
-                <div class="swcfpc_tab <?php if($tab_active == 'cache') echo 'active'; ?>" id="cache">
+                <div class="swcfpc_tab <?php if(!$tab_active || $tab_active == 'cache') echo 'active'; ?>" id="cache">
 
-                    <!-- Cache TTL -->
-                    <div class="main_section_header first_section">
-                        <h3><?php echo __( 'Cache lifetime settings', 'wp-cloudflare-page-cache' ); ?></h3>
+                    <!-- Fallback page caching -->
+                    <div class="main_section_header">
+                        <h3><?php echo __( 'Cache Settings', 'wp-cloudflare-page-cache' ); ?></h3>
                     </div>
 
-                    <div class="main_section">
+                    <!-- <div class="description_section">
+                        <?php
+                        // _e('This is a traditional page cache on disk but which follows the same rules of the cache on Cloudflare set with this plugin. It is very useful when Cloudflare on its own initiative decides to invalidate a few pages from its cache. Thanks to this function you will no longer need to use other page caching functions of other plugins.', 'wp-cloudflare-page-cache');
+                        ?>
+                    </div> -->
+
+                    <?php if( ! $this->modules['fallback_cache']->fallback_cache_is_wp_config_writable() ): ?>
+                        <div class="description_section highlighted"><?php _e('The file wp-config.php is not writable. Please add write permission to activate the fallback cache.', 'wp-cloudflare-page-cache'); ?></div>
+                    <?php endif; ?>
+
+                    <?php if( ! $this->modules['fallback_cache']->fallback_cache_is_wp_content_writable() ): ?>
+                        <div class="description_section highlighted"><?php _e('The directory wp-content is not writable. Please add write permission or you have to use the fallback cache with cURL.', 'wp-cloudflare-page-cache'); ?></div>
+                    <?php endif; ?>
+
+                    <?php
+                    if (
+                        0 < $this->main_instance->get_single_config('swcfpc_cf_fallback_cache', 0) || 
+                        ( $this->modules['cache_controller']->is_cache_enabled() && $this->modules['cloudflare']->is_enabled() )
+                    ):
+                    ?>
+                        <!-- Enable Disk Page cache -->
+                        <div class="main_section fallbackcache">
+                            <div class="left_column">
+                                <label><?php _e('Enable Disk Page cache', 'wp-cloudflare-page-cache'); ?></label>
+                                <div class="description"><?php _e('Disable this option if you want to use only Cloudflare Cache.', 'wp-cloudflare-page-cache'); ?></div>
+                            </div>
+                            <div class="right_column">
+
+                                <div class="switch-field">
+                                    <input type="radio" data-mainoption="cloudflarecache" class="conditional_item" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 ) echo 'checked'; ?>/>
+                                    <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                    <input type="radio" data-mainoption="cloudflarecache" class="conditional_item" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache', 0) <= 0 ) echo 'checked'; ?> />
+                                    <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                                </div>
+
+                                <br/>
+                                <div class="description highlighted"><?php _e('If you enable the DIsk Page cache is strongly recommended disable all page caching functions of other plugins.', 'wp-cloudflare-page-cache'); ?></div>
+
+
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    <?php endif; ?>
+
+                    
+                    <!-- Cache TTL/Lifespan -->
+                    <div class="main_section fallbackcache">
                         <div class="left_column">
-                            <label><?php _e('Cloudflare Cache-Control max-age', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Don\'t touch if you don\'t know what is it. Must be greater than zero. Recommended 31536000 (1 year)', 'wp-cloudflare-page-cache'); ?></div>
+                            <label><?php _e('Cache Lifespan', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Enter 0 for no expiration.', 'wp-cloudflare-page-cache'); ?></div>
                         </div>
                         <div class="right_column">
-                            <input type="text" name="swcfpc_maxage"  value="<?php echo $this->main_instance->get_single_config('cf_maxage', ''); ?>" />
+                            <input type="text" name="swcfpc_cf_fallback_cache_ttl"  value="<?php echo $this->main_instance->get_single_config('cf_fallback_cache_ttl', 0); ?>" />
+                            <div class="description"><?php _e('Enter a value in seconds.', 'wp-cloudflare-page-cache'); ?></div>
                         </div>
                         <div class="clear"></div>
                     </div>
 
-                    <div class="main_section">
+                    <!-- ByPass Cache when cookies are present -->
+                    <div class="main_section fallbackcache">
                         <div class="left_column">
-                            <label><?php _e('Browser Cache-Control max-age', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Don\'t touch if you don\'t know what is it. Must be greater than zero. Recommended a value between 60 and 600', 'wp-cloudflare-page-cache'); ?></div>
+                            <label><?php _e('Bypass Page cache when these cookies are present in the request packet', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('One cookie name per line. These strings will be used by preg_grep.', 'wp-cloudflare-page-cache'); ?></div>
                         </div>
                         <div class="right_column">
-                            <input type="text" name="swcfpc_browser_maxage"  value="<?php echo $this->main_instance->get_single_config('cf_browser_maxage', ''); ?>" />
+                            <textarea name="swcfpc_cf_fallback_cache_excluded_cookies"><?php echo ( is_array( $this->main_instance->get_single_config('cf_fallback_cache_excluded_cookies', array()) ) && count( $this->main_instance->get_single_config('cf_fallback_cache_excluded_cookies', array()) ) > 0 ) ? implode("\n", $this->main_instance->get_single_config('cf_fallback_cache_excluded_cookies', '') ) : ''; ?></textarea>
                         </div>
                         <div class="clear"></div>
                     </div>
-
 
                     <div class="main_section_header">
                         <h3><?php echo __( 'Cache behavior settings', 'wp-cloudflare-page-cache' ); ?></h3>
                     </div>
 
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Automatically purge the Cloudflare\'s cache when something changes on the website', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description">
-                                <strong><?php _e('Example: update/publish a post/page', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'it is recommended to add the browser caching rules that you find', 'wp-cloudflare-page-cache'); ?> <a href="<?php echo $nginx_instructions_page_url; ?>" target="_blank"><?php _e('on this page', 'wp-cloudflare-page-cache'); ?></a> <?php _e('after saving these settings', 'wp-cloudflare-page-cache'); ?>.
-                            </div>
-                        </div>
-                        <div class="right_column">
-                            <div><input type="checkbox" name="swcfpc_cf_auto_purge" value="1" <?php echo $this->main_instance->get_single_config('cf_auto_purge', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Purge cache for related pages only', 'wp-cloudflare-page-cache'); ?> - <strong><?php _e('(recommended)', 'wp-cloudflare-page-cache'); ?></strong></div>
-                            <div><input type="checkbox" name="swcfpc_cf_auto_purge_all" value="1" <?php echo $this->main_instance->get_single_config('cf_auto_purge_all', 0) > 0 ? 'checked' : ''; ?> /> <?php _e('Purge whole cache', 'wp-cloudflare-page-cache'); ?></strong></div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
+                    <!-- Don't cache the following dynamic contents -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Don\'t cache the following dynamic contents:', 'wp-cloudflare-page-cache'); ?></label>
@@ -395,6 +589,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Don't cache the following static contents -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Don\'t cache the following static contents:', 'wp-cloudflare-page-cache'); ?></label>
@@ -411,6 +606,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Prevent the following URIs to be cached -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Prevent the following URIs to be cached', 'wp-cloudflare-page-cache'); ?></label>
@@ -423,6 +619,149 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Posts per page -->
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('Posts per page', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Enter how many posts per page (or category) the theme shows to your users. It will be use to clean up the pagination on cache purge.', 'wp-cloudflare-page-cache'); ?></div>
+                        </div>
+                        <div class="right_column">
+                            <input type="text" name="swcfpc_post_per_page"  value="<?php echo $this->main_instance->get_single_config('cf_post_per_page', ''); ?>" />
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Browser caching -->
+                    <div class="main_section_header">
+                        <h3><?php echo __( 'Browser caching', 'wp-cloudflare-page-cache' ); ?></h3>
+                    </div>
+
+                    <div class="description_section">
+                        <?php _e('This option is useful if you want to use Super Page Cache to enable browser caching rules for assets such like images, CSS, scripts, etc. It works automatically if you use Apache as web server or as backend web server.', 'wp-cloudflare-page-cache'); ?>
+                    </div>
+
+                    <!-- Add browser caching rules for static assets -->
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('Add browser caching rules for static assets', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description">
+                                <div class="orange_color"><?php _e('Writes into .htaccess', 'wp-cloudflare-page-cache'); ?></div>
+                                <br/>
+                            </div>
+                            <div class="description"><strong><?php _e('Read here if you only use Nginx', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'it is not possible for Super Page Cache to automatically change the settings to allow this option to work immediately. For it to work, update these settings and then follow the instructions', 'wp-cloudflare-page-cache'); ?> <a href="<?php echo $nginx_instructions_page_url; ?>" target="_blank"><?php _e('on this page', 'wp-cloudflare-page-cache'); ?>.</a></div>
+                        </div>
+                        <div class="right_column">
+
+                            <div class="switch-field">
+                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_browser_caching_htaccess" value="1" <?php if( $this->main_instance->get_single_config('cf_browser_caching_htaccess', 0) > 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_browser_caching_htaccess" value="0" <?php if( $this->main_instance->get_single_config('cf_browser_caching_htaccess', 0) <= 0 ) echo 'checked'; ?> />
+                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                            </div>
+
+                            <br/>
+                            <div class="description highlighted"><?php _e('If you are using Plesk, make sure you have disabled the options "Smart static files processing" and "Serve static files directly by Nginx" on "Apache & Nginx Settings" page of your Plesk panel or ask your hosting provider to update browser caching rules for you.', 'wp-cloudflare-page-cache'); ?></div>
+
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                </div>
+
+
+                <!-- ADVANCED TAB -->
+                <div class="swcfpc_tab <?php if($tab_active == 'advanced') echo 'active'; ?>" id="advanced">
+
+                    <!-- Cache Advanced Settings -->
+                    <div class="main_section_header first_section">
+                        <h3><?php echo __( 'Cache', 'wp-cloudflare-page-cache' ); ?></h3>
+                    </div>
+
+                    <!-- Use cURL -->
+                    <div class="main_section fallbackcache">
+                        <div class="left_column">
+                            <label><?php _e('Use cURL', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Use cURL instead of Wordpress advanced-cache.php to generate the Page page. It can increase the time it takes to generate the Page cache but improves compatibility with other performance plugins.', 'wp-cloudflare-page-cache'); ?></div>
+
+                        </div>
+                        <div class="right_column">
+                            <div class="switch-field">
+                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_curl" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) > 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_curl" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) <= 0 ) echo 'checked'; ?> />
+                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Save response headers -->
+                    <div class="main_section fallbackcache">
+                        <div class="left_column">
+                            <label><?php _e('Save response headers', 'wp-cloudflare-page-cache'); ?></label>
+                            <div class="description"><?php _e('Save response headers together with HTML code.', 'wp-cloudflare-page-cache'); ?></div>
+                            <div class="description"><?php _e('The following response header will never be saved:', 'wp-cloudflare-page-cache'); ?> cache-control, set-cookie, X-WP-CF-Super-Cache*</div>
+                        </div>
+                        <div class="right_column">
+                            <div class="switch-field">
+                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_save_headers" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_save_headers', 0) > 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_save_headers" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_save_headers', 0) <= 0 ) echo 'checked'; ?> />
+                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Prevent cache URLs without trailing slash -->
+                    <div class="main_section fallbackcache">
+                        <div class="left_column">
+                            <label><?php _e('Prevent to cache URLs without trailing slash', 'wp-cloudflare-page-cache'); ?></label>
+                        </div>
+                        <div class="right_column">
+                            <div class="switch-field">
+                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_prevent_cache_urls_without_trailing_slash" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_prevent_cache_urls_without_trailing_slash', 0) > 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_prevent_cache_urls_without_trailing_slash" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_prevent_cache_urls_without_trailing_slash', 0) <= 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Automatically purge single post cache when a new comment -->
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('Automatically purge single post cache when a new comment is inserted into the database or when a comment is approved or deleted', 'wp-cloudflare-page-cache'); ?></label>
+                        </div>
+                        <div class="right_column">
+                            <div class="switch-field">
+                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_auto_purge_on_comments" value="1" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_comments', 0) > 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_auto_purge_on_comments" value="0" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_comments', 0) <= 0 ) echo 'checked'; ?> />
+                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Automatically purge the cache when the upgrader process is complete -->
+                    <div class="main_section">
+                        <div class="left_column">
+                            <label><?php _e('Automatically purge the cache when the upgrader process is complete', 'wp-cloudflare-page-cache'); ?></label>
+                        </div>
+                        <div class="right_column">
+                            <div class="switch-field">
+                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_auto_purge_on_upgrader_process_complete" value="1" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_upgrader_process_complete', 0) > 0 ) echo 'checked'; ?>/>
+                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
+                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_auto_purge_on_upgrader_process_complete" value="0" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_upgrader_process_complete', 0) <= 0 ) echo 'checked'; ?> />
+                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
+                            </div>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+
+                    <!-- Strip response cookies -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Strip response cookies on pages that should be cached', 'wp-cloudflare-page-cache'); ?></label>
@@ -442,54 +781,14 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Automatically purge single post cache when a new comment is inserted into the database or when a comment is approved or deleted', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_auto_purge_on_comments" value="1" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_comments', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_auto_purge_on_comments" value="0" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_comments', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Automatically purge the cache when the upgrader process is complete', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_auto_purge_on_upgrader_process_complete" value="1" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_upgrader_process_complete', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_auto_purge_on_upgrader_process_complete" value="0" <?php if( $this->main_instance->get_single_config('cf_auto_purge_on_upgrader_process_complete', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Posts per page', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Enter how many posts per page (or category) the theme shows to your users. It will be use to clean up the pagination on cache purge.', 'wp-cloudflare-page-cache'); ?></div>
-                        </div>
-                        <div class="right_column">
-                            <input type="text" name="swcfpc_post_per_page"  value="<?php echo $this->main_instance->get_single_config('cf_post_per_page', ''); ?>" />
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
+                    <!-- Overwrite the cache-control header for Wordpress's pages using web server rules -->
                     <div class="main_section cfworker_not">
                         <div class="left_column">
                             <label><?php _e('Overwrite the cache-control header for Wordpress\'s pages using web server rules', 'wp-cloudflare-page-cache'); ?></label>
                             <div class="description">
                                 <div class="orange_color"><?php _e('Writes into .htaccess', 'wp-cloudflare-page-cache'); ?></div>
                                 <br/>
-                                <?php _e('This option is useful if you use Super Page Cache for Cloudflare together with other performance plugins that could affect the Cloudflare cache with their cache-control headers. It works automatically if you are using Apache as web server or as backend web server.', 'wp-cloudflare-page-cache'); ?>
+                                <?php _e('This option is useful if you use Super Page Cache together with other performance plugins that could affect the Cloudflare cache with their cache-control headers. It works automatically if you are using Apache as web server or as backend web server.', 'wp-cloudflare-page-cache'); ?>
                             </div>
                         </div>
                         <div class="right_column">
@@ -505,30 +804,15 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                             <div class="description highlighted"><?php _e('This option is not essential and must be disabled if enabled the Workers mode option. In most cases this plugin works out of the box. If the page cache does not work after a considerable number of attempts or you see that max-age and s-maxage values of <strong>X-WP-CF-Super-Cache-Cache-Control</strong> response header are not the same of the ones in <strong>Cache-Control</strong> response header, activate this option.', 'wp-cloudflare-page-cache'); ?></div>
                             <br/>
 
-                            <div class="description"><strong><?php _e('Read here if you use Apache (htaccess)', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e('for overwriting to work, make sure that the rules added by Super Page Cache for Cloudflare are placed at the bottom of the htaccess file. If they are present BEFORE other caching rules of other plugins, move them to the bottom manually.', 'wp-cloudflare-page-cache'); ?></div>
+                            <div class="description"><strong><?php _e('Read here if you use Apache (htaccess)', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e('for overwriting to work, make sure that the rules added by Super Page Cache are placed at the bottom of the htaccess file. If they are present BEFORE other caching rules of other plugins, move them to the bottom manually.', 'wp-cloudflare-page-cache'); ?></div>
                             <br/>
-                            <div class="description"><strong><?php _e('Read here if you only use Nginx', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'it is not possible for Super Page Cache for Cloudflare to automatically change the settings to allow this option to work immediately. For it to work, update these settings and then follow the instructions', 'wp-cloudflare-page-cache'); ?> <a href="<?php echo $nginx_instructions_page_url; ?>" target="_blank"><?php _e('on this page', 'wp-cloudflare-page-cache'); ?>.</a></div>
+                            <div class="description"><strong><?php _e('Read here if you only use Nginx', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'it is not possible for Super Page Cache to automatically change the settings to allow this option to work immediately. For it to work, update these settings and then follow the instructions', 'wp-cloudflare-page-cache'); ?> <a href="<?php echo $nginx_instructions_page_url; ?>" target="_blank"><?php _e('on this page', 'wp-cloudflare-page-cache'); ?>.</a></div>
 
                         </div>
                         <div class="clear"></div>
                     </div>
 
-                    <div class="main_section cfworker_not">
-                        <div class="left_column">
-                            <label><?php _e('Force cache bypassing for backend with an additional Cloudflare page rule', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('<strong>Read here:</strong> by default, all back-end URLs are not cached thanks to some response headers, but if for some circumstances your backend pages are still cached, you can enable this option which will add an <strong>additional page rule on Cloudflare</strong> to force cache bypassing for the whole Wordpress backend directly from Cloudflare. This option will be ignored if worker mode is enabled.', 'wp-cloudflare-page-cache'); ?></div>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_bypass_backend_page_rule" value="1" <?php if( $this->main_instance->get_single_config('cf_bypass_backend_page_rule', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Enabled', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_bypass_backend_page_rule" value="0" <?php if( $this->main_instance->get_single_config('cf_bypass_backend_page_rule', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('Disabled', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
+                    <!-- Purge HTML pages only -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Purge HTML pages only', 'wp-cloudflare-page-cache'); ?></label>
@@ -556,7 +840,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
-
+                    <!-- Disable cache purging using queue -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Disable cache purging using queue', 'wp-cloudflare-page-cache'); ?></label>
@@ -575,255 +859,11 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
-                    <!-- CF Worker -->
-                    <div class="main_section_header first_section">
-                        <h3><?php echo __( 'Cloudflare Workers', 'wp-cloudflare-page-cache' ); ?></h3>
-                    </div>
-
-                    <div class="description_section">
-                        <?php _e('This is a different way of using Cloudflare as a page caching system. Instead of page rules, you can use Cloudflare workers. This mode is only recommended if there are conflicts with the current web server or other plugins, as it is not 100% free.', 'wp-cloudflare-page-cache'); ?>
-                    </div>
-
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Worker mode', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Use Cloudflare Worker instead of page rule.', 'wp-cloudflare-page-cache'); ?></div>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" data-mainoption="cfworker" class="conditional_item" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_woker_enabled" value="1" <?php if( $this->main_instance->get_single_config('cf_woker_enabled', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Enabled', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" data-mainoption="cfworker" class="conditional_item" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_woker_enabled" value="0" <?php if( $this->main_instance->get_single_config('cf_woker_enabled', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('Disabled', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-
-                            <?php if( $this->main_instance->get_single_config('cf_auth_mode', SWCFPC_AUTH_MODE_API_KEY) == SWCFPC_AUTH_MODE_API_TOKEN): ?>
-
-                                <br/>
-                                <div class="description highlighted"><?php echo sprintf( __( 'If you are using an API Token, make sure you have enabled the permissions %1$s and %2$s', 'wp-cloudflare-page-cache' ), '<strong>' . __( 'Zone - Worker Routes - Edit', 'wp-cloudflare-page-cache' ) . '</strong>', '<strong>' . __( 'Account - Worker Scripts - Edit', 'wp-cloudflare-page-cache' ) . '</strong>' ); ?></div>
-                                <br/>
-                                <div class="description highlighted"><?php _e( 'After enabled this option, enter to <strong>Workers</strong> section of your domain on Cloudflare, click on Edit near to Worker <strong>swcfpc_worker</strong> than select <strong>Fail open</strong> as <em>Request limit failure mode</em> and click on Save', 'wp-cloudflare-page-cache'); ?></div>
-                                <br/>
-
-                            <?php endif; ?>
-
-
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section cfworker">
-                        <div class="left_column">
-                            <label><?php _e('Bypass cache for the following cookies', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('One cookie per line.', 'wp-cloudflare-page-cache'); ?></div>
-                            <br/>
-                            <div class="description"><strong><?php _e('Read here', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'to apply the changes you will need to purge the cache after saving.', 'wp-cloudflare-page-cache'); ?></div>
-                        </div>
-                        <div class="right_column">
-                            <textarea name="swcfpc_cf_worker_bypass_cookies"><?php echo ( is_array( $this->main_instance->get_single_config('cf_worker_bypass_cookies', array()) ) && count( $this->main_instance->get_single_config('cf_worker_bypass_cookies', array()) ) > 0 ) ? implode("\n", $this->main_instance->get_single_config('cf_worker_bypass_cookies', '') ) : ''; ?></textarea>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-
-                    <!-- Fallback page caching -->
-                    <div class="main_section_header">
-                        <h3><?php echo __( 'Fallback page caching', 'wp-cloudflare-page-cache' ); ?></h3>
-                    </div>
-
-                    <div class="description_section">
-                        <?php _e('This is a traditional page cache on disk but which follows the same rules of the cache on Cloudflare set with this plugin. It is very useful when Cloudflare on its own initiative decides to invalidate a few pages from its cache. Thanks to this function you will no longer need to use other page caching functions of other plugins.', 'wp-cloudflare-page-cache'); ?>
-                    </div>
-
-                    <?php if( ! $this->modules['fallback_cache']->fallback_cache_is_wp_config_writable() ): ?>
-                        <div class="description_section highlighted"><?php _e('The file wp-config.php is not writable. Please add write permission to activate the fallback cache.', 'wp-cloudflare-page-cache'); ?></div>
-                    <?php endif; ?>
-
-                    <?php if( ! $this->modules['fallback_cache']->fallback_cache_is_wp_content_writable() ): ?>
-                        <div class="description_section highlighted"><?php _e('The directory wp-content is not writable. Please add write permission or you have to use the fallback cache with cURL.', 'wp-cloudflare-page-cache'); ?></div>
-                    <?php endif; ?>
-
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Enable fallback page cache', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-
-                            <div class="switch-field">
-                                <input type="radio" data-mainoption="fallbackcache" class="conditional_item" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" data-mainoption="fallbackcache" class="conditional_item" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-
-                            <br/>
-                            <div class="description highlighted"><?php _e('If you enable the fallback page cache is strongly recommended disable all page caching functions of other plugins.', 'wp-cloudflare-page-cache'); ?></div>
-
-
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Automatically purge the fallback cache when Cloudflare cache is purged', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_auto_purge" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_auto_purge', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_auto_purge" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_auto_purge', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Use cURL', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Use cURL instead of Wordpress advanced-cache.php to generate the fallback page. It can increase the time it takes to generate the fallback cache but improves compatibility with other performance plugins.', 'wp-cloudflare-page-cache'); ?></div>
-
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_curl" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_curl" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Fallback cache TTL', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Enter 0 for no expiration.', 'wp-cloudflare-page-cache'); ?></div>
-                        </div>
-                        <div class="right_column">
-                            <input type="text" name="swcfpc_cf_fallback_cache_ttl"  value="<?php echo $this->main_instance->get_single_config('cf_fallback_cache_ttl', 0); ?>" />
-                            <div class="description"><?php _e('Enter a value in seconds.', 'wp-cloudflare-page-cache'); ?></div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Prevent the following URIs to be cached', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('One URI per line. You can use the * for wildcard URLs.', 'wp-cloudflare-page-cache'); ?></div>
-                            <div class="description"><?php _e('Example', 'wp-cloudflare-page-cache'); ?>: /my-page<br/>/my-main-page/my-sub-page<br/>/my-main-page*</div>
-                        </div>
-                        <div class="right_column">
-
-                            <textarea name="swcfpc_cf_fallback_cache_excluded_urls"><?php echo ( is_array( $this->main_instance->get_single_config('cf_fallback_cache_excluded_urls', array()) ) && count( $this->main_instance->get_single_config('cf_fallback_cache_excluded_urls', array()) ) > 0 ) ? implode("\n", $this->main_instance->get_single_config('cf_fallback_cache_excluded_urls', '') ) : ''; ?></textarea>
-
-                            <br/>
-                            <div class="description highlighted"><?php _e('URIs exluded for the Cloudflare Cache are automatically excluded for the fallback cache.', 'wp-cloudflare-page-cache'); ?></div>
-
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Bypass fallback cache when these cookies are present in the request packet', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('One cookie name per line. These strings will be used by preg_grep.', 'wp-cloudflare-page-cache'); ?></div>
-                        </div>
-                        <div class="right_column">
-                            <textarea name="swcfpc_cf_fallback_cache_excluded_cookies"><?php echo ( is_array( $this->main_instance->get_single_config('cf_fallback_cache_excluded_cookies', array()) ) && count( $this->main_instance->get_single_config('cf_fallback_cache_excluded_cookies', array()) ) > 0 ) ? implode("\n", $this->main_instance->get_single_config('cf_fallback_cache_excluded_cookies', '') ) : ''; ?></textarea>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Save response headers', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Save response headers together with HTML code.', 'wp-cloudflare-page-cache'); ?></div>
-                            <div class="description"><?php _e('The following response header will never be saved:', 'wp-cloudflare-page-cache'); ?> cache-control, set-cookie, X-WP-CF-Super-Cache*</div>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_save_headers" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_save_headers', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_save_headers" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_save_headers', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Prevent to cache URLs without trailing slash', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_fallback_cache_prevent_cache_urls_without_trailing_slash" value="1" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_prevent_cache_urls_without_trailing_slash', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_fallback_cache_prevent_cache_urls_without_trailing_slash" value="0" <?php if( $this->main_instance->get_single_config('cf_fallback_cache_prevent_cache_urls_without_trailing_slash', 0) <= 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section fallbackcache">
-                        <div class="left_column">
-                            <label><?php _e('Purge fallback cache', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <button type="button" id="swcfpc_fallback_page_cache_purge" class="button button-primary"><?php _e('Purge cache', 'wp-cloudflare-page-cache'); ?></button>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-
-                    <!-- Browser caching -->
-                    <div class="main_section_header">
-                        <h3><?php echo __( 'Browser caching', 'wp-cloudflare-page-cache' ); ?></h3>
-                    </div>
-
-                    <div class="description_section">
-                        <?php _e('This option is useful if you want to use Super Page Cache for Cloudflare to enable browser caching rules for assets such like images, CSS, scripts, etc. It works automatically if you use Apache as web server or as backend web server.', 'wp-cloudflare-page-cache'); ?>
-                    </div>
-
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Add browser caching rules for static assets', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description">
-                                <div class="orange_color"><?php _e('Writes into .htaccess', 'wp-cloudflare-page-cache'); ?></div>
-                                <br/>
-                            </div>
-                            <div class="description"><strong><?php _e('Read here if you only use Nginx', 'wp-cloudflare-page-cache'); ?></strong>: <?php _e( 'it is not possible for Super Page Cache for Cloudflare to automatically change the settings to allow this option to work immediately. For it to work, update these settings and then follow the instructions', 'wp-cloudflare-page-cache'); ?> <a href="<?php echo $nginx_instructions_page_url; ?>" target="_blank"><?php _e('on this page', 'wp-cloudflare-page-cache'); ?>.</a></div>
-                        </div>
-                        <div class="right_column">
-
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_browser_caching_htaccess" value="1" <?php if( $this->main_instance->get_single_config('cf_browser_caching_htaccess', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_browser_caching_htaccess" value="0" <?php if( $this->main_instance->get_single_config('cf_browser_caching_htaccess', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-
-                            <br/>
-                            <div class="description highlighted"><?php _e('If you are using Plesk, make sure you have disabled the options "Smart static files processing" and "Serve static files directly by Nginx" on "Apache & Nginx Settings" page of your Plesk panel or ask your hosting provider to update browser caching rules for you.', 'wp-cloudflare-page-cache'); ?></div>
-
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                </div>
-
-
-                <!-- ADVANCED TAB -->
-                <div class="swcfpc_tab <?php if($tab_active == 'advanced') echo 'active'; ?>" id="advanced">
-
-                    <!-- Preloader -->
                     <div class="main_section_header first_section">
                         <h3><?php echo __( 'Preloader', 'wp-cloudflare-page-cache' ); ?></h3>
                     </div>
-
+                    
+                    <!-- Enable Preloader -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Enable preloader', 'wp-cloudflare-page-cache'); ?></label>
@@ -839,9 +879,10 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Automatically preload the pages you have purged from cache -->
                     <div class="main_section preloader">
                         <div class="left_column">
-                            <label><?php _e('Automatically preload the pages you have purged from Cloudflare cache with this plugin', 'wp-cloudflare-page-cache'); ?></label>
+                            <label><?php _e('Automatically preload the pages you have purged from cache.', 'wp-cloudflare-page-cache'); ?></label>
                         </div>
                         <div class="right_column">
                             <div class="switch-field">
@@ -854,6 +895,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Preloader operation -->
                     <div class="main_section preloader">
                         <div class="left_column">
                             <label><?php _e('Preloader operation', 'wp-cloudflare-page-cache'); ?></label>
@@ -872,6 +914,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Preload all URLs into the following sitemaps -->
                     <div class="main_section preloader">
                         <div class="left_column">
                             <label><?php _e('Preload all URLs into the following sitemaps', 'wp-cloudflare-page-cache'); ?></label>
@@ -884,10 +927,11 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Start the preloader manually -->
                     <div class="main_section preloader">
                         <div class="left_column">
                             <label><?php _e('Start the preloader manually', 'wp-cloudflare-page-cache'); ?></label>
-                            <div class="description"><?php _e('Start preloading the pages of your website to speed up their inclusion in the Cloudflare cache. Make sure the cache is working first.', 'wp-cloudflare-page-cache'); ?></div>
+                            <div class="description"><?php _e('Start preloading the pages of your website to speed up their inclusion in the cache. Make sure the cache is working first.', 'wp-cloudflare-page-cache'); ?></div>
                         </div>
                         <div class="right_column">
                             <button type="button" id="swcfpc_start_preloader" class="button button-primary"><?php _e('Start preloader', 'wp-cloudflare-page-cache'); ?></button>
@@ -895,6 +939,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Start the preloader via Cronjob -->
                     <div class="main_section preloader">
                         <div class="left_column">
                             <label><?php _e('Start the preloader via Cronjob', 'wp-cloudflare-page-cache'); ?></label>
@@ -906,6 +951,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Cronjob secret key -->
                     <div class="main_section preloader">
                         <div class="left_column">
                             <label><?php _e('Cronjob secret key', 'wp-cloudflare-page-cache'); ?></label>
@@ -919,6 +965,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                     <?php if( !$this->modules['cache_controller']->can_i_start_preloader() ): ?>
 
+                        <!-- Manually unlock preloader -->
                         <div class="main_section preloader">
                             <div class="left_column">
                                 <label><?php _e('Manually unlock preloader', 'wp-cloudflare-page-cache'); ?></label>
@@ -939,6 +986,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
+                    <!-- Enable Varnish Support -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Varnish Support', 'wp-cloudflare-page-cache'); ?></label>
@@ -954,6 +1002,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Varnish Hostname -->
                     <div class="main_section varnish">
                         <div class="left_column">
                             <label><?php _e('Hostname', 'wp-cloudflare-page-cache'); ?></label>
@@ -966,6 +1015,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Varnish Port -->
                     <div class="main_section varnish">
                         <div class="left_column">
                             <label><?php _e('Port', 'wp-cloudflare-page-cache'); ?></label>
@@ -978,6 +1028,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Varnish HTTP method for single page cache purge -->
                     <div class="main_section varnish">
                         <div class="left_column">
                             <label><?php _e('HTTP method for single page cache purge', 'wp-cloudflare-page-cache'); ?></label>
@@ -990,6 +1041,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Varnish HTTP method for whole page cache purge -->
                     <div class="main_section varnish">
                         <div class="left_column">
                             <label><?php _e('HTTP method for whole page cache purge', 'wp-cloudflare-page-cache'); ?></label>
@@ -1002,6 +1054,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Varnish Cloudways -->
                     <div class="main_section varnish">
                         <div class="left_column">
                             <label><?php _e('Cloudways Varnish', 'wp-cloudflare-page-cache'); ?></label>
@@ -1018,9 +1071,10 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Automatically purge Varnish cache when the cache is purged -->
                     <div class="main_section varnish">
                         <div class="left_column">
-                            <label><?php _e('Automatically purge Varnish cache when the Cloudflare cache is purged', 'wp-cloudflare-page-cache'); ?></label>
+                            <label><?php _e('Automatically purge Varnish cache when the cache is purged.', 'wp-cloudflare-page-cache'); ?></label>
                         </div>
                         <div class="right_column">
                             <div class="switch-field">
@@ -1033,6 +1087,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Purge Varnish cache -->
                     <div class="main_section varnish">
                         <div class="left_column">
                             <label><?php _e('Purge Varnish cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1042,45 +1097,6 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                         <div class="clear"></div>
                     </div>
-
-
-                    <!-- Other -->
-                    <div class="main_section_header">
-                        <h3>
-                            <?php echo __( 'Other', 'wp-cloudflare-page-cache' ); ?>
-                        </h3>
-                    </div>
-
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Automatically purge the OPcache when Cloudflare cache is purged', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_opcache_purge_on_flush" value="1" <?php if( $this->main_instance->get_single_config('cf_opcache_purge_on_flush', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_opcache_purge_on_flush" value="0" <?php if( $this->main_instance->get_single_config('cf_opcache_purge_on_flush', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Automatically purge the object cache when Cloudflare cache is purged', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <div class="switch-field">
-                                <input type="radio" id="switch_<?php echo ++$switch_counter; ?>_left" name="swcfpc_cf_object_cache_purge_on_flush" value="1" <?php if( $this->main_instance->get_single_config('cf_object_cache_purge_on_flush', 0) > 0 ) echo 'checked'; ?>/>
-                                <label for="switch_<?php echo $switch_counter; ?>_left"><?php _e('Yes', 'wp-cloudflare-page-cache'); ?></label>
-                                <input type="radio" id="switch_<?php echo $switch_counter; ?>_right" name="swcfpc_cf_object_cache_purge_on_flush" value="0" <?php if( $this->main_instance->get_single_config('cf_object_cache_purge_on_flush', 0) <= 0 ) echo 'checked'; ?> />
-                                <label for="switch_<?php echo $switch_counter; ?>_right"><?php _e('No', 'wp-cloudflare-page-cache'); ?></label>
-                            </div>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
                 </div>
 
 
@@ -1100,6 +1116,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
+                    <!-- Don't cache the following WooCommerce page types -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Don\'t cache the following WooCommerce page types', 'wp-cloudflare-page-cache'); ?></label>
@@ -1119,6 +1136,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Automatically purge cache for product page and related categories when stock quantity changes -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge cache for product page and related categories when stock quantity changes', 'wp-cloudflare-page-cache'); ?></label>
@@ -1134,6 +1152,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Automatically purge cache for product page and related categories when product is updated -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge cache for scheduled sales', 'wp-cloudflare-page-cache'); ?></label>
@@ -1163,6 +1182,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
+                    <!-- Don't cache the following EDD page types -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Don\'t cache the following EDD page types', 'wp-cloudflare-page-cache'); ?></label>
@@ -1177,6 +1197,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Automatically purge cache when a payment is inserted into the database -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge cache when a payment is inserted into the database', 'wp-cloudflare-page-cache'); ?></label>
@@ -1205,6 +1226,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
+                    <!-- Automatically purge the cache when Autoptimize flushs its cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when Autoptimize flushs its cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1239,6 +1261,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                     <?php endif; ?>
 
+                    <!-- Automatically purge the cache when W3TC flushs all caches -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when', 'wp-cloudflare-page-cache'); ?></label>
@@ -1273,6 +1296,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                     <?php endif; ?>
 
+                    <!-- Automatically purge the cache when LiteSpeed Cache flushs all caches -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when', 'wp-cloudflare-page-cache'); ?></label>
@@ -1306,6 +1330,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                     <?php endif; ?>
 
+                    <!-- Automatically purge the cache when Hummingbird flushs page cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when Hummingbird flushs page cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1340,6 +1365,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                     <?php endif; ?>
 
+                    <!-- Automatically purge the cache when WP-Optimize flushs page cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when WP-Optimize flushs page cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1374,6 +1400,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                     <?php endif; ?>
 
+                    <!-- Automatically purge the cache when Flying Press flushs its own cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when Flying Press flushs its own cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1408,6 +1435,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                     <?php endif; ?>
 
+                    <!-- Automatically purge the cache when WP Rocket flushs its cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when', 'wp-cloudflare-page-cache'); ?></label>
@@ -1425,6 +1453,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Disable WP Rocket page cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Disable WP Rocket page cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1455,6 +1484,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
+                    <!-- Automatically purge the cache when WP Asset Clean Up flushs its own cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when WP Asset Clean Up flushs its own cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1483,6 +1513,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
+                    <!-- Automatically purge the cache when Nginx Helper flushs the cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when Nginx Helper flushs the cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1511,6 +1542,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </h3>
                     </div>
 
+                    <!-- Automatically purge the cache when WP Performance flushs its own cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Automatically purge the cache when WP Performance flushs its own cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1707,6 +1739,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <h3><?php echo __( 'Logs', 'wp-cloudflare-page-cache' ); ?></h3>
                     </div>
 
+                    <!-- Clear logs -->
                     <div class="main_section logs">
                         <div class="left_column">
                             <label><?php _e('Clear logs manually', 'wp-cloudflare-page-cache'); ?></label>
@@ -1718,6 +1751,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Download logs -->
                     <div class="main_section logs">
                         <div class="left_column">
                             <label><?php _e('Download logs', 'wp-cloudflare-page-cache'); ?></label>
@@ -1730,6 +1764,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Max log file size -->
                     <div class="main_section logs">
                         <div class="left_column">
                             <label><?php _e('Max log file size in MB', 'wp-cloudflare-page-cache'); ?></label>
@@ -1740,8 +1775,8 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
                         <div class="clear"></div>
                     </div>
-
-
+                                
+                    <!-- Log verbosity -->
                     <div class="main_section logs">
                         <div class="left_column">
                             <label><?php _e('Log verbosity', 'wp-cloudflare-page-cache'); ?></label>
@@ -1761,6 +1796,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <h3><?php echo __( 'Import/Export', 'wp-cloudflare-page-cache' ); ?></h3>
                     </div>
 
+                    <!-- Export config file -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Export config file', 'wp-cloudflare-page-cache'); ?></label>
@@ -1773,6 +1809,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Import config file -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Import config file', 'wp-cloudflare-page-cache'); ?></label>
@@ -1793,17 +1830,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <h3><?php echo __( 'Other settings', 'wp-cloudflare-page-cache' ); ?></h3>
                     </div>
 
-                    <div class="main_section">
-                        <div class="left_column">
-                            <label><?php _e('Purge the whole Cloudflare cache via Cronjob', 'wp-cloudflare-page-cache'); ?></label>
-                        </div>
-                        <div class="right_column">
-                            <p><?php _e('If you want purge the whole Cloudflare cache at specific intervals decided by you, you can create a cronjob that hits the following URL', 'wp-cloudflare-page-cache'); ?>:</p>
-                            <p><strong><?php echo $cronjob_url; ?></strong></p>
-                        </div>
-                        <div class="clear"></div>
-                    </div>
-
+                    <!-- Purge cache URL secret key -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Purge cache URL secret key', 'wp-cloudflare-page-cache'); ?></label>
@@ -1815,6 +1842,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Remove purge option from toolbar -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Remove purge option from toolbar', 'wp-cloudflare-page-cache'); ?></label>
@@ -1830,6 +1858,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Disable metaboxes on single pages and posts -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Disable metaboxes on single pages and posts', 'wp-cloudflare-page-cache'); ?></label>
@@ -1846,6 +1875,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- SEO redirect -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('SEO redirect', 'wp-cloudflare-page-cache'); ?></label>
@@ -1862,6 +1892,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Select user roles allowed to purge the cache -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Select user roles allowed to purge the cache', 'wp-cloudflare-page-cache'); ?></label>
@@ -1875,6 +1906,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Auto prefetch URLs in viewport -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Auto prefetch URLs in viewport', 'wp-cloudflare-page-cache'); ?></label>
@@ -1897,6 +1929,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Auto prefetch URLs on mouse hover -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Auto prefetch URLs on mouse hover', 'wp-cloudflare-page-cache'); ?></label>
@@ -1919,6 +1952,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Remove Cache Buster Query Parameter -->
                     <div class="main_section cfworker_not">
                         <div class="left_column">
                             <label><?php _e('Remove Cache Buster Query Parameter', 'wp-cloudflare-page-cache'); ?></label>
@@ -1941,6 +1975,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <div class="clear"></div>
                     </div>
 
+                    <!-- Keep settings on deactivation -->
                     <div class="main_section">
                         <div class="left_column">
                             <label><?php _e('Keep settings on deactivation', 'wp-cloudflare-page-cache'); ?></label>
@@ -1970,6 +2005,16 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                     <div class="swcfpc_faq_accordion">
 
+                        <h3 class="swcfpc_faq_question"><?php _e('How it works?', 'wp-cloudflare-page-cache'); ?></h3>
+                        <div class="swcfpc_faq_answer">
+
+                            <p><?php _e('Super Page Cache generate static HTML version of the webpages inside your site. This is a great option and can increase your site speed dramatically.', 'wp-cloudflare-page-cache'); ?></p>
+
+
+                            <p><?php _e('Our page cache system works way better than any other disk cache system and plugins out there in the market. In short now you don\'t need to install any other caching plugin in conjunction with Super Page Cache, as the plugin can now handle Cloudflare caching and disk caching.', 'wp-cloudflare-page-cache'); ?></p>
+
+                        </div>
+
                         <h3 class="swcfpc_faq_question"><?php _e('Can I use this plugin to take advantage of Cloudflare\'s Cache Everything rule, bypassing the cache for logged in users even if I\'m using the free plan?', 'wp-cloudflare-page-cache'); ?></h3>
                         <div class="swcfpc_faq_answer">
 
@@ -1977,15 +2022,6 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                         </div>
 
-
-                        <h3 class="swcfpc_faq_question"><?php _e('Does this plugin also perform CSS and Javascript optimizations?', 'wp-cloudflare-page-cache'); ?></h3>
-                        <div class="swcfpc_faq_answer">
-
-                            <p><?php _e('No, this is a caching plugin. To perform other page optimizations you can use it together with other performance plugins.', 'wp-cloudflare-page-cache'); ?></p>
-
-                            <p><?php _e('The purpose of this plugin is to get you the lowest possible response times (TTFB) by using Cloudflare as a page caching system, while maintaining full control of the cache.', 'wp-cloudflare-page-cache'); ?></p>
-
-                        </div>
 
 
                         <h3 class="swcfpc_faq_question"><?php _e('What is the <strong>swcfpc=1</strong> parameter I see to every internal links when I\'m logged in?', 'wp-cloudflare-page-cache'); ?></h3>
@@ -2012,19 +2048,6 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                         </div>
 
-
-                        <h3 class="swcfpc_faq_question"><?php _e('What is Fallback Cache?', 'wp-cloudflare-page-cache'); ?></h3>
-                        <div class="swcfpc_faq_answer">
-
-                            <p><?php _e('Fallback Cache is an option to generate static HTML version of the webpages inside your site. This is a great option and can increase your site speed dramatically. The way Cloudflare works is that it will only cache a page to it\'s global CDN network if it has received any request for those pages. So, if you don\'t have fallback cache, for the first few requests, your server will be executing the pages and sending the HTML to the user, which increases slowness and latency.', 'wp-cloudflare-page-cache'); ?></p>
-
-                            <p><?php _e('Our fallback cache system follows the same standard that Cloudflare follows when it caches a page to it\'s CDN edge. This way we generate the HTML version of the webpage before an user has requested for that page. By doing this, when any user access the webpage for the first time, the page loads super fast as it is already loading a rendered HTML rather than waiting for the server to generate HTML and pass that to the users.', 'wp-cloudflare-page-cache'); ?></p>
-
-                            <p><?php _e('Our fallback cache system works way better than any other disk cache system and plugins out there in the market. In short now you don\'t need to install any other caching plugin in conjunction with Super Page Cache for Cloudflare, as the plugin can now handle Cloudflare caching and disk caching.', 'wp-cloudflare-page-cache'); ?></p>
-
-                        </div>
-
-
                         <h3 class="swcfpc_faq_question"><?php _e('What is Preloader and how it works?', 'wp-cloudflare-page-cache'); ?></h3>
                         <div class="swcfpc_faq_answer">
 
@@ -2044,7 +2067,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <h3 class="swcfpc_faq_question"><?php _e('What is the difference between Purge Cache and Force purge everything actions?', 'wp-cloudflare-page-cache'); ?></h3>
                         <div class="swcfpc_faq_answer">
 
-                            <p><?php _e('If the <strong>Purge HTML pages only</strong> option is enabled, clicking on the <strong>PURGE CACHE</strong> button only HTML pages already in cache will be deleted from Cloudflare\'s cache.', 'wp-cloudflare-page-cache'); ?></p>
+                            <p><?php _e('If the <strong>Purge HTML pages only</strong> option is enabled, clicking on the <strong>PURGE CACHE</strong> button only HTML pages already in cache will be deleted .', 'wp-cloudflare-page-cache'); ?></p>
 
                             <p><?php _e('If for some reason you need to delete static files (such as CSS, images and scripts) from Cloudflare\'s cache, you can do so by clicking on <strong>Force purge everything</strong>', 'wp-cloudflare-page-cache'); ?></p>
 
@@ -2074,7 +2097,7 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         <h3 class="swcfpc_faq_question"><?php _e('Error: Page Rule validation failed: See messages for details. (err code: 1004 )', 'wp-cloudflare-page-cache'); ?></h3>
                         <div class="swcfpc_faq_answer">
 
-                            <p><?php _e('Login to Cloudflare, click on your domain and go to Page Rules section. Check if a <strong>Cache Everything</strong> page rule already exists for your domain. If yes, delete it. Now from the settings page of Super Page Cache for Cloudflare, disable and re-enable the cache.', 'wp-cloudflare-page-cache'); ?></p>
+                            <p><?php _e('Login to Cloudflare, click on your domain and go to Page Rules section. Check if a <strong>Cache Everything</strong> page rule already exists for your domain. If yes, delete it. Now from the settings page of Super Page Cache, disable and re-enable the cache.', 'wp-cloudflare-page-cache'); ?></p>
 
                         </div>
 
@@ -2163,35 +2186,6 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                         </div>
 
-
-                        <h3 class="swcfpc_faq_question"><?php _e('Can I use this plugin together with Autoptimize?', 'wp-cloudflare-page-cache'); ?></h3>
-                        <div class="swcfpc_faq_answer">
-
-                            <p><?php _e('Yes you can! It is highly recommended to enable the option <strong>Enable 404 fallbacks</strong> of Autoptimize.', 'wp-cloudflare-page-cache'); ?></p>
-
-                        </div>
-
-
-                        <h3 class="swcfpc_faq_question"><?php _e('Can I use this plugin together with WP-Rocket?', 'wp-cloudflare-page-cache'); ?></h3>
-                        <div class="swcfpc_faq_answer">
-
-                            <p><?php _e('Yes you can! Please follow these steps mentioned in <a href="https://gist.github.com/isaumya/d5990b036e0ed2ac55631995f862f4b8" target="_blank" rel="external">this GitHub Gist</a>. This will guide you to do all the things necessary in order to use WP Rocket with this plugin. Here is a summery of what you need to do:', 'wp-cloudflare-page-cache'); ?></p>
-
-                            <ol>
-                                <li><?php _e('Disable WP-Rocket and make sure no advanced-cache.php files of other plugins are into wp-content directory', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Upload the must use plugin code (inside <code>/wp-content/mu-plugins/</code> folder) provided in the GitHub Gist (link given above).', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Enable this plugin', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Enable the <strong>Fallback Cache</strong> option (If you want to use disk level fallback cache)', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Click on <strong>Third Party</strong> tab', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Scroll to <strong>WP-Rocket Cache Settings</strong> section and enable the <strong>Disable WP Rocket page cache</strong> option', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Purge the cache', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Enable WP-Rocket again', 'wp-cloudflare-page-cache'); ?></li>
-                                <li><?php _e('Purge WP-Rocket cache', 'wp-cloudflare-page-cache'); ?></li>
-                            </ol>
-
-                        </div>
-
-
                         <h3 class="swcfpc_faq_question"><?php _e('Can I use this plugin together with other page caching plugins such like Cache Enabler, WP Super Cache and WP Fastest Cache?', 'wp-cloudflare-page-cache'); ?></h3>
                         <div class="swcfpc_faq_answer">
 
@@ -2240,9 +2234,9 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                             <p><?php _e('If so, good news: the plugin is working correctly. If not, open a ticket on the support forum.', 'wp-cloudflare-page-cache'); ?></p>
 
-                            <p><?php _e('If you have enabled the <strong>Fallback cache</strong>, make sure you have also enabled the option <strong>Automatically purge the fallback cache when Cloudflare cache is purged</strong>.', 'wp-cloudflare-page-cache'); ?></p>
+                            <p><?php _e('If you have enabled the <strong>Page cache</strong>, make sure you have also enabled the option <strong>Automatically purge the Page cache when Cloudflare cache is purged</strong>.', 'wp-cloudflare-page-cache'); ?></p>
 
-                            <p><?php _e('If you are using <strong>Varnish cache</strong>, make sure you have also enabled the option <strong>Automatically purge Varnish cache when the Cloudflare cache is purged</strong>.', 'wp-cloudflare-page-cache'); ?></p>
+                            <p><?php _e('If you are using <strong>Varnish cache</strong>, make sure you have also enabled the option <strong>Automatically purge Varnish cache when the cache is purged</strong>.', 'wp-cloudflare-page-cache'); ?></p>
 
                             <p><?php _e('Disable any other page caching plugins or services. Only use this plugin to cache HTML pages.', 'wp-cloudflare-page-cache'); ?></p>
 
@@ -2285,12 +2279,12 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
                         </div>
 
 
-                        <h3 class="swcfpc_faq_question"><?php _e('Should I enable the cURL mode for Fallback Cache?', 'wp-cloudflare-page-cache'); ?></h3>
+                        <h3 class="swcfpc_faq_question"><?php _e('Should I enable the cURL mode for Disk Cache?', 'wp-cloudflare-page-cache'); ?></h3>
                         <div class="swcfpc_faq_answer">
 
-                            <p><?php _e('In most cases you don\'t need to enable the cURL mode for fallback cache. If you don\'t enable the cURL mode, the plugin will use the standard WordPress <code>advanced-cache.php</code> method to generate the fallback cache. This system works well in almost all the cases, also this cache generation mechanism is very fast and don\'t eat much server resource. On the other hand the cURL mode is useful in some edge cases where the <code>advanced-cache.php</code> mode of fallback cache is unable to generate proper HTML for the page. This is rare, but the cURL option is given just for these edge cases.', 'wp-cloudflare-page-cache'); ?></p>
+                            <p><?php _e('In most cases you don\'t need to enable the cURL mode for fallback cache. If you don\'t enable the cURL mode, the plugin will use the standard WordPress <code>advanced-cache.php</code> method to generate the Page cache. This system works well in almost all the cases, also this cache generation mechanism is very fast and don\'t eat much server resource. On the other hand the cURL mode is useful in some edge cases where the <code>advanced-cache.php</code> mode of fallback cache is unable to generate proper HTML for the page. This is rare, but the cURL option is given just for these edge cases.', 'wp-cloudflare-page-cache'); ?></p>
 
-                            <p><?php _e('One of the benefit of the cURL mode is that as it uses server level cRUL instead of <code>advanced-cache.php</code> to generate the page cache, the cache files comes out very stable and without any issues. But then again if your enable the cURL mode, that means cURL will fetch every page of your website (which are not excluded from fallback cache) to generate the fallback cache and each cURL request is going to increase some server load. So, if you have a small to medium site with not many pages, you can definitely use the cURL mode of fallback cache. But for large high traffic website, unless you have more than enough server resource to handle so many  cURL requests, we will recommend stick to using the default <code>advanced-cache.php</code> option which works flawlessly anyway.', 'wp-cloudflare-page-cache'); ?></p>
+                            <p><?php _e('One of the benefit of the cURL mode is that as it uses server level cRUL instead of <code>advanced-cache.php</code> to generate the page cache, the cache files comes out very stable and without any issues. But then again if your enable the cURL mode, that means cURL will fetch every page of your website (which are not excluded from fallback cache) to generate the Page cache and each cURL request is going to increase some server load. So, if you have a small to medium site with not many pages, you can definitely use the cURL mode of fallback cache. But for large high traffic website, unless you have more than enough server resource to handle so many  cURL requests, we will recommend stick to using the default <code>advanced-cache.php</code> option which works flawlessly anyway.', 'wp-cloudflare-page-cache'); ?></p>
 
                         </div>
 
@@ -2490,16 +2484,17 @@ $tab_active      = isset($_REQUEST['swcfpc_tab']) ? $_REQUEST['swcfpc_tab'] : fa
 
                 </div>
 
-            <?php //endif; ?>
 
-            <input type="hidden" name="swcfpc_tab" value="" />
+                <input type="hidden" name="swcfpc_tab" value="" />
 
-            <p class="submit"><input type="submit" name="swcfpc_submit_general" class="button button-primary" value="<?php _e('Update settings', 'wp-cloudflare-page-cache'); ?>"></p>
+                <div class="swcfpc_row">
+                    <p class="submit"><input type="submit" name="swcfpc_submit_general" class="button button-primary" value="<?php _e('Update settings', 'wp-cloudflare-page-cache'); ?>"></p>
+                
+                    <p class="submit"><input type="submit" id="swcfpc_form_reset_all" name="swcfpc_submit_reset_all" class="button button-secondary" value="<?php _e('Reset All', 'wp-cloudflare-page-cache'); ?>"></p>
+                
+                </div>
+            </form>
 
-        </form>
-
+        <?php endif; ?>
     </div>
-
-    <?php require_once SWCFPC_PLUGIN_PATH . 'libs/views/sidebar.php'; ?>
-
 </div>

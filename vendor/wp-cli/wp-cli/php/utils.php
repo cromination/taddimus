@@ -220,7 +220,7 @@ function find_file_upward( $files, $dir = null, $stop_check = null ) {
 }
 
 function is_path_absolute( $path ) {
-	// Windows
+	// Windows.
 	if ( isset( $path[1] ) && ':' === $path[1] ) {
 		return true;
 	}
@@ -825,7 +825,7 @@ function http_request( $method, $url, $data = null, $headers = [], $options = []
 				if ( $halt_on_error ) {
 					WP_CLI::error( $error_msg );
 				}
-				throw new RuntimeException( $error_msg, null, $exception );
+				throw new RuntimeException( $error_msg, 0, $exception );
 			}
 
 			$warning = sprintf(
@@ -846,7 +846,7 @@ function http_request( $method, $url, $data = null, $headers = [], $options = []
 					if ( $halt_on_error ) {
 						WP_CLI::error( $error_msg );
 					}
-					throw new RuntimeException( $error_msg, null, $exception );
+					throw new RuntimeException( $error_msg, 0, $exception );
 				}
 				throw $exception;
 			}
@@ -868,7 +868,7 @@ function get_default_cacert( $halt_on_error = false ) {
 	$error_msg = 'Cannot find SSL certificate.';
 
 	if ( inside_phar( $cert_path ) ) {
-		// cURL can't read Phar archives
+		// cURL can't read Phar archives.
 		return extract_from_phar( $cert_path );
 	}
 
@@ -895,13 +895,13 @@ function get_default_cacert( $halt_on_error = false ) {
  * @return string
  */
 function increment_version( $current_version, $new_version ) {
-	// split version assuming the format is x.y.z-pre
+	// split version assuming the format is x.y.z-pre.
 	$current_version    = explode( '-', $current_version, 2 );
 	$current_version[0] = explode( '.', $current_version[0] );
 
 	switch ( $new_version ) {
 		case 'same':
-			// do nothing
+			// do nothing.
 			break;
 
 		case 'patch':
@@ -925,7 +925,7 @@ function increment_version( $current_version, $new_version ) {
 			$current_version = [ $current_version[0] ]; // Drop possible pre-release info.
 			break;
 
-		default: // not a keyword
+		default: // not a keyword.
 			$current_version = [ [ $new_version ] ];
 			break;
 	}
@@ -1007,7 +1007,7 @@ function get_flag_value( $assoc_args, $flag, $default = null ) {
 function get_home_dir() {
 	$home = getenv( 'HOME' );
 	if ( ! $home ) {
-		// In Windows $HOME may not be defined
+		// In Windows $HOME may not be defined.
 		$home = getenv( 'HOMEDRIVE' ) . getenv( 'HOMEPATH' );
 	}
 
@@ -1384,7 +1384,7 @@ function glob_brace( $pattern, $dummy_flags = null ) { // phpcs:ignore Generic.C
 }
 
 /**
- * Get the closest suggestion for a mis-typed target term amongst a list of
+ * Get the closest suggestion for a mistyped target term amongst a list of
  * options.
  *
  * Uses the Levenshtein algorithm to calculate the relative "distance" between
@@ -1864,4 +1864,27 @@ function has_stdin() {
 	fclose( $handle );
 
 	return 1 === $streams;
+}
+
+/**
+ * Return description of WP_CLI hooks used in @when tag
+ *
+ *  @param string $hook Name of WP_CLI hook
+ *
+ * @return string|null
+ */
+function get_hook_description( $hook ) {
+	$events = [
+		'find_command_to_run_pre'     => 'just before WP-CLI finds the command to run.',
+		'before_registering_contexts' => 'before the contexts are registered.',
+		'before_wp_load'              => 'just before the WP load process begins.',
+		'before_wp_config_load'       => 'after wp-config.php has been located.',
+		'after_wp_config_load'        => 'after wp-config.php has been loaded into scope.',
+		'after_wp_load'               => 'just after the WP load process has completed.',
+	];
+
+	if ( array_key_exists( $hook, $events ) ) {
+		return $events[ $hook ];
+	}
+	return null;
 }

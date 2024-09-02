@@ -38,6 +38,26 @@ function tryAddSaleBanner () {
 	sectionStart.parentNode.insertBefore(saleLink, sectionStart.nextSibling);
 }
 
+/**
+ * Attempts to add a lock icon to the specified HTML element.
+ *
+ * @param {string} elementId - The ID of the target element where the lock icon should be added.
+ * @param {string} elementSuffix - A suffix to be appended to the element ID for identifying the lock icon element.
+ */
+function tryAddLockIcon( elementId, elementSuffix) {
+	var hasIcon = jQuery( '#' + elementId );
+	if ( hasIcon.length === 0 ) {
+		jQuery( '#' + elementId + elementSuffix )
+		.addClass( 'customize-locked-control' )
+		.find('input:checkbox')
+		.attr( 'readonly', true )
+		.next( 'label' )
+		.replaceWith( function(index, labelHtml) {
+			return jQuery(this).text().trim() + ' <span class="dashicons dashicons-lock"></span>';
+		} );
+	}
+}
+
 jQuery( document ).ready(
 	function () {
 		'use strict';
@@ -247,21 +267,10 @@ jQuery( document ).ready(
         // Open navigation panel.
         wp.customize.section( 'hestia_navigation' ).expanded.bind( function ( isExpanded ) {
         	if ( isExpanded ) {
-        		var hasIcon = jQuery( '#customize-control-hestia_cart_icon' );
-        		if ( hasIcon.length === 0 ) {
-        			var iconStatusElement = jQuery( '#customize-control-hestia_cart_icon_status input:checkbox' );
-        			var hasCustomIcon = jQuery( '#customize-control-hestia_mobile_menu_icon' );
-        			if ( hasCustomIcon.length === 0 ) {
-        				var iconStatusElement = jQuery( '#customize-control-hestia_mobile_menu_icon_status input:checkbox' );
-        				var iconStatusLable = iconStatusElement.next( 'label' );
-        				var hasLockedIcon = iconStatusLable.find( '.dashicons-lock' );
-        				if ( hasLockedIcon.length === 0 ) {
-        					iconStatusElement.attr( 'readonly', true );
-        					iconStatusLable.html( iconStatusLable.html() + ' <span class="dashicons dashicons-lock"></span>' );
-        					iconStatusElement.parents( 'li' ).addClass( 'customize-locked-control' );
-        				}
-        			}
-        		}
+        		// Lock minicart option.
+        		tryAddLockIcon( 'customize-control-hestia_cart_icon', '_status' );
+        		// Lock mobile menu option.
+        		tryAddLockIcon( 'customize-control-hestia_mobile_menu_icon', '_status' );
         	}
         } );
 

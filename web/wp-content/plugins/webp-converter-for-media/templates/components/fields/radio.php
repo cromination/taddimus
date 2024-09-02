@@ -27,6 +27,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php echo ( $value == $option['value'] ) ? 'checked' : ''; // phpcs:ignore  ?>
 		>
 		<label for="<?php echo esc_attr( $option['name'] . '-' . $value ); ?>"></label>
-		<span class="webpcField__label"><?php echo wp_kses_post( $label ); ?></span>
+		<span class="webpcField__label">
+			<?php echo wp_kses_post( $label ); ?>
+			<?php if ( $option['values_warnings'][ $value ] ?? null ) : ?>
+				<span class="webpcField__labelWarning">
+					<?php echo wp_kses_post( $option['values_warnings'][ $value ] ); ?>
+				</span>
+			<?php endif; ?>
+		</span>
 	</div>
 <?php endforeach; ?>

@@ -21,15 +21,19 @@ interface HelperInterface
     /**
      * Sets the helper set associated with this helper.
      */
-    public function setHelperSet(?HelperSet $helperSet): void;
+    public function setHelperSet(?HelperSet $helperSet = null);
 
     /**
      * Gets the helper set associated with this helper.
+     *
+     * @return HelperSet|null
      */
-    public function getHelperSet(): ?HelperSet;
+    public function getHelperSet();
 
     /**
      * Returns the canonical name of this helper.
+     *
+     * @return string
      */
-    public function getName(): string;
+    public function getName();
 }

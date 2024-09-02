@@ -88,6 +88,29 @@ class LoaderTypeOption extends OptionAbstract {
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @return mixed[]
+	 */
+	public function get_values_warnings( array $settings ): array {
+		return [
+			HtaccessLoader::LOADER_TYPE          => null,
+			HtaccessBypassingLoader::LOADER_TYPE => sprintf(
+			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+				__( 'If you are using this alternative setting, please read %1$sour guide%2$s which explains how it works.', 'webp-converter-for-media' ),
+				'<a href="https://url.mattplugins.com/converter-field-loader-type-alert-bypassing-nginx" target="_blank">',
+				'</a>'
+			),
+			PassthruLoader::LOADER_TYPE          => sprintf(
+			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+				__( 'If you are using this alternative setting, please read %1$sour guide%2$s which explains how it works.', 'webp-converter-for-media' ),
+				'<a href="https://url.mattplugins.com/converter-field-loader-type-alert-pass-thru" target="_blank">',
+				'</a>'
+			),
+		];
+	}
+
+	/**
+	 * {@inheritdoc}
 	 */
 	public function get_default_value( array $settings = null ): string {
 		return HtaccessLoader::LOADER_TYPE;

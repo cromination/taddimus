@@ -148,11 +148,7 @@ function swcfpc_fallback_cache_end( $html ) {
                 $ttl = time() + $sw_cloudflare_pagecache->get_single_config('cf_fallback_cache_ttl', 0);
             }
 
-            if( $ttl > 0 ) {
-                $html .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache - page generated @ " . date('Y-m-d H:i:s') . ' - fallback cache expiration @ ' . date('Y-m-d H:i:s', $ttl) . " - cache key {$cache_key} -->";
-            } else {
-                $html .= "\n<!-- Page retrieved from Super Page Cache for Cloudflare's fallback cache - page generated @ " . date('Y-m-d H:i:s') . " - fallback cache expiration @ never expires - cache key {$cache_key} -->";
-            }
+            $html .= "\n<!-- Page retrieved from Super Page Cache fallback cache - page generated @ " . date('Y-m-d H:i:s') . ' - fallback cache expiration @ ' . ( $ttl > 0 ? date( 'Y-m-d H:i:s', $ttl ) : "never expires" ) . " - cache key {$cache_key} -->";
 
             // Provide a filter to modify the HTML before it is cached
             $html = apply_filters( 'swcfpc_normal_fallback_cache_html', $html );

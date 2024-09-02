@@ -99,10 +99,10 @@ class FilesTreeFinder {
 			);
 		}
 
-		$this->stats_manager->set_images_webp_all( $this->files_converted[ WebpFormat::FORMAT_EXTENSION ] + $this->files_unconverted[ WebpFormat::FORMAT_EXTENSION ] );
-		$this->stats_manager->set_images_webp_unconverted( $this->files_unconverted[ WebpFormat::FORMAT_EXTENSION ] );
-		$this->stats_manager->set_images_avif_all( $this->files_converted[ AvifFormat::FORMAT_EXTENSION ] + $this->files_unconverted[ AvifFormat::FORMAT_EXTENSION ] );
-		$this->stats_manager->set_images_avif_unconverted( $this->files_unconverted[ AvifFormat::FORMAT_EXTENSION ] );
+		$this->stats_manager->set_images_webp_all( ( $this->files_converted[ WebpFormat::FORMAT_EXTENSION ] ?? 0 ) + ( $this->files_unconverted[ WebpFormat::FORMAT_EXTENSION ] ?? 0 ) );
+		$this->stats_manager->set_images_webp_unconverted( $this->files_unconverted[ WebpFormat::FORMAT_EXTENSION ] ?? 0 );
+		$this->stats_manager->set_images_avif_all( ( $this->files_converted[ AvifFormat::FORMAT_EXTENSION ] ?? 0 ) + ( $this->files_unconverted[ AvifFormat::FORMAT_EXTENSION ] ?? 0 ) );
+		$this->stats_manager->set_images_avif_unconverted( $this->files_unconverted[ AvifFormat::FORMAT_EXTENSION ] ?? 0 );
 
 		return [
 			'files_converted'   => $this->files_converted,

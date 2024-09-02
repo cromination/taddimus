@@ -3,12 +3,12 @@
 namespace WebpConverter\Action;
 
 use WebpConverter\Conversion\CrashedFilesOperator;
+use WebpConverter\Conversion\Format\AvifFormat;
 use WebpConverter\Conversion\Format\FormatFactory;
+use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\LargerFilesOperator;
 use WebpConverter\Conversion\OutputPathGenerator;
 use WebpConverter\HookableInterface;
-use WebpConverter\PluginData;
-use WebpConverter\Settings\Option\OutputFormatsOption;
 
 /**
  * Deletes all images in list of paths.
@@ -16,21 +16,14 @@ use WebpConverter\Settings\Option\OutputFormatsOption;
 class DeletePathsAction implements HookableInterface {
 
 	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
-
-	/**
 	 * @var OutputPathGenerator
 	 */
 	private $output_path;
 
 	public function __construct(
-		PluginData $plugin_data,
 		FormatFactory $format_factory,
 		OutputPathGenerator $output_path = null
 	) {
-		$this->plugin_data = $plugin_data;
 		$this->output_path = $output_path ?: new OutputPathGenerator( $format_factory );
 	}
 
@@ -65,8 +58,7 @@ class DeletePathsAction implements HookableInterface {
 	 * @return void
 	 */
 	private function delete_file_by_path( string $path, bool $set_skipped_flag ) {
-		$plugin_settings = $this->plugin_data->get_plugin_settings();
-		$output_formats  = ( $set_skipped_flag ) ? $plugin_settings[ OutputFormatsOption::OPTION_NAME ] : null;
+		$output_formats = ( $set_skipped_flag ) ? [ AvifFormat::FORMAT_EXTENSION, WebpFormat::FORMAT_EXTENSION ] : null;
 
 		if ( ! ( $output_paths = $this->output_path->get_paths( $path, $set_skipped_flag, $output_formats ) ) ) {
 			return;

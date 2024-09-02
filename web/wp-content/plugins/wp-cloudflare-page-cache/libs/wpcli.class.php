@@ -23,13 +23,13 @@ class SWCFPC_WP_CLI extends WP_CLI_Command
 
 
     /**
-     * Show current Super Page Cache for Cloudflare version
+     * Show current Super Page Cache version
      *
      * @when after_wp_load
      */
     function version()
     {
-        WP_CLI::line( 'Super Page Cache for Cloudflare v' . get_option('swcfpc_version', false));
+        WP_CLI::line( 'Super Page Cache' . get_option('swcfpc_version', false));
     }
 
 

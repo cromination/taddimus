@@ -1,21 +1,23 @@
-#wp-admin-bar-wp-cloudflare-super-page-cache-toolbar-container.bullet-green .ab-icon::before,
-#wp-admin-bar-wp-cloudflare-super-page-cache-toolbar-container.bullet-green:hover .ab-icon::before {
+#wp-admin-bar-wp-cloudflare-super-page-cache-toolbar-container:is(.bullet-green, .bullet-green:hover ) .ab-icon::before {
     content: "\f176";
     color: #02ca02;
     font-size: 16px;
 }
 
-#wp-admin-bar-wp-cloudflare-super-page-cache-toolbar-container.bullet-red .ab-icon::before,
-#wp-admin-bar-wp-cloudflare-super-page-cache-toolbar-container.bullet-red:hover .ab-icon::before {
+#wp-admin-bar-wp-cloudflare-super-page-cache-toolbar-container:is(.bullet-red, .bullet-red:hover ) .ab-icon::before {
     content: "\f176";
     color: #d40000;
     font-size: 16px;
 }
 
-.main_section input[type=text],
-.main_section input[type=password],
-.main_section input[type=email],
-.main_section select {
+.main_section :is(
+    input:is(
+        [type="text"],
+        [type="password"],
+        [type="email"]
+    ),
+    select
+) {
   transition: all 0.3s;
 }
 
@@ -23,8 +25,7 @@
   border-radius: 5px;
 }
 
-.swcfpc_sidebar_widget .button,
-#swcfpc_main_content .button {
+:is( .swcfpc_sidebar_widget, #swcfpc_main_content) .button {
   transition: all 0.5s;
 }
 
@@ -47,9 +48,11 @@
     position: relative;
 }
 
-#swcfpc_tab_links .nav-tab:focus,
-#swcfpc_tab_links .nav-tab:hover,
-#swcfpc_tab_links .nav-tab.nav-tab-active {
+#swcfpc_tab_links .nav-tab:is(
+    :focus,
+    :hover,
+    .nav-tab-active
+) {
     background: #f38020;
     color: #fff;
     border: 1px solid #f38020;
@@ -265,10 +268,15 @@
 }
 
 #swcfpc_main_content.width_sidebar {
-    float: left;
-    width: 75%;
     box-sizing: border-box;
     padding-right: 20px;
+}
+
+@media (min-width: 1200px) {
+    #swcfpc_main_content.width_sidebar {
+        width: 75%;
+        margin: 0 auto;
+    }
 }
 
 .swcfpc_sidebar_widget .button {
@@ -277,8 +285,10 @@
     max-width: 170px;
 }
 
-.swcfpc_sidebar_widget .button,
-#swcfpc_main_content .button {
+:is(
+    .swcfpc_sidebar_widget,
+    #swcfpc_main_content
+) .button {
     min-width: 170px;
     padding: 5px 8px;
     text-shadow: none !important;
@@ -290,10 +300,13 @@
     color: #ffffff;
     border-color: #f38020;
     box-shadow: inset 0 0px 2px rgba(113, 113, 113, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+    text-align: center;
 }
 
-.swcfpc_sidebar_widget .button:hover,
-#swcfpc_main_content .button:hover {
+:is(
+    .swcfpc_sidebar_widget,
+    #swcfpc_main_content
+) .button:hover {
     background: #333333;
     color: #fff;
     border-color: #333;
@@ -396,23 +409,21 @@
     margin-top: 10px;
 }
 
-.main_section .description.highlighted {
-    background: #ffe000;
-    padding: 8px;
-    color: #000;
-}
-
+.main_section .description.highlighted,
 .description_section.highlighted {
     background: #ffe000;
     padding: 8px;
     color: #000;
 }
 
-
-.main_section input[type=text],
-.main_section input[type=password],
-.main_section input[type=email],
-.main_section select {
+.main_section :is(
+    input:is(
+        [type=text],
+        [type=password],
+        [type=email]
+    ),
+    select
+) {
     padding: 5px 10px;
     min-width: 200px;
     width: 100%;
@@ -497,24 +508,28 @@
     border: 1px solid #dfdfdf;
 }
 
-.right_column input[type=checkbox]:focus,
-.right_column input[type=color]:focus,
-.right_column input[type=date]:focus,
-.right_column input[type=datetime-local]:focus,
-.right_column input[type=datetime]:focus,
-.right_column input[type=email]:focus,
-.right_column input[type=month]:focus,
-.right_column input[type=number]:focus,
-.right_column input[type=password]:focus,
-.right_column input[type=radio]:focus,
-.right_column input[type=search]:focus,
-.right_column input[type=tel]:focus,
-.right_column input[type=text]:focus,
-.right_column input[type=time]:focus,
-.right_column input[type=url]:focus,
-.right_column input[type=week]:focus,
-.right_column select:focus,
-.right_column textarea:focus {
+.right_column :is(
+    input:is(
+        [type=checkbox],
+        [type=color],
+        [type=date],
+        [type=datetime-local],
+        [type=datetime],
+        [type=email],
+        [type=month],
+        [type=number],
+        [type=password],
+        [type=radio],
+        [type=search],
+        [type=tel],
+        [type=text],
+        [type=time],
+        [type=url],
+        [type=week],
+    ),
+    select,
+    textarea
+):focus {
     border-color: #f38020;
     box-shadow: 0 0 0 1px #f38020;
     outline: 1px solid transparent;
@@ -590,8 +605,7 @@
     font-weight: 400;
 }
 
-.swcfpc_faq_accordion .swcfpc_faq_question.active,
-.swcfpc_faq_accordion .swcfpc_faq_question:hover {
+.swcfpc_faq_accordion .swcfpc_faq_question:is( .active, :hover ) {
     background: #f38020;
     color: #fff;
     border-color: #f38020;
@@ -611,6 +625,12 @@
 .swcfpc_faq_accordion  .swcfpc_faq_answer ul {
     list-style: revert;
     margin-left: 2em;
+}
+
+.swcfpc_row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
 
 /* SWITCH - START */
@@ -673,3 +693,51 @@
 }
 
 /* SWITCH - END */
+
+.swcfpc-test-response {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    gap: 10px;
+}
+
+.swcfpc-test-response :is( p, h3, ul ) {
+    margin: 5px 0;
+}
+
+.swcfpc-test-response ul li {
+    list-style-type: none;
+    position: relative;
+    line-height: 1.5;
+}
+
+.swcfpc-test-response li::before {
+    margin-right: 5px;
+}
+
+.swcfpc-test-response li.is-warning::before {
+    content: '⚠️'; 
+    color: #f38020;
+}
+
+.swcfpc-test-response li.is-error::before {
+    content: '❌';
+    color: #dc3232;
+}
+
+.swcfpc-test-response li.is-success::before {
+    content: '✅';
+    color: #85B730;
+}
+
+.swcfpc-highlight {
+    text-align: center;
+    background-color: #ffe000;
+    padding: 8px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.swcfpc-required {
+    color: #dc3232;
+}

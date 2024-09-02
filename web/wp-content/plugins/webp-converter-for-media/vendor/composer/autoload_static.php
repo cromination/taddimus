@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb3cba3e0bcf9265e013a62e97cb26081
+class ComposerStaticInitedb6463f92ffbe80bad3cfb53ecb8d6e
 {
     public static $prefixLengthsPsr4 = array (
         'W' => 
@@ -173,6 +173,7 @@ class ComposerStaticInitb3cba3e0bcf9265e013a62e97cb26081
         'WebpConverter\\Service\\PathsGenerator' => __DIR__ . '/../..' . '/src/Service/PathsGenerator.php',
         'WebpConverter\\Service\\RestApiUnlocker' => __DIR__ . '/../..' . '/src/Service/RestApiUnlocker.php',
         'WebpConverter\\Service\\ServerConfigurator' => __DIR__ . '/../..' . '/src/Service/ServerConfigurator.php',
+        'WebpConverter\\Service\\SiteHealthDetector' => __DIR__ . '/../..' . '/src/Service/SiteHealthDetector.php',
         'WebpConverter\\Service\\StatsManager' => __DIR__ . '/../..' . '/src/Service/StatsManager.php',
         'WebpConverter\\Service\\TokenValidator' => __DIR__ . '/../..' . '/src/Service/TokenValidator.php',
         'WebpConverter\\Service\\ViewLoader' => __DIR__ . '/../..' . '/src/Service/ViewLoader.php',
@@ -219,9 +220,9 @@ class ComposerStaticInitb3cba3e0bcf9265e013a62e97cb26081
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb3cba3e0bcf9265e013a62e97cb26081::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb3cba3e0bcf9265e013a62e97cb26081::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitb3cba3e0bcf9265e013a62e97cb26081::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitedb6463f92ffbe80bad3cfb53ecb8d6e::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitedb6463f92ffbe80bad3cfb53ecb8d6e::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitedb6463f92ffbe80bad3cfb53ecb8d6e::$classMap;
 
         }, null, ClassLoader::class);
     }

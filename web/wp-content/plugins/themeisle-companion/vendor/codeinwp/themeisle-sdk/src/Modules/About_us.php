@@ -124,11 +124,32 @@ class About_Us extends Abstract_Module {
 		add_submenu_page(
 			$this->about_data['location'],
 			$this->about_data['upgrade_text'],
-			$this->about_data['upgrade_text'],
+			'<span class="tsdk-upg-menu-item">' . $this->about_data['upgrade_text'] . '</span>',
 			'manage_options',
 			$this->about_data['upgrade_link'],
 			'',
 			101
+		);
+		add_action(
+			'admin_footer',
+			function () {
+				?>
+			<style>
+				.tsdk-upg-menu-item {
+					color: #009528;
+				}
+
+				.tsdk-upg-menu-item:hover {
+					color: #008a20;
+				}
+			</style>
+			<script type="text/javascript">
+				jQuery(document).ready(function ($) {
+					$('.tsdk-upg-menu-item').parent().attr('target', '_blank');
+				});
+			</script>
+				<?php
+			} 
 		);
 	}
 
@@ -237,9 +258,9 @@ class About_Us extends Abstract_Module {
 					'heading'      => Loader::$labels['about_us']['otter-page']['heading'],
 					'text'         => Loader::$labels['about_us']['otter-page']['text'],
 					'buttons'      => [
-						'install_otter_free' => Loader::$labels['about_us']['otter-page']['install_otter_free'],
-						'install_now'        => Loader::$labels['about_us']['otter-page']['install_now'],
-						'learn_more'         => Loader::$labels['about_us']['otter-page']['learn_more'],
+						'install_otter_free' => Loader::$labels['about_us']['otter-page']['buttons']['install_otter_free'],
+						'install_now'        => Loader::$labels['about_us']['otter-page']['buttons']['install_now'],
+						'learn_more'         => Loader::$labels['about_us']['otter-page']['buttons']['learn_more'],
 						'learn_more_link'    => tsdk_utmify( 'https://themeisle.com/plugins/otter-blocks/', 'otter-page', 'about-us' ),
 					],
 					'features'     => [

@@ -656,7 +656,7 @@ class SWCFPC_Cache_Controller
         }
       } else {
 
-        if (!$this->modules['cloudflare']->purge_cache($error)) {
+        if ( $this->modules['cloudflare']->is_enabled() && !$this->modules['cloudflare']->purge_cache( $error ) ) {
           $this->modules['logs']->add_log('cache_controller::purge_all', "Unable to purge the whole Cloudflare cache due to error: {$error}");
           return false;
         }
@@ -746,7 +746,7 @@ class SWCFPC_Cache_Controller
 
       $count_urls = count($urls);
 
-      if (!$this->modules['cloudflare']->purge_cache_urls($urls, $error)) {
+      if ( $this->modules['cloudflare']->is_enabled() && !$this->modules['cloudflare']->purge_cache_urls($urls, $error)) {
         $this->modules['logs']->add_log('cache_controller::purge_urls', "Unable to purge some URLs from Cloudflare due to error: {$error}");
         return false;
       }
@@ -1145,10 +1145,9 @@ class SWCFPC_Cache_Controller
     }
 
     // Delete Cache Rule
-    if( $this->modules['cloudflare']->delete_cache_rule() ) {
-        $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_rule_id', '' );
-    }
+    $this->modules['cloudflare']->delete_cache_rule();
     $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_id', '' );
+    $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_rule_id', '' );
 
     // Disable fallback cache
     if (defined('SWCFPC_ADVANCED_CACHE')) {
@@ -2313,7 +2312,7 @@ class SWCFPC_Cache_Controller
     $this->modules['logs']->add_log('cache_controller::ajax_purge_whole_cache', 'Purge whole Cloudflare cache');
     $this->purge_all(false, false, true);
 
-    $return_array['success_msg'] = __('Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned by Cloudflare.', 'wp-cloudflare-page-cache');
+    $return_array['success_msg'] = __('Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned.', 'wp-cloudflare-page-cache');
 
     die(json_encode($return_array));
   }
@@ -2337,7 +2336,7 @@ class SWCFPC_Cache_Controller
     $this->modules['logs']->add_log('cache_controller::ajax_purge_whole_cache', 'Purge whole Cloudflare cache');
     $this->purge_all(false, false);
 
-    $return_array['success_msg'] = __('Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned by Cloudflare.', 'wp-cloudflare-page-cache');
+    $return_array['success_msg'] = __('Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned.', 'wp-cloudflare-page-cache');
 
     die(json_encode($return_array));
   }
@@ -2373,7 +2372,7 @@ class SWCFPC_Cache_Controller
 
     $this->modules['logs']->add_log('cache_controller::ajax_purge_single_post_cache', "Purge Cloudflare cache for only post id {$post_id} and related contents");
 
-    $return_array['success_msg'] = __('Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned by Cloudflare.', 'wp-cloudflare-page-cache');
+    $return_array['success_msg'] = __('Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned.', 'wp-cloudflare-page-cache');
 
     die(json_encode($return_array));
   }
@@ -2524,7 +2523,7 @@ class SWCFPC_Cache_Controller
 
     $schedules['swcfpc_purge_cache_cron_interval'] = array(
       'interval' => (defined('SWCFPC_PURGE_CACHE_CRON_INTERVAL') && SWCFPC_PURGE_CACHE_CRON_INTERVAL > 0) ? SWCFPC_PURGE_CACHE_CRON_INTERVAL : 10,
-      'display'  => esc_html__('Super Page Cache for Cloudflare - Purge Cache Cron Interval', 'wp-cloudflare-page-cache')
+      'display'  => esc_html__('Super Page Cache - Purge Cache Cron Interval', 'wp-cloudflare-page-cache')
     );
 
     return $schedules;
@@ -3221,13 +3220,15 @@ class SWCFPC_Cache_Controller
       die(json_encode($return_array));
     }
 
-    if (!$this->modules['cloudflare']->enable_page_cache($error)) {
-      $return_array['status'] = 'error';
-      $return_array['error'] = $error;
-      die(json_encode($return_array));
-    }
+    $this->main_instance->set_single_config( 'cf_cache_enabled', 1 );
+    $this->main_instance->set_single_config( 'cf_fallback_cache', 1 );
+    $this->main_instance->update_config();
 
-    if ($this->main_instance->get_single_config('cf_fallback_cache', 0) > 0 && $this->main_instance->get_single_config('cf_fallback_cache_curl', 0) == 0 && !defined('SWCFPC_ADVANCED_CACHE')) {
+    if (
+      $this->main_instance->get_single_config( 'cf_fallback_cache', 0 ) > 0 &&
+      $this->main_instance->get_single_config( 'cf_fallback_cache_curl', 0 ) === 0 &&
+      !defined( 'SWCFPC_ADVANCED_CACHE' )
+    ) {
       $this->modules['fallback_cache']->fallback_cache_advanced_cache_enable();
     }
 

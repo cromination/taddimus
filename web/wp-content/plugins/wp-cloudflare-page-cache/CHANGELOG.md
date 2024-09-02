@@ -1,3 +1,19 @@
+#####   Version 5.0.1 (2024-08-28)
+
+- Fixed critical error produced by the Cache status bar
+- Fixed Test Cache functionality and reliability for Cloudflare
+- Improved the domain rules for caching
+
+####   Version 5.0.0 (2024-08-27)
+
+- Super Page Cache for Cloudflare is now becoming Super Page Cache. While you can still enjoy the Cloudflare functionality, it is now optional. The plugin will work for your non-Cloudflare sites as well, with much more to come.
+- Fixed compatibility issues with PHP 8.3
+- Fixed an issue with the user survey
+
+#####   Version 4.7.13 (2024-07-18)
+
+- Fixed Zone ID selection for creating Cache Rule where the correct domain was not picked
+
 #####   Version 4.7.12 (2024-07-15)
 
 - Fixed fatal error when calling get_objects() method

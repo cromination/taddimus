@@ -46,16 +46,17 @@ class OptionIntegrator {
 
 		$value = ( $value !== null ) ? $value : $this->option->get_default_value( $settings );
 		return [
-			'name'         => $this->option->get_name(),
-			'type'         => $option_type,
-			'label'        => $this->option->get_label(),
-			'notice_lines' => $this->option->get_notice_lines(),
-			'info'         => $this->option->get_info(),
-			'placeholder'  => $this->option->get_placeholder(),
-			'values'       => $values,
-			'disabled'     => $disabled_values ?: [],
-			'value'        => $value,
-			'value_public' => $this->option->get_public_value( $value ),
+			'name'            => $this->option->get_name(),
+			'type'            => $option_type,
+			'label'           => $this->option->get_label(),
+			'notice_lines'    => $this->option->get_notice_lines(),
+			'info'            => $this->option->get_info(),
+			'placeholder'     => $this->option->get_placeholder(),
+			'values'          => $values,
+			'values_warnings' => $this->option->get_values_warnings( $settings ),
+			'disabled'        => $disabled_values ?: [],
+			'value'           => $value,
+			'value_public'    => $this->option->get_public_value( $value ),
 		];
 	}
 }

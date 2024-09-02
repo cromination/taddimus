@@ -54,16 +54,10 @@ class Review extends Abstract_Module {
 	public function add_notification( $all_notifications ) {
 
 		$developers = [
-			'Bogdan',
 			'Marius',
 			'Hardeep',
-			'Rodica',
-			'Stefan',
-			'Uriahs',
-			'Madalin',
-			'Cristi',
-			'Silviu',
 			'Andrei',
+			'Robert',
 		];
 
 		$link = 'https://wordpress.org/support/' . $this->product->get_type() . '/' . $this->product->get_slug() . '/reviews/#wporg-footer';
@@ -76,7 +70,7 @@ class Review extends Abstract_Module {
 			[ '{product}', '{developer}' ],
 			[
 				$this->product->get_friendly_name(),
-				$developers[ strlen( get_site_url() ) % 10 ],
+				$developers[ strlen( get_site_url() ) % count( $developers ) ],
 			],
 			$message
 		);

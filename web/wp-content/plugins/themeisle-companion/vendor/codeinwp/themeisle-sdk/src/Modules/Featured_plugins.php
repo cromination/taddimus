@@ -44,9 +44,7 @@ class Featured_Plugins extends Abstract_Module {
 			return false;
 		}
 
-		$slug = $product->get_slug();
-		// only load for products that contain "pro" in the slug.
-		if ( strpos( $slug, 'pro' ) === false ) {
+		if ( $product->is_wordpress_available() ) {
 			return false;
 		}
 

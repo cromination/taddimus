@@ -69,9 +69,22 @@ class SWCFPC_Cloudflare
 
     function actions() {
 
-        // Ajax clear whole cache
-        add_action( 'wp_ajax_swcfpc_test_page_cache', array($this, 'ajax_test_page_cache') );
+    }
 
+    /**
+     * Check if the Cloudflare API is enabled.
+     *
+     * @return bool
+     */
+    function is_enabled() {
+        return (
+            ! empty( $this->zone_id ) &&
+            ! empty( $this->email ) &&
+            (
+                ! empty( $this->api_token ) ||
+                ! empty( $this->api_key )
+            )
+        );
     }
 
 
@@ -1591,63 +1604,6 @@ class SWCFPC_Cloudflare
 
     }
 
-    function ajax_test_page_cache() {
-
-        check_ajax_referer( 'ajax-nonce-string', 'security' );
-
-        $return_array = array('status' => 'ok');
-        $error_dynamic = '';
-        $error_static = '';
-
-        $url_static_resource = SWCFPC_PLUGIN_URL.'assets/testcache.html';
-        $url_dynamic_resource = home_url();
-
-        $return_array['static_resource_url'] = $url_static_resource;
-        $return_array['dynamic_resource_url'] = $url_dynamic_resource;
-
-        $headers_dyamic_resource = $this->page_cache_test( $url_dynamic_resource, $error_dynamic );
-
-        if( ! $headers_dyamic_resource ) {
-
-            $headers_static_resource = $this->page_cache_test( $url_static_resource, $error_static, true );
-            $error = '';
-
-            // Error on both dynamic and static test
-            if( !$headers_static_resource ) {
-
-                $error .= __( 'Page caching seems not working for both dynamic and static pages.', 'wp-cloudflare-page-cache');
-                $error .= '<br/><br/>';
-                $error .= sprintf( __( 'Error on dynamic page (%1$s): %2$s', 'wp-cloudflare-page-cache' ), $url_dynamic_resource, $error_dynamic );
-                $error .= '<br/><br/>';
-                $error .= sprintf( __( 'Error on static resource (%1$s): %2$s', 'wp-cloudflare-page-cache'), $url_static_resource, $error_static);
-                $error .= '<br/><br/>';
-                $error .= __( 'Please check if the page caching is working by yourself by surfing the website in incognito mode \'cause sometimes Cloudflare bypass the cache for cURL requests. Reload a page two or three times. If you see the response header <strong>cf-cache-status: HIT</strong>, the page caching is working well.', 'wp-cloudflare-page-cache');
-
-            }
-            // Error on dynamic test only
-            else {
-
-                $error .= sprintf( __( 'Page caching is working for static page but seems not working for dynamic pages.', 'wp-cloudflare-page-cache'), $url_static_resource);
-                $error .= '<br/><br/>';
-                $error .=  sprintf( __('Error on dynamic page (%1$s): %2$s', 'wp-cloudflare-page-cache'), $url_dynamic_resource, $error_dynamic);
-                $error .= '<br/><br/>';
-                $error .= __( 'Please check if the page caching is working by yourself by surfing the website in incognito mode \'cause sometimes Cloudflare bypass the cache for cURL requests. Reload a page two or three times. If you see the response header <strong>cf-cache-status: HIT</strong>, the page caching is working well.', 'wp-cloudflare-page-cache');
-
-            }
-
-            $return_array['status'] = 'error';
-            $return_array['error'] = $error;
-
-            die(json_encode($return_array));
-
-        }
-
-        $return_array['success_msg'] = __('Page caching is working properly', 'wp-cloudflare-page-cache');
-
-        die(json_encode($return_array));
-
-    }
-
     /**
      * Get the existing ruleset ID for the current zone.
      *
@@ -1666,8 +1622,8 @@ class SWCFPC_Cloudflare
         $response     = wp_remote_get( $url, $request_args );
 
         if ( is_wp_error( $response ) ) {
-            if( is_object( $this->$modules['logs'] ) ) {
-                $this->modules['logs']->add_log( 'cloudflare::get_ruleset_id_from_api', "Connection error: " . $response->get_error_message() );
+            if( is_object( $modules['logs'] ) ) {
+                $modules['logs']->add_log( 'cloudflare::get_ruleset_id_from_api', "Connection error: " . $response->get_error_message() );
             }
             return '';
         }
@@ -1677,8 +1633,8 @@ class SWCFPC_Cloudflare
 
         if( isset( $response['success'] ) && ! $response['success'] ) {
 
-            if( is_object( $this->$modules['logs'] ) ) {
-                $this->modules['logs']->add_log( 'cloudflare::get_ruleset_id_from_api', "Could NOT retrieve rulesets ID for zone {$this->zone_id} - URL: ".esc_url_raw( $url ) );
+            if( is_object( $modules['logs'] ) ) {
+                $modules['logs']->add_log( 'cloudflare::get_ruleset_id_from_api', "Could NOT retrieve rulesets ID for zone {$this->zone_id} - URL: ".esc_url_raw( $url ) );
             }
             $this->try_log_error( $response );
 
@@ -1719,8 +1675,8 @@ class SWCFPC_Cloudflare
         $response = wp_remote_post( $url, $request_args );
 
         if ( is_wp_error( $response ) ) {
-            if( is_object( $this->$modules['logs'] ) ) {
-                $this->modules['logs']->add_log( 'cloudflare::create_ruleset_id', "Connection error: " . $response->get_error_message() );
+            if( is_object( $modules['logs'] ) ) {
+                $modules['logs']->add_log( 'cloudflare::create_ruleset_id', "Connection error: " . $response->get_error_message() );
             }
             return '';
         }
@@ -1776,7 +1732,7 @@ class SWCFPC_Cloudflare
      */
     function get_cache_rule_expression() {
         // Rule expression reference: https://gist.github.com/isaumya/af10e4855ac83156cc210b7148135fa2
-        $wordpress_links_to_cache  = 'http.host eq "' . $this->zone_domain_name . '"';
+        $wordpress_links_to_cache  = 'http.host contains "' . $this->zone_domain_name . '"';
 
         $wordpress_links_to_ignore = '
             and http.cookie ne "comment_"
@@ -1978,6 +1934,16 @@ class SWCFPC_Cloudflare
     }
 
     /**
+     * Delete the page rule in the Cloudflare API.
+     *
+     * @return void
+     */
+    public function disable_page_cache_rule() {
+        $this->delete_cache_rule();
+        $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_rule_id', '' );
+    }
+
+    /**
      * Try to log out the error message from the Cloudflare API response.
      *
      * @param array $response_body The response body of Cloudflare API.
@@ -2000,5 +1966,42 @@ class SWCFPC_Cloudflare
         $error = implode(' - ', $error);
 
         $this->modules['logs']->add_log('cloudflare::try_log_error', "Cloudflare API Errors: {$error}" );
+    }
+
+    /**
+     * Pull the existing cache rule from the Cloudflare API if it is not set.
+     *
+     * @param bool $auto_save If true, it will save the cache rule ID. But not commit the changes.
+     *
+     * @return void
+     */
+    public function pull_existing_cache_rule( $auto_save = true ) {
+        if ( empty( $this->zone_id ) ) {
+            return;
+        }
+
+        $this->cache_ruleset_id = empty( $this->cache_ruleset_id ) ? $this->get_ruleset_id_from_api() : $this->cache_ruleset_id;
+
+		if (
+			! empty( $this->cache_ruleset_rule_id ) ||
+			empty( $this->last_cache_ruleset_options_retrieved ) ||
+			empty( $this->last_cache_ruleset_options_retrieved['rules'] )
+		) {
+			return;
+		}
+
+	    if ( $auto_save) {
+            $this->main_instance->set_single_config( 'cf_cache_settings_ruleset_id', $this->cache_ruleset_id );
+        }
+
+		$available_rule = $this->find_cache_rule_by_description( $this->last_cache_ruleset_options_retrieved['rules'], $this->cache_rule_description );
+		if ( empty( $available_rule ) ) {
+		    return;
+		}
+
+		$this->cache_ruleset_rule_id = $available_rule['id'];
+		if ( $auto_save ) {
+			$this->main_instance->set_single_config( 'cf_cache_settings_ruleset_rule_id', $this->cache_ruleset_rule_id );
+		}
     }
 }

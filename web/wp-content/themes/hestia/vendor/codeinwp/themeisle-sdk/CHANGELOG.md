@@ -1,3 +1,27 @@
+##### [Version 3.3.29](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.28...v3.3.29) (2024-08-21)
+
+- feat: improve the Promotions appearance timing
+
+##### [Version 3.3.28](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.27...v3.3.28) (2024-08-09)
+
+
+- fix: remove the delay on woo plugins promos [closes Codeinwp/themeisle[#1655](https://github.com/Codeinwp/themeisle-sdk/issues/1655)]
+- fix: swap Neve FSE notice with Neve [closes Codeinwp/themeisle[#1654](https://github.com/Codeinwp/themeisle-sdk/issues/1654)]
+- fix: rework optimole promo [closes Codeinwp/themeisle[#1656](https://github.com/Codeinwp/themeisle-sdk/issues/1656)]
+- fix: translations workflow always requiring updates [closes Codeinwp/neve-pro-addon[#2840](https://github.com/Codeinwp/themeisle-sdk/issues/2840)]
+
+##### [Version 3.3.27](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.26...v3.3.27) (2024-07-30)
+
+- fix: array out of bounds index
+
+##### [Version 3.3.26](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.25...v3.3.26) (2024-07-29)
+
+- fix: JS error in core editor
+- twak: change ROP product name
+- tweak: updated developers list
+- fix: removed duplicate feed URL
+- feat: add private translation functionality
+
 ##### [Version 3.3.25](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.24...v3.3.25) (2024-07-08)
 
 improve upgrade link

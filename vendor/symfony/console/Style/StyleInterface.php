@@ -21,90 +21,112 @@ interface StyleInterface
     /**
      * Formats a command title.
      */
-    public function title(string $message): void;
+    public function title(string $message);
 
     /**
      * Formats a section title.
      */
-    public function section(string $message): void;
+    public function section(string $message);
 
     /**
      * Formats a list.
      */
-    public function listing(array $elements): void;
+    public function listing(array $elements);
 
     /**
      * Formats informational text.
+     *
+     * @param string|array $message
      */
-    public function text(string|array $message): void;
+    public function text($message);
 
     /**
      * Formats a success result bar.
+     *
+     * @param string|array $message
      */
-    public function success(string|array $message): void;
+    public function success($message);
 
     /**
      * Formats an error result bar.
+     *
+     * @param string|array $message
      */
-    public function error(string|array $message): void;
+    public function error($message);
 
     /**
      * Formats an warning result bar.
+     *
+     * @param string|array $message
      */
-    public function warning(string|array $message): void;
+    public function warning($message);
 
     /**
      * Formats a note admonition.
+     *
+     * @param string|array $message
      */
-    public function note(string|array $message): void;
+    public function note($message);
 
     /**
      * Formats a caution admonition.
+     *
+     * @param string|array $message
      */
-    public function caution(string|array $message): void;
+    public function caution($message);
 
     /**
      * Formats a table.
      */
-    public function table(array $headers, array $rows): void;
+    public function table(array $headers, array $rows);
 
     /**
      * Asks a question.
+     *
+     * @return mixed
      */
-    public function ask(string $question, ?string $default = null, ?callable $validator = null): mixed;
+    public function ask(string $question, ?string $default = null, ?callable $validator = null);
 
     /**
      * Asks a question with the user input hidden.
+     *
+     * @return mixed
      */
-    public function askHidden(string $question, ?callable $validator = null): mixed;
+    public function askHidden(string $question, ?callable $validator = null);
 
     /**
      * Asks for confirmation.
+     *
+     * @return bool
      */
-    public function confirm(string $question, bool $default = true): bool;
+    public function confirm(string $question, bool $default = true);
 
     /**
      * Asks a choice question.
+     *
+     * @param string|int|null $default
+     *
+     * @return mixed
      */
-    public function choice(string $question, array $choices, mixed $default = null): mixed;
+    public function choice(string $question, array $choices, $default = null);
 
     /**
      * Add newline(s).
      */
-    public function newLine(int $count = 1): void;
+    public function newLine(int $count = 1);
 
     /**
      * Starts the progress output.
      */
-    public function progressStart(int $max = 0): void;
+    public function progressStart(int $max = 0);
 
     /**
      * Advances the progress output X steps.
      */
-    public function progressAdvance(int $step = 1): void;
+    public function progressAdvance(int $step = 1);
 
     /**
      * Finishes the progress output.
      */
-    public function progressFinish(): void;
+    public function progressFinish();
 }

@@ -31,6 +31,7 @@ $files_to_load          = [
 	$themeisle_library_path . '/src/Modules/Notification.php',
 	$themeisle_library_path . '/src/Modules/Logger.php',
 	$themeisle_library_path . '/src/Modules/Translate.php',
+	$themeisle_library_path . '/src/Modules/Translations.php',
 	$themeisle_library_path . '/src/Modules/Review.php',
 	$themeisle_library_path . '/src/Modules/Recommendation.php',
 	$themeisle_library_path . '/src/Modules/Promotions.php',

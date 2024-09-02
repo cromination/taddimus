@@ -25,6 +25,9 @@
 						iconPreview.append( iconElement );
 
 						classInput.trigger( 'change' );
+						if ( 'undefined' !== typeof wp.customize.previewer ) {
+							wp.customize.previewer.refresh();
+						}
 						return false;
 					}
 			);

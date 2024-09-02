@@ -1,5 +1,14 @@
 == Changelog ==
 
+= 6.0.0 (2024-08-28) =
+* `[Fixed]` Generating statistics on plugin settings page when WebP format is unchecked
+* `[Fixed]` Restoring original images in Media Library
+* `[Changed]` Optimization statistics in Media Library
+* `[Added]` Warnings with explanations in plugin settings field: Image loading mode
+
+= 5.13.1 (2024-08-04) =
+* `[Changed]` Optimization statistics in Media Library
+
 = 5.13.0 (2024-06-27) =
 * `[Fixed]` Filter `webpc_option_quality_levels` to change conversion quality levels
 * `[Added]` Support for WordPress 6.6

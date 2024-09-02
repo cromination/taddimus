@@ -142,7 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<label for="webpc-regenerate-force"></label>
 					<span class="webpcField__label">
 						<?php echo esc_html( __( 'Force the conversion of all images again', 'webp-converter-for-media' ) ); ?>
-						<span class="webpcField__labelChecked">
+						<span class="webpcField__labelWarning">
 							<?php echo esc_html( __( 'If you want to optimize only unconverted images, leave this option unchecked. Use only when needed.', 'webp-converter-for-media' ) ); ?>
 						</span>
 					</span>

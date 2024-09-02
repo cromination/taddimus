@@ -40,14 +40,12 @@ use Symfony\Component\Console\Exception\RuntimeException;
  */
 class ArgvInput extends Input
 {
-    /** @var list<string> */
-    private array $tokens;
-    private array $parsed;
+    private $tokens;
+    private $parsed;
 
-    /** @param list<string>|null $argv */
     public function __construct(?array $argv = null, ?InputDefinition $definition = null)
     {
-        $argv ??= $_SERVER['argv'] ?? [];
+        $argv = $argv ?? $_SERVER['argv'] ?? [];
 
         // strip the application name
         array_shift($argv);
@@ -57,13 +55,15 @@ class ArgvInput extends Input
         parent::__construct($definition);
     }
 
-    /** @param list<string> $tokens */
-    protected function setTokens(array $tokens): void
+    protected function setTokens(array $tokens)
     {
         $this->tokens = $tokens;
     }
 
-    protected function parse(): void
+    /**
+     * {@inheritdoc}
+     */
+    protected function parse()
     {
         $parseOptions = true;
         $this->parsed = $this->tokens;
@@ -92,7 +92,7 @@ class ArgvInput extends Input
     /**
      * Parses a short option.
      */
-    private function parseShortOption(string $token): void
+    private function parseShortOption(string $token)
     {
         $name = substr($token, 1);
 
@@ -113,7 +113,7 @@ class ArgvInput extends Input
      *
      * @throws RuntimeException When option given doesn't exist
      */
-    private function parseShortOptionSet(string $name): void
+    private function parseShortOptionSet(string $name)
     {
         $len = \strlen($name);
         for ($i = 0; $i < $len; ++$i) {
@@ -136,7 +136,7 @@ class ArgvInput extends Input
     /**
      * Parses a long option.
      */
-    private function parseLongOption(string $token): void
+    private function parseLongOption(string $token)
     {
         $name = substr($token, 2);
 
@@ -155,7 +155,7 @@ class ArgvInput extends Input
      *
      * @throws RuntimeException When too many arguments are given
      */
-    private function parseArgument(string $token): void
+    private function parseArgument(string $token)
     {
         $c = \count($this->arguments);
 
@@ -199,7 +199,7 @@ class ArgvInput extends Input
      *
      * @throws RuntimeException When option given doesn't exist
      */
-    private function addShortOption(string $shortcut, mixed $value): void
+    private function addShortOption(string $shortcut, $value)
     {
         if (!$this->definition->hasShortcut($shortcut)) {
             throw new RuntimeException(sprintf('The "-%s" option does not exist.', $shortcut));
@@ -213,7 +213,7 @@ class ArgvInput extends Input
      *
      * @throws RuntimeException When option given doesn't exist
      */
-    private function addLongOption(string $name, mixed $value): void
+    private function addLongOption(string $name, $value)
     {
         if (!$this->definition->hasOption($name)) {
             if (!$this->definition->hasNegation($name)) {
@@ -263,7 +263,10 @@ class ArgvInput extends Input
         }
     }
 
-    public function getFirstArgument(): ?string
+    /**
+     * {@inheritdoc}
+     */
+    public function getFirstArgument()
     {
         $isOption = false;
         foreach ($this->tokens as $i => $token) {
@@ -295,7 +298,10 @@ class ArgvInput extends Input
         return null;
     }
 
-    public function hasParameterOption(string|array $values, bool $onlyParams = false): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function hasParameterOption($values, bool $onlyParams = false)
     {
         $values = (array) $values;
 
@@ -317,7 +323,10 @@ class ArgvInput extends Input
         return false;
     }
 
-    public function getParameterOption(string|array $values, string|bool|int|float|array|null $default = false, bool $onlyParams = false): mixed
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameterOption($values, $default = false, bool $onlyParams = false)
     {
         $values = (array) $values;
         $tokens = $this->tokens;
@@ -346,38 +355,11 @@ class ArgvInput extends Input
     }
 
     /**
-     * Returns un-parsed and not validated tokens.
-     *
-     * @param bool $strip Whether to return the raw parameters (false) or the values after the command name (true)
-     *
-     * @return list<string>
-     */
-    public function getRawTokens(bool $strip = false): array
-    {
-        if (!$strip) {
-            return $this->tokens;
-        }
-
-        $parameters = [];
-        $keep = false;
-        foreach ($this->tokens as $value) {
-            if (!$keep && $value === $this->getFirstArgument()) {
-                $keep = true;
-
-                continue;
-            }
-            if ($keep) {
-                $parameters[] = $value;
-            }
-        }
-
-        return $parameters;
-    }
-
-    /**
      * Returns a stringified representation of the args passed to the command.
+     *
+     * @return string
      */
-    public function __toString(): string
+    public function __toString()
     {
         $tokens = array_map(function ($token) {
             if (preg_match('{^(-[^=]+=)(.+)}', $token, $match)) {

@@ -21,37 +21,43 @@ use Symfony\Component\Console\Exception\LogicException;
  */
 class Question
 {
-    private ?int $attempts = null;
-    private bool $hidden = false;
-    private bool $hiddenFallback = true;
-    private ?\Closure $autocompleterCallback = null;
-    private ?\Closure $validator = null;
-    private ?\Closure $normalizer = null;
-    private bool $trimmable = true;
-    private bool $multiline = false;
+    private $question;
+    private $attempts;
+    private $hidden = false;
+    private $hiddenFallback = true;
+    private $autocompleterCallback;
+    private $validator;
+    private $default;
+    private $normalizer;
+    private $trimmable = true;
+    private $multiline = false;
 
     /**
      * @param string                     $question The question to ask to the user
      * @param string|bool|int|float|null $default  The default answer to return if the user enters nothing
      */
-    public function __construct(
-        private string $question,
-        private string|bool|int|float|null $default = null,
-    ) {
+    public function __construct(string $question, $default = null)
+    {
+        $this->question = $question;
+        $this->default = $default;
     }
 
     /**
      * Returns the question.
+     *
+     * @return string
      */
-    public function getQuestion(): string
+    public function getQuestion()
     {
         return $this->question;
     }
 
     /**
      * Returns the default answer.
+     *
+     * @return string|bool|int|float|null
      */
-    public function getDefault(): string|bool|int|float|null
+    public function getDefault()
     {
         return $this->default;
     }
@@ -69,7 +75,7 @@ class Question
      *
      * @return $this
      */
-    public function setMultiline(bool $multiline): static
+    public function setMultiline(bool $multiline): self
     {
         $this->multiline = $multiline;
 
@@ -78,8 +84,10 @@ class Question
 
     /**
      * Returns whether the user response must be hidden.
+     *
+     * @return bool
      */
-    public function isHidden(): bool
+    public function isHidden()
     {
         return $this->hidden;
     }
@@ -91,7 +99,7 @@ class Question
      *
      * @throws LogicException In case the autocompleter is also used
      */
-    public function setHidden(bool $hidden): static
+    public function setHidden(bool $hidden)
     {
         if ($this->autocompleterCallback) {
             throw new LogicException('A hidden question cannot use the autocompleter.');
@@ -104,8 +112,10 @@ class Question
 
     /**
      * In case the response cannot be hidden, whether to fallback on non-hidden question or not.
+     *
+     * @return bool
      */
-    public function isHiddenFallback(): bool
+    public function isHiddenFallback()
     {
         return $this->hiddenFallback;
     }
@@ -115,7 +125,7 @@ class Question
      *
      * @return $this
      */
-    public function setHiddenFallback(bool $fallback): static
+    public function setHiddenFallback(bool $fallback)
     {
         $this->hiddenFallback = $fallback;
 
@@ -124,8 +134,10 @@ class Question
 
     /**
      * Gets values for the autocompleter.
+     *
+     * @return iterable|null
      */
-    public function getAutocompleterValues(): ?iterable
+    public function getAutocompleterValues()
     {
         $callback = $this->getAutocompleterCallback();
 
@@ -139,17 +151,18 @@ class Question
      *
      * @throws LogicException
      */
-    public function setAutocompleterValues(?iterable $values): static
+    public function setAutocompleterValues(?iterable $values)
     {
         if (\is_array($values)) {
             $values = $this->isAssoc($values) ? array_merge(array_keys($values), array_values($values)) : array_values($values);
 
-            $callback = static fn () => $values;
-        } elseif ($values instanceof \Traversable) {
             $callback = static function () use ($values) {
-                static $valueCache;
-
-                return $valueCache ??= iterator_to_array($values, false);
+                return $values;
+            };
+        } elseif ($values instanceof \Traversable) {
+            $valueCache = null;
+            $callback = static function () use ($values, &$valueCache) {
+                return $valueCache ?? $valueCache = iterator_to_array($values, false);
             };
         } else {
             $callback = null;
@@ -173,13 +186,13 @@ class Question
      *
      * @return $this
      */
-    public function setAutocompleterCallback(?callable $callback): static
+    public function setAutocompleterCallback(?callable $callback = null): self
     {
         if ($this->hidden && null !== $callback) {
             throw new LogicException('A hidden question cannot use the autocompleter.');
         }
 
-        $this->autocompleterCallback = null === $callback ? null : $callback(...);
+        $this->autocompleterCallback = $callback;
 
         return $this;
     }
@@ -189,17 +202,19 @@ class Question
      *
      * @return $this
      */
-    public function setValidator(?callable $validator): static
+    public function setValidator(?callable $validator = null)
     {
-        $this->validator = null === $validator ? null : $validator(...);
+        $this->validator = $validator;
 
         return $this;
     }
 
     /**
      * Gets the validator for the question.
+     *
+     * @return callable|null
      */
-    public function getValidator(): ?callable
+    public function getValidator()
     {
         return $this->validator;
     }
@@ -213,7 +228,7 @@ class Question
      *
      * @throws InvalidArgumentException in case the number of attempts is invalid
      */
-    public function setMaxAttempts(?int $attempts): static
+    public function setMaxAttempts(?int $attempts)
     {
         if (null !== $attempts && $attempts < 1) {
             throw new InvalidArgumentException('Maximum number of attempts must be a positive value.');
@@ -228,8 +243,10 @@ class Question
      * Gets the maximum number of attempts.
      *
      * Null means an unlimited number of attempts.
+     *
+     * @return int|null
      */
-    public function getMaxAttempts(): ?int
+    public function getMaxAttempts()
     {
         return $this->attempts;
     }
@@ -241,9 +258,9 @@ class Question
      *
      * @return $this
      */
-    public function setNormalizer(callable $normalizer): static
+    public function setNormalizer(callable $normalizer)
     {
-        $this->normalizer = $normalizer(...);
+        $this->normalizer = $normalizer;
 
         return $this;
     }
@@ -252,13 +269,15 @@ class Question
      * Gets the normalizer for the response.
      *
      * The normalizer can ba a callable (a string), a closure or a class implementing __invoke.
+     *
+     * @return callable|null
      */
-    public function getNormalizer(): ?callable
+    public function getNormalizer()
     {
         return $this->normalizer;
     }
 
-    protected function isAssoc(array $array): bool
+    protected function isAssoc(array $array)
     {
         return (bool) \count(array_filter(array_keys($array), 'is_string'));
     }
@@ -271,7 +290,7 @@ class Question
     /**
      * @return $this
      */
-    public function setTrimmable(bool $trimmable): static
+    public function setTrimmable(bool $trimmable): self
     {
         $this->trimmable = $trimmable;
 
