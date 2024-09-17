@@ -51,6 +51,10 @@ class PathsGenerator {
 		);
 	}
 
+	public static function get_site_url(): string {
+		return apply_filters( 'webpc_site_url', ( defined( 'WP_HOME' ) ) ? WP_HOME : get_site_url() );
+	}
+
 	private static function get_root_directory(): string {
 		return ( defined( 'WP_CONTENT_DIR' ) ) ? dirname( WP_CONTENT_DIR ) : ABSPATH;
 	}

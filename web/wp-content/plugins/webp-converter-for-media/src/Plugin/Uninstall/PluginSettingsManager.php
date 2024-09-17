@@ -39,6 +39,7 @@ class PluginSettingsManager {
 		OptionsAccessManager::delete_option( 'webpc_notice_cloudways' );
 		OptionsAccessManager::delete_option( 'webpc_notice_litespeed' );
 		OptionsAccessManager::delete_option( 'webpc_notice_bf2022' );
+		OptionsAccessManager::delete_option( 'webpc_notice_bf2023' );
 		OptionsAccessManager::delete_option( 'webpc_notice_upgrade' );
 
 		OptionsAccessManager::delete_option( ErrorDetectorAggregator::ERRORS_CACHE_OPTION );

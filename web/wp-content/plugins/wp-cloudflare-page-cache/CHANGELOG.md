@@ -1,3 +1,23 @@
+#####   Version 5.0.3 (2024-09-16)
+
+- Fix wrong documentation link for media lazy loading setting
+- Fix error when saving settings because of conflict with the wp_lazy_loading_enabled filter
+- Fix cache test not taking into account legacy page rule
+- Fix issue where license cannot be activated on pro version
+- Fix issue with pro version requiring update even if at latest version
+
+#####   Version 5.0.2 (2024-09-11)
+
+- Use proper versions for backend scripts and styles
+- Improve dashboard script dependency loading
+- Improve dashboard settings organization and UI
+- Fixed page cache setting not appearing in some instances
+- Fixed Cloudflare cache toggle value not being consistent in the dashboard
+- Updated Cloudflare cache rule to work regardless of the URL protocol
+- Added media lazy loading feature
+- Added javascript delayed loading feature [PRO]
+- Added javascript defer feature [PRO]
+
 #####   Version 5.0.1 (2024-08-28)
 
 - Fixed critical error produced by the Cache status bar

@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 6.0.0
+Stable tag: 6.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -205,20 +205,17 @@ After setting the filters go to `Settings -> Converter for Media` in the admin p
 
 = How to exclude paths from converting? =
 
-To exclude selected directories, use the following filter:
+To exclude selected directories, provide them in the `Excluded directories` field in the Advanced Settings tab in the plugin settings.
 
-`add_filter( 'webpc_supported_source_directory', function( bool $status, string $directory_name, string $server_path ): bool {
-    $excluded_directories = [ 'my-directory' ];
-    if ( in_array( $directory_name, $excluded_directories ) ) {
-        return false;
-    }
-    return $status;
-}, 10, 3 );`
+In this field, you can enter a directory name or path. Here are examples:
+- `2023`
+- `2024/01`
+- `2023,2024/01`
 
-To exclude selected files use the following filter *(in this case with the suffix "-skipwebp" in a filename, e.g. image-skipwebp.png)*:
+To exclude selected files, use the following filter *(in this case with the suffix "-skipped" in a filename, e.g. image-skipped.png)*:
 
 `add_filter( 'webpc_supported_source_file', function( bool $status, string $file_name, string $server_path ): bool {
-    $excluded_suffix = '-skipwebp';
+    $excluded_suffix = '-skipped';
     if ( strpos( $file_name, $excluded_suffix . '.' ) !== false ) {
         return false;
     }
@@ -227,7 +224,7 @@ To exclude selected files use the following filter *(in this case with the suffi
 
 Argument `$server_path` is the absolute server path to a directory or file. Inside the filters, you can apply more complicated rules as needed.
 
-Filters run before images are converted - they no longer support converted images. You have to delete them manually if they should not be converted.
+Changes to excluded directories and files take effect before images are converted - they do not affect already converted images. These images must be manually removed from the directory: `/wp-content/uploads-webpc/`.
 
 = Support for custom directories =
 
@@ -303,6 +300,13 @@ Current list of supported CDN servers:
 
 == Changelog ==
 
+= 6.1.0 (2024-09-13) =
+* `[Removed]` Filter `webpc_supported_source_directory`
+* `[Fixed]` Handling of excluded directories when uploading new images
+* `[Fixed]` Handling of excluded filenames when uploading new images
+* `[Fixed]` Adding support for custom directories using webpc_source_directories filter
+* `[Fixed]` Verification of rewrites_not_working server configuration error when HTTP referer is required
+
 = 6.0.0 (2024-08-28) =
 * `[Fixed]` Generating statistics on plugin settings page when WebP format is unchecked
 * `[Fixed]` Restoring original images in Media Library
@@ -315,32 +319,6 @@ Current list of supported CDN servers:
 = 5.13.0 (2024-06-27) =
 * `[Fixed]` Filter `webpc_option_quality_levels` to change conversion quality levels
 * `[Added]` Support for WordPress 6.6
-
-= 5.12.5 (2024-04-15) =
-* `[Fixed]` Modification of plugin settings via filters
-
-= 5.12.4 (2024-04-12) =
-* `[Fixed]` Support for changed upload directory path based on absolute path from upload_path option
-* `[Fixed]` UX of plugin settings page
-* `[Changed]` Error message for rewrites_not_executed error in server configuration
-
-= 5.12.3 (2024-03-19) =
-* `[Fixed]` Support for changed upload directory path based on upload_path option
-
-= 5.12.2 (2024-03-14) =
-* `[Changed]` Verification of rewrites_not_executed server configuration error
-* `[Added]` Support for changed upload directory path based on upload_path option
-* `[Added]` Support for WordPress 6.5
-
-= 5.12.1 (2024-02-15) =
-* `[Fixed]` Verification of rewrites_not_executed server configuration error when there is also a problem with the Gd or Imagick libraries
-* `[Changed]` Error message for bypassing_apache error in server configuration
-* `[Added]` Possibility to add directory paths in the Excluded directories field in Advanced Settings
-
-= 5.12.0 (2024-01-18) =
-* `[Changed]` Statistics about bulk optimization process
-* `[Added]` Expert settings to overwrite paths for rewrite rules
-* `[Added]` Improvement in verifying operation of redirections
 
 See [changelog.txt](https://url.mattplugins.com/converter-readme-changelog) for previous versions.
 

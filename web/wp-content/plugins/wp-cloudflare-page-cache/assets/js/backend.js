@@ -1,7 +1,10 @@
 "use strict"
 
 let swcfpc_toolbar_cache_status_tries = 0;
-let swcfpc_toolbar_cache_status_interval = null;
+let swcfpc_toolbar_cache_status_interval = /** @type {number|null} */ (null);
+
+const swcfpc_ajax_url = /** @type {string} */ ( window.swcfpcOptions.ajaxUrl );
+let swcfpc_cache_enabled = parseInt( window.swcfpcOptions.cacheEnabled );
 
 function swcfpc_handle_conditional_settings(mainOption) {
   // Check if the checked option has value > 0 i.e. YES || Enable selected
@@ -23,7 +26,7 @@ function swcfpc_handle_conditional_settings(mainOption) {
     document.querySelectorAll(`.${mainOption.dataset.mainoption}`).forEach((item) => {
       item.classList.add('swcfpc_hide')
     })
-    
+
 
     // Show the items with class = `data-mainoption_not`
     document.querySelectorAll(`.${mainOption.dataset.mainoption}_not`).forEach((item) => {
@@ -401,7 +404,7 @@ async function swcfpc_test_page_cache() {
     if (response.ok) {
       const data = await response.json()
       swcfpc_unlock_screen()
-      
+
       if (data.status === 'ok') {
         swcfpc_display_ok_dialog("Success", `${data.html}`, null, null, "success")
       } else {
@@ -725,6 +728,25 @@ function swcfpc_update_toolbar_cache_status() {
   }
 }
 
+function swcfpc_handle_lazyload_radios() {
+  const lazyLoadRadios = document.querySelectorAll('input[name="swcfpc_cf_lazy_loading"]');
+  const nativeLazyLoadRadios = document.querySelectorAll('input[name="swcfpc_cf_native_lazy_loading"]');
+
+  function toggleNativeLazyLoad(status) {
+    nativeLazyLoadRadios.forEach(radio => {
+      if (!status) {
+        radio.checked = !parseInt(radio.value);
+      }
+      radio.classList.toggle('disabled', !status);
+    });
+  }
+
+  lazyLoadRadios.forEach(radio => {
+    radio.addEventListener('change', function () {
+      toggleNativeLazyLoad(parseInt(this.value) !== 1);
+    });
+  });
+}
 
 document.addEventListener('DOMContentLoaded', (event) => {
 
@@ -883,6 +905,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.querySelector('#swcfpc_options')?.addEventListener('submit', (e) => {
       swcfpc_lock_screen();
     })
+
+    swcfpc_handle_lazyload_radios();
 
     swcfpc_toolbar_cache_status_interval = window.setInterval(swcfpc_update_toolbar_cache_status, 2000);
   } catch (e) {

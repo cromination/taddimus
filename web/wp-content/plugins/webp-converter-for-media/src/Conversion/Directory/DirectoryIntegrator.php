@@ -142,7 +142,7 @@ class DirectoryIntegrator implements HookableInterface {
 			}
 		}
 
-		$source_url = apply_filters( 'webpc_site_url', ( defined( 'WP_HOME' ) ) ? WP_HOME : get_site_url() );
+		$source_url = PathsGenerator::get_site_url();
 		return sprintf( '%1$s/%2$s', $source_url, $directory_name );
 	}
 }

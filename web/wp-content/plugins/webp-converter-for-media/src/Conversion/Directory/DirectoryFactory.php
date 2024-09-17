@@ -34,10 +34,29 @@ class DirectoryFactory implements HookableInterface {
 		$this->set_integration( new SourceDirectory( 'plugins' ) );
 		$this->set_integration( new SourceDirectory( 'themes' ) );
 		$this->set_integration( new UploadsDirectory() );
+		$this->set_integration( new UploadsWebpcDirectory() );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function init_hooks() {
+		add_action( 'init', [ $this, 'init_hooks_after_setup' ], 0 );
+		add_action( 'webpc_settings_updated', [ $this, 'remove_unused_output_directories' ], 10, 2 );
+		add_action( 'webpc_settings_updated', [ $this, 'remove_unused_output_format' ], 10, 2 );
+	}
+
+	/**
+	 * Loads hooks before other init_hooks_after_setup() functions.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function init_hooks_after_setup() {
 		foreach ( apply_filters( 'webpc_source_directories', [] ) as $directory_name ) {
 			$this->set_integration( new SourceDirectory( $directory_name ) );
 		}
-		$this->set_integration( new UploadsWebpcDirectory() );
+		$this->directories_integration->init_hooks();
 	}
 
 	/**
@@ -52,27 +71,6 @@ class DirectoryFactory implements HookableInterface {
 			$this->directories_integration = new DirectoryIntegrator( $this->format_factory );
 		}
 		$this->directories_integration->add_directory( $directory );
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function init_hooks() {
-		$this->directories_integration->init_hooks();
-		add_action( 'init', [ $this, 'init_hooks_after_setup' ] );
-		add_action( 'webpc_settings_updated', [ $this, 'remove_unused_output_directories' ], 10, 2 );
-		add_action( 'webpc_settings_updated', [ $this, 'remove_unused_output_format' ], 10, 2 );
-	}
-
-	/**
-	 * @return void
-	 * @internal
-	 */
-	public function init_hooks_after_setup() {
-		foreach ( apply_filters( 'webpc_source_directories', [] ) as $directory_name ) {
-			$this->set_integration( new SourceDirectory( $directory_name ) );
-		}
-		$this->directories_integration->init_hooks();
 	}
 
 	/**

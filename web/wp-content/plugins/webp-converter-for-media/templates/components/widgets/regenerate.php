@@ -66,14 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="webpcPage__widgetNotice">
 				<p>
 					<?php
-					echo wp_kses_post(
-						sprintf(
-						/* translators: %1$s: open strong tag, %2$s: close strong tag */
-							__( 'Converting images to WebP and AVIF simultaneously guarantees the lowest weight of your images and compatibility with all browsers. By using the AVIF format you will reduce the weight of your images even more compared to WebP.', 'webp-converter-for-media' ),
-							'<strong>',
-							'</strong>'
-						)
-					);
+					echo esc_html__( 'Converting images to WebP and AVIF simultaneously guarantees the lowest weight of your images and compatibility with all browsers. By using the AVIF format you will reduce the weight of your images even more compared to WebP.', 'webp-converter-for-media' );
 					?>
 				</p>
 			</div>
@@ -147,7 +140,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</span>
 					</span>
 				</div>
-				<button type="button" class="webpcLoader__button webpcButton webpcButton--blue webpcButton--bg" data-submit>
+				<button type="button" class="webpcLoader__button webpcButton webpcButton--blue webpcButton--bg"
+					data-submit
+					data-open-popup="regeneration">
 					<?php echo esc_html( __( 'Start Bulk Optimization', 'webp-converter-for-media' ) ); ?>
 				</button>
 				<div class="webpcLoader__status" data-status hidden>

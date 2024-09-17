@@ -84,6 +84,9 @@
     margin-top: 6px;
     padding-top: 5px;
     transition: all 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .settings_page_wp-cloudflare-super-page-cache-index #wpcontent {
@@ -240,7 +243,7 @@
 }
 
 #swcfpc_sidebar {
-    float: left;
+    float: right;
     width: 25%;
     padding-top: 50px;
 }
@@ -273,9 +276,12 @@
 }
 
 @media (min-width: 1200px) {
-    #swcfpc_main_content.width_sidebar {
+    #swcfpc_main_content {
         width: 75%;
         margin: 0 auto;
+    }
+    #swcfpc_main_content.width_sidebar {
+        display: inline-block;
     }
 }
 
@@ -348,7 +354,7 @@
     margin-top: 40px;
 }
 
-.main_section_header.first_section {
+.main_section_header.first_section, .main_section.first_section {
     margin-top: 20px;
 }
 
@@ -525,7 +531,7 @@
         [type=text],
         [type=time],
         [type=url],
-        [type=week],
+        [type=week]
     ),
     select,
     textarea
@@ -684,6 +690,13 @@
     box-shadow: none;
 }
 
+
+.switch-field input.disabled + label {
+    filter: grayscale(100%);
+    opacity: .75;
+    pointer-events: none;
+}
+
 .switch-field label:first-of-type {
     border-radius: 4px 0 0 4px;
 }
@@ -716,7 +729,7 @@
 }
 
 .swcfpc-test-response li.is-warning::before {
-    content: '⚠️'; 
+    content: '⚠️';
     color: #f38020;
 }
 
@@ -740,4 +753,56 @@
 
 .swcfpc-required {
     color: #dc3232;
+}
+
+.spc-upsell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    background: #f38020;
+    font-weight: 800;
+    margin-left: auto;
+    float: right;
+    padding: 0 10px;
+    border-radius: 3px;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all .1s ease-in;
+    letter-spacing: normal;
+}
+.spc-upsell:hover {
+    background: #fff;
+    color: #f38020;
+}
+.spc-upsell i {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+}
+
+.spc-pro-tag {
+    background: #333;
+    color: #fff;
+    padding: 2px 5px 2px 3px;
+    margin-left: 5px;
+    border-radius: 5px;
+    font-weight: 400;
+    display: inline-flex;
+    text-decoration: none;
+    font-size: 14px;
+    text-transform: uppercase;
+    align-items: center;
+}
+
+.spc-pro-tag:hover {
+    background: #f38020;
+    color: #fff;
+}
+
+.spc-pro-tag .dashicons {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

@@ -1,14 +1,14 @@
 === Super Page Cache ===
-Contributors: optimole, salvatorefresta, isaumya
-Tags: cloudflare, caching ,performance, page caching, pagespeed, cdn
-Requires at least: 4.9
-Requires PHP: 7.0
+Contributors: themeisle, salvatorefresta, isaumya
+Tags: cloudflare, caching ,performance, page caching, pagespeed
+Requires at least: 5.3
+Requires PHP: 7.4
 Tested up to: 6.6
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Speed up your WordPress website, improve your pagespeed & seo by optimising your images, html, js, css and caching onto global CDN using any Cloudflare Plan.
+Supercharge Your Pagespeed and SEO by Powerful Caching, JS/CSS, Media, and Cloudflare's Global CDN.
 
 == Description ==
 
@@ -166,6 +166,32 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 
 == Changelog ==
+
+#####   Version 5.0.3 (2024-09-16)
+
+- Fix wrong documentation link for media lazy loading setting
+- Fix error when saving settings because of conflict with the wp_lazy_loading_enabled filter
+- Fix cache test not taking into account legacy page rule
+- Fix issue where license cannot be activated on pro version
+- Fix issue with pro version requiring update even if at latest version
+
+
+
+
+#####   Version 5.0.2 (2024-09-11)
+
+- Use proper versions for backend scripts and styles
+- Improve dashboard script dependency loading
+- Improve dashboard settings organization and UI
+- Fixed page cache setting not appearing in some instances
+- Fixed Cloudflare cache toggle value not being consistent in the dashboard
+- Updated Cloudflare cache rule to work regardless of the URL protocol
+- Added media lazy loading feature
+- Added javascript delayed loading feature [PRO]
+- Added javascript defer feature [PRO]
+
+
+
 
 #####   Version 5.0.1 (2024-08-28)
 
@@ -777,9 +803,11 @@ Version 3.3 - Fixed missing checks in backend
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.jpg
-Step 1 - Enter your Cloudflare's API Key and e-mail
-2. This screen shot description corresponds to screenshot-2.jpg
-Step 2 - Select the domain
-3. This screen shot description corresponds to screenshot-3.jpg
-Step 3 - Enable the page Cache
+1. Enable Caching
+2. Cache Settings
+3. Cloudflare (CDN & Edge Caching Settings)
+4. Advanced Settings
+5. Third-Party Plugins Settings
+6. Other Settings
+7. Test Caching and FAQ
+

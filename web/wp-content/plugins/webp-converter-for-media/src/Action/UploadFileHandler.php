@@ -111,6 +111,10 @@ class UploadFileHandler implements HookableInterface {
 		$file_extension  = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
 		if ( ! in_array( $file_extension, $plugin_settings[ SupportedExtensionsOption::OPTION_NAME ] ) ) {
 			return $filename;
+		} elseif ( ! apply_filters( 'webpc_supported_source_directory', true, basename( dirname( $filename ) ), $filename ) ) {
+			return $filename;
+		} elseif ( ! apply_filters( 'webpc_supported_source_file', true, basename( $filename ), $filename ) ) {
+			return $filename;
 		}
 
 		$this->uploaded_paths[] = str_replace( '\\', '/', $filename );
@@ -131,6 +135,10 @@ class UploadFileHandler implements HookableInterface {
 		$directory = $this->get_attachment_directory( $data['file'] );
 		$list      = [];
 
+		if ( ! apply_filters( 'webpc_supported_source_directory', true, basename( $directory ), $directory ) ) {
+			return $list;
+		}
+
 		if ( isset( $data['original_image'] ) ) {
 			$list[] = $directory . $data['original_image'];
 		}
@@ -142,6 +150,13 @@ class UploadFileHandler implements HookableInterface {
 				$list[] = $path;
 			}
 		}
+
+		foreach ( $list as $index => $path ) {
+			if ( ! apply_filters( 'webpc_supported_source_file', true, basename( $path ), $path ) ) {
+				unset( $list[ $index ] );
+			}
+		}
+
 		return array_values( array_unique( $list ) );
 	}
 

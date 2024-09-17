@@ -1,5 +1,12 @@
 == Changelog ==
 
+= 6.1.0 (2024-09-13) =
+* `[Removed]` Filter `webpc_supported_source_directory`
+* `[Fixed]` Handling of excluded directories when uploading new images
+* `[Fixed]` Handling of excluded filenames when uploading new images
+* `[Fixed]` Adding support for custom directories using webpc_source_directories filter
+* `[Fixed]` Verification of rewrites_not_working server configuration error when HTTP referer is required
+
 = 6.0.0 (2024-08-28) =
 * `[Fixed]` Generating statistics on plugin settings page when WebP format is unchecked
 * `[Fixed]` Restoring original images in Media Library

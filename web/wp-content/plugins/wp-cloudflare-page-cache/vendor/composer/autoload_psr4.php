@@ -6,4 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'SPC_Pro\\' => array($baseDir . '/pro'),
+    'SPC\\' => array($baseDir . '/src'),
 );
