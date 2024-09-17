@@ -44,6 +44,10 @@ RewriteCond %{HTTP_REFERER} !^$
 RewriteCond %{HTTP_REFERER} !^http(s)?://(www\.)?taddimus.com [NC]
 RewriteRule \.(jpg|jpeg|png|gif|svg)$ - [NC,F,L]
 
+# Block AI agents
+RewriteCond %{HTTP_REFERER} CCBot|GPTBot|ChatGPT-User|Anthropic-ai|ClaudeBot|Omgilibot|Omgili|FacebookBot|Meta-ExternalAgent|Meta-ExternalFetcher|Diffbot|Bytespider|PerplexityBot|ImagesiftBot|cohere-ai|Timpibot|Webzio-Extended|YouBot [NC]
+RewriteRule . - [R=403,L]
+
 # Protect all htaccess files
 <files ~ "^.*\.([Hh][Tt][Aa])">
 order allow,deny
