@@ -160,7 +160,6 @@ class Hestia_Customizer_Range_Value_Control extends WP_Customize_Control {
 					<i class="dashicons dashicons-editor-help" style="vertical-align: text-bottom;"
 							title="{{{ data.description }}}"></i>
 				<# } #>
-			</span>
 		<# if ( data.media_query ) { #>
 		<ul class="responsive-switchers">
 			<li class="desktop">
@@ -180,6 +179,7 @@ class Hestia_Customizer_Range_Value_Control extends WP_Customize_Control {
 			</li>
 		</ul>
 		<# } #>
+		</span>
 		<# }
 		var min, max, step, default_value;
 		if( data.min ){

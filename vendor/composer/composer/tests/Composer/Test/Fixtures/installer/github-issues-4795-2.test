@@ -1,6 +1,6 @@
 --TEST--
 
-See Github issue #4795 ( github.com/composer/composer/issues/4795 ).
+See GitHub issue #4795 ( github.com/composer/composer/issues/4795 ).
 
 Composer\Installer::allowListUpdateDependencies should not output a warning for dependencies that need to be updated
 that are also a root package, when that root package is also explicitly allowed.
@@ -45,8 +45,8 @@ that are also a root package, when that root package is also explicitly allowed.
     "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": []
+    "platform": {},
+    "platform-dev": {}
 }
 --RUN--
 update a/a b/b --with-dependencies

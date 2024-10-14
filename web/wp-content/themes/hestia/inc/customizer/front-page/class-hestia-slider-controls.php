@@ -145,11 +145,14 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 	 * Change controls from lite version.
 	 */
 	public function change_controls() {
+		error_log( 'CHANGING CONTROLS' );
 
 		$this->change_customizer_object( 'control', 'header_video', 'section', 'hestia_big_title' );
 		$this->change_customizer_object( 'control', 'header_video', 'priority', 15 );
+		$this->change_customizer_object( 'control', 'header_video', 'active_callback', '__return_true' );
 		$this->change_customizer_object( 'control', 'external_header_video', 'section', 'hestia_big_title' );
 		$this->change_customizer_object( 'control', 'external_header_video', 'priority', 20 );
+		$this->change_customizer_object( 'control', 'external_header_video', 'active_callback', '__return_true' );
 
 		$this->change_customizer_object(
 			'control',

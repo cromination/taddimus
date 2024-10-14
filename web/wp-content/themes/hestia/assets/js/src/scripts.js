@@ -995,7 +995,7 @@
 		 * Check navbar scroll point.
 		 */
 		'checkNavbarScrollPoint': function () {
-			if ( $( '.navbar-header' ).length === 0 ) {
+			if ( $( '.navbar-fixed-top' ).length === 0 ) {
 				return false;
 			}
 
@@ -1035,9 +1035,9 @@
 			$( window ).on(
 				'scroll', function () {
 					if ( $( document ).scrollTop() >= navbarScrollPoint ) {
-						$( '.navbar' ).addClass( 'navbar-scroll-point' );
+						$( '.navbar-fixed-top' ).addClass( 'navbar-scroll-point' );
 					} else {
-						$( '.navbar' ).removeClass( 'navbar-scroll-point' );
+						$( '.navbar-fixed-top' ).removeClass( 'navbar-scroll-point' );
 					}
 				}
 			);
@@ -1067,13 +1067,21 @@ jQuery( window ).on( 'load',
 	}
 );
 
-jQuery( window ).resize(
-	function () {
-		jQuery.hestiaFeatures.initMasonry();
-		jQuery.hestia.fixHeaderPadding();
-		jQuery.hestia.headerSpacingFrontpage();
-		jQuery.hestia.handleGutenbergAlignment();
-		jQuery.hestiaNavBarScroll.checkNavbarScrollPoint();
-		jQuery.navigation.repositionDropdowns();
-	}
-);
+jQuery(window).on('resize', (function() {
+	var windowWidth = jQuery(window).width();
+	
+	return function(e) {
+			var newWindowWidth = jQuery(window).width();
+			
+			jQuery.hestiaFeatures.initMasonry();
+			jQuery.hestia.fixHeaderPadding();
+			jQuery.hestia.headerSpacingFrontpage();
+			jQuery.hestiaNavBarScroll.checkNavbarScrollPoint();
+			jQuery.navigation.repositionDropdowns();
+
+			if (newWindowWidth !== windowWidth) {
+					jQuery.hestia.handleGutenbergAlignment();
+					windowWidth = newWindowWidth;
+			}
+	};
+})());

@@ -234,7 +234,7 @@ class Hestia_Big_Title_Controls extends Hestia_Front_Page_Section_Controls_Abstr
 					'transport'         => $this->selective_refresh,
 				),
 				array(
-					'label'    => esc_html__( 'Text', 'hestia' ),
+					'label'    => esc_html__( 'Subtitle', 'hestia' ),
 					'section'  => 'hestia_big_title',
 					'priority' => 30,
 				),

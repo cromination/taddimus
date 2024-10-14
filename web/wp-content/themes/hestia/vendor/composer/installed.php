@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'codeinwp/hestia-pro',
-        'pretty_version' => 'v3.1.10',
-        'version' => '3.1.10.0',
-        'reference' => '53f5ee6ef0f72465003a7ea021225aafd1ee9c20',
+        'pretty_version' => 'v3.2.1',
+        'version' => '3.2.1.0',
+        'reference' => '18c07eecc7c4d7a7d3a11f4fb1779dc045cf7dbc',
         'type' => 'wordpress-theme',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,18 +11,18 @@
     ),
     'versions' => array(
         'codeinwp/hestia-pro' => array(
-            'pretty_version' => 'v3.1.10',
-            'version' => '3.1.10.0',
-            'reference' => '53f5ee6ef0f72465003a7ea021225aafd1ee9c20',
+            'pretty_version' => 'v3.2.1',
+            'version' => '3.2.1.0',
+            'reference' => '18c07eecc7c4d7a7d3a11f4fb1779dc045cf7dbc',
             'type' => 'wordpress-theme',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'codeinwp/themeisle-sdk' => array(
-            'pretty_version' => '3.3.29',
-            'version' => '3.3.29.0',
-            'reference' => '4d63bc81ec0357c8675dac1e35511fd81104605d',
+            'pretty_version' => '3.3.30',
+            'version' => '3.3.30.0',
+            'reference' => '801a07604a297f02de3067948176f91b4c84bd8a',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/themeisle-sdk',
             'aliases' => array(),
@@ -31,7 +31,7 @@
         'codeinwp/ti-about-page' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'b3c3149',
+            'reference' => 'c95bc1d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/ti-about-page',
             'aliases' => array(
@@ -51,7 +51,7 @@
         'codeinwp/ti-white-label' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => 'a856af7a9a5e800515682462f2b8cfc52fd12b48',
+            'reference' => '31ee7f9f8ba25bde1844c95c598ebb8d914fce50',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/ti-white-label',
             'aliases' => array(

@@ -430,24 +430,16 @@
          * This function triggers click on show/hide control when user clicks on one of their custom shortcut.
          */
         'handleShowHideShortcut': function () {
-            var classesToLook = [
-                'hestia_features_hide',
-                'hestia_about_hide',
-                'hestia_shop_hide',
-                'hestia_portfolio_hide',
-                'hestia_team_hide',
-                'hestia_pricing_hide',
-                'hestia_ribbon_hide',
-                'hestia_testimonials_hide',
-                'hestia_clients_bar_hide',
-                'hestia_subscribe_hide',
-                'hestia_blog_hide',
-                'hestia_contact_hide'];
 
-            classesToLook.forEach(function(element){
-                $( '.customize-partial-edit-shortcut-'+element ).on( 'click', function() {
-                    wp.customize.preview.send('hestia-customize-disable-section', element);
-                });
+            $('.hestia-section-cp-utils').on('click', 'button', function() {
+                var control = $(this).parent().data('control');
+
+                if ($(this).hasClass('toggle')) {
+                    wp.customize.preview.send('focus-control', control);
+                    wp.customize.preview.send('hestia-customize-disable-section', control);
+                } else if ($(this).hasClass('edit')) {
+                    wp.customize.preview.send('focus-control', control);
+                }
             });
         },
 

@@ -42,22 +42,19 @@
   /* six items */
   .hestia-mega-menu > .dropdown-menu .hestia-mm-col:first-child:nth-last-child(5),
   .hestia-mega-menu > .dropdown-menu .hestia-mm-col:first-child:nth-last-child(5) ~ li {
-    width: 16.66666666666667%;
+    width: 16.6666666667%;
   }
 }
-
 @media (min-width: 992px) {
   .navbar .hestia-mega-menu > .dropdown-menu {
     width: 970px;
   }
 }
-
 @media (min-width: 1200px) {
   .navbar .hestia-mega-menu > .dropdown-menu {
     width: 1170px;
   }
 }
-
 .navbar .navbar-nav > li.hestia-mega-menu {
   position: static;
 }
@@ -75,7 +72,6 @@
   display: table;
   top: inherit;
 }
-
 .hestia-mega-menu > .dropdown-menu .divider {
   height: 1px;
   margin: 9px auto;
@@ -94,7 +90,6 @@
   position: relative;
   padding: 5px;
 }
-
 .hestia-mega-menu .hestia-mm-col > a {
   display: none;
 }

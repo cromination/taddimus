@@ -229,7 +229,7 @@ class TI_About_Render {
 					$this->render_changelog();
 					break;
 				default:
-					$this->render_default_tab( $tab_data['content'] );
+					$this->render_default_tab( $tab_data );
 					break;
 			}
 
@@ -256,7 +256,7 @@ class TI_About_Render {
 		$recommended_plugins_visbility = get_theme_mod( 'ti_about_recommended_plugins' );
 
 		foreach ( $plugins_list as $slug => $plugin ) {
-			if ( $recommended_plugins_visbility[ $slug ] === 'hidden' || Ti_About_Plugin_Helper::instance()->check_plugin_state( $slug ) === 'deactivate' ) {
+			if ( isset( $recommended_plugins_visbility[ $slug ] ) && $recommended_plugins_visbility[ $slug ] === 'hidden' || Ti_About_Plugin_Helper::instance()->check_plugin_state( $slug ) === 'deactivate' ) {
 				continue;
 			}
 
@@ -480,9 +480,15 @@ class TI_About_Render {
 	/**
 	 * Render default tab content.
 	 *
-	 * @param array $tab_content - tab content, title, text, button.
+	 * @param array $tab_data - tab content, video.
 	 */
-	private function render_default_tab( $tab_content ) {
+	private function render_default_tab( $tab_data ) {
+		if ( ! isset( $tab_data['content'] ) || ! is_array( $tab_data['content'] ) ) {
+			return;
+		}
+
+		$tab_content = $tab_data['content'];
+
 		foreach ( $tab_content as $content ) {
 			echo '<div class="about-col">';
 			echo '<h3>';
@@ -501,6 +507,16 @@ class TI_About_Render {
 			}
 			echo '</div>';
 		}
+
+		if ( ! isset( $tab_data['video'] ) || ! is_array( $tab_data['video'] ) || ! isset( $tab_data['video']['url'] ) ) {
+			return;
+		}
+		echo '<div style="display: grid; place-items: center; margin: 0 auto">';
+		if ( isset( $tab_data['video']['heading'] ) ) {
+			echo '<h3>' . esc_html( $tab_data['video']['heading'] ) . '</h3>';
+		}
+		echo '<iframe width="560" height="315" src="' . esc_url( $tab_data['video']['url'] ) . '" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+		echo '</div>';
 	}
 
 	/**

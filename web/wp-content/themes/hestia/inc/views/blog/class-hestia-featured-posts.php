@@ -121,9 +121,9 @@ class Hestia_Featured_Posts extends Hestia_Abstract_Main {
 			echo '<article class="hestia-blog-featured-card ' . join( ' ', get_post_class() ) . ' ' . esc_attr( $card_class ) . '">';
 			echo '<div class="' . esc_attr( $card_inner_class ) . '" ' . $thumb_style . '>';
 			echo '<div class="card-body">';
-			echo '<h6 class="category text-info">';
+			echo '<span class="category text-info">';
 			echo hestia_category();
-			echo '</h6>';
+			echo '</span>';
 
 			if ( ! empty( $title ) ) {
 				echo '<a href="' . esc_url( $post_url ) . '" rel="bookmark">';

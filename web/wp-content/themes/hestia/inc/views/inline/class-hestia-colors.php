@@ -38,6 +38,11 @@ class Hestia_Colors extends Hestia_Abstract_Main {
 		$header_gradient = get_theme_mod( 'hestia_header_gradient_color', apply_filters( 'hestia_header_gradient_default', '#a81d84' ) );
 
 		$custom_css .= ! empty( $color_accent ) ? '
+
+		:root {
+			--hestia-primary-color: ' . esc_html( $color_accent ) . ';
+		}
+
 		a,
 		.navbar .dropdown-menu li:hover > a,
 		.navbar .dropdown-menu li:focus > a,

@@ -65,7 +65,7 @@ class Hestia_Header extends Hestia_Abstract_Main {
 			return;
 		}
 		$nav_classes = $this->header_classes(); ?>
-		<nav class="navbar navbar-default navbar-fixed-top <?php echo esc_attr( $nav_classes ); ?>">
+		<nav class="navbar navbar-default <?php echo esc_attr( $nav_classes ); ?>">
 			<?php hestia_before_header_content_trigger(); ?>
 			<div class="container">
 				<?php
@@ -100,6 +100,15 @@ class Hestia_Header extends Hestia_Abstract_Main {
 		$is_blog_frontpage  = get_option( 'show_on_front' ) !== 'page' && is_front_page();
 		if ( ! is_front_page() || $is_blog_frontpage || $disabled_frontpage || $disabled_big_title ) {
 			$class .= ' navbar-not-transparent';
+		}
+
+		$sticky = get_theme_mod( 'hestia_navbar_sticky', true );
+
+		if ( ! $sticky ) {
+			$class  = str_replace( 'navbar-color-on-scroll', '', $class );
+			$class .= ' navbar-static-top';
+		} else {
+			$class .= ' navbar-fixed-top';
 		}
 
 		return $class;

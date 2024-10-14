@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="webpcPopup__contentButton">
 							<button type="button"
 								class="webpcButton webpcButton--gray webpcButton--bg"
-								data-popup-button-page="2">
+								data-popup-button-page="3">
 								<?php echo esc_html__( 'Skip for now', 'webp-converter-for-media' ); ?>
 							</button>
 						</div>
@@ -104,8 +104,84 @@ if ( ! defined( 'ABSPATH' ) ) {
 								sprintf(
 								/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 									__( 'You can get your access token %1$shere%2$s.', 'webp-converter-for-media' ),
-									'<a href="https://url.mattplugins.com/converter-regeneration-popup-step-token?webp=0&avif=0" target="_blank" data-plans-button>',
+									'<a href="https://url.mattplugins.com/converter-regeneration-popup-step-token-yes?webp=0&avif=0" target="_blank" data-plans-button>',
 									'</a>'
+								)
+							);
+							?>
+							<?php
+							echo wp_kses_post(
+								sprintf(
+                                /* translators: %1$s: percent value, %2$s: coupon code */
+                                    __( 'Get %1$s off by entering the code %2$s at checkout!', 'webp-converter-for-media' ),
+									'<strong>20%</strong>',
+									'"<strong>20VZUMCF</strong>"'
+								)
+							);
+							?>
+						</p>
+					</div>
+					<div class="webpcPopup__input webpcInput">
+						<input type="text" name="access_token" id="access_token" class="webpcInput__field" required>
+					</div>
+					<div class="webpcPopup__contentButtons">
+						<div class="webpcPopup__contentButton">
+							<button type="submit" class="webpcButton webpcButton--blue webpcButton--bg">
+								<?php echo esc_html__( 'Activate Token', 'webp-converter-for-media' ); ?>
+							</button>
+						</div>
+						<div class="webpcPopup__contentButton">
+							<button type="button"
+								class="webpcButton webpcButton--gray webpcButton--bg"
+								data-popup-close>
+								<?php echo esc_html__( 'Not now', 'webp-converter-for-media' ); ?>
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="webpcPopup__inner" data-popup-page="3" hidden>
+				<button type="button" class="webpcPopup__close dashicons dashicons-no" data-popup-close></button>
+				<form method="post" action="" class="webpcPopup__content">
+					<input type="hidden" name="<?php echo esc_attr( $form_input_name ); ?>"
+						value="<?php echo esc_attr( $form_sidebar_input_value ); ?>">
+					<input type="hidden" name="<?php echo esc_attr( $nonce_input_name ); ?>"
+						value="<?php echo esc_attr( $nonce_input_value ); ?>">
+					<div class="webpcPopup__contentText">
+						<p>
+							<strong>
+								<?php
+								echo esc_html(
+									sprintf(
+									/* translators: %s: format name */
+										__( 'Provide a valid access token to continue the process of optimizing images to the %s format.', 'webp-converter-for-media' ),
+										'AVIF'
+									)
+								);
+								?>
+							</strong>
+						</p>
+						<p>
+							<?php echo esc_html__( 'Converting images to WebP and AVIF simultaneously guarantees the lowest weight of your images and compatibility with all browsers. By using the AVIF format you will reduce the weight of your images even more compared to WebP.', 'webp-converter-for-media' ); ?>
+						</p>
+						<p data-plans>
+							<?php
+							echo wp_kses_post(
+								sprintf(
+								/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
+									__( 'You can get your access token %1$shere%2$s.', 'webp-converter-for-media' ),
+									'<a href="https://url.mattplugins.com/converter-regeneration-popup-step-token-no?webp=0&avif=0" target="_blank" data-plans-button>',
+									'</a>'
+								)
+							);
+							?>
+							<?php
+							echo wp_kses_post(
+								sprintf(
+								/* translators: %1$s: percent value, %2$s: coupon code */
+									__( 'Get %1$s off by entering the code %2$s at checkout!', 'webp-converter-for-media' ),
+									'<strong>20%</strong>',
+									'"<strong>20YKFPKV</strong>"'
 								)
 							);
 							?>

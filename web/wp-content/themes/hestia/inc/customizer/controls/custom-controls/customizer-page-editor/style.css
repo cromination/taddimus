@@ -1,6 +1,5 @@
 /*EDIT CONTENT CONTROL*/
-.edit-content-button{  margin-bottom: 10px;}
-.edit-content-button:before{content: "\f464";opacity: 0.6;background-color: #ddd;padding: 4px 5px;margin-left: -10px;margin-right: 7px;font-size: 18px;vertical-align: top;border-radius: 2px 0 0 2px;font-family: 'dashicons';}
+.edit-content-button{ display:flex !important; align-items: center; gap: 5px; }
 
 /*--------------------------WIDGETS------------------------------------*/
 #wp-editor-widget-container{position:fixed;left:0;right:0;bottom:0;z-index:9999999;background:#f1f1f1;border-top:1px solid #ddd;}

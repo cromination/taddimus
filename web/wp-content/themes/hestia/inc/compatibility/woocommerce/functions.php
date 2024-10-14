@@ -236,7 +236,7 @@ function hestia_woocommerce_template_loop_product_title() {
 			$index     = 0;
 
 			if ( $nb_of_cat !== 0 ) {
-				echo '<h6 class="category">';
+				echo '<span class="category">';
 				foreach ( $product_categories as $product_category ) {
 					if ( $index < $nb_of_cat || $nb_of_cat < 0 ) {
 						$product_cat_id   = $product_category->term_id;
@@ -247,7 +247,7 @@ function hestia_woocommerce_template_loop_product_title() {
 						$index ++;
 					}
 				}
-				echo '</h6>';
+				echo '</span>';
 			}
 		}
 		?>
@@ -493,3 +493,17 @@ function hestia_woocommerce_load_fa() {
 	}
 	hestia_load_fa();
 }
+
+// Stretch WooCommerce content on the account page.
+add_action(
+	'hestia_filter_page_content_classes',
+	function ( $classes ) {
+		if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+			return $classes;
+		}
+		$classes = str_replace( 'col-md-8', '', $classes );
+
+		return str_replace( 'col-md-offset-2', '', $classes );
+	},
+	1000
+);

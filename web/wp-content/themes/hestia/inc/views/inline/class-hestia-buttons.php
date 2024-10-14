@@ -178,6 +178,9 @@ class Hestia_Buttons extends Hestia_Abstract_Main {
 		/**
 		 * Adding border radius
 		 */
+
+		$custom_css .= ':root {--hestia-button-border-radius:' . $hestia_buttons_border_radius . 'px;}';
+
 		$custom_css .= $selectors . '{';
 		$custom_css .= 'border-radius:' . $hestia_buttons_border_radius . 'px;';
 		$custom_css .= '}';

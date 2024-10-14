@@ -123,7 +123,7 @@ class Hestia_Starter_Content {
 	public function get() {
 		$nav_items                   = $this->get_nav_menu_items();
 		$contact_default             = $this->get_default_contact_content();
-		$default_home_featured_image = get_template_directory_uri() . '/assets/img/contact.jpg';
+		$default_home_featured_image = get_template_directory_uri() . '/assets/img/slider1.jpg';
 		$default_slides              = array(
 			array(
 				'image_url' => get_template_directory_uri() . '/assets/img/slider1.jpg',
@@ -152,7 +152,7 @@ class Hestia_Starter_Content {
 				'featured-image-home' => array(
 					'post_title'   => __( 'Featured Image Homepage', 'hestia' ),
 					'post_content' => __( 'Featured Image Homepage', 'hestia' ),
-					'file'         => 'assets/img/contact.jpg',
+					'file'         => 'assets/img/slider1.jpg',
 				),
 				'featured-slide1'     => array(
 					'post_title' => 'First slide',

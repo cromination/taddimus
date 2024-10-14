@@ -94,7 +94,7 @@ class Hestia_Contact_Section extends Hestia_Abstract_Main {
 		$hestia_contact_title      = get_theme_mod( 'hestia_contact_title', esc_html__( 'Get in Touch', 'hestia' ) );
 		$hestia_contact_area_title = get_theme_mod( 'hestia_contact_area_title', esc_html__( 'Contact Us', 'hestia' ) );
 
-		$hestia_contact_background = get_theme_mod( 'hestia_contact_background', apply_filters( 'hestia_contact_background_default', get_template_directory_uri() . '/assets/img/contact.jpg' ) );
+		$hestia_contact_background = get_theme_mod( 'hestia_contact_background', apply_filters( 'hestia_contact_background_default', get_template_directory_uri() . '/assets/img/slider1.jpg' ) );
 		if ( ! empty( $hestia_contact_background ) ) {
 			$section_style .= 'background-image: url(' . esc_url( $hestia_contact_background ) . ');';
 		}

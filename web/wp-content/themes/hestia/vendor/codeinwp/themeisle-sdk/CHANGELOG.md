@@ -1,3 +1,8 @@
+##### [Version 3.3.30](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.29...v3.3.30) (2024-09-10)
+
+- Remove margin auto from ThemeIsle Woo tab
+- Add Hyve Promo
+
 ##### [Version 3.3.29](https://github.com/Codeinwp/themeisle-sdk/compare/v3.3.28...v3.3.29) (2024-08-21)
 
 - feat: improve the Promotions appearance timing

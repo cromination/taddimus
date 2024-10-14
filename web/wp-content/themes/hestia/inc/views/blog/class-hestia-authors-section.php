@@ -77,7 +77,7 @@ class Hestia_Authors_Section extends Hestia_Abstract_Main {
 				echo '<h4 class="card-title">' . wp_kses_post( html_entity_decode( $title ) ) . '</h4>';
 			}
 			if ( ! empty( $subtitle ) ) {
-				echo '<h6 class="category text-muted">' . wp_kses_post( html_entity_decode( $subtitle ) ) . '</h6>';
+				echo '<span class="category text-muted">' . wp_kses_post( html_entity_decode( $subtitle ) ) . '</span>';
 			}
 			if ( ! empty( $text ) ) {
 				echo '<p class="card-description">' . wp_kses_post( html_entity_decode( $text ) ) . '</p>';

@@ -92,11 +92,9 @@
     }
   }
   .ti-about-wrap #about-tabs {
-    > div {
-      &.columns-2 > div, &.columns-3 > div {
+      .columns-2 > .about-col, .columns-3 > .about-col {
         width: 100%;
       }
-    }
   }
 }
 

@@ -49,13 +49,9 @@ class Hestia_Setup_Wizard {
 		add_action( 'admin_action_hestia_dismiss_wizard', array( $this, 'dismiss_wizard' ) );
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ), PHP_INT_MAX );
 		add_action( 'wp_ajax_hestia_wizard_step_process', array( $this, 'hestia_wizard_step_process' ) );
-		add_action( 'wp_ajax_nopriv_hestia_wizard_step_process', array( $this, 'hestia_wizard_step_process' ) );
-		add_action( 'wp_ajax_hestia_set_logo_and_icon', array( $this, 'hestia_set_logo_and_icon' ) );
-		add_action( 'wp_ajax_nopriv_hestia_set_logo_and_icon', array( $this, 'hestia_set_logo_and_icon' ) );
-		add_action( 'wp_ajax_hestia_add_new_page', array( $this, 'hestia_add_new_page' ) );
-		add_action( 'wp_ajax_nopriv_hestia_add_new_page', array( $this, 'hestia_add_new_page' ) );
 		add_action( 'admin_footer', array( $this, 'add_inline_style' ) );
 		add_action( 'switch_theme', array( $this, 'hestia_handle_switch_theme' ) );
+
 		$this->is_wizard_dismissed = get_option( self::OPTION_NAME, 0 );
 	}
 
@@ -72,7 +68,7 @@ class Hestia_Setup_Wizard {
 	public function hestia_after_setup_theme() {
 		global $pagenow;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		if ( 'themes.php' === $pagenow && isset( $_GET['activated'] ) ) {
+		if ( 'themes.php' === $pagenow && isset( $_GET['activated'] ) && ! (bool) get_option( 'fresh_site', false ) ) {
 			if ( ! $this->is_wizard_dismissed ) {
 				$this->is_wizard_dismissed = update_option( self::OPTION_NAME, false );
 				wp_redirect( add_query_arg( 'page', 'hestia-setup-wizard', admin_url( 'admin.php' ) ) );
@@ -118,12 +114,14 @@ class Hestia_Setup_Wizard {
 	 * Add classes to make the wizard full screen.
 	 *
 	 * @param string $classes Body classes.
+	 *
 	 * @return string
 	 */
 	public function add_wizard_classes( $classes ) {
 		if ( ! $this->is_wizard_dismissed ) {
 			$classes .= ' hestia-wizard-fullscreen';
 		}
+
 		return trim( $classes );
 	}
 
@@ -148,10 +146,19 @@ class Hestia_Setup_Wizard {
 	public function hestia_enqueue_setup_wizard_scripts() {
 		wp_enqueue_media();
 		wp_enqueue_style( 'jquery-smart-wizard', get_template_directory_uri() . '/assets/jquery-smartwizard/css/smart_wizard_all' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.css', array(), HESTIA_VERSION );
-		wp_enqueue_style( 'hestia-setup-wizard', get_template_directory_uri() . '/assets/css/setup-wizard' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.css', array( 'wp-color-picker' ), HESTIA_VERSION, 'all' );
+		wp_enqueue_style( 'hestia-setup-wizard', get_template_directory_uri() . '/assets/css/setup-wizard' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.css', array(), HESTIA_VERSION, 'all' );
 
-		wp_enqueue_script( 'jquery-smart-wizard', get_template_directory_uri() . '/assets/jquery-smartwizard/js/jquery.smartWizard' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.js', array( 'jquery', 'clipboard' ), HESTIA_VERSION, true );
-		wp_enqueue_script( 'hestia-setup-wizard', get_template_directory_uri() . '/assets/js/setup-wizard.min.js', array( 'jquery', 'plupload-handlers', 'wp-color-picker' ), HESTIA_VERSION, true );
+		wp_enqueue_script(
+			'jquery-smart-wizard',
+			get_template_directory_uri() . '/assets/jquery-smartwizard/js/jquery.smartWizard' . ( ( HESTIA_DEBUG ) ? '' : '.min' ) . '.js',
+			array(
+				'jquery',
+				'clipboard',
+			),
+			HESTIA_VERSION,
+			true
+		);
+		wp_enqueue_script( 'hestia-setup-wizard', get_template_directory_uri() . '/assets/js/setup-wizard.min.js', array( 'jquery' ), HESTIA_VERSION, true );
 		wp_localize_script(
 			'hestia-setup-wizard',
 			'hestiaSetupWizardData',
@@ -165,32 +172,6 @@ class Hestia_Setup_Wizard {
 					'requiredEmail' => __( 'This field is required.', 'hestia' ),
 					'invalidEmail'  => __( 'Please enter a valid email address.', 'hestia' ),
 				),
-				'pluploadData'  => apply_filters(
-					'plupload_init',
-					array(
-						'runtimes'            => 'html5,silverlight,flash,html4',
-						'container'           => array( 'icon-hestia-upload-ui', 'hestia-upload-ui' ),
-						'drop_element'        => array( 'drag-drop-area', 'icon-drag-drop-area' ),
-						'file_data_name'      => 'hestia_image',
-						'multiple_queues'     => true,
-						'max_file_size'       => wp_max_upload_size() . 'b',
-						'url'                 => admin_url( 'admin-ajax.php' ),
-						'flash_swf_url'       => includes_url( 'js/plupload/plupload.flash.swf' ),
-						'silverlight_xap_url' => includes_url( 'js/plupload/plupload.silverlight.xap' ),
-						'filters'             => array(
-							array(
-								'title'      => __( 'Allowed Files', 'hestia' ),
-								'extensions' => 'png,jpg,jpge,ico',
-							),
-						),
-						'multipart'           => true,
-						'urlstream_upload'    => true,
-						'multipart_params'    => array(
-							'_ajax_nonce' => wp_create_nonce( 'hestia-media-upload' ),
-							'action'      => 'hestia_set_logo_and_icon',
-						),
-					)
-				),
 			)
 		);
 	}
@@ -199,6 +180,7 @@ class Hestia_Setup_Wizard {
 	 * Dismiss setup wizard.
 	 *
 	 * @param bool $redirect_to_dashboard Redirect to dashboard.
+	 *
 	 * @return bool|void
 	 */
 	public function dismiss_wizard( $redirect_to_dashboard = true ) {
@@ -208,6 +190,7 @@ class Hestia_Setup_Wizard {
 				wp_safe_redirect( admin_url( 'index.php' ) );
 				exit;
 			}
+
 			return false;
 		}
 
@@ -217,6 +200,7 @@ class Hestia_Setup_Wizard {
 				wp_safe_redirect( admin_url( 'index.php' ) );
 				exit;
 			}
+
 			return false;
 		}
 
@@ -225,6 +209,7 @@ class Hestia_Setup_Wizard {
 			wp_safe_redirect( admin_url( 'index.php' ) );
 			exit;
 		}
+
 		return true;
 	}
 
@@ -235,23 +220,9 @@ class Hestia_Setup_Wizard {
 		check_ajax_referer( 'hestia-setup-wizard', 'security' );
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 		$this->wizard_data = ! empty( $_POST['wizard'] ) ? $this->sanitize_wizard_data( $_POST['wizard'] ) : array();
-		$action            = ! empty( $_POST['_action'] ) ? filter_input( INPUT_POST, '_action', FILTER_SANITIZE_STRING ) : '';
+		$action            = ! empty( $_POST['_action'] ) ? sanitize_text_field( $_POST['_action'] ) : '';
+
 		switch ( $action ) {
-			case 'site_title_tagline':
-				$this->save_site_title_tagline();
-				break;
-			case 'site_logo':
-				$this->set_site_logo();
-				break;
-			case 'site_icon':
-				$this->set_site_icon();
-				break;
-			case 'brand_color':
-				$this->set_brand_color();
-				break;
-			case 'hestia_typography':
-				$this->set_hestia_typography();
-				break;
 			case 'hestia_homepage_setting':
 				$this->set_homepage_setting();
 				break;
@@ -273,101 +244,49 @@ class Hestia_Setup_Wizard {
 	}
 
 	/**
-	 * Save site title and tagline.
-	 *
-	 * @return void
-	 */
-	private function save_site_title_tagline() {
-		if ( isset( $this->wizard_data['site_title'] ) ) {
-			update_option( 'blogname', $this->wizard_data['site_title'] );
-		}
-		if ( isset( $this->wizard_data['site_tagline'] ) ) {
-			update_option( 'blogdescription', $this->wizard_data['site_tagline'] );
-		}
-		wp_send_json( array( 'status' => 1 ) );
-	}
-
-	/**
-	 * Set site logo.
-	 *
-	 * @return void
-	 */
-	private function set_site_logo() {
-		if ( empty( $this->wizard_data['logo_id'] ) ) {
-			wp_send_json(
-				array(
-					'status'  => 0,
-					'message' => __( 'Something went wrong, please try again', 'hestia' ),
-				)
-			);
-		}
-		$logo = $this->wizard_data['logo_id'];
-		set_theme_mod( 'custom_logo', $logo );
-		wp_send_json( array( 'status' => 1 ) );
-	}
-
-	/**
-	 * Set site icon.
-	 *
-	 * @return void
-	 */
-	private function set_site_icon() {
-		if ( empty( $this->wizard_data['site_icon_id'] ) ) {
-			wp_send_json(
-				array(
-					'status'  => 0,
-					'message' => __( 'Something went wrong, please try again', 'hestia' ),
-				)
-			);
-		}
-		$site_icon_id = $this->wizard_data['site_icon_id'];
-		update_option( 'site_icon', $site_icon_id );
-		wp_send_json( array( 'status' => 1 ) );
-	}
-
-	/**
-	 * Set brand color.
-	 *
-	 * @return void
-	 */
-	private function set_brand_color() {
-		if ( isset( $this->wizard_data['background_color'] ) ) {
-			set_theme_mod( 'background_color', $this->wizard_data['background_color'] );
-		}
-		if ( isset( $this->wizard_data['accent_color'] ) ) {
-			set_theme_mod( 'accent_color', $this->wizard_data['accent_color'] );
-		}
-		wp_send_json( array( 'status' => 1 ) );
-	}
-
-	/**
-	 * Set typography.
-	 *
-	 * @return void
-	 */
-	private function set_hestia_typography() {
-		if ( isset( $this->wizard_data['hestia_headings_font'] ) ) {
-			set_theme_mod( 'hestia_headings_font', $this->wizard_data['hestia_headings_font'] );
-		}
-		if ( isset( $this->wizard_data['hestia_body_font'] ) ) {
-			set_theme_mod( 'hestia_body_font', $this->wizard_data['hestia_body_font'] );
-		}
-		wp_send_json( array( 'status' => 1 ) );
-	}
-
-	/**
 	 * Set homepage settings..
 	 *
 	 * @return void
 	 */
 	private function set_homepage_setting() {
-		if ( isset( $this->wizard_data['show_on_front'] ) ) {
-			update_option( 'show_on_front', $this->wizard_data['show_on_front'] );
+		if ( ! isset( $this->wizard_data['show_on_front'] ) ) {
+			wp_send_json(
+				array(
+					'status'  => 0,
+					'message' => __( 'Invalid request.', 'hestia' ),
+				)
+			);
+			exit;
 		}
-		if ( isset( $this->wizard_data['page_on_front'] ) ) {
-			update_option( 'page_on_front', $this->wizard_data['page_on_front'] );
+
+		update_option( 'show_on_front', $this->wizard_data['show_on_front'] );
+
+		if ( $this->wizard_data['show_on_front'] !== 'page' ) {
+			wp_send_json( array( 'status' => 1 ) );
+			exit;
 		}
+
+		$post_args = array_merge(
+			require HESTIA_PHP_INCLUDE . 'compatibility/starter-content/home.php',
+			array(
+				'post_status' => 'publish',
+			)
+		);
+		$page_id   = wp_insert_post( $post_args );
+
+		if ( is_wp_error( $page_id ) ) {
+			wp_send_json(
+				array(
+					'status'  => 0,
+					'message' => $page_id->get_error_message(),
+				)
+			);
+			exit;
+		}
+
+		update_option( 'page_on_front', $page_id );
 		wp_send_json( array( 'status' => 1 ) );
+		exit;
 	}
 
 	/**
@@ -429,11 +348,11 @@ class Hestia_Setup_Wizard {
 						);
 					}
 				} elseif ( $skin->get_errors()->has_errors() ) {
-					if ( 'folder_exists' !== $skin->get_error_code() ) {
+					if ( 'folder_exists' !== $skin->get_errors()->get_error_code() ) {
 						wp_send_json(
 							array(
 								'status'  => 0,
-								'message' => $skin->get_error_message(),
+								'message' => $skin->get_errors()->get_error_message(),
 							)
 						);
 					}
@@ -453,6 +372,9 @@ class Hestia_Setup_Wizard {
 				activate_plugin( "$slug/$slug.php" );
 				if ( 'optimole-wp' === $slug ) {
 					delete_transient( 'optml_fresh_install' );
+				}
+				if ( 'otter-blocks' === $slug ) {
+					update_option( 'themeisle_blocks_settings_redirect', false );
 				}
 			}
 		}
@@ -532,11 +454,12 @@ class Hestia_Setup_Wizard {
 	 * Filter postdata.
 	 *
 	 * @param array $postdata Post data.
+	 *
 	 * @return array
 	 */
 	private function sanitize_wizard_data( $postdata ) {
 		$postdata = array_map(
-			function( $data ) {
+			function ( $data ) {
 				if ( is_array( $data ) ) {
 					return $this->sanitize_wizard_data( $data );
 				}
@@ -544,144 +467,31 @@ class Hestia_Setup_Wizard {
 				if ( is_numeric( $data ) ) {
 					return (int) $data;
 				}
+
 				return sanitize_text_field( $data );
 			},
 			$postdata
 		);
+
+		if ( isset( $postdata['install_plugin'] ) && is_array( $postdata['install_plugin'] ) ) {
+			$plugins = array();
+
+			foreach ( $postdata['install_plugin'] as $plugin ) {
+				$plugins = array_merge( $plugins, explode( '|', $plugin ) );
+			}
+
+			$postdata['install_plugin'] = $plugins;
+		}
+
 		return array_filter( $postdata );
-	}
-
-	/**
-	 * Set logo and favicon.
-	 */
-	public function hestia_set_logo_and_icon() {
-		check_ajax_referer( 'hestia-media-upload', '_ajax_nonce' );
-
-		require_once ABSPATH . 'wp-admin/includes/image.php';
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/media.php';
-
-		if ( ! empty( $_POST['default_img'] ) ) {
-			$url        = esc_url_raw( wp_unslash( $_POST['default_img'] ) );
-			$name       = wp_basename( $url );
-			$title      = preg_replace( '/\.[^.]+$/', '', $name );
-			$attachment = post_exists( $title, '', '', 'attachment' );
-			if ( ! $attachment ) {
-				$tmp        = download_url( $url );
-				$file_array = array(
-					'name'     => $name,
-					'tmp_name' => $tmp,
-				);
-				$attachment = media_handle_sideload( $file_array, 0 );
-			}
-		} else {
-			$title      = ! empty( $_FILES['hestia_image']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['hestia_image']['name'] ) ) : '';
-			$title      = preg_replace( '/\.[^.]+$/', '', $title );
-			$attachment = post_exists( $title, '', '', 'attachment' );
-			if ( ! $attachment ) {
-				$attachment = media_handle_upload( 'hestia_image', 0 );
-			}
-		}
-
-		if ( is_wp_error( $attachment ) ) {
-			wp_send_json(
-				array(
-					'status'  => 0,
-					'message' => $attachment->get_error_message(),
-				)
-			);
-		} else {
-			wp_send_json(
-				array(
-					'status'         => 1,
-					'attachment_id'  => $attachment,
-					'attachment_url' => wp_get_attachment_url( $attachment ),
-				)
-			);
-		}
-		exit;
-	}
-
-	/**
-	 * List of standard fonts.
-	 */
-	public function get_standard_fonts() {
-		return apply_filters(
-			'hestia_standard_fonts_array',
-			array(
-				'Arial, Helvetica, sans-serif',
-				'Arial Black, Gadget, sans-serif',
-				'Bookman Old Style, serif',
-				'Comic Sans MS, cursive',
-				'Courier, monospace',
-				'Georgia, serif',
-				'Garamond, serif',
-				'Impact, Charcoal, sans-serif',
-				'Lucida Console, Monaco, monospace',
-				'Lucida Sans Unicode, Lucida Grande, sans-serif',
-				'MS Sans Serif, Geneva, sans-serif',
-				'MS Serif, New York, sans-serif',
-				'Palatino Linotype, Book Antiqua, Palatino, serif',
-				'Tahoma, Geneva, sans-serif',
-				'Times New Roman, Times, serif',
-				'Trebuchet MS, Helvetica, sans-serif',
-				'Verdana, Geneva, sans-serif',
-				'Paratina Linotype',
-				'Trebuchet MS',
-			)
-		);
-	}
-
-	/**
-	 * Add new page.
-	 */
-	public function hestia_add_new_page() {
-		check_ajax_referer( 'hestia-setup-wizard', 'nonce' );
-
-		$page_title = ! empty( $_POST['page_title'] ) ? filter_input( INPUT_POST, 'page_title', FILTER_SANITIZE_STRING ) : '';
-		$page_id    = post_exists( $page_title, '', '', 'page' );
-
-		if ( $page_id ) {
-			wp_send_json(
-				array(
-					'status'  => 2,
-					'page_id' => $page_id,
-				)
-			);
-		}
-
-		$page_id = wp_insert_post(
-			array(
-				'post_title'  => $page_title,
-				'post_type'   => 'page',
-				'post_status' => 'publish',
-			)
-		);
-
-		if ( is_wp_error( $page_id ) ) {
-			wp_send_json(
-				array(
-					'status'  => 0,
-					'message' => $attachment->get_error_message(),
-				)
-			);
-		} else {
-			wp_send_json(
-				array(
-					'status' => 1,
-					'option' => '<option value="' . $page_id . '">' . $page_title . '</option>',
-				)
-			);
-		}
-		exit;
 	}
 
 	/**
 	 * Disallow object clone
 	 *
 	 * @access public
-	 * @since  3.1
 	 * @return void
+	 * @since  3.1
 	 */
 	public function __clone() {
 	}
@@ -690,8 +500,8 @@ class Hestia_Setup_Wizard {
 	 * Disable un-serializing
 	 *
 	 * @access public
-	 * @since  3.1
 	 * @return void
+	 * @since  3.1
 	 */
 	public function __wakeup() {
 	}

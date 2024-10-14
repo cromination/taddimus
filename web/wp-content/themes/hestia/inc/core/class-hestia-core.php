@@ -174,6 +174,8 @@ class Hestia_Core {
 		add_filter( 'after_switch_theme', array( $admin, 'maybe_switched_from_zerif' ) );
 		add_filter( 'admin_init', array( $admin, 'add_zerif_frontpage_import' ) );
 		add_filter( 'admin_enqueue_scripts', array( $admin, 'hestia_options_init' ) );
+		add_action( 'themeisle_ob_after_customizer_import', array( $admin, 'dismiss_welcome_notice' ) );
+		add_filter( 'hestia_welcome_metadata', array( $admin, 'get_welcome_metadata' ) );
 
 		$front_end = new Hestia_Public();
 		add_filter( 'frontpage_template', array( $front_end, 'filter_front_page_template' ) );

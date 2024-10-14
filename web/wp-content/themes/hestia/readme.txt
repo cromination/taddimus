@@ -18,6 +18,51 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 == Changelog ==
 
+##### [Version 3.2.1](https://github.com/Codeinwp/hestia-pro/compare/v3.2.0...v3.2.1) (2024-10-10)
+
+- Fix welcome notice CSS layout
+- Fix about page Getting Started tab layout
+- Fix compatibility with WooCommerce booking plugin
+
+
+
+
+#### [Version 3.2.0](https://github.com/Codeinwp/hestia-pro/compare/v3.1.10...v3.2.0) (2024-10-09)
+
+- Added 3 new starter sites and removed legacy ones
+- Added option to toggle sticky navbar
+- Added new color options for front page
+- Added section edit button beside section toggle
+- Added new setting to toggle blog subscribe section
+- Added new patterns and pattern category
+- Improved overall loading speed
+- Improved About page User Experience
+- Removed some unused CSS
+- Fixed starter content in the front page that onboarding publishes
+- Renamed Big title section Text control to Subtitle
+- Fixed layout of comments with long words
+- Fixed TikTok embeds display
+- Adjusted line-height for top bar widget area
+- Fixed default for shopping cart icon
+- Fixes customizer control style
+- Improved customizer controls layout and appearance
+- Replaced sharing link for Twitter with x.com
+- Fixed video controls appearing on customizer load when video not enabled
+- Fixed Gutenberg alignment issue on vertical window resize
+- Replaced h6 tag for categories with span tag to have a proper heading hierarchy
+- Fixed WooCommerce blocks buttons styling inconsistencies
+- Fixed WooCommerce My Account page layout
+- Enabled theme support for core editor controls
+- Updated blog sidebar headings from h2 to h5 on theme activation
+- Fixed search form widget styles
+- Fixed error in white label module
+- Changed default body font for new users
+- Reworked theme activation flow
+- Reworked onboarding and welcome notice
+
+
+
+
 ##### [Version 3.1.10](https://github.com/Codeinwp/hestia-pro/compare/v3.1.9...v3.1.10) (2024-08-27)
 
 - Fixed an issue where the Mini Cart option appeared incorrectly in the customizer

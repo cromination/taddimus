@@ -64,7 +64,7 @@ class Hestia_About_Section extends Hestia_Abstract_Main {
 		if ( is_customize_preview() ) {
 			$option_name = 'hestia_feature_thumbnail_buffer';
 		}
-			$hestia_frontpage_featured = get_theme_mod( $option_name, get_template_directory_uri() . '/assets/img/contact.jpg' );
+			$hestia_frontpage_featured = get_theme_mod( $option_name, get_template_directory_uri() . '/assets/img/slider1.jpg' );
 		if ( ! empty( $hestia_frontpage_featured ) ) {
 			$class_to_add   = 'section-image';
 			$section_style .= 'background-image: url(\'' . esc_url( $hestia_frontpage_featured ) . '\');';

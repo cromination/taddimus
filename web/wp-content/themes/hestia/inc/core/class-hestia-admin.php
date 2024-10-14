@@ -25,13 +25,6 @@ class Hestia_Admin {
 	public $theme_slug = '';
 
 	/**
-	 * Show welcome message
-	 *
-	 * @var bool $should_show_welcome Show welcome.
-	 */
-	public $should_show_welcome = false;
-
-	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0
@@ -69,23 +62,23 @@ class Hestia_Admin {
 						'link_text' => __( 'Submit a review', 'hestia' ),
 						'link'      => apply_filters( 'ti_wl_agency_url', 'https://wordpress.org/support/theme/hestia/reviews/#new-post' ),
 					),
+					array(
+						'heading'   => __( 'Contact Support', 'hestia' ),
+						// translators: %s - theme name
+						'text'      => esc_html__( 'We want to make sure you have the best experience using Hestia, and that is why we have gathered all the necessary information here for you. We hope you will enjoy using Hestia as much as we enjoy creating great products.', 'hestia' ),
+						'link_text' => __( 'Contact Support', 'hestia' ),
+						'link'      => apply_filters( 'hestia_contact_support_link', 'https://wordpress.org/support/theme/hestia/' ),
+					),
 				),
 			),
 			'getting_started'     => array(
-				'type'    => 'columns-3',
+				'type'    => 'columns-2',
 				'title'   => __( 'Getting Started', 'hestia' ),
+				'video'   => array(
+					'url'     => 'https://www.youtube-nocookie.com/embed/bpom4SSyo-8?si=b563iAwrWJTyors-',
+					'heading' => esc_html__( 'Get started here', 'hestia' ),
+				),
 				'content' => array(
-					array(
-						'title'    => esc_html__( 'Recommended actions', 'hestia' ),
-						'text_old' => esc_html__( 'Hestia now comes with a sites library with various designs to pick from. Visit our collection of demos that are constantly being added.', 'hestia' ),
-						'text'     => esc_html__( 'We have compiled a list of steps for you to take so we can ensure that the experience you have using one of our products is very easy to follow.', 'hestia' ),
-						'button'   => array(
-							'label'     => esc_html__( 'Recommended actions', 'hestia' ),
-							'link'      => esc_url( '#recommended_actions' ),
-							'is_button' => true,
-							'blank'     => false,
-						),
-					),
 					array(
 						'title'  => esc_html__( 'Read full documentation', 'hestia' ),
 						'text'   => esc_html__( 'Need more details? Please check our full documentation for detailed information on how to use Hestia.', 'hestia' ),
@@ -117,6 +110,11 @@ class Hestia_Admin {
 						'slug'        => 'themeisle-companion',
 						'description' => __( 'It is highly recommended that you install the companion plugin to have access to the Frontpage features, Team and Testimonials sections.', 'hestia' ),
 					),
+					'otter-blocks'        => array(
+						'name'        => 'Otter Blocks by ThemeIsle',
+						'slug'        => 'otter-blocks',
+						'description' => __( 'Quickly create WordPress pages with 20+ blocks, 100+ ready-to-import designs, and advanced editor extensions.', 'hestia' ),
+					),
 				),
 			),
 			'recommended_plugins' => array(
@@ -146,19 +144,8 @@ class Hestia_Admin {
 			),
 			'support'             => array(
 				'type'    => 'columns-3',
-				'title'   => __( 'Support', 'hestia' ),
+				'title'   => __( 'Documentation', 'hestia' ),
 				'content' => array(
-					array(
-						'icon'   => 'dashicons dashicons-sos',
-						'title'  => esc_html__( 'Contact Support', 'hestia' ),
-						'text'   => esc_html__( 'We want to make sure you have the best experience using Hestia, and that is why we have gathered all the necessary information here for you. We hope you will enjoy using Hestia as much as we enjoy creating great products.', 'hestia' ),
-						'button' => array(
-							'label'     => esc_html__( 'Contact Support', 'hestia' ),
-							'link'      => apply_filters( 'hestia_contact_support_link', 'https://wordpress.org/support/theme/hestia/' ),
-							'is_button' => true,
-							'blank'     => true,
-						),
-					),
 					array(
 						'icon'   => 'dashicons dashicons-book-alt',
 						'title'  => esc_html__( 'Documentation', 'hestia' ),
@@ -171,23 +158,12 @@ class Hestia_Admin {
 						),
 					),
 					array(
-						'icon'   => 'dashicons dashicons-portfolio',
-						'title'  => esc_html__( 'Changelog', 'hestia' ),
-						'text'   => esc_html__( 'Want to get the gist on the latest theme changes? Just consult our changelog below to get a taste of the recent fixes and features implemented.', 'hestia' ),
-						'button' => array(
-							'label'     => esc_html__( 'Changelog', 'hestia' ),
-							'link'      => esc_url( '#changelog' ),
-							'is_button' => false,
-							'blank'     => false,
-						),
-					),
-					array(
 						'icon'   => 'dashicons dashicons-admin-customizer',
 						'title'  => esc_html__( 'Create a child theme', 'hestia' ),
 						'text'   => esc_html__( "If you want to make changes to the theme's files, those changes are likely to be overwritten when you next update the theme. In order to prevent that from happening, you need to create a child theme. For this, please follow the documentation below.", 'hestia' ),
 						'button' => array(
 							'label'     => esc_html__( 'View how to do this', 'hestia' ),
-							'link'      => 'http://docs.themeisle.com/article/14-how-to-create-a-child-theme',
+							'link'      => 'https://docs.themeisle.com/article/656-how-to-create-a-child-theme-for-hestia',
 							'is_button' => false,
 							'blank'     => true,
 						),
@@ -228,18 +204,33 @@ class Hestia_Admin {
 			),
 		);
 
-		if ( class_exists( 'Themeisle_Onboarding', false ) ) {
-			$config['welcome_notice']
-				= array(
-					'type'            => 'custom',
-					'notice_class'    => 'ti-welcome-notice updated',
-					'dismiss_option'  => 'hestia_notice_dismissed',
-					'render_callback' => array( $this, 'welcome_notice_content' ),
-				);
+		$has_pro = defined( 'HESTIA_PRO_FLAG' );
+
+		if ( $has_pro || (bool) get_option( 'fresh_site', false ) ) {
+			$config['welcome_notice'] = array(
+				'type'            => 'custom',
+				'notice_class'    => 'ti-welcome-notice notice notice-info',
+				'dismiss_option'  => $has_pro ? 'hestia_pro_welcome_notice_dismissed' : 'hestia_notice_dismissed',
+				'render_callback' => array( $this, 'welcome_notice_content' ),
+			);
 		}
+
 		if ( class_exists( 'TI_About_Page', false ) ) {
 			TI_About_Page::init( apply_filters( 'hestia_about_page_array', $config ) );
 		}
+	}
+
+	/**
+	 * Welcome notice dismiss.
+	 *
+	 * @see Hestia_Core::define_hooks()
+	 *
+	 * @hooked themeisle_ob_after_customizer_import
+	 */
+	public function dismiss_welcome_notice() {
+		$dismiss_option = defined( 'HESTIA_PRO_FLAG' ) ? 'hestia_pro_welcome_notice_dismissed' : 'hestia_notice_dismissed';
+
+		update_option( $dismiss_option, 'yes' );
 	}
 
 
@@ -371,7 +362,6 @@ class Hestia_Admin {
 									$output .= '<td class="only-pro"><span class="dashicons-before dashicons-no-alt"></span></td>';
 								}
 								echo '</tr>';
-
 							}
 
 							if ( ! empty( $free_pro['pro_theme_link'] ) && ! empty( $free_pro['get_pro_theme_label'] ) ) {
@@ -393,7 +383,7 @@ class Hestia_Admin {
 				echo '</div>';
 				echo '</div>';
 			}
-		}// End if().
+		} // End if().
 	}
 
 	/**
@@ -481,7 +471,6 @@ class Hestia_Admin {
 				$events_assets
 			);
 		}
-
 	}
 
 	/**
@@ -573,50 +562,64 @@ class Hestia_Admin {
 	 * Render welcome notice content
 	 */
 	public function welcome_notice_content() {
-		if ( ! $this->should_show_welcome ) {
-			return;
-		}
-		$theme_args = wp_get_theme();
-		$name       = apply_filters( 'ti_wl_theme_name', $theme_args->__get( 'Name' ) );
-		$template   = $theme_args->get( 'Template' );
-		$slug       = $theme_args->__get( 'stylesheet' );
-		$theme_page = ! empty( $template ) ? $template . '-welcome' : $slug . '-welcome';
+		$theme_args     = wp_get_theme();
+		$name           = apply_filters( 'ti_wl_theme_name', $theme_args->__get( 'Name' ) );
+		$has_onboarding = class_exists( 'Themeisle_Onboarding', false );
 
-		$notice_template = '
-			<div class="ti-notice-wrapper">
-				<div class="ti-notice-text">%1$s</div>
-			</div>';
+		/* translators: %s - theme name */
+		$heading     = str_replace( ' - Version', '', sprintf( __( 'Welcome to %s! - Version ', 'hestia' ), $name ) );
+		$screenshot  = get_template_directory_uri() . '/assets/img/notice.png';
+		$description = __( 'Using the WordPress Customizer you can easily customize every aspect of the theme.', 'hestia' );
+		$button_text = __( 'Go to the Customizer', 'hestia' );
+		$button_link = admin_url( 'customize.php' );
 
-		$ob_btn = sprintf(
-			/* translators: 1 - options page url, 2 - button text */
-			'<a href="%1$s" class="onboarding-btn">%2$s</a>',
-			esc_url( admin_url( 'customize.php' ) ),
-			esc_html__( 'or customize the theme', 'hestia' )
-		);
-		$options_page_btn = sprintf(
-			/* translators: 1 - onboarding url, 2 - button text */
-			'<a href="%1$s" class="button button-primary" style="text-decoration: none;">%2$s</a>',
-			esc_url( admin_url( 'themes.php?page=' . $theme_page . '&onboarding=yes&readyimport=hestia-default#sites_library' ) ),
-			sprintf( esc_html__( 'Import Demo Content', 'hestia' ) )
-		);
-
-		$content = sprintf(
-			/* translators: 1 - notice title, 2 - notice message, 3 - options page button, 4 - starter sites button, 5 - notice closing button */
-			'<p>%1$s</p>
-					<p>%2$s %3$s</p>',
-			sprintf(
+		if ( $has_onboarding ) {
+			$template    = $theme_args->get( 'Template' );
+			$slug        = $theme_args->__get( 'stylesheet' );
+			$description = sprintf(
 				/* translators: %s - theme name */
-				esc_html__( '%s is now installed and ready to use. We\'ve assembled some links to get you started.', 'hestia' ),
+				__( '%s is now installed and ready to use. We\'ve assembled some links to get you started.', 'hestia' ),
 				'<strong>' . $name . '</strong>'
-			),
-			$options_page_btn,
-			$ob_btn
-		);
+			);
+			$theme_page  = ! empty( $template ) ? $template . '-welcome' : $slug . '-welcome';
+			$button_text = __( 'Import Demo Content', 'hestia' );
+			$button_link = esc_url( admin_url( 'themes.php?page=' . $theme_page . '&onboarding=yes&readyimport=hestia-default#sites_library' ) );
+		}
 
-		echo sprintf(
-			$notice_template,
-			$content
-		);
+		$style = '
+		<style>
+		.ti-welcome-notice .notice-content{ display: flex; gap: 48px; width: 100%; }
+		.ti-welcome-notice p { font-size: 15px; line-height: 1.6; max-width: 700px; }
+		.ti-welcome-notice .notice-title { font-weight: 600; line-height: 1.5; max-width: 700px; }
+		.ti-welcome-notice { border-left: 1px solid #c3c4c7; padding: 20px 0; position: relative; }
+		.ti-welcome-notice .actions { align-items: center; display: flex; gap: 10px; margin-top: 20px; }
+		.ti-welcome-notice .notice-copy { display: flex; flex-direction: column; justify-content: center; padding: 30px 0; }
+		.ti-welcome-notice img { align-self: flex-end; display: block; flex-shrink: 1; max-height: 300px; max-width: 500px; width: auto; }
+		@media(max-width: 1200px) {
+    	    .ti-welcome-notice .notice-content{ flex-direction: column-reverse; gap: 0; text-align: center; }
+			.ti-welcome-notice .notice-copy { align-items: center; padding: 20px 0; }
+			.ti-welcome-notice img { margin: 0 auto; max-width: 80%; }
+		}
+		</style>';
+
+		echo $style;
+		echo '<div class="notice-content">';
+		echo '<img class="image" src="' . esc_url( $screenshot ) . '"/>';
+		echo '<div class="notice-copy">';
+		echo '<h1 class="notice-title">' . esc_html( $heading ) . ' 🎉</h1>';
+		echo '<p class="description">' . wp_kses_post( $description ) . '</p>';
+		echo '<div class="actions">';
+		echo '<a href="' . esc_url( $button_link ) . '" class="button button-primary button-hero">';
+		echo esc_html( $button_text );
+		echo '</a>';
+		if ( $has_onboarding ) {
+			echo '<a href="' . esc_url( admin_url( 'customize.php' ) ) . '" class="button button-link button-hero">';
+			echo esc_html( __( 'Go to the Customizer', 'hestia' ) );
+			echo '</a>';
+		}
+		echo '</div>';
+		echo '</div>';
+		echo '</div>';
 	}
 
 	/**
@@ -624,7 +627,6 @@ class Hestia_Admin {
 	 */
 	public function load_site_import() {
 		if ( class_exists( 'Themeisle_Onboarding', false ) ) {
-			$this->should_show_welcome = true;
 			Themeisle_Onboarding::instance();
 		}
 	}
@@ -633,6 +635,7 @@ class Hestia_Admin {
 	 * Get the plan category for the product plan ID.
 	 *
 	 * @param object $license_data The license data.
+	 *
 	 * @return int
 	 */
 	private function plan_category( $license_data ) {
@@ -729,10 +732,33 @@ class Hestia_Admin {
 	 */
 	public function hestia_options_init() {
 		$screen = get_current_screen();
-		if ( ! in_array( $screen->base, array( 'appearance_page_hestia-welcome', 'appearance_page_hestia-pro-welcome' ), true ) ) {
+		if ( ! in_array(
+			$screen->base,
+			array(
+				'appearance_page_hestia-welcome',
+				'appearance_page_hestia-pro-welcome',
+			),
+			true
+		) ) {
 			return;
 		}
 
 		$this->register_survey();
+	}
+
+	/**
+	 * Get the welcome metadata.
+	 *
+	 * @return array
+	 *
+	 * @hooked hestia_welcome_metadata
+	 */
+	public function get_welcome_metadata() {
+		return array(
+			'is_enabled' => ! defined( 'HESTIA_PRO_FLAG' ),
+			'pro_name'   => 'Hestia Pro',
+			'logo'       => get_template_directory_uri() . '/assets/img/logo.svg',
+			'cta_link'   => tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/?discount=LOYALUSER583&dvalue=60#pricing', 'hestia-welcome', 'notice' ),
+		);
 	}
 }

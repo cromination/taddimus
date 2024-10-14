@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 6.1.1 (2024-10-02) =
+* `[Changed]` Bulk Optimization of Images section
+
 = 6.1.0 (2024-09-13) =
 * `[Removed]` Filter `webpc_supported_source_directory`
 * `[Fixed]` Handling of excluded directories when uploading new images
@@ -378,9 +381,9 @@
 * `[Changed]` Message after successfully completing conversion of images
 
 = 4.0.3 (2021-12-20) =
+* `[Security]` Added URL validation for Pass Thru loading mode ([CVE-2021-25074](https://wpscan.com/vulnerability/f3c0a155-9563-4533-97d4-03b9bac83164/))
 * `[Fixed]` Auto-conversion images with unsupported extensions when uploading files
 * `[Fixed]` Generating directory paths when ABSPATH constant is invalid
-* `[Added]` URL validation for Pass Thru loading mode
 
 = 4.0.2 (2021-12-17) =
 * `[Fixed]` Fetching large list of files to conversion
@@ -463,7 +466,6 @@
 * `[Added]` Compatibility with NextGEN Gallery plugin
 * `[Added]` Data displayed on "Server configuration" tab on plugin settings page
 * `[Added]` Changes to improve performance of plugin
-* `[Added]` Changes to improve security of plugin
 
 = 2.4.0 (2021-02-28) =
 * `[Fixed]` Error detection of redirects without .png as supported file extension
@@ -542,11 +544,11 @@
 * `[Added]` Error detection of non-working redirects of images to WebP files
 
 = 1.4.0 (2020-08-13) =
+* `[Security]` Added validation of saved settings values
 * `[Removed]` Filter `webpc_notice_url`
 * `[Changed]` Error messages for server requirements
 * `[Changed]` Loading CSS and JS files only on plugin settings page
 * `[Changed]` Minor changes for plugin settings page
-* `[Changed]` Validation of saved settings values for security
 * `[Added]` Blocking redirects to WebP when displaying images on other domains
 * `[Added]` Cron to automatically regenerate new images outside of Media Library
 * `[Added]` Filter `webpc_cron_interval` to change cron interval
@@ -650,14 +652,14 @@
 * `[Changed]` Limits of maximum execution time
 
 = 1.0.3 (2019-06-26) =
-* `[Added]` Additional security rules
+* `[Security]` Fixed CSRF vulnerability when saving plugin settings ([CVE-2019-15834](https://wpscan.com/vulnerability/65483794-f22f-41c7-b286-fd70c38ae160/))
 
 = 1.0.2 (2019-06-25) =
 * `[Changed]` Error messages
 * `[Added]` Tab in Settings page about server configuration
 
 = 1.0.1 (2019-06-23) =
-* `[Changed]` Securing access to REST API
+* `[Security]` Added permission check for endpoints in REST API
 * `[Added]` Error handler for undefined `GD` extension
 
 = 1.0.0 (2019-06-16) =

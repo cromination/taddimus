@@ -23,7 +23,7 @@ function handleTabs() {
 			let active = document.querySelector( '.tab-content.active' ),
 					newTabId = event.target.getAttribute( 'href' );
 
-			window.location.hash = newTabId;
+			window.history.pushState( null, '', newTabId );
 			if ( active !== null ) {
 				active.classList.remove( 'active' );
 				for ( let i = 0; i < links.length; i++ ) {

@@ -147,7 +147,7 @@ class Hestia_Sync_About extends Hestia_Abstract_Main {
 		switch ( $should_sync ) {
 			// Synchronize customizer controls with page content
 			case 'sync_customizer':
-				$featured_image = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/contact.jpg' );
+				$featured_image = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/slider1.jpg' );
 				if ( has_post_thumbnail( $frontpage_id ) ) {
 					$featured_image = get_the_post_thumbnail_url( $frontpage_id );
 				}
@@ -155,7 +155,7 @@ class Hestia_Sync_About extends Hestia_Abstract_Main {
 				break;
 			// Synchronize frontpage content with customizer values.
 			case 'sync_page':
-				$thumbnail    = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/contact.jpg' );
+				$thumbnail    = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/slider1.jpg' );
 				$thumbnail_id = attachment_url_to_postid( $thumbnail );
 				update_post_meta( $frontpage_id, '_thumbnail_id', $thumbnail_id );
 

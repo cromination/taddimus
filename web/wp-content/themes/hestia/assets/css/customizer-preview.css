@@ -6,14 +6,12 @@
   z-index: 100;
   border: 2px dashed #8a8a8a;
 }
-
 .pirate-forms-placeholder .card {
   background: rgba(255, 255, 255, 0.1);
   border: 2px dashed #8a8a8a;
   z-index: 50;
   position: relative;
 }
-
 .pirate-forms-placeholder .card:after {
   border-radius: 6px;
   z-index: -1;
@@ -24,7 +22,6 @@
   left: 0;
   bottom: 0;
 }
-
 .pirate-forms-placeholder .pirate-forms-placeholder-overlay {
   top: 0;
   text-align: center;
@@ -34,46 +31,39 @@
   height: 100%;
   display: inline-block;
 }
-
 .pirate-forms-placeholder .pirate-forms-placeholder-overlay:before {
   height: 100%;
   width: 0;
   display: inline-block;
-  content: '';
+  content: "";
   vertical-align: middle;
 }
-
 .pirate-forms-placeholder .pirate-forms-placeholder-overlay .placeholder-text {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 6px;
   font-weight: 100;
   padding: 15px 15px;
 }
-
 .pirate-forms-placeholder .pirate-forms-placeholder-overlay .placeholder-text .customize-partial-edit-shortcut button {
   top: -25px;
 }
-
 .pirate-forms-placeholder .pirate_forms_wrap form, .pirate-forms-placeholder .pirate_forms_wrap div {
-  opacity: .3;
+  opacity: 0.3;
   z-index: -2;
 }
-
 .pirate-forms-placeholder .pirate_forms_wrap form button, .pirate-forms-placeholder .pirate_forms_wrap div button {
   box-shadow: none;
   border: 2px dashed #8a8a8a;
   background-color: #333;
 }
-
 .pirate-forms-placeholder .pirate-forms-placeholder-align {
   display: inline-block;
   margin: 0 -7px;
   vertical-align: middle;
   width: 100%;
 }
-
 .pirate-forms-placeholder .pirate-forms-placeholder-align:before {
-  content: '';
+  content: "";
   display: inline-block;
   float: left;
   height: 100%;
@@ -164,7 +154,6 @@ body.page .hestia-blogs:not(.is-shortcode),
 .hestia-contact:not(.is-shortcode) {
   position: relative;
 }
-
 .hestia-features:not(.is-shortcode):before,
 .hestia-about:not(.is-shortcode):before,
 .hestia-shop:not(.related):not(.is-shortcode):before,
@@ -177,7 +166,7 @@ body.page .hestia-blogs:not(.is-shortcode),
 body.page .hestia-blogs:not(.is-shortcode):before,
 .hestia-clients-bar:not(.is-shortcode):before,
 .hestia-contact:not(.is-shortcode):before {
-  transition: .3s ease;
+  transition: 0.3s ease;
   z-index: 100;
   position: absolute;
   content: " ";
@@ -188,7 +177,6 @@ body.page .hestia-blogs:not(.is-shortcode):before,
   right: 20px;
   pointer-events: none;
 }
-
 .hestia-features:not(.is-shortcode):hover:before,
 .hestia-about:not(.is-shortcode):hover:before,
 .hestia-shop:not(.related):not(.is-shortcode):hover:before,
@@ -214,9 +202,8 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
 .hestia-contact-title-area,
 .hestia-portfolio-title-area,
 .pirate-forms-placeholder-align {
-  transition: .3s ease;
+  transition: 0.3s ease;
 }
-
 .hestia-features-title-area:hover .customize-partial-edit-shortcut,
 .hestia-shop-title-area:hover .customize-partial-edit-shortcut,
 .hestia-team-title-area:hover .customize-partial-edit-shortcut,
@@ -229,7 +216,6 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
 .pirate-forms-placeholder-align:hover .customize-partial-edit-shortcut {
   opacity: 1;
 }
-
 .hestia-features-title-area .customize-partial-edit-shortcut,
 .hestia-shop-title-area .customize-partial-edit-shortcut,
 .hestia-team-title-area .customize-partial-edit-shortcut,
@@ -240,10 +226,9 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
 .hestia-contact-title-area .customize-partial-edit-shortcut,
 .hestia-portfolio-title-area .customize-partial-edit-shortcut,
 .pirate-forms-placeholder-align .customize-partial-edit-shortcut {
-  transition: .3s ease;
+  transition: 0.3s ease;
   opacity: 0;
 }
-
 .hestia-features-title-area .customize-partial-edit-shortcut button,
 .hestia-shop-title-area .customize-partial-edit-shortcut button,
 .hestia-team-title-area .customize-partial-edit-shortcut button,
@@ -268,10 +253,9 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
 .hestia-clients-bar,
 .hestia-contact .hestia-description,
 .hestia-contact-form-col {
-  transition: .3s ease;
+  transition: 0.3s ease;
   position: relative;
 }
-
 .hestia-features-content .customize-partial-edit-shortcut,
 .hestia-about-content .customize-partial-edit-shortcut,
 .hestia-team-content .customize-partial-edit-shortcut,
@@ -283,10 +267,9 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
 .hestia-clients-bar .customize-partial-edit-shortcut,
 .hestia-contact .hestia-description .customize-partial-edit-shortcut,
 .hestia-contact-form-col .customize-partial-edit-shortcut {
-  transition: .3s ease;
+  transition: 0.3s ease;
   opacity: 0;
 }
-
 .hestia-features-content .customize-partial-edit-shortcut button,
 .hestia-about-content .customize-partial-edit-shortcut button,
 .hestia-team-content .customize-partial-edit-shortcut button,
@@ -300,7 +283,6 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
 .hestia-contact-form-col .customize-partial-edit-shortcut button {
   margin: 0;
 }
-
 .hestia-features-content .customize-partial-edit-shortcut.customize-partial-edit-shortcut-hestia_pricing_table_one_title button, .hestia-features-content .customize-partial-edit-shortcut.customize-partial-edit-shortcut-hestia_pricing_table_two_title button,
 .hestia-about-content .customize-partial-edit-shortcut.customize-partial-edit-shortcut-hestia_pricing_table_one_title button,
 .hestia-about-content .customize-partial-edit-shortcut.customize-partial-edit-shortcut-hestia_pricing_table_two_title button,
@@ -324,7 +306,6 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
 .hestia-contact-form-col .customize-partial-edit-shortcut.customize-partial-edit-shortcut-hestia_pricing_table_two_title button {
   left: 0;
 }
-
 .hestia-features-content:hover .customize-partial-edit-shortcut,
 .hestia-about-content:hover .customize-partial-edit-shortcut,
 .hestia-team-content:hover .customize-partial-edit-shortcut,
@@ -350,4 +331,37 @@ body.page .hestia-blogs:not(.is-shortcode):hover:before,
   left: 50% !important;
   position: absolute;
   z-index: 10000;
+}
+
+.hestia-section-cp-utils {
+  opacity: 0;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  left: 25px;
+  top: 25px;
+  z-index: 999;
+  gap: 5px;
+  transition: opacity 0.3s ease;
+}
+.hestia-section-cp-utils button {
+  padding: 5px !important;
+  background-color: #3582c4 !important;
+  color: #fff !important;
+  border-radius: 100% !important;
+  box-shadow: 0 2px 1px rgba(60, 67, 74, 0.15) !important;
+  border: 2px solid #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 !important;
+}
+.hestia-section-cp-utils button:hover {
+  background-color: #4f94d4 !important;
+}
+section:hover .hestia-section-cp-utils {
+  opacity: 1;
 }

@@ -345,6 +345,22 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 
 		$this->add_control(
 			new Hestia_Customizer_Control(
+				'hestia_navbar_sticky',
+				array(
+					'sanitize_callback' => 'hestia_sanitize_checkbox',
+					'default'           => apply_filters( 'hestia_navbar_sticky_default', true ),
+				),
+				array(
+					'type'     => 'checkbox',
+					'label'    => esc_html__( 'Sticky Navbar', 'hestia' ),
+					'section'  => 'hestia_navigation',
+					'priority' => 16,
+				)
+			)
+		);
+
+		$this->add_control(
+			new Hestia_Customizer_Control(
 				'hestia_search_in_menu',
 				array(
 					'sanitize_callback' => 'hestia_sanitize_checkbox',

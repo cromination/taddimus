@@ -707,11 +707,11 @@ class InitCommandTest extends TestCase
 
         $appTester->setInputs([
             'vendor/pkg',                   // Pkg name
-            'my desciption',                // Description
+            'my description',               // Description
             'Mr. Test <test@example.org>',  // Author
             'stable',                       // Minimum stability
             'library',                      // Type
-            'Custom License',               // License
+            'AGPL-3.0-only',                // License
             'no',                           // Define dependencies
             'no',                           // Define dev dependencies
             'n',                            // Add PSR-4 autoload mapping
@@ -724,9 +724,9 @@ class InitCommandTest extends TestCase
 
         $expected = [
             'name' => 'vendor/pkg',
-            'description' => 'my desciption',
+            'description' => 'my description',
             'type' => 'library',
-            'license' => 'Custom License',
+            'license' => 'AGPL-3.0-only',
             'authors' => [['name' => 'Mr. Test', 'email' => 'test@example.org']],
             'minimum-stability' => 'stable',
             'require' => [],

@@ -196,9 +196,9 @@ class Hestia_Blog_Post_Layout {
 		if ( $type === 'alt-2' ) {
 			$post_body_content .= '<div class="card-body">';
 		}
-		$post_body_content .= '<h6 class="category text-info">';
+		$post_body_content .= '<span class="category text-info">';
 		$post_body_content .= hestia_category();
-		$post_body_content .= '</h6>';
+		$post_body_content .= '</span>';
 
 		$post_body_content .= the_title(
 			sprintf(

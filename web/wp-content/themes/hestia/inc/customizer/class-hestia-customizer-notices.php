@@ -143,25 +143,63 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 	 * Check for required plugins and add main notice if needed.
 	 */
 	private function maybe_add_main_notice() {
-		if ( class_exists( 'Orbit_Fox', false ) ) {
+		if ( ! class_exists( 'Orbit_Fox', false ) ) {
+
+			$this->add_section(
+				new Hestia_Customizer_Section(
+					'hestia_info_obfx',
+					array(
+						'plugin_name' => 'Orbit Fox Companion',
+						'slug'        => 'themeisle-companion',
+						'priority'    => 0,
+						'capability'  => 'install_plugins',
+						'hide_notice' => (bool) get_option( 'dismissed-hestia_info_obfx', false ),
+						'title'       => __( 'Recommended Plugins', 'hestia' ),
+						'options'     => array(
+							'redirect' => admin_url( 'customize.php' ),
+						),
+						/* translators: Orbit Fox Companion */
+						'description' => sprintf( esc_html__( 'If you want to take full advantage of the options this theme has to offer, please install and activate %s.', 'hestia' ), sprintf( '<strong>%s</strong>', 'Orbit Fox Companion' ) ),
+					),
+					'Hestia_Main_Notice_Section'
+				)
+			);
+
+			$this->add_control(
+				new Hestia_Customizer_Control(
+					'hestia_control_to_enable_obfx_recommendation',
+					array(
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					array(
+						'section' => 'hestia_info_obfx',
+						'type'    => 'hidden',
+					)
+				)
+			);
+		}
+
+		$obfx_was_dismissed = (bool) get_option( 'dismissed-hestia_info_obfx', false ) || defined( 'OBFX_URL' );
+
+		if ( ! $obfx_was_dismissed ) {
 			return;
 		}
 
 		$this->add_section(
 			new Hestia_Customizer_Section(
-				'hestia_info_obfx',
+				'hestia_info_otter_blocks',
 				array(
-					'plugin_name' => 'Orbit Fox Companion',
-					'slug'        => 'themeisle-companion',
+					'plugin_name' => 'Otter Blocks',
+					'slug'        => 'otter-blocks',
 					'priority'    => 0,
 					'capability'  => 'install_plugins',
-					'hide_notice' => (bool) get_option( 'dismissed-hestia_info_obfx', false ),
+					'hide_notice' => (bool) get_option( 'dismissed-hestia_info_otter_blocks', false ) || defined( 'OTTER_BLOCKS_VERSION' ),
 					'title'       => __( 'Recommended Plugins', 'hestia' ),
 					'options'     => array(
 						'redirect' => admin_url( 'customize.php' ),
 					),
 					/* translators: Orbit Fox Companion */
-					'description' => sprintf( esc_html__( 'If you want to take full advantage of the options this theme has to offer, please install and activate %s.', 'hestia' ), sprintf( '<strong>%s</strong>', 'Orbit Fox Companion' ) ),
+					'description' => esc_html__( 'Quickly create WordPress pages with 20+ blocks, 100+ ready-to-import designs, and advanced editor extensions.', 'hestia' ),
 				),
 				'Hestia_Main_Notice_Section'
 			)
@@ -169,12 +207,12 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 
 		$this->add_control(
 			new Hestia_Customizer_Control(
-				'hestia_control_to_enable_obfx_recommendation',
+				'hestia_control_to_enable_otter_blocks_recommendation',
 				array(
 					'sanitize_callback' => 'sanitize_text_field',
 				),
 				array(
-					'section' => 'hestia_info_obfx',
+					'section' => 'hestia_info_otter_blocks',
 					'type'    => 'hidden',
 				)
 			)

@@ -14,11 +14,11 @@
     max-width: 100%;
     padding: 20px;
 
-    &.columns-2 > div {
+    &.columns-2 > .about-col {
       width: calc(50% - 30px);
     }
 
-    &.columns-3 > div {
+    &.columns-3 > .about-col {
       width: calc(33.3333333% - 30px);
     }
   }

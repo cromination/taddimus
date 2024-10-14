@@ -143,9 +143,9 @@ class Hestia_Customizer_Page_Editor_Helper extends Hestia_Abstract_Main {
 				if ( has_post_thumbnail( $frontpage_id ) ) {
 					$featured_image = get_the_post_thumbnail_url( $frontpage_id );
 				} else {
-					$thumbnail = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/contact.jpg' );
-					if ( $thumbnail === get_template_directory_uri() . '/assets/img/contact.jpg' ) {
-						$featured_image = get_template_directory_uri() . '/assets/img/contact.jpg';
+					$thumbnail = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/slider1.jpg' );
+					if ( $thumbnail === get_template_directory_uri() . '/assets/img/slider1.jpg' ) {
+						$featured_image = get_template_directory_uri() . '/assets/img/slider1.jpg';
 					}
 				}
 				set_theme_mod( 'hestia_feature_thumbnail', $featured_image );
@@ -163,7 +163,7 @@ class Hestia_Customizer_Page_Editor_Helper extends Hestia_Abstract_Main {
 						wp_update_post( $post );
 					}
 				}
-				$thumbnail    = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/contact.jpg' );
+				$thumbnail    = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/slider1.jpg' );
 				$thumbnail_id = attachment_url_to_postid( $thumbnail );
 				update_post_meta( $frontpage_id, '_thumbnail_id', $thumbnail_id );
 				break;
@@ -186,9 +186,9 @@ class Hestia_Customizer_Page_Editor_Helper extends Hestia_Abstract_Main {
 		if ( has_post_thumbnail( $pid ) ) {
 			$featured_image = get_the_post_thumbnail_url( $pid );
 		} else {
-			$thumbnail = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/contact.jpg' );
-			if ( $thumbnail === get_template_directory_uri() . '/assets/img/contact.jpg' ) {
-				$featured_image = get_template_directory_uri() . '/assets/img/contact.jpg';
+			$thumbnail = get_theme_mod( 'hestia_feature_thumbnail', get_template_directory_uri() . '/assets/img/slider1.jpg' );
+			if ( $thumbnail === get_template_directory_uri() . '/assets/img/slider1.jpg' ) {
+				$featured_image = get_template_directory_uri() . '/assets/img/slider1.jpg';
 			}
 		}
 		set_theme_mod( 'hestia_feature_thumbnail', $featured_image );

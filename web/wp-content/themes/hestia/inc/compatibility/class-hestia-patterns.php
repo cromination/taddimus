@@ -17,16 +17,20 @@ class Hestia_Patterns {
 	 * @var string[] Patterns list.
 	 */
 	private $patterns = array(
-		'team-cards',
-		'team-columns',
-		'team-card-columns',
-		'pricing-plan-columns',
 		'call-to-action',
-		'testimonial-columns',
-		'content-with-alternating-image-and-text',
-		'image-and-text-columns',
-		'latest-posts-row',
-		'latest-posts-wide',
+		'content-1',
+		'features-1',
+		'features-2',
+		'features-3',
+		'hero-1',
+		'hero-2',
+		'pricing-1',
+		'pricing-2',
+		'stats',
+		'team-1',
+		'team-2',
+		'testimonials-1',
+		'testimonials-2',
 	);
 
 	/**
@@ -36,6 +40,16 @@ class Hestia_Patterns {
 		if ( ! function_exists( 'register_block_pattern' ) ) {
 			return;
 		}
+
+		if ( ! function_exists( 'register_block_pattern_category' ) ) {
+			return;
+		}
+
+		register_block_pattern_category(
+			'hestia',
+			array( 'label' => esc_html( $this->get_theme_name() ) )
+		);
+
 		foreach ( $this->patterns as $pattern ) {
 			register_block_pattern(
 				'hestia/' . $pattern,
@@ -44,4 +58,14 @@ class Hestia_Patterns {
 		}
 	}
 
+	/**
+	 * Get theme name.
+	 *
+	 * @return string
+	 */
+	private function get_theme_name() {
+		$theme = wp_get_theme();
+
+		return apply_filters( 'ti_wl_theme_name', $theme->get( 'Name' ) );
+	}
 }

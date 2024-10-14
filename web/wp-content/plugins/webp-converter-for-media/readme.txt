@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.6
 Requires PHP: 7.0
-Stable tag: 6.1.0
+Stable tag: 6.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -67,6 +67,12 @@ If you would like to appreciate it, you can try [the PRO version](https://url.ma
 That's all! Your website is already loading faster!
 
 == Frequently Asked Questions ==
+
+= How can I report security bugs? =
+
+You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities.
+
+[Report a security vulnerability.](https://patchstack.com/database/vdp/webp-converter-for-media)
 
 = How to get technical support? (before you ask for help) =
 
@@ -299,6 +305,9 @@ Current list of supported CDN servers:
 5. Ability to manually undo optimization of selected image
 
 == Changelog ==
+
+= 6.1.1 (2024-10-02) =
+* `[Changed]` Bulk Optimization of Images section
 
 = 6.1.0 (2024-09-13) =
 * `[Removed]` Filter `webpc_supported_source_directory`

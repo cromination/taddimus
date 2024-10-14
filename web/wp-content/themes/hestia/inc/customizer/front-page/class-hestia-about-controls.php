@@ -127,7 +127,7 @@ class Hestia_About_Controls extends Hestia_Register_Customizer_Controls {
 				'hestia_feature_thumbnail',
 				array(
 					'sanitize_callback' => 'esc_url_raw',
-					'default'           => get_template_directory_uri() . '/assets/img/contact.jpg',
+					'default'           => get_template_directory_uri() . '/assets/img/slider1.jpg',
 					'transport'         => $this->selective_refresh,
 				),
 				array(

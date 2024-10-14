@@ -325,20 +325,30 @@ if ( ! function_exists( 'hestia_display_customizer_shortcut' ) ) {
 	 */
 	function hestia_display_customizer_shortcut( $class_name, $is_section_toggle = false, $should_return = false ) {
 		if ( ! is_customize_preview() ) {
-			return;
-		}
-		$icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-				<path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path>
-			</svg>';
-		if ( $is_section_toggle ) {
-			$icon = '<i class="far fa-eye"></i>';
+			return '';
 		}
 
-		$data = '<span class="hestia-hide-section-shortcut customize-partial-edit-shortcut customize-partial-edit-shortcut-' . esc_attr( $class_name ) . '">
-		<button class="customize-partial-edit-shortcut-button">
-			' . $icon . '
-		</button>
-	</span>';
+		if ( $is_section_toggle ) {
+			$output  = '<span class="hestia-section-cp-utils" data-control="' . esc_attr( $class_name ) . '">';
+			$output .= '<button class="toggle" data-type-="toggle"><i class="dashicons dashicons-hidden"></i></button>';
+			$output .= '<button class="edit" data-type="edit"><i class="dashicons dashicons-edit"></i></button>';
+			$output .= '</span>';
+
+			if ( $should_return === true ) {
+				return $output;
+			}
+
+			echo $output;
+
+			return '';
+		}
+
+		$icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.89 3.39l2.71 2.72c.46.46.42 1.24.03 1.64l-8.01 8.02-5.56 1.16 1.16-5.58s7.6-7.63 7.99-8.03c.39-.39 1.22-.39 1.68.07zm-2.73 2.79l-5.59 5.61 1.11 1.11 5.54-5.65zm-2.97 8.23l5.58-5.6-1.07-1.08-5.59 5.6z"></path></svg>';
+
+		$data  = '<span class="hestia-hide-section-shortcut customize-partial-edit-shortcut customize-partial-edit-shortcut-' . esc_attr( $class_name ) . '">';
+		$data .= '<button class="customize-partial-edit-shortcut-edit">' . $icon . '</button>';
+		$data .= '</span>';
+
 		if ( $should_return === true ) {
 			return $data;
 		}

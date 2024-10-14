@@ -257,7 +257,7 @@ class Hestia_Import_Zerif extends Hestia_Import_Utilities {
 		                </span>
 						<div class="progress-value">' . wp_kses_post( $knob_percentage ) . '%</div>
 						</div>
-						<h6 class="category">' . wp_kses_post( $knob_title ) . '</h6>
+						<span class="category">' . wp_kses_post( $knob_title ) . '</span>
 						<p>' . wp_kses_post( $knob_text ) . '</p>
 					</div>';
 			}

@@ -232,8 +232,10 @@ php composer.phar update vendor/package:2.0.1 vendor/package2:3.0.*
   COMPOSER_PREFER_LOWEST=1 env var.
 * **--minimal-changes (-m):** During a partial update with `-w`/`-W`, only perform absolutely necessary
   changes to transitive dependencies. Can also be set via the COMPOSER_MINIMAL_CHANGES=1 env var.
+* **--patch-only:** Only allow patch version updates for currently installed dependencies.
 * **--interactive:** Interactive interface with autocompletion to select the packages to update.
 * **--root-reqs:** Restricts the update to your first degree dependencies.
+* **--bump-after-update:** Runs `bump` after performing the update. Set to `dev` or `no-dev` to only bump those dependencies.
 
 Specifying one of the words `mirrors`, `lock`, or `nothing` as an argument has the same effect as specifying the option `--lock`, for example `composer update mirrors` is exactly the same as `composer update --lock`.
 
@@ -727,8 +729,10 @@ packages depending on the packages that cause the conflict.
 ## validate
 
 You should always run the `validate` command before you commit your
-`composer.json` file, and before you tag a release. It will check if your
-`composer.json` is valid.
+`composer.json` file (and `composer.lock` [if applicable](01-basic-usage.md#commit-your-composer-lock-file-to-version-control)), and before you tag a release.
+
+It will check if your
+`composer.json` is valid. If a `composer.lock` exists, it will also check if it is up to date with the `composer.json`.
 
 ```shell
 php composer.phar validate
@@ -738,7 +742,9 @@ php composer.phar validate
 
 * **--no-check-all:** Do not emit a warning if requirements in `composer.json` use unbound or overly strict version constraints.
 * **--no-check-lock:** Do not emit an error if `composer.lock` exists and is not up to date.
+* **--check-lock** Check if lock file is up to date (even when [config.lock](06-config.md#lock) is false)
 * **--no-check-publish:** Do not emit an error if `composer.json` is unsuitable for publishing as a package on Packagist but is otherwise valid.
+* **--no-check-version:** Do not emit an error if the version field is present.
 * **--with-dependencies:** Also validate the composer.json of all installed dependencies.
 * **--strict:** Return a non-zero exit code for warnings as well as errors.
 
@@ -977,6 +983,7 @@ performance.
 * **--apcu:** Use APCu to cache found/not-found classes.
 * **--apcu-prefix:** Use a custom prefix for the APCu autoloader cache.
   Implicitly enables `--apcu`.
+* **--dry-run:** Outputs the operations but will not execute anything.
 * **--no-dev:** Disables autoload-dev rules. Composer will by default infer this
   automatically according to the last `install` or `update` `--no-dev` state.
 * **--dev:** Enables autoload-dev rules. Composer will by default infer this
@@ -989,6 +996,8 @@ performance.
   Multiple requirements can be ignored via wildcard.
 * **--strict-psr:** Return a failed exit code (1) if PSR-4 or PSR-0 mapping errors
   are present. Requires --optimize to work.
+* **--strict-ambiguous:** Return a failed exit code (2) if the same class is found
+  in multiple files. Requires --optimize to work.
 
 ## clear-cache / clearcache / cc
 
@@ -1075,6 +1084,11 @@ php composer.phar audit
 * **--no-dev:** Disables auditing of require-dev packages.
 * **--format (-f):** Audit output format. Must be "table" (default), "plain", "json", or "summary".
 * **--locked:** Audit packages from the lock file, regardless of what is currently in vendor dir.
+* **--abandoned:** Behavior on abandoned packages. Must be "ignore", "report",
+  or "fail".  See also [audit.abandoned](06-config.md#abandoned).  Passing this
+  flag will override the config value and the environment variable.
+* **--ignore-severity:** Ignore advisories of a certain severity level. Can be passed one or more
+  time to ignore multiple severities.
 
 ## help
 
@@ -1086,8 +1100,8 @@ php composer.phar help install
 
 ## Command-line completion
 
-Command-line completion can be enabled by following instructions
-[on this page](https://github.com/bamarni/symfony-console-autocomplete).
+Command-line completion can be enabled by running the `composer completion --help` command and
+following the instructions.
 
 ## Environment variables
 

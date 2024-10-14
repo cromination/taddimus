@@ -50,7 +50,7 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 				'url'  => $post_link,
 				'text' => rawurlencode( html_entity_decode( wp_strip_all_tags( $post_title ), ENT_COMPAT, 'UTF-8' ) ),
 			),
-			'http://twitter.com/share'
+			'https://x.com/share'
 		);
 
 		$email_title = str_replace( '&', '%26', $post_title );
@@ -74,7 +74,7 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
                 </a>
                 
                 <a target="_blank" rel="tooltip"
-                   data-original-title="' . esc_attr__( 'Share on Twitter', 'hestia' ) . '"
+                   data-original-title="' . esc_attr__( 'Share on X', 'hestia' ) . '"
                    class="btn btn-just-icon btn-round btn-twitter"
                    href="' . esc_url( $twitter_url ) . '">
                    <svg width="20" height="17" viewBox="0 0 1200 1227" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -234,7 +234,7 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 												</div>
 											<?php endif; ?>
 											<div class="content">
-												<h6 class="category text-info"><?php echo hestia_category( false ); ?></h6>
+												<span class="category text-info"><?php echo hestia_category( false ); ?></span>
 												<h4 class="card-title">
 													<a class="blog-item-title-link" href="<?php echo esc_url( get_permalink() ); ?>" title="<?php the_title_attribute(); ?>" rel="bookmark">
 														<?php echo wp_kses( force_balance_tags( get_the_title() ), $allowed_html ); ?>

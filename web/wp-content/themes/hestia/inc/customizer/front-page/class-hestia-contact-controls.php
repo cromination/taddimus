@@ -87,7 +87,7 @@ class Hestia_Contact_Controls extends Hestia_Front_Page_Section_Controls_Abstrac
 			new Hestia_Customizer_Control(
 				'hestia_contact_background',
 				array(
-					'default'           => apply_filters( 'hestia_contact_background_default', get_template_directory_uri() . '/assets/img/contact.jpg' ),
+					'default'           => apply_filters( 'hestia_contact_background_default', get_template_directory_uri() . '/assets/img/slider1.jpg' ),
 					'sanitize_callback' => 'esc_url_raw',
 					'transport'         => $this->selective_refresh,
 				),

@@ -225,9 +225,9 @@ class Hestia_Shop_Section extends Hestia_Abstract_Main {
 											'rel'  => array(),
 										),
 									);
-									echo '<h6 class="category">';
+									echo '<span class="category">';
 									echo wp_kses( $cat, $allowed_html );
-									echo '</h6>';
+									echo '</span>';
 								}
 								?>
 

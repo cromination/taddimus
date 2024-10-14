@@ -2792,14 +2792,14 @@ tbody.collapse.in {
     left: auto
 }
 
-.dropup .caret, .navbar-fixed-bottom .dropdown .caret {
+.dropup .caret {
     border-top: 0;
     border-bottom: 4px dashed;
     border-bottom: 4px solid \9;
     content: ""
 }
 
-.dropup .dropdown-menu, .navbar-fixed-bottom .dropdown .dropdown-menu {
+.dropup .dropdown-menu {
     top: auto;
     bottom: 100%;
     margin-bottom: 2px
@@ -3084,18 +3084,18 @@ tbody.collapse.in {
         overflow-y: visible
     }
 
-    .navbar-fixed-top .navbar-collapse, .navbar-static-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
+    .navbar-fixed-top .navbar-collapse, .navbar-static-top .navbar-collapse {
         padding-left: 0;
         padding-right: 0
     }
 }
 
-.navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
+.navbar-fixed-top .navbar-collapse {
     max-height: 340px
 }
 
 @media (max-device-width: 480px) and (orientation: landscape) {
-    .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
+    .navbar-fixed-top .navbar-collapse {
         max-height: 200px
     }
 }
@@ -3123,15 +3123,23 @@ tbody.collapse.in {
     }
 }
 
-.navbar-fixed-top, .navbar-fixed-bottom {
+.navbar-fixed-top {
     position: fixed;
+}
+
+.navbar-static-top {
+    position: absolute;
+}
+
+.navbar-fixed-top, .navbar-static-top {
+    top: 0;
     right: 0;
     left: 0;
     z-index: 1030
 }
 
 @media (min-width: 769px) {
-    .navbar-fixed-top, .navbar-fixed-bottom {
+    .navbar-fixed-top {
         border-radius: 0
     }
 }
@@ -3139,12 +3147,6 @@ tbody.collapse.in {
 .navbar-fixed-top {
     top: 0;
     border-width: 0 0 1px
-}
-
-.navbar-fixed-bottom {
-    bottom: 0;
-    margin-bottom: 0;
-    border-width: 1px 0 0
 }
 
 .navbar-brand {
@@ -3348,14 +3350,6 @@ tbody.collapse.in {
     margin-top: 0;
     border-top-right-radius: 0;
     border-top-left-radius: 0
-}
-
-.navbar-fixed-bottom .navbar-nav > li > .dropdown-menu {
-    margin-bottom: 0;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: 0
 }
 
 .navbar-btn {

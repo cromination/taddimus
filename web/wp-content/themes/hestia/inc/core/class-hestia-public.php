@@ -222,6 +222,8 @@ class Hestia_Public {
 		update_option( 'hestia_time_activated', time() );
 		$this->import_flagship_content();
 		$this->import_child_themes_content();
+		$this->override_default_widget_headings();
+		$this->maybe_change_new_users_defaults();
 	}
 
 	/**
@@ -385,7 +387,15 @@ class Hestia_Public {
 		add_theme_support( 'customize-selective-refresh-widgets' );
 		add_theme_support( 'custom-background', $custom_background_settings );
 		add_theme_support( 'themeisle-demo-import', $this->get_ti_demo_content_support_data() );
+
+		// Enable Core editor supports
 		add_theme_support( 'align-wide' );
+		add_theme_support( 'border' );
+		add_theme_support( 'custom-spacing' );
+		add_theme_support( 'custom-units' );
+		add_theme_support( 'link-color' );
+		add_theme_support( 'appearance-tools' );
+
 		add_theme_support( 'header-footer-elementor' );
 		if ( class_exists( 'Hestia_Starter_Content', false ) ) {
 			add_theme_support( 'starter-content', ( new Hestia_Starter_Content() )->get() );
@@ -393,13 +403,6 @@ class Hestia_Public {
 
 		add_theme_support( 'style' );
 		add_theme_support( 'script' );
-
-		/**
-		 * Add support for wide alignments.
-		 *
-		 * @link https://wordpress.org/gutenberg/handbook/extensibility/theme-support/
-		 */
-		add_theme_support( 'align-wide' );
 
 		/**
 		 * Add support for block color palettes.
@@ -478,6 +481,7 @@ class Hestia_Public {
 	 */
 	public function filter_html_widget_content( $content ) {
 		maybe_trigger_fa_loading( $content );
+
 		return $content;
 	}
 
@@ -496,56 +500,35 @@ class Hestia_Public {
 			),
 			'remote'      => array(
 				'elementor' => array(
-					'hestia-default'       => array(
+					'hestia-default' => array(
 						'url'                   => 'https://demo.themeisle.com/hestia-default',
 						'screenshot'            => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2020/03/hestia-default.png',
 						'title'                 => 'Hestia Original',
 						'edit_content_redirect' => 'customizer',
 					),
-					'hestia-woocommerce'   => array(
-						'url'                   => 'https://demo.themeisle.com/hestia-woocommerce',
-						'screenshot'            => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2020/03/hestia-woocommerce.png',
-						'title'                 => 'WooCommerce Demo',
-						'edit_content_redirect' => 'customizer',
-					),
-					'hestia-energy-panels' => array(
-						'url'        => 'https://demo.themeisle.com/hestia-energy-panels',
-						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2020/03/hestia-energy-panels.png',
-						'title'      => 'Energy Panels Demo',
-					),
-					'hestia-vet-center'    => array(
-						'url'        => 'https://demo.themeisle.com/hestia-vet-center',
-						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2020/03/hestia-vet-center.png',
-						'title'      => 'Vet Center Demo',
-					),
-					'hestia-zelle'         => array(
-						'url'        => 'https://demo.themeisle.com/hestia-zelle',
-						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2020/03/hestia-zelle.png',
-						'title'      => 'Agency Travel Demo',
-					),
 				),
 			),
 			'upsell'      => array(
 				'elementor' => array(
-					'hestia-lawyers'     => array(
+					'hestia-lawyers'    => array(
 						'url'        => 'https://demo.themeisle.com/hestia-lawyers/',
 						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2019/03/hestia-lawyers-demo-screenshot-big.png',
 						'title'      => 'Lawyers Demo',
 					),
-					'hestia-travel'      => array(
-						'url'        => 'https://demo.themeisle.com/hestia-travel/',
-						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2019/03/hestia-travel-demo-screenshot-big.png',
-						'title'      => 'Travel Agency Demo',
+					'hestia-industrial' => array(
+						'url'        => 'https://demo.themeisle.com/hestia-industrial/',
+						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2024/10/hestia-industrial.png',
+						'title'      => 'Industrial Demo',
 					),
-					'hestia-coffee-shop' => array(
-						'url'        => 'https://demo.themeisle.com/hestia-coffee-shop/',
-						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2019/03/hestia-coffee-shop-demo-screenshot-big.png',
-						'title'      => 'Coffee Shop Demo',
+					'hestia-business'   => array(
+						'url'        => 'https://demo.themeisle.com/hestia-business/',
+						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2024/10/hestia-business.png',
+						'title'      => 'Business Demo',
 					),
-					'hestia-gym'         => array(
-						'url'        => 'https://demo.themeisle.com/hestia-gym/',
-						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2019/03/hestia-gym-demo-screenshot-big.png',
-						'title'      => 'Gym Demo',
+					'hestia-fitness'    => array(
+						'url'        => 'https://demo.themeisle.com/hestia-fitness',
+						'screenshot' => 'https://demo.themeisle.com/hestia-pro-demo-content/wp-content/uploads/sites/105/2024/10/hestia-fitness.png',
+						'title'      => 'Fitness Demo',
 					),
 				),
 			),
@@ -658,8 +641,10 @@ class Hestia_Public {
 			'blog_subscribe_widgets'   => esc_html__( 'Blog Subscribe Section', 'hestia' ),
 			'onboarding_message'       => esc_html__( 'This process will set up your website, install required plugins, import demo content (pages, posts, media) and set up the customizer options.', 'hestia' ),
 			'sites_library'            => esc_html__( 'Sites Library', 'hestia' ),
+			'welcome_to_hestia'        => esc_html__( 'Welcome to Hestia Theme', 'hestia' ),
+			'static_page'              => esc_html__( 'A static page (select below)', 'hestia' ),
 			'contact_form_description' => sprintf(
-				/* translators: %1$s is Plugin name */
+			/* translators: %1$s is Plugin name */
 				esc_html__( 'In order to add a contact form to this section, you need to install the %1$s plugin. Then follow %2$sthis guide%3$s to create your form.', 'hestia' ),
 				esc_html( 'WPForms Lite' ),
 				'<a href="' . esc_url( 'https://docs.themeisle.com/article/949-how-to-create-the-hestia-contact-form-in-wpforms' ) . '" target="_blank">',
@@ -710,10 +695,12 @@ class Hestia_Public {
 
 		if ( ( $current_time - $theme_install_time ) > 60 ) {
 			update_option( 'hestia_load_shim', 'yes' );
+
 			return true;
 		}
 
 		update_option( 'hestia_load_shim', 'no' );
+
 		return false;
 	}
 
@@ -748,16 +735,72 @@ class Hestia_Public {
 	/**
 	 *  Check for all enqueued styles for font-awesome.min.css.
 	 */
-	function check_fa4_styles() {
+	public function check_fa4_styles() {
 
 		global $wp_styles;
 		foreach ( $wp_styles->queue as $style ) {
 			if ( isset( $wp_styles->registered[ $style ] ) && strstr( $wp_styles->registered[ $style ]->src, 'font-awesome.min.css' ) ) {
 				update_option( 'hestia_load_shim', 'yes' );
+
 				return true;
 			}
 		}
+
 		return false;
 	}
 
+	/**
+	 * Set up default widgets for the sidebar.
+	 *
+	 * Set the the headings from h2 to h5.
+	 *
+	 * @return void
+	 */
+	public function override_default_widget_headings() {
+		$widget_data   = get_option( 'sidebars_widgets', array() );
+		$block_widgets = get_option( 'widget_block', array() );
+
+		if ( empty( $widget_data ) || empty( $block_widgets ) || ! isset( $widget_data['sidebar-1'] ) ) {
+			return;
+		}
+
+		$blog_sidebar = $widget_data['sidebar-1'];
+
+		foreach ( $block_widgets as $idx => $data ) {
+			if ( ! in_array( "block-$idx", $blog_sidebar, true ) ) {
+				continue;
+			}
+
+			if ( ! is_array( $data ) || empty( $data ) || ! isset( $data['content'] ) ) {
+				continue;
+			}
+
+			$data['content'] = str_replace( '<h2', '<h5', $data['content'] );
+			$data['content'] = str_replace( '</h2>', '</h5>', $data['content'] );
+
+			$block_widgets[ $idx ] = $data;
+		}
+
+		update_option( 'widget_block', $block_widgets );
+	}
+
+	/**
+	 * Change new user default theme mods.
+	 *
+	 * @return void
+	 */
+	public function maybe_change_new_users_defaults() {
+		// Some theme mods to check if the customizer was ever saved:
+		$theme_mods_to_check = array( 'hestia_slider_content', 'hestia_big_title_title', 'disable_frontpage_sections' );
+		$mods                = get_theme_mods();
+
+		foreach ( $theme_mods_to_check as $mod ) {
+			if ( isset( $mods[ $mod ] ) ) {
+				return;
+			}
+		}
+
+		set_theme_mod( 'hestia_body_font', 'Arial, Helvetica, sans-serif' );
+		set_theme_mod( 'hestia_ribbon_hide', false );
+	}
 }
