@@ -72,7 +72,7 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 			esc_html__( 'big title section', 'hestia' ),
 			/* translators: %s is the Learn more label*/
 			sprintf(
-				'<a class="button button-primary" target="_blank" href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'bigtitlesection' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
+				'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'bigtitlesection' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
 				__( 'Upgrade to Unlock', 'hestia' )
 			)
 		);
@@ -145,8 +145,6 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 	 * Change controls from lite version.
 	 */
 	public function change_controls() {
-		error_log( 'CHANGING CONTROLS' );
-
 		$this->change_customizer_object( 'control', 'header_video', 'section', 'hestia_big_title' );
 		$this->change_customizer_object( 'control', 'header_video', 'priority', 15 );
 		$this->change_customizer_object( 'control', 'header_video', 'active_callback', '__return_true' );

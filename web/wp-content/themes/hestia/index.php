@@ -52,8 +52,8 @@ do_action( 'hestia_before_index_wrapper' ); ?>
 						echo '<div class="' . esc_attr( $wrap_posts ) . '">';
 						while ( have_posts() ) {
 							the_post();
-							$counter ++;
 							$pid = get_the_ID();
+							$counter ++;
 							if ( ! empty( $posts_to_skip ) && in_array( $pid, $posts_to_skip, true ) ) {
 								$counter ++;
 								continue;

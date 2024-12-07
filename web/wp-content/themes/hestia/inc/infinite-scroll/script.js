@@ -7,15 +7,16 @@ jQuery(document).ready(function($){
      * Append button after all posts
      */
     $('.blog-posts-wrap').append( '<div class="trigger"></div>' );
-    var page = 2;
+    var page = 1;
     var lock = false;
-
 
     $(window).scroll(function(){
         var postWrap = $('.blog-posts-wrap');
         var button = postWrap.find('.trigger');
         var processing = isElementInViewport(button);
-
+        const loadedPost = Array.from(document.querySelectorAll('.hestia-blogs article'))
+            .map(article => article.id.match(/\d+/))
+            .filter(Boolean);
         if ( processing === true && lock === false ) {
             if( page <= infinite.max_page ){
                 postWrap.append( '<div class="loading text-center"><i class="fa fa-3x fa-spin fa-spinner" aria-hidden="true"></i></div>' );
@@ -25,11 +26,12 @@ jQuery(document).ready(function($){
             var data = {
                 action: 'infinite_scroll',
                 page: page,
-                nonce: infinite.nonce
+                nonce: infinite.nonce,
+                postsToSkip: infinite.postsToSkip || [],
+                loadedPost: loadedPost.length || 0,
             };
             $.post(infinite.ajaxurl, data, function(res) {
                 if( res ) {
-                    postWrap.find('.loading').remove();
                     if( typeof infinite.masonry !== 'undefined' ){
                         var html = $.parseHTML( res );
                         var masonryGrid =  $('.post-grid-display');
@@ -50,6 +52,7 @@ jQuery(document).ready(function($){
                 } else {
                     console.log(res);
                 }
+                postWrap.find('.loading').remove();
             }).fail(function(xhr) {
                 console.log(xhr.responseText);
             });

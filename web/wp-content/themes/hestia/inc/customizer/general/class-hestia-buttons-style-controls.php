@@ -164,7 +164,7 @@ class Hestia_Buttons_Style_Controls extends Hestia_Register_Customizer_Controls 
 						__( 'More Options Available for %1$s in the Pro version.', 'hestia' ),
 						esc_html__( 'Button', 'hestia' )
 					),
-					'link'            => tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'buttons' ),
+					'link'            => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'buttons' ), 'query' ),
 					'button_text'     => __( 'Upgrade Now', 'hestia' ),
 					'new_tab'         => true,
 					'is_button'       => false,

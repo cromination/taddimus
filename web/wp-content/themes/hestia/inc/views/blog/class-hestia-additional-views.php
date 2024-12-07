@@ -112,7 +112,7 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 						}
 						?>
 					</div>
-					<?php the_tags( '<div class="entry-tags">' . esc_html__( 'Tags: ', 'hestia' ) . '<span class="entry-tag">', '</span><span class="entry-tag">', '</span></div>' ); ?>
+					<?php the_tags( '<div class="entry-tags">' . esc_html__( 'Tags:', 'hestia' ) . ' ' . '<span class="entry-tag">', '</span><span class="entry-tag">', '</span></div>' ); ?>
 				</div>
 				<?php do_action( 'hestia_blog_social_icons' ); ?>
 			</div>

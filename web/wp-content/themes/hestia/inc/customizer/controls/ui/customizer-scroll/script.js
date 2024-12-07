@@ -22,7 +22,11 @@ var hestia_customize_scroller = function ( $ ) {
 					function () {
 						$( this ).on(
 							'click', function() {
-								var section = $( this ).attr( 'aria-owns' ).split( '_' ).pop();
+								var getAriaOwns = $( this ).attr( 'aria-owns' );
+								var sectionId = getAriaOwns.split( '-' ).pop();
+								wp.customize.section( sectionId ).expand();
+
+								var section = getAriaOwns.split( '_' ).pop();
 								customize.previewer.send( 'clicked-customizer-section', section );
 							}
 						);

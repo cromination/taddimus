@@ -598,7 +598,7 @@ class Problem
             if ($topPackage instanceof RootPackageInterface) {
                 return [
                     "- Root composer.json requires $packageName".self::constraintToText($constraint).', it is ',
-                    'satisfiable by '.self::getPackageList($nextRepoPackages, $isVerbose, $pool, $constraint).' from '.$nextRepo->getRepoName().' but '.$topPackage->getPrettyName().' is the root package and cannot be modified. See https://getcomposer.org/dep-on-root for details and assistance.',
+                    'satisfiable by '.self::getPackageList($nextRepoPackages, $isVerbose, $pool, $constraint).' from '.$nextRepo->getRepoName().' but '.$topPackage->getPrettyName().' '.$topPackage->getPrettyVersion().' is the root package and cannot be modified. See https://getcomposer.org/dep-on-root for details and assistance.',
                 ];
             }
         }
@@ -649,7 +649,7 @@ class Problem
         $providers = $repositorySet->getProviders($packageName);
         if (\count($providers) > 0) {
             $providersStr = implode(array_map(static function ($p): string {
-                $description = $p['description'] !== '' ? ' '.substr($p['description'], 0, 100) : '';
+                $description = $p['description'] !== '' && $p['description'] !== null ? ' '.substr($p['description'], 0, 100) : '';
 
                 return '      - '.$p['name'].$description."\n";
             }, count($providers) > $maxProviders + 1 ? array_slice($providers, 0, $maxProviders) : $providers));

@@ -241,7 +241,7 @@ class Hestia_Admin {
 		$free_pro = array(
 			'free_theme_name'     => 'Hestia',
 			'pro_theme_name'      => 'Hestia Pro',
-			'pro_theme_link'      => apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'freevspro', 'abouthestia' ) ),
+			'pro_theme_link'      => apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'freevspro', 'abouthestia' ), 'query' ) ),
 			/* translators: s - theme name */
 			'get_pro_theme_label' => sprintf( __( 'Get %s now!', 'hestia' ), 'Hestia Pro' ),
 			'banner_link'         => 'http://docs.themeisle.com/article/647-what-is-the-difference-between-hestia-and-hestia-pro',
@@ -567,7 +567,7 @@ class Hestia_Admin {
 		$has_onboarding = class_exists( 'Themeisle_Onboarding', false );
 
 		/* translators: %s - theme name */
-		$heading     = str_replace( ' - Version', '', sprintf( __( 'Welcome to %s! - Version ', 'hestia' ), $name ) );
+		$heading     = str_replace( ' - Version', '', sprintf( __( 'Welcome to %s! - Version', 'hestia' ), $name ) . ' ' );
 		$screenshot  = get_template_directory_uri() . '/assets/img/notice.png';
 		$description = __( 'Using the WordPress Customizer you can easily customize every aspect of the theme.', 'hestia' );
 		$button_text = __( 'Go to the Customizer', 'hestia' );
@@ -669,7 +669,7 @@ class Hestia_Admin {
 	 * @return array
 	 * @see survey.js
 	 */
-	public function get_survery_metadata() {
+	public function get_survey_metadata() {
 
 		$user_id       = 'hestia_';
 		$license_saved = get_option( 'hestia_pro_license_data', array() );
@@ -719,11 +719,17 @@ class Hestia_Admin {
 	 */
 	public function register_survey() {
 
+		$survey_data = $this->get_survey_metadata();
+
+		if ( 1 >= $survey_data['attributes']['plan'] ) {
+			do_action( 'themeisle_sdk_load_banner', 'hestia' );
+		}
+
 		$survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
 		if ( ! empty( $survey_handler ) ) {
 			do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
 			wp_enqueue_script( 'hestia_survey', get_template_directory_uri() . '/assets/js/survey.js', array( $survey_handler ), HESTIA_VENDOR_VERSION, true );
-			wp_localize_script( 'hestia_survey', 'hestiaSurveyData', $this->get_survery_metadata() );
+			wp_localize_script( 'hestia_survey', 'hestiaSurveyData', $survey_data );
 		}
 	}
 
@@ -758,7 +764,7 @@ class Hestia_Admin {
 			'is_enabled' => ! defined( 'HESTIA_PRO_FLAG' ),
 			'pro_name'   => 'Hestia Pro',
 			'logo'       => get_template_directory_uri() . '/assets/img/logo.svg',
-			'cta_link'   => tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/?discount=LOYALUSER583&dvalue=60#pricing', 'hestia-welcome', 'notice' ),
+			'cta_link'   => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/?discount=LOYALUSER583&dvalue=60#pricing', 'hestia-welcome', 'notice' ), 'query' ),
 		);
 	}
 }

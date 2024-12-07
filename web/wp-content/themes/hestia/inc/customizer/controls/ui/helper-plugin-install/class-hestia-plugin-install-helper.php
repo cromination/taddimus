@@ -172,7 +172,10 @@ class Hestia_Plugin_Install_Helper {
 			'hestia-plugin-install-helper',
 			'hestia_plugin_helper',
 			array(
-				'activating' => esc_html__( 'Activating ', 'hestia' ),
+				'activating' => esc_html__(
+					'Activating',
+					'hestia',
+				) . ' ',
 			)
 		);
 		wp_localize_script(

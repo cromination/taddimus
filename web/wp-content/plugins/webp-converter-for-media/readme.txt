@@ -3,9 +3,9 @@ Contributors: mateuszgbiorczyk
 Donate link: https://url.mattplugins.com/converter-readme-donate-link
 Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.0
-Stable tag: 6.1.1
+Stable tag: 6.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,24 +29,23 @@ Now in [the PRO version](https://url.mattplugins.com/converter-readme-avif-suppo
 
 #### How does this work?
 
-- If you have just installed the plugin, you can optimize images with one click. Image size will be smaller after generate webp!
-- New images that will be added to the Media Library will be converted automatically.
-- Our image optimizer does not modify your original images in any way. This means security for you and your files.
-- When the browser loads an image, our plugin checks if it supports the WebP format. If so, the image in WebP format is loaded.
-- The plugin does not make redirects in default mode, so the URL is always the same. Only the MIME type of the image changes to `image/webp`.
-- No redirects means no cache issues, faster and trouble-free operation of your website. If you want to know more about how it works, check out [the plugin FAQ](#faq) below.
-- It does not matter if the image display as an `img` HTML tag or you use `background-image`. It works always!
-- In case rewriting by rules from .htaccess file is blocked, a mode is available which loads images via PHP file. Then image URLs are changed, but the logic of operation is the same as in the case of the default mode.
-- The final result after image optimization is that your users download less than half of the data, and the website itself loads faster!
-- You lose nothing - if you had to remove the plugin, it will remove everything after itself. It does not leave any trace, so you can check it with ease.
+When a browser tries to load an image file, the plugin checks if it supports the AVIF format (if enabled in the plugin settings). If so, the browser will receive the equivalent of the original image in the AVIF format. If it does not support AVIF, but supports the WebP format, the browser will receive the equivalent of the original image in WebP format. In case the browser does not support either WebP or AVIF, the original image is loaded. **This means full support for all browsers.**
 
-#### Convert WebP - it is the future of image optimization!
+A guide on how to test whether the plugin is working properly can be found [here](https://mattplugins.com/docs/how-to-test-converter-for-media-plugin).
+
+#### Additional information
+- If you have just installed the plugin, you can optimize images with **one click**. Image size will be smaller after generate AVIF and WebP!
+- New images that will be added to the Media Library will be converted **automatically**.
+- Our image optimizer does not modify your original images in any way. **This means security for you and your files.** Files converted to AVIF and WebP format are saved in a separate directory: /wp-content/uploads-webpc/.
+- **You lose nothing** - if you had to remove the plugin, it will remove everything after itself. It does not leave any trace, so you can check it with ease.
+
+#### Convert WebP and AVIF - it is the future of image optimization!
 
 Optimize images and raise your website to a new level now! Install the plugin and enjoy the website that loads faster by image optimization. Surely you and your users will appreciate it.
 
 #### Support for additional directories
 
-You can convert WebP and optimize images not only from `/uploads` directory but also from `/plugins` and `/themes` directories. This allows full integration with the WebP format!
+You can convert WebP and AVIF, and optimize images not only from `/uploads` directory but also from `/plugins` and `/themes` directories. This allows full integration with WebP and AVIF formats!
 
 #### Support to the development of plugin
 
@@ -305,6 +304,13 @@ Current list of supported CDN servers:
 5. Ability to manually undo optimization of selected image
 
 == Changelog ==
+
+= 6.1.3 (2024-11-19) =
+* `[Fixed]` Translations in command registration for WP-CLI
+* `[Added]` Support for WordPress 6.7
+
+= 6.1.2 (2024-10-26) =
+* `[Fixed]` Removing converted files after uninstalling plugin
 
 = 6.1.1 (2024-10-02) =
 * `[Changed]` Bulk Optimization of Images section

@@ -372,30 +372,27 @@ class Locker
                                'Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies',
                                'This file is @gener'.'ated automatically', ],
             'content-hash' => $this->contentHash,
-            'packages' => null,
+            'packages' => $this->lockPackages($packages),
             'packages-dev' => null,
             'aliases' => $aliases,
             'minimum-stability' => $minimumStability,
-            'stability-flags' => \count($stabilityFlags) > 0 ? $stabilityFlags : new \stdClass,
+            'stability-flags' => $stabilityFlags,
             'prefer-stable' => $preferStable,
             'prefer-lowest' => $preferLowest,
         ];
 
-        if (is_array($lock['stability-flags'])) {
-            ksort($lock['stability-flags']);
-        }
-
-        $lock['packages'] = $this->lockPackages($packages);
         if (null !== $devPackages) {
             $lock['packages-dev'] = $this->lockPackages($devPackages);
         }
 
-        $lock['platform'] = \count($platformReqs) > 0 ? $platformReqs : new \stdClass;
-        $lock['platform-dev'] = \count($platformDevReqs) > 0 ? $platformDevReqs : new \stdClass;
+        $lock['platform'] = $platformReqs;
+        $lock['platform-dev'] = $platformDevReqs;
         if (\count($platformOverrides) > 0) {
             $lock['platform-overrides'] = $platformOverrides;
         }
         $lock['plugin-api-version'] = PluginInterface::PLUGIN_API_VERSION;
+
+        $lock = $this->fixupJsonDataType($lock);
 
         try {
             $isLocked = $this->isLocked();
@@ -416,6 +413,60 @@ class Locker
         }
 
         return false;
+    }
+
+    /**
+     * Updates the lock file's hash in-place from a given composer.json's JsonFile
+     *
+     * This does not reload or require any packages, and retains the filemtime of the lock file.
+     *
+     * Use this only to update the lock file hash after updating a composer.json in ways that are guaranteed NOT to impact the dependency resolution.
+     *
+     * This is a risky method, use carefully.
+     *
+     * @param (callable(array<string, mixed>): array<string, mixed>)|null $dataProcessor Receives the lock data and can process it before it gets written to disk
+     */
+    public function updateHash(JsonFile $composerJson, ?callable $dataProcessor = null): void
+    {
+        $contents = file_get_contents($composerJson->getPath());
+        if (false === $contents) {
+            throw new \RuntimeException('Unable to read '.$composerJson->getPath().' contents to update the lock file hash.');
+        }
+
+        $lockMtime = filemtime($this->lockFile->getPath());
+        $lockData = $this->lockFile->read();
+        $lockData['content-hash'] = Locker::getContentHash($contents);
+        if ($dataProcessor !== null) {
+            $lockData = $dataProcessor($lockData);
+        }
+
+        $this->lockFile->write($this->fixupJsonDataType($lockData));
+        $this->lockDataCache = null;
+        $this->virtualFileWritten = false;
+        if (is_int($lockMtime)) {
+            @touch($this->lockFile->getPath(), $lockMtime);
+        }
+    }
+
+    /**
+     * Ensures correct data types and ordering for the JSON lock format
+     *
+     * @param array<mixed> $lockData
+     * @return array<mixed>
+     */
+    private function fixupJsonDataType(array $lockData): array
+    {
+        foreach (['stability-flags', 'platform', 'platform-dev'] as $key) {
+            if (isset($lockData[$key]) && is_array($lockData[$key]) && \count($lockData[$key]) === 0) {
+                $lockData[$key] = new \stdClass();
+            }
+        }
+
+        if (is_array($lockData['stability-flags'])) {
+            ksort($lockData['stability-flags']);
+        }
+
+        return $lockData;
     }
 
     /**
@@ -503,13 +554,14 @@ class Locker
                 case 'git':
                     GitUtil::cleanEnv();
 
-                    if (0 === $this->process->execute('git log -n1 --pretty=%ct '.ProcessExecutor::escape($sourceRef).GitUtil::getNoShowSignatureFlag($this->process), $output, $path) && Preg::isMatch('{^\s*\d+\s*$}', $output)) {
+                    $command = array_merge(['git', 'log', '-n1', '--pretty=%ct', (string) $sourceRef], GitUtil::getNoShowSignatureFlags($this->process));
+                    if (0 === $this->process->execute($command, $output, $path) && Preg::isMatch('{^\s*\d+\s*$}', $output)) {
                         $datetime = new \DateTime('@'.trim($output), new \DateTimeZone('UTC'));
                     }
                     break;
 
                 case 'hg':
-                    if (0 === $this->process->execute('hg log --template "{date|hgdate}" -r '.ProcessExecutor::escape($sourceRef), $output, $path) && Preg::isMatch('{^\s*(\d+)\s*}', $output, $match)) {
+                    if (0 === $this->process->execute(['hg', 'log', '--template', '{date|hgdate}', '-r', (string) $sourceRef], $output, $path) && Preg::isMatch('{^\s*(\d+)\s*}', $output, $match)) {
                         $datetime = new \DateTime('@'.$match[1], new \DateTimeZone('UTC'));
                     }
                     break;

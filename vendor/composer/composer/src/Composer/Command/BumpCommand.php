@@ -216,15 +216,8 @@ EOT
             $io->write('<info>No requirements to update in '.$composerJsonPath.'.</info>');
         }
 
-        if (!$dryRun && $composer->getLocker()->isLocked() && $changeCount > 0) {
-            $contents = file_get_contents($composerJson->getPath());
-            if (false === $contents) {
-                throw new \RuntimeException('Unable to read '.$composerJson->getPath().' contents to update the lock file hash.');
-            }
-            $lock = new JsonFile(Factory::getLockFile($composerJsonPath));
-            $lockData = $lock->read();
-            $lockData['content-hash'] = Locker::getContentHash($contents);
-            $lock->write($lockData);
+        if (!$dryRun && $composer->getLocker()->isLocked() && $composer->getConfig()->get('lock') && $changeCount > 0) {
+            $composer->getLocker()->updateHash($composerJson);
         }
 
         if ($dryRun && $changeCount > 0) {

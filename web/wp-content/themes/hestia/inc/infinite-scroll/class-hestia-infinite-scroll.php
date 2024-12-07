@@ -40,7 +40,7 @@ class Hestia_Infinite_Scroll extends Hestia_Abstract_Main {
 	public function enqueue_scripts() {
 		if ( $this->should_enqueue_infinite_scroll() ) {
 			wp_enqueue_script( 'hestia-infinit-scroll', get_template_directory_uri() . '/inc/infinite-scroll/script.js', array( 'jquery', 'masonry' ), HESTIA_VERSION, true );
-
+			hestia_load_fa();
 			$script_options = $this->get_infinite_scroll_options();
 			wp_localize_script( 'hestia-infinit-scroll', 'infinite', $script_options );
 		}
@@ -54,12 +54,19 @@ class Hestia_Infinite_Scroll extends Hestia_Abstract_Main {
 	public function get_infinite_scroll_options() {
 
 		global $wp_query;
-		$max_pages = $wp_query->max_num_pages;
+		$max_pages        = $wp_query->max_num_pages;
+		$posts_id_to_skip = array_map(
+			function( $p ) {
+				return $p->ID;
+			},
+			$wp_query->posts
+		);
 
 		$result = array(
-			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-			'max_page' => $max_pages,
-			'nonce'    => wp_create_nonce( 'hestia-infinite-scroll' ),
+			'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+			'max_page'    => $max_pages,
+			'nonce'       => wp_create_nonce( 'hestia-infinite-scroll' ),
+			'postsToSkip' => $posts_id_to_skip,
 		);
 
 		if ( Hestia_Public::should_enqueue_masonry() === true ) {
@@ -78,13 +85,11 @@ class Hestia_Infinite_Scroll extends Hestia_Abstract_Main {
 			return;
 		}
 
-		$page                    = $_POST['page'];
+		$page                    = isset( $_POST['page'] ) ? (int) $_POST['page'] : 1;
+		$posts_id_to_skip        = ! empty( $_POST['postsToSkip'] ) ? array_unique( array_map( 'intval', $_POST['postsToSkip'] ) ) : array();
+		$counter                 = ! empty( $_POST['loadedPost'] ) ? (int) $_POST['loadedPost'] : 0;
 		$alternative_blog_layout = get_theme_mod( 'hestia_alternative_blog_layout', 'blog_normal_layout' );
-		$posts_per_page          = get_option( 'posts_per_page' );
-		$counter                 = $posts_per_page * $page;
-		if ( $posts_per_page % 2 === 0 ) {
-			$counter += 1;
-		}
+		$posts_per_page          = (int) get_option( 'posts_per_page' );
 
 		$args = array(
 			'posts_per_page'      => $posts_per_page,
@@ -92,6 +97,7 @@ class Hestia_Infinite_Scroll extends Hestia_Abstract_Main {
 			'paged'               => $page,
 			'ignore_sticky_posts' => 1,
 			'post_status'         => 'publish',
+			'post__not_in'        => $posts_id_to_skip,
 		);
 
 		$query = new WP_Query( $args );

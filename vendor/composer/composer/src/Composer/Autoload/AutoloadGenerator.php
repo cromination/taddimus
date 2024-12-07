@@ -34,6 +34,7 @@ use Composer\Script\ScriptEvents;
 use Composer\Util\PackageSorter;
 use Composer\Json\JsonFile;
 use Composer\Package\Locker;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 
 /**
  * @author Igor Wiedler <igor@wiedler.ch>
@@ -380,6 +381,9 @@ EOF;
                 );
             }
         }
+        if (\count($ambiguousClasses) > 0) {
+            $this->io->writeError('<info>To resolve ambiguity in classes not under your control you can ignore them by path using <href='.OutputFormatter::escape('https://getcomposer.org/doc/04-schema.md#exclude-files-from-classmaps').'>exclude-files-from-classmap</>');
+        }
 
         // output PSR violations which are not coming from the vendor dir
         $classMap->clearPsrViolationsByPath($vendorPath);
@@ -661,11 +665,11 @@ EOF;
 
             foreach ($package->getIncludePaths() as $includePath) {
                 $includePath = trim($includePath, '/');
-                $includePaths[] = empty($installPath) ? $includePath : $installPath.'/'.$includePath;
+                $includePaths[] = $installPath === '' ? $includePath : $installPath.'/'.$includePath;
             }
         }
 
-        if (!$includePaths) {
+        if (\count($includePaths) === 0) {
             return null;
         }
 

@@ -4,8 +4,8 @@ Donate link: https://yoa.st/1up
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: SEO, XML sitemap, Content analysis, Readability, Schema
-Tested up to: 6.6
-Stable tag: 23.6
+Tested up to: 6.7
+Stable tag: 24.0
 Requires PHP: 7.2.5
 
 Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin.
@@ -274,42 +274,50 @@ Your question has most likely been answered on our help center: [yoast.com/help/
 
 == Changelog ==
 
-= 23.6 =
+= 24.0 =
 
-Release date: 2024-10-08
+Release date: 2024-12-03
 
-Yoast SEO 23.6 brings more enhancements and bugfixes. [Find more information about our software releases and updates here](https://yoa.st/release-8-10-24).
+Yoast SEO 24.0 brings more enhancements and bugfixes. [Find more information about our software releases and updates here](https://yoa.st/release-3-12-24).
 
 #### Enhancements
 
-* Adds a filter to modify the sitemap's URL. Props to [ashujangra](https://github.com/ashujangra).
-* Improves the _transition words_ assessment for Turkish and English by expanding the relevant lists of transitions words. Props to [abulu](https://wordpress.org/support/users/abulu/).
-* Uses the full-sized counterpart when a resized first content image is used for Open Graph and X images.
+* Allows to set OpenGraph image HTML metadata `width`, `height`, and `type` to `null` in order not to show them. Props to [GiovanniMounir](https://github.com/GiovanniMounir).
+* Improves the _transition words_ assessment for Portuguese and English by updating the relevant lists of transition words. Props to [BrunoAseff](https://github.com/BrunoAseff).
+* Introduces an error message in the Yoast _General_ page in case of JavaScript errors.
+* Updates the design and translations of the country selector in the modal for related keyphrase suggestions.
 
 #### Bugfixes
 
-* Fixes a bug where the content analysis would error when removing an image caption in the default editor.
-* Fixes a bug where the link popover would be hidden when editing a post in tablet/mobile view. Props to [stokesman](https://github.com/stokesman).
-* Fixes a visual inconsistency where the descriptions of the disabled Premium policy settings would look enabled, when they are not enabled.
+* Fixes a bug where the first step in the _First time configuration_ would not be considered finished unless the _Site representation_ step would be finished as well.
+* Fixes a bug where the settings for a post type are inaccessible when the permalink structure includes special characters that require encoding, e.g., when WooCommerce products are set to use the \"Shop base with category\" permalink structure.
+* Fixes a bug where the Yoast _General_ page would not reflect the active menu item properly if using a fallback.
 
 #### Other
 
-* Sets the minimum supported WordPress version to 6.5.
+* Improves the documentation for `wpseo_enable_tracking` filter. Props to [kkmuffme](https://github.com/kkmuffme).
 
-= 23.5 =
+= 23.9 =
 
-Release date: 2024-09-24
+Release date: 2024-11-19
 
-Yoast SEO 23.5 brings more enhancements and bugfixes. [Find more information about our software releases and updates here](https://yoa.st/release-24-9-24).
+Yoast SEO 23.9 brings enhancements to the Yoast SEO Semrush integration and various bug fixes. Find more about Yoast SEO 23.9 in [our release post](https://yoa.st/release-19-11-24)!
 
 #### Enhancements
 
-* Improves analysis score feedback labels in the publish sections.
-* Improves our integration with cache plugins by preventing flushing their cache when not needed.
+* Adds a maximum width to the problems and notifications sections on the _General_ page.
+* Adds _Intent_ and _Difficulty_ to the metrics shown in the Semrush integration.
+* Improves the compatibility of the Yoast blocks with WordPress 6.7.
 
 #### Bugfixes
 
-* Fixes a bug where Arabic keyphrases containing certain function words were not correctly matched.
+* Fixes a bug where a fatal error is triggered in PHP 8.x when a user's additional contact methods have been improperly set to `null`. Props to [PhilETaylor](https://github.com/PhilETaylor).
+* Fixes a bug where the _First time configuration_ would have a double separator for the title and content.
+* Fixes a bug where the _First time configuration_ would not resize properly on smaller width screens.
+
+#### Other
+
+* Stops PHP notices on WordPress 6.7 about `_load_textdomain_just_in_time` loading incorrectly.
 
 = Earlier versions =
 For the changelog of earlier versions, please refer to [the changelog on yoast.com](https://yoa.st/yoast-seo-changelog).

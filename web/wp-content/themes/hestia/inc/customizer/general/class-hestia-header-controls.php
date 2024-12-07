@@ -270,7 +270,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 						__( 'More Options Available for %1$s in the Pro version.', 'hestia' ),
 						esc_html__( 'Very Top Bar', 'hestia' )
 					),
-					'link'            => tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'very-top-bar' ),
+					'link'            => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'very-top-bar' ), 'query' ),
 					'button_text'     => __( 'Upgrade Now', 'hestia' ),
 					'new_tab'         => true,
 					'is_button'       => false,
@@ -307,7 +307,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 				esc_html__( 'Navigation', 'hestia' ),
 				/* translators: %s is the Learn more label*/
 				sprintf(
-					'<a class="button button-primary" target="_blank" href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'navigation' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
+					'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'navigation' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
 					__( 'Upgrade to Unlock', 'hestia' )
 				)
 			);

@@ -56,6 +56,14 @@ class WpCliManager implements HookableInterface {
 	 * {@inheritdoc}
 	 */
 	public function init_hooks() {
+		add_action( 'cli_init', [ $this, 'init_hooks_after_setup' ] );
+	}
+
+	/**
+	 * @return void
+	 * @internal
+	 */
+	public function init_hooks_after_setup() {
 		if ( ! class_exists( '\WP_CLI' ) ) {
 			return;
 		}

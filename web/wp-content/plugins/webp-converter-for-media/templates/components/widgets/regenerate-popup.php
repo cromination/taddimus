@@ -112,8 +112,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<?php
 							echo wp_kses_post(
 								sprintf(
-                                /* translators: %1$s: percent value, %2$s: coupon code */
-                                    __( 'Get %1$s off by entering the code %2$s at checkout!', 'webp-converter-for-media' ),
+								/* translators: %1$s: percent value, %2$s: coupon code */
+									__( 'Get %1$s off by entering the code %2$s at checkout!', 'webp-converter-for-media' ),
 									'<strong>20%</strong>',
 									'"<strong>20VZUMCF</strong>"'
 								)

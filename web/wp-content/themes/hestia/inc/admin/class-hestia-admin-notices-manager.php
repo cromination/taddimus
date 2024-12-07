@@ -36,7 +36,7 @@ class Hestia_Admin_Notices_Manager extends Hestia_Abstract_Main {
 		printf( '<a href="%s" class="notice-dismiss" style="text-decoration:none;"></a>', '?hestia_nag_ignore=0' );
 		echo '<p>';
 		/* translators: Upsell to get the pro version */
-		printf( esc_html__( 'Hestia front-page is not multi-language compatible, for this feature %s.', 'hestia' ), sprintf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url_raw( apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'multilanguage' ) ) ), esc_html__( 'Get the PRO version!', 'hestia' ) ) );
+		printf( esc_html__( 'Hestia front-page is not multi-language compatible, for this feature %s.', 'hestia' ), sprintf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url_raw( apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'multilanguage' ), 'query' ) ) ), esc_html__( 'Get the PRO version!', 'hestia' ) ) );
 		echo '</p>';
 		echo '</div>';
 	}

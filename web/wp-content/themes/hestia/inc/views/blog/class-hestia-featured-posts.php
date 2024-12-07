@@ -15,13 +15,14 @@ class Hestia_Featured_Posts extends Hestia_Abstract_Main {
 	 *
 	 * @var array
 	 */
-	private $posts_to_skip = array();
+	private $posts_id_to_skip = array();
 
 	/**
 	 * Initialize Featured Posts
 	 */
 	public function init() {
 		add_action( 'hestia_before_index_posts_loop', array( $this, 'render_featured_posts' ) );
+		add_action( 'hestia_after_archive_content', array( $this, 'after_archive_content' ) );
 		add_filter(
 			'hestia_filter_skipped_posts_in_main_loop',
 			array(
@@ -112,7 +113,7 @@ class Hestia_Featured_Posts extends Hestia_Abstract_Main {
 
 			// Get the data (title, category, content) and display the post.
 			$pid = get_the_ID();
-			array_push( $this->posts_to_skip, $pid );
+			array_push( $this->posts_id_to_skip, $pid );
 			$post_url = esc_url( get_permalink() );
 			$title    = get_the_title();
 			$content  = get_the_excerpt();
@@ -157,7 +158,7 @@ class Hestia_Featured_Posts extends Hestia_Abstract_Main {
 	 * @return array
 	 */
 	public function remove_featured_posts_in_main_loop( $posts ) {
-		return array_merge( $posts, $this->posts_to_skip );
+		return array_merge( $posts, $this->posts_id_to_skip );
 	}
 
 	/**
@@ -193,6 +194,41 @@ class Hestia_Featured_Posts extends Hestia_Abstract_Main {
 			return ' col-md-10 col-md-offset-1 ';
 		} else {
 			return ' col-md-12 ';
+		}
+	}
+
+	/**
+	 * Localize script data on the `after_archive_content` hook.
+	 *
+	 * @return null|void
+	 */
+	public function after_archive_content() {
+		if ( false === hestia_featured_posts_enabled() ) {
+			return;
+		}
+		global $wp_query;
+
+		if ( wp_script_is( 'hestia-infinit-scroll' ) && $wp_query->posts ) {
+			$posts_id_to_skip       = array_map(
+				function( $p ) {
+					return $p->ID;
+				},
+				$wp_query->posts
+			);
+			$this->posts_id_to_skip = array_merge( $this->posts_id_to_skip, $posts_id_to_skip );
+			$max_pages              = $wp_query->max_num_pages;
+
+			$data = array(
+				'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+				'max_page'    => absint( $max_pages ),
+				'nonce'       => wp_create_nonce( 'hestia-infinite-scroll' ),
+				'postsToSkip' => $this->posts_id_to_skip,
+			);
+
+			if ( Hestia_Public::should_enqueue_masonry() === true ) {
+				$data['masonry'] = true;
+			}
+			wp_localize_script( 'hestia-infinit-scroll', 'infinite', $data );
 		}
 	}
 }

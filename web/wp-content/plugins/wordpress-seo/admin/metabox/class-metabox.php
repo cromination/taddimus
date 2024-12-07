@@ -82,8 +82,8 @@ class WPSEO_Metabox extends WPSEO_Meta {
 		$this->editor = new WPSEO_Metabox_Editor();
 		$this->editor->register_hooks();
 
-		$this->social_is_enabled            = WPSEO_Options::get( 'opengraph', false ) || WPSEO_Options::get( 'twitter', false );
-		$this->is_advanced_metadata_enabled = WPSEO_Capability_Utils::current_user_can( 'wpseo_edit_advanced_metadata' ) || WPSEO_Options::get( 'disableadvanced_meta' ) === false;
+		$this->social_is_enabled            = WPSEO_Options::get( 'opengraph', false, [ 'wpseo_social' ] ) || WPSEO_Options::get( 'twitter', false, [ 'wpseo_social' ] );
+		$this->is_advanced_metadata_enabled = WPSEO_Capability_Utils::current_user_can( 'wpseo_edit_advanced_metadata' ) || WPSEO_Options::get( 'disableadvanced_meta', null, [ 'wpseo' ] ) === false;
 
 		$this->seo_analysis                = new WPSEO_Metabox_Analysis_SEO();
 		$this->readability_analysis        = new WPSEO_Metabox_Analysis_Readability();
@@ -879,6 +879,10 @@ class WPSEO_Metabox extends WPSEO_Meta {
 			'log_level'               => WPSEO_Utils::get_analysis_worker_log_level(),
 		];
 
+		$page_on_front    = (int) get_option( 'page_on_front' );
+		$homepage_is_page = get_option( 'show_on_front' ) === 'page';
+		$is_front_page    = $homepage_is_page && $page_on_front === (int) $post_id;
+
 		$script_data = [
 			'metabox'                    => $this->get_metabox_script_data(),
 			'isPost'                     => true,
@@ -891,6 +895,7 @@ class WPSEO_Metabox extends WPSEO_Meta {
 				'plugins' => $plugins_script_data,
 				'worker'  => $worker_script_data,
 			],
+			'isFrontPage'                => $is_front_page,
 		];
 
 		/**

@@ -2,23 +2,24 @@
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.3.30",
-            "version_normalized": "3.3.30.0",
+            "version": "3.3.39",
+            "version_normalized": "3.3.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "801a07604a297f02de3067948176f91b4c84bd8a"
+                "reference": "f98e239211697760333913fc729f9403ce2bd1e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/801a07604a297f02de3067948176f91b4c84bd8a",
-                "reference": "801a07604a297f02de3067948176f91b4c84bd8a",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/f98e239211697760333913fc729f9403ce2bd1e2",
+                "reference": "f98e239211697760333913fc729f9403ce2bd1e2",
                 "shasum": ""
             },
             "require-dev": {
-                "codeinwp/phpcs-ruleset": "dev-main"
+                "codeinwp/phpcs-ruleset": "dev-main",
+                "yoast/phpunit-polyfills": "^2.0"
             },
-            "time": "2024-09-10T23:53:07+00:00",
+            "time": "2024-11-19T11:46:23+00:00",
             "type": "library",
             "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
@@ -39,7 +40,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.30"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.3.39"
             },
             "install-path": "../codeinwp/themeisle-sdk"
         },
@@ -50,15 +51,15 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/ti-about-page.git",
-                "reference": "c95bc1d"
+                "reference": "3332419a3facb9937289af0652fbd907c1a8d1cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/ti-about-page/zipball/c95bc1d",
-                "reference": "c95bc1d",
+                "url": "https://api.github.com/repos/Codeinwp/ti-about-page/zipball/3332419a3facb9937289af0652fbd907c1a8d1cb",
+                "reference": "3332419a3facb9937289af0652fbd907c1a8d1cb",
                 "shasum": ""
             },
-            "time": "2024-10-10T06:22:24+00:00",
+            "time": "2024-11-05T12:56:22+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",

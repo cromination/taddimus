@@ -95,6 +95,10 @@ class FileLoader {
 		if ( $ver_param !== null ) {
 			$image_url = add_query_arg( 'ver', $ver_param, $image_url );
 		}
+		if ( function_exists( 'is_plugin_active' ) && is_plugin_active( 'wccp-pro/preventer-index.php' ) ) {
+			$image_url = add_query_arg( 'wccp_pro_watermark_pass', '', $image_url );
+		}
+
 		return apply_filters( 'webpc_debug_image_url', $image_url );
 	}
 

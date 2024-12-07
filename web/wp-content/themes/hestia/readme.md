@@ -18,6 +18,50 @@ Hestia is distributed under the terms of the GNU GPLv2 or later
 
 ## Changelog ##
 
+##### [Version 3.2.6](https://github.com/Codeinwp/hestia-pro/compare/v3.2.5...v3.2.6) (2024-11-22)
+
+- Fixed issue with the License key field and rollback button not appearing
+- Fixed issue with Icons disappearing from the Featured section
+- Fixed issue with Menu items and Widgets sections missing and mobile menu breaking
+
+
+
+
+##### [Version 3.2.5](https://github.com/Codeinwp/hestia-pro/compare/v3.2.4...v3.2.5) (2024-11-21)
+
+- Fixed compatibility issue with WordPress 6.7 that was throwing warnings on translations
+
+
+
+
+##### [Version 3.2.4](https://github.com/Codeinwp/hestia-pro/compare/v3.2.3...v3.2.4) (2024-11-18)
+
+- Fixed the Big Title section compatibility issue with WordPress 6.7
+- Fixed the Read More button style
+
+
+
+
+##### [Version 3.2.3](https://github.com/Codeinwp/hestia-pro/compare/v3.2.2...v3.2.3) (2024-11-11)
+
+- Fixed the blog layout infinite scroll issue
+- Updated dependencies
+
+
+
+
+##### [Version 3.2.2](https://github.com/Codeinwp/hestia-pro/compare/v3.2.1...v3.2.2) (2024-10-30)
+
+Enhancements
+- Added more translatable strings for improved localization.
+Fixes
+- Aligned shopping cart widget in the top bar.
+- Fixed support link for premium users.
+- Updated About page links and text.
+
+
+
+
 ##### [Version 3.2.1](https://github.com/Codeinwp/hestia-pro/compare/v3.2.0...v3.2.1) (2024-10-10)
 
 - Fix welcome notice CSS layout

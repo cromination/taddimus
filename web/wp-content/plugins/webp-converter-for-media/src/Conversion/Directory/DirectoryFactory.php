@@ -44,6 +44,7 @@ class DirectoryFactory implements HookableInterface {
 		add_action( 'init', [ $this, 'init_hooks_after_setup' ], 0 );
 		add_action( 'webpc_settings_updated', [ $this, 'remove_unused_output_directories' ], 10, 2 );
 		add_action( 'webpc_settings_updated', [ $this, 'remove_unused_output_format' ], 10, 2 );
+		$this->directories_integration->init_hooks();
 	}
 
 	/**
@@ -56,7 +57,6 @@ class DirectoryFactory implements HookableInterface {
 		foreach ( apply_filters( 'webpc_source_directories', [] ) as $directory_name ) {
 			$this->set_integration( new SourceDirectory( $directory_name ) );
 		}
-		$this->directories_integration->init_hooks();
 	}
 
 	/**

@@ -69,6 +69,7 @@ class TI_About_Render {
 
 		echo '<div class="ti-about-wrap">';
 		$this->render_header();
+		echo '<div id="tsdk_banner" class="ti-about-banner"></div>';
 		echo '<div class="main-content">';
 		echo '<div id="about-tabs">';
 		$this->render_tabs_content();

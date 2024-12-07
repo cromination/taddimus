@@ -29,7 +29,7 @@ class Hestia_Upsell_Manager extends Hestia_Register_Customizer_Controls {
 			__( 'Remove branding label and get access to more options in our premium version. %s', 'hestia' ),
 			/* translators: %s is the Learn more label*/
 			sprintf(
-				'<a class="button button-primary" target="_blank" href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'branding' ) . '" style="display: block; clear: both; width: fit-content; margin-top: 5px;">%s</a>',
+				'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'branding' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin-top: 5px;">%s</a>',
 				__( 'Learn more', 'hestia' )
 			)
 		);
@@ -91,7 +91,7 @@ class Hestia_Upsell_Manager extends Hestia_Register_Customizer_Controls {
 						esc_html__( 'The ability to reorganize your Frontpage Sections more easily and quickly.', 'hestia' ),
 						esc_html__( '24/7 HelpDesk Professional Support', 'hestia' ),
 					),
-					'button_url'         => esc_url_raw( apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'profeatures' ) ) ),
+					'button_url'         => esc_url_raw( apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'profeatures' ), 'query' ) ) ),
 					'button_text'        => esc_html__( 'Get the PRO version!', 'hestia' ),
 				),
 				'Hestia_Control_Upsell'
@@ -137,7 +137,7 @@ class Hestia_Upsell_Manager extends Hestia_Register_Customizer_Controls {
 			/* translators: %s Required action */
 			array_push( $notification_settings['options'], sprintf( esc_html__( 'Hestia front-page is not multi-language compatible, for this feature %s.', 'hestia' ), sprintf( '<a href="%1$s" target="_blank" class="button button-primary" style="margin-top: 20px; margin-bottom: -20px;">%2$s</a>', esc_url( apply_filters( 'hestia_upgrade_link_from_child_theme_filter', 'https://docs.themeisle.com/article/753-hestia-doc?utm_medium=customizer&utm_source=button&utm_campaign=multilanguage#translatehestia' ) ), esc_html__( 'Get the PRO version!', 'hestia' ) ) ) );
 		} else {
-			$notification_settings['button_url']  = esc_url_raw( apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'frontpage_section' ) ) );
+			$notification_settings['button_url']  = esc_url_raw( apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'frontpage_section' ), 'query' ) ) );
 			$notification_settings['button_text'] = esc_html__( 'Get the PRO version!', 'hestia' );
 		}
 
@@ -244,7 +244,7 @@ class Hestia_Upsell_Manager extends Hestia_Register_Customizer_Controls {
 				__( 'More options are available for this section in our premium version. %s', 'hestia' ),
 				/* translators: %s is the Learn more label*/
 				sprintf(
-					'<a class="button button-primary" target="_blank" href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', '<upsellsection>' ) . '" style="display: block; clear: both; width: fit-content; margin-top: 5px;">%s</a>',
+					'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', '<upsellsection>' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin-top: 5px;">%s</a>',
 					__( 'Learn more', 'hestia' )
 				)
 			);

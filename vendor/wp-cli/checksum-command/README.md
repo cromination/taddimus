@@ -16,7 +16,7 @@ This package implements the following commands:
 Verifies WordPress files against WordPress.org's checksums.
 
 ~~~
-wp core verify-checksums [--include-root] [--version=<version>] [--locale=<locale>] [--insecure]
+wp core verify-checksums [--include-root] [--version=<version>] [--locale=<locale>] [--insecure] [--exclude=<files>]
 ~~~
 
 Downloads md5 checksums for the current version from WordPress.org, and
@@ -43,6 +43,9 @@ site.
 	[--insecure]
 		Retry downloads without certificate validation if TLS handshake fails. Note: This makes the request vulnerable to a MITM attack.
 
+	[--exclude=<files>]
+		Exclude specific files from the checksum verification. Provide a comma-separated list of file paths.
+
 **EXAMPLES**
 
     # Verify checksums
@@ -63,6 +66,10 @@ site.
     Warning: File doesn't verify against checksum: readme.html
     Warning: File doesn't verify against checksum: wp-config-sample.php
     Error: WordPress installation doesn't verify against checksums.
+
+    # Verify checksums and exclude files
+    $ wp core verify-checksums --exclude="readme.html"
+    Success: WordPress installation verifies against checksums.
 
 
 

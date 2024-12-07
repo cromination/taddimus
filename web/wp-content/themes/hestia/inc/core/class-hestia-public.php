@@ -560,7 +560,7 @@ class Hestia_Public {
 					),
 				),
 			),
-			'pro_link'    => tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'startersites' ),
+			'pro_link'    => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'startersites' ), 'query' ),
 		);
 
 		return apply_filters( 'hestia_filter_onboarding_data', $onboarding_sites );

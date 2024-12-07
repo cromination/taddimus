@@ -429,7 +429,7 @@ To confirm the ID for the site you want to query, you can use the `wp site list`
 Exports the database to a file or to STDOUT.
 
 ~~~
-wp db export [<file>] [--dbuser=<value>] [--dbpass=<value>] [--<field>=<value>] [--tables=<tables>] [--exclude_tables=<tables>] [--include-tablespaces] [--porcelain] [--defaults]
+wp db export [<file>] [--dbuser=<value>] [--dbpass=<value>] [--<field>=<value>] [--tables=<tables>] [--exclude_tables=<tables>] [--include-tablespaces] [--porcelain] [--add-drop-table] [--defaults]
 ~~~
 
 Runs `mysqldump` utility using `DB_HOST`, `DB_NAME`, `DB_USER` and
@@ -461,6 +461,9 @@ Runs `mysqldump` utility using `DB_HOST`, `DB_NAME`, `DB_USER` and
 
 	[--porcelain]
 		Output filename for the exported database.
+
+	[--add-drop-table]
+		Include a `DROP TABLE IF EXISTS` statement before each `CREATE TABLE` statement.
 
 	[--defaults]
 		Loads the environment's MySQL option files. Default behavior is to skip loading them to avoid failures due to misconfiguration.
@@ -631,6 +634,15 @@ Defaults to searching through all tables registered to $wpdb. On multisite, this
 
 	[--format=<format>]
 		Render output in a particular format.
+		---
+		options:
+		  - table
+		  - csv
+		  - json
+		  - yaml
+		  - ids
+		  - count
+		---
 
 The percent color codes available are:
 
@@ -665,6 +677,16 @@ The percent color codes available are:
 |  %F  | Blink (unlikely to work)
 
 They can be concatenated. For instance, the default match color of black on a mustard (dark yellow) background `%3%k` can be made black on a bright yellow background with `%Y%0%8`.
+
+**AVAILABLE FIELDS**
+
+These fields will be displayed by default for each result:
+
+* table
+* column
+* match
+* primary_key_name
+* primary_key_value
 
 **EXAMPLES**
 

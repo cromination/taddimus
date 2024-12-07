@@ -91,7 +91,7 @@ class Hestia_View_Hooks_With_Upsell {
 						echo '<div class="hestia-hook-wrapper hestia-hook-upsell-wrapper">';
 						echo '<div class="hestia-hook-placeholder">';
 						echo '<span class="hestia-hook-label">' . esc_html( $hook_label ) . '</span>';
-						echo '<div class="hestia-hook-upsell">' . __( 'Add content to this location conditionally using', 'hestia' ) . '<a href="' . tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'viewhooks' ) . '" target="_blank"> ' . __( 'Hestia PRO', 'hestia' ) . '</a></div>';
+						echo '<div class="hestia-hook-upsell">' . __( 'Add content to this location conditionally using', 'hestia' ) . '<a href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'viewhooks' ), 'query' ) . '" target="_blank"> ' . __( 'Hestia PRO', 'hestia' ) . '</a></div>';
 						echo '</div>';
 						echo '</div>';
 					}

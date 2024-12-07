@@ -178,9 +178,9 @@ class Hestia_Core {
 		add_filter( 'hestia_welcome_metadata', array( $admin, 'get_welcome_metadata' ) );
 
 		$front_end = new Hestia_Public();
+		$front_end->setup_theme();
 		add_filter( 'frontpage_template', array( $front_end, 'filter_front_page_template' ) );
 		add_action( 'after_switch_theme', array( $front_end, 'theme_activated' ), 15 );
-		add_action( 'after_setup_theme', array( $front_end, 'setup_theme' ) );
 		add_action( 'widgets_init', array( $front_end, 'initialize_widgets' ) );
 		add_action( 'wp_enqueue_scripts', array( $front_end, 'enqueue_scripts' ) );
 		add_action( 'enqueue_block_editor_assets', array( $front_end, 'enqueue_custom_fonts' ) );

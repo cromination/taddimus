@@ -32,7 +32,7 @@ class Promotions extends Abstract_Module {
 	 *
 	 * @var array
 	 */
-	private $promotions = array();
+	public $promotions = array();
 
 	/**
 	 * Holds the values of the promotions that are not allowed to be shown.
@@ -92,6 +92,13 @@ class Promotions extends Abstract_Module {
 	private $option_hyve = 'themeisle_sdk_promotions_hyve_installed';
 
 	/**
+	 * Option key for WP Full Pay.
+	 * 
+	 * @var string
+	 */
+	private $option_wp_full_pay = 'themeisle_sdk_promotions_wp_full_pay_installed';
+
+	/**
 	 * Loaded promotion.
 	 *
 	 * @var string
@@ -129,13 +136,13 @@ class Promotions extends Abstract_Module {
 
 		$this->debug          = apply_filters( 'themeisle_sdk_promo_debug', $this->debug );
 		$promotions_to_load   = apply_filters( $product->get_key() . '_load_promotions', array() );
-		$promotions_to_load[] = 'otter';
 		$promotions_to_load[] = 'optimole';
 		$promotions_to_load[] = 'rop';
 		$promotions_to_load[] = 'woo_plugins';
 		$promotions_to_load[] = 'neve';
 		$promotions_to_load[] = 'redirection-cf7';
 		$promotions_to_load[] = 'hyve';
+		$promotions_to_load[] = 'wp_full_pay';
 
 		$promotions_to_load = array_unique( $promotions_to_load );
 
@@ -167,7 +174,7 @@ class Promotions extends Abstract_Module {
 
 		$last_dismiss_time = $this->get_last_dismiss_time();
 
-		if ( ! $this->debug && is_int( $last_dismiss_time ) && ( time() - $last_dismiss_time ) < WEEK_IN_SECONDS ) {
+		if ( ! $this->debug && is_int( $last_dismiss_time ) && ( time() - $last_dismiss_time ) < ( 3 * WEEK_IN_SECONDS ) ) {
 			return;
 		}
 
@@ -234,6 +241,10 @@ class Promotions extends Abstract_Module {
 
 		if ( isset( $_GET['hyve_reference_key'] ) ) {
 			update_option( 'hyve_reference_key', sanitize_key( $_GET['hyve_reference_key'] ) );
+		}
+
+		if ( isset( $_GET['wp_full_pay_reference_key'] ) ) {
+			update_option( 'wp_full_pay_reference_key', sanitize_key( $_GET['wp_full_pay_reference_key'] ) );
 		}
 	}
 
@@ -314,6 +325,16 @@ class Promotions extends Abstract_Module {
 				'default'           => false,
 			)
 		);
+		register_setting(
+			'themeisle_sdk_settings',
+			$this->option_wp_full_pay,
+			array(
+				'type'              => 'boolean',
+				'sanitize_callback' => 'rest_sanitize_boolean',
+				'show_in_rest'      => true,
+				'default'           => false,
+			)
+		);
 	}
 
 	/**
@@ -370,12 +391,16 @@ class Promotions extends Abstract_Module {
 		$has_hyve                  = defined( 'HYVE_LITE_VERSION' ) || $this->is_plugin_installed( 'hyve' ) || $this->is_plugin_installed( 'hyve-lite' );
 		$had_hyve_from_promo       = get_option( $this->option_hyve, false );
 		$has_hyve_conditions       = version_compare( get_bloginfo( 'version' ), '6.2', '>=' ) && $this->has_support_page();
+		$has_wfp_full_pay          = defined( 'WP_FULL_STRIPE_BASENAME' ) || $this->is_plugin_installed( 'wp-full-stripe-free' );
+		$had_wfp_from_promo        = get_option( $this->option_wp_full_pay, false );
+		$has_wfp_conditions        = $this->has_donate_page();
 		$is_min_req_v              = version_compare( get_bloginfo( 'version' ), '5.8', '>=' );
 		$current_theme             = wp_get_theme();
 		$has_neve                  = $current_theme->template === 'neve' || $current_theme->parent() === 'neve';
 		$has_neve_from_promo       = get_option( $this->option_neve, false );
 		$has_enough_attachments    = $this->has_min_media_attachments();
 		$has_enough_old_posts      = $this->has_old_posts();
+		$is_min_php_8_1            = version_compare( PHP_VERSION, '8.1', '>=' );
 
 		$all = [
 			'optimole'        => [
@@ -460,7 +485,13 @@ class Promotions extends Abstract_Module {
 			],
 			'hyve'            => [
 				'hyve-plugins-install' => [
-					'env'    => ! $has_hyve && ! $had_hyve_from_promo && $has_hyve_conditions,
+					'env'    => $is_min_php_8_1 && ! $has_hyve && ! $had_hyve_from_promo && $has_hyve_conditions,
+					'screen' => 'plugin-install',
+				],
+			],
+			'wp_full_pay'     => [
+				'wp-full-pay-plugins-install' => [
+					'env'    => ! $has_wfp_full_pay && ! $had_wfp_from_promo && $has_wfp_conditions,
 					'screen' => 'plugin-install',
 				],
 			],
@@ -539,7 +570,7 @@ class Promotions extends Abstract_Module {
 		
 		$product_install_time = (int) $this->product->get_install_time();
 		$is_older             = time() > ( $product_install_time + ( 3 * DAY_IN_SECONDS ) );
-		$is_newer             = time() < ( $product_install_time + ( 5 * MINUTE_IN_SECONDS ) );
+		$is_newer             = time() < ( $product_install_time + ( 6 * HOUR_IN_SECONDS ) );
 
 		foreach ( $this->promotions as $slug => $promos ) {
 			foreach ( $promos as $key => $data ) {
@@ -548,9 +579,9 @@ class Promotions extends Abstract_Module {
 
 				if (
 					! $this->debug && 
-					( 
+					(
 						( $data['delayed'] === true && ! $is_older ) || // Skip promotions that are delayed for 3 days.
-						$is_newer // Skip promotions for the first 5 minutes after install.
+						$is_newer // Skip promotions for the first 6 hours after install.
 					)
 				) {
 					unset( $this->promotions[ $slug ][ $key ] );
@@ -648,6 +679,10 @@ class Promotions extends Abstract_Module {
 				add_action( 'admin_notices', [ $this, 'render_hyve_notice' ] );
 			}
 
+			if ( $this->get_upsells_dismiss_time( 'wp-full-pay-plugins-install' ) === false ) {
+				add_action( 'admin_notices', [ $this, 'render_wp_full_pay_notice' ] );
+			}
+
 			$this->load_woo_promos();
 
 			return;
@@ -702,6 +737,10 @@ class Promotions extends Abstract_Module {
 				add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
 				add_action( 'admin_notices', [ $this, 'render_hyve_notice' ] );
 				break;
+			case 'wp-full-pay-plugins-install':
+				add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
+				add_action( 'admin_notices', [ $this, 'render_wp_full_pay_notice' ] );
+				break;
 		}
 	}
 
@@ -738,31 +777,33 @@ class Promotions extends Abstract_Module {
 			$handle,
 			'themeisleSDKPromotions',
 			[
-				'debug'                 => $this->debug,
-				'labels'                => Loader::$labels['promotions'],
-				'email'                 => $user->user_email,
-				'showPromotion'         => $this->loaded_promo,
-				'optionKey'             => $this->option_main,
-				'product'               => $this->product->get_name(),
-				'option'                => empty( $saved ) ? new \stdClass() : $saved,
-				'nonce'                 => wp_create_nonce( 'wp_rest' ),
-				'assets'                => $themeisle_sdk_src . 'assets/images/',
-				'optimoleApi'           => esc_url( rest_url( 'optml/v1/register_service' ) ),
-				'optimoleActivationUrl' => $this->get_plugin_activation_link( 'optimole-wp' ),
-				'otterActivationUrl'    => $this->get_plugin_activation_link( 'otter-blocks' ),
-				'ropActivationUrl'      => $this->get_plugin_activation_link( 'tweet-old-post' ),
-				'optimoleDash'          => esc_url( add_query_arg( [ 'page' => 'optimole' ], admin_url( 'upload.php' ) ) ),
-				'ropDash'               => esc_url( add_query_arg( [ 'page' => 'TweetOldPost' ], admin_url( 'admin.php' ) ) ),
+				'debug'                  => $this->debug,
+				'labels'                 => Loader::$labels['promotions'],
+				'email'                  => $user->user_email,
+				'showPromotion'          => $this->loaded_promo,
+				'optionKey'              => $this->option_main,
+				'product'                => $this->product->get_name(),
+				'option'                 => empty( $saved ) ? new \stdClass() : $saved,
+				'nonce'                  => wp_create_nonce( 'wp_rest' ),
+				'assets'                 => $themeisle_sdk_src . 'assets/images/',
+				'optimoleApi'            => esc_url( rest_url( 'optml/v1/register_service' ) ),
+				'optimoleActivationUrl'  => $this->get_plugin_activation_link( 'optimole-wp' ),
+				'otterActivationUrl'     => $this->get_plugin_activation_link( 'otter-blocks' ),
+				'ropActivationUrl'       => $this->get_plugin_activation_link( 'tweet-old-post' ),
+				'optimoleDash'           => esc_url( add_query_arg( [ 'page' => 'optimole' ], admin_url( 'upload.php' ) ) ),
+				'ropDash'                => esc_url( add_query_arg( [ 'page' => 'TweetOldPost' ], admin_url( 'admin.php' ) ) ),
 				// translators: %s is the product name.
-				'title'                 => esc_html( sprintf( Loader::$labels['promotions']['recommended'], $this->product->get_name() ) ),
-				'redirectionCF7MoreUrl' => tsdk_utmify( 'https://docs.themeisle.com/collection/2014-redirection-for-contact-form-7', 'redirection-for-contact-form-7', 'plugin-install' ),
-				'rfCF7ActivationUrl'    => $this->get_plugin_activation_link( 'wpcf7-redirect' ),
-				'cf7Dash'               => esc_url( add_query_arg( [ 'page' => 'wpcf7-new' ], admin_url( 'admin.php' ) ) ),
-				'hyveActivationUrl'     => $this->get_plugin_activation_link( 'hyve-lite' ),
-				'hyveDash'              => esc_url( add_query_arg( [ 'page' => 'hyve' ], admin_url( 'admin.php' ) ) ),
-				'nevePreviewURL'        => esc_url( add_query_arg( [ 'theme' => 'neve' ], admin_url( 'theme-install.php' ) ) ),
-				'neveAction'            => $neve_action,
-				'activateNeveURL'       => esc_url(
+				'title'                  => esc_html( sprintf( Loader::$labels['promotions']['recommended'], $this->product->get_name() ) ),
+				'redirectionCF7MoreUrl'  => tsdk_utmify( 'https://docs.themeisle.com/collection/2014-redirection-for-contact-form-7', 'redirection-for-contact-form-7', 'plugin-install' ),
+				'rfCF7ActivationUrl'     => $this->get_plugin_activation_link( 'wpcf7-redirect' ),
+				'cf7Dash'                => esc_url( add_query_arg( [ 'page' => 'wpcf7-new' ], admin_url( 'admin.php' ) ) ),
+				'hyveActivationUrl'      => $this->get_plugin_activation_link( 'hyve-lite' ),
+				'hyveDash'               => esc_url( add_query_arg( [ 'page' => 'wpfs-settings-stripe' ], admin_url( 'admin.php' ) ) ),
+				'wpFullPayActivationUrl' => $this->get_plugin_activation_link( 'wp-full-stripe-free' ),
+				'wpFullPayDash'          => esc_url( add_query_arg( [ 'page' => 'wpfs-settings-stripe' ], admin_url( 'admin.php' ) ) ),
+				'nevePreviewURL'         => esc_url( add_query_arg( [ 'theme' => 'neve' ], admin_url( 'theme-install.php' ) ) ),
+				'neveAction'             => $neve_action,
+				'activateNeveURL'        => esc_url(
 					add_query_arg(
 						[
 							'action'     => 'activate',
@@ -803,6 +844,13 @@ class Promotions extends Abstract_Module {
 	 */
 	public function render_hyve_notice() {
 		echo '<div id="ti-hyve-notice" class="notice notice-info ti-sdk-om-notice"></div>';
+	}
+
+	/**
+	 * Render WP Full Pay notice.
+	 */
+	public function render_wp_full_pay_notice() {
+		echo '<div id="ti-wp-full-pay-notice" class="notice notice-info ti-sdk-om-notice"></div>';
 	}
 
 	/**
@@ -1250,5 +1298,32 @@ class Promotions extends Abstract_Module {
 		}
 
 		return 'yes' === $has_support;
+	}
+
+	/**
+	 * Check if the user has a donate page.
+	 */
+	public function has_donate_page() {
+		$transient_name = 'tisdk_has_donate_page';
+		$has_donate     = get_transient( $transient_name );
+
+		if ( false === $has_donate ) {
+			global $wpdb;
+
+			$query = $wpdb->get_var( //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				$wpdb->prepare(
+					'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type = %s AND post_status = %s AND post_title LIKE %s LIMIT 1',
+					'page',
+					'publish',
+					'%donate%'
+				)
+			);
+
+			$has_donate = $query ? 'yes' : 'no';
+
+			set_transient( $transient_name, $has_donate, 7 * DAY_IN_SECONDS );
+		}
+
+		return 'yes' === $has_donate;
 	}
 }

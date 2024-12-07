@@ -80,7 +80,7 @@ class Hestia_Customize_Alpha_Color_Control extends WP_Customize_Control {
 			echo '<span class="description customize-control-description">' . sanitize_text_field( $this->description ) . '</span>';
 		}
 		if ( 'color_upsell_notice' === $this->id ) {
-			echo '<a href="' . ( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'colornotices' ) ) . '" class="button-primary button" target="_blank">' . esc_html__( 'Upgrade to Unlock', 'hestia' ) . '</a>';
+			echo '<a href="' . ( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'colornotices' ), 'query' ) ) . '" class="button-primary button" target="_blank">' . esc_html__( 'Upgrade to Unlock', 'hestia' ) . '</a>';
 			return;
 		}
 		?>

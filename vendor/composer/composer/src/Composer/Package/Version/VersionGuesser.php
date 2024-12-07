@@ -13,6 +13,7 @@
 namespace Composer\Package\Version;
 
 use Composer\Config;
+use Composer\IO\IOInterface;
 use Composer\Pcre\Preg;
 use Composer\Repository\Vcs\HgDriver;
 use Composer\IO\NullIO;
@@ -50,11 +51,17 @@ class VersionGuesser
      */
     private $versionParser;
 
-    public function __construct(Config $config, ProcessExecutor $process, SemverVersionParser $versionParser)
+    /**
+     * @var IOInterface|null
+     */
+    private $io;
+
+    public function __construct(Config $config, ProcessExecutor $process, SemverVersionParser $versionParser, ?IOInterface $io = null)
     {
         $this->config = $config;
         $this->process = $process;
         $this->versionParser = $versionParser;
+        $this->io = $io;
     }
 
     /**
@@ -178,6 +185,7 @@ class VersionGuesser
                 $prettyVersion = $result['pretty_version'];
             }
         }
+        GitUtil::checkForRepoOwnershipError($this->process->getErrorOutput(), $path, $this->io);
 
         if (!$version || $isDetached) {
             $result = $this->versionFromGitTags($path);
@@ -190,7 +198,7 @@ class VersionGuesser
         }
 
         if (null === $commit) {
-            $command = 'git log --pretty="%H" -n1 HEAD'.GitUtil::getNoShowSignatureFlag($this->process);
+            $command = array_merge(['git', 'log', '--pretty=%H', '-n1', 'HEAD'], GitUtil::getNoShowSignatureFlags($this->process));
             if (0 === $this->process->execute($command, $output, $path)) {
                 $commit = trim($output) ?: null;
             }
@@ -209,7 +217,7 @@ class VersionGuesser
     private function versionFromGitTags(string $path): ?array
     {
         // try to fetch current version from git tags
-        if (0 === $this->process->execute('git describe --exact-match --tags', $output, $path)) {
+        if (0 === $this->process->execute(['git', 'describe', '--exact-match', '--tags'], $output, $path)) {
             try {
                 $version = $this->versionParser->normalize(trim($output));
 
@@ -229,7 +237,7 @@ class VersionGuesser
     private function guessHgVersion(array $packageConfig, string $path): ?array
     {
         // try to fetch current version from hg branch
-        if (0 === $this->process->execute('hg branch', $output, $path)) {
+        if (0 === $this->process->execute(['hg', 'branch'], $output, $path)) {
             $branch = trim($output);
             $version = $this->versionParser->normalizeBranch($branch);
             $isFeatureBranch = 0 === strpos($version, 'dev-');
@@ -367,14 +375,14 @@ class VersionGuesser
         $prettyVersion = null;
 
         // try to fetch current version from fossil
-        if (0 === $this->process->execute('fossil branch list', $output, $path)) {
+        if (0 === $this->process->execute(['fossil', 'branch', 'list'], $output, $path)) {
             $branch = trim($output);
             $version = $this->versionParser->normalizeBranch($branch);
             $prettyVersion = 'dev-' . $branch;
         }
 
         // try to fetch current version from fossil tags
-        if (0 === $this->process->execute('fossil tag list', $output, $path)) {
+        if (0 === $this->process->execute(['fossil', 'tag', 'list'], $output, $path)) {
             try {
                 $version = $this->versionParser->normalize(trim($output));
                 $prettyVersion = trim($output);
@@ -395,7 +403,7 @@ class VersionGuesser
         SvnUtil::cleanEnv();
 
         // try to fetch current version from svn
-        if (0 === $this->process->execute('svn info --xml', $output, $path)) {
+        if (0 === $this->process->execute(['svn', 'info', '--xml'], $output, $path)) {
             $trunkPath = isset($packageConfig['trunk-path']) ? preg_quote($packageConfig['trunk-path'], '#') : 'trunk';
             $branchesPath = isset($packageConfig['branches-path']) ? preg_quote($packageConfig['branches-path'], '#') : 'branches';
             $tagsPath = isset($packageConfig['tags-path']) ? preg_quote($packageConfig['tags-path'], '#') : 'tags';
