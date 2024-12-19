@@ -69,14 +69,14 @@ class SupportedDirectoriesOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_default_value( array $settings = null ): array {
+	public function get_default_value( ?array $settings = null ): array {
 		return [ 'uploads' ];
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function validate_value( $current_value, ?array $available_values = null, ?array $disabled_values = null ) {
 		$valid_values = [];
 		if ( ! $current_value ) {
 			return $valid_values;

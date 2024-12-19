@@ -311,8 +311,11 @@ $wp_otter_blocks_active = is_plugin_active( 'otter-blocks/otter-blocks.php' );
 										<p class="p">
 											<?php
 											echo wp_kses(
-												// translators: %s to document URL.
-												sprintf( __( 'Need more help? Read our <a href="%s" target="_blank">documentation</a>', '', 'hestia' ), esc_url( 'https://docs.themeisle.com/article/753-hestia-doc' ) ),
+												sprintf(
+													// translators: %s: link to documentation with label 'documentation'.
+													__( 'Need more help? Read our %s', 'hestia' ),
+													'<a href="' . esc_url( 'https://docs.themeisle.com/article/753-hestia-doc' ) . '" target="_blank">' . __( 'documentation', 'hestia' ) . '</a>'
+												),
 												array(
 													'a' => array(
 														'href'   => true,

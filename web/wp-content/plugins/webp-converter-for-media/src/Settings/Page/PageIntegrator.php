@@ -27,7 +27,7 @@ class PageIntegrator implements HookableInterface {
 	 */
 	private $view_loader;
 
-	public function __construct( PluginInfo $plugin_info, ViewLoader $view_loader = null ) {
+	public function __construct( PluginInfo $plugin_info, ?ViewLoader $view_loader = null ) {
 		$this->plugin_info = $plugin_info;
 		$this->view_loader = $view_loader ?: new ViewLoader( $plugin_info );
 	}
@@ -82,7 +82,7 @@ class PageIntegrator implements HookableInterface {
 	 *
 	 * @return string
 	 */
-	public static function get_settings_page_url( string $action = null ): string {
+	public static function get_settings_page_url( ?string $action = null ): string {
 		if ( ! is_multisite() ) {
 			$page_url = admin_url( 'options-general.php?page=' . self::SETTINGS_MENU_PAGE );
 		} else {

@@ -10,7 +10,7 @@ abstract class NoticeAbstract implements NoticeInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public static function get_default_value() {
+	public static function get_default_value(): ?string {
 		return null;
 	}
 

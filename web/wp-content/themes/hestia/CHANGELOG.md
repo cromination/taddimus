@@ -1,3 +1,9 @@
+##### [Version 3.2.7](https://github.com/Codeinwp/hestia-pro/compare/v3.2.6...v3.2.7) (2024-12-09)
+
+- Fixed the Big Title options display issue
+- Fix the customizer broken layout introduced by the LearnPress plugin
+- Fixed the Subscriber section issue in the customizer preview
+
 ##### [Version 3.2.6](https://github.com/Codeinwp/hestia-pro/compare/v3.2.5...v3.2.6) (2024-11-22)
 
 - Fixed issue with the License key field and rollback button not appearing

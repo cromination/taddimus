@@ -78,6 +78,7 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 					'theme_info_title' => esc_html__( 'Hestia', 'hestia' ),
 					'label_url'        => 'https://docs.themeisle.com/article/753-hestia-doc?utm_medium=customizer&utm_source=button&utm_campaign=documentation',
 					'label_text'       => esc_html__( 'Documentation', 'hestia' ),
+					'priority'         => 455,
 				),
 				'Hestia_Section_Docs'
 			)

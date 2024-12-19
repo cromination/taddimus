@@ -24,12 +24,26 @@ var hestia_customize_scroller = function ( $ ) {
 							'click', function() {
 								var getAriaOwns = $( this ).attr( 'aria-owns' );
 								var sectionId = getAriaOwns.split( '-' ).pop();
-								wp.customize.section( sectionId ).expand();
+								wp.customize.section( sectionId ).expand({
+									completeCallback: function() {
+										var activeTab = $( '.hestia-customizer-tab.active' );
+										if (activeTab.length) {
+											activeTab.trigger( 'click' );
+										}
+									}
+								});
 
 								var section = getAriaOwns.split( '_' ).pop();
 								customize.previewer.send( 'clicked-customizer-section', section );
 							}
 						);
+
+						$( document ).on( 'change', '[id*="hestia_slider_type"]', function() {
+							var activeTab = $( '.hestia-customizer-tab.active' );
+							if (activeTab.length) {
+								activeTab.trigger( 'click' );
+							}
+						} );
 					}
 				);
 		}

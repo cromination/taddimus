@@ -23,29 +23,29 @@ abstract class OptionAbstract implements OptionInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_notice_lines() {
+	public function get_notice_lines(): ?array {
 		return null;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_info() {
+	public function get_info(): ?string {
 		return null;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_placeholder() {
-		return '';
+	public function get_placeholder(): ?string {
+		return null;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_values_warnings( array $settings ) {
-		return [];
+	public function get_values_warnings( array $settings ): ?array {
+		return null;
 	}
 
 	/**
@@ -65,7 +65,7 @@ abstract class OptionAbstract implements OptionInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_disabled_values( array $settings ) {
+	public function get_disabled_values( array $settings ): ?array {
 		return null;
 	}
 }

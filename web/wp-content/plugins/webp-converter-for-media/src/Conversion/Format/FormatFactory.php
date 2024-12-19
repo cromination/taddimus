@@ -57,7 +57,7 @@ class FormatFactory {
 	 *
 	 * @return string[] Extensions of output formats with labels.
 	 */
-	public function get_available_formats( string $conversion_method = null ): array {
+	public function get_available_formats( ?string $conversion_method = null ): array {
 		if ( $conversion_method === null ) {
 			return [];
 		} elseif ( isset( $this->available_formats[ $conversion_method ] ) ) {
@@ -101,7 +101,7 @@ class FormatFactory {
 	 *
 	 * @return string[] Mime types of output formats.
 	 */
-	public function get_mime_types( array $output_formats = null ): array {
+	public function get_mime_types( ?array $output_formats = null ): array {
 		$values = [];
 		foreach ( $this->formats as $format ) {
 			if ( ( $output_formats !== null ) && ! in_array( $format->get_extension(), $output_formats ) ) {

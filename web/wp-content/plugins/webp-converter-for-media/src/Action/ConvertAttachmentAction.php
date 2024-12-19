@@ -30,14 +30,14 @@ class ConvertAttachmentAction implements HookableInterface {
 	/**
 	 * Converts all sizes of attachment to output formats.
 	 *
-	 * @param int  $post_id          ID of attachment.
-	 * @param bool $regenerate_force .
-	 * @param int  $quality_level    .
+	 * @param int      $post_id          ID of attachment.
+	 * @param bool     $regenerate_force .
+	 * @param int|null $quality_level    .
 	 *
 	 * @return void
 	 * @internal
 	 */
-	public function convert_files_by_attachment( int $post_id, bool $regenerate_force = false, int $quality_level = null ) {
+	public function convert_files_by_attachment( int $post_id, bool $regenerate_force = false, ?int $quality_level = null ) {
 		$attachment = new AttachmentPathsGenerator( $this->plugin_data );
 
 		if ( $quality_level === 0 ) {

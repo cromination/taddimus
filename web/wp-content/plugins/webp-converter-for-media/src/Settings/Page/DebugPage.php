@@ -35,7 +35,7 @@ class DebugPage extends PageAbstract {
 	public function __construct(
 		PluginInfo $plugin_info,
 		PluginData $plugin_data,
-		FileLoader $file_loader = null
+		?FileLoader $file_loader = null
 	) {
 		$this->plugin_info = $plugin_info;
 		$this->plugin_data = $plugin_data;

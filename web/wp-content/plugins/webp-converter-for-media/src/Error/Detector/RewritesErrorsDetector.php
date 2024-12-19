@@ -64,8 +64,8 @@ class RewritesErrorsDetector implements DetectorInterface {
 		PluginInfo $plugin_info,
 		PluginData $plugin_data,
 		FormatFactory $format_factory,
-		FileLoader $file_loader = null,
-		OutputPathGenerator $output_path = null
+		?FileLoader $file_loader = null,
+		?OutputPathGenerator $output_path = null
 	) {
 		$this->plugin_info  = $plugin_info;
 		$this->plugin_data  = $plugin_data;

@@ -30,7 +30,7 @@ class MethodIntegrator {
 	 */
 	private $stats_manager;
 
-	public function __construct( PluginData $plugin_data, MethodFactory $method_factory, StatsManager $stats_manager = null ) {
+	public function __construct( PluginData $plugin_data, MethodFactory $method_factory, ?StatsManager $stats_manager = null ) {
 		$this->plugin_data    = $plugin_data;
 		$this->method_factory = $method_factory;
 		$this->stats_manager  = $stats_manager ?: new StatsManager();
@@ -42,11 +42,11 @@ class MethodIntegrator {
 	 * @param string[] $paths              Server paths for source images.
 	 * @param bool     $regenerate_force   .
 	 * @param bool     $skip_server_errors .
-	 * @param int      $quality_level      .
+	 * @param int|null $quality_level      .
 	 *
 	 * @return mixed[]|null Results data of conversion.
 	 */
-	public function init_conversion( array $paths, bool $regenerate_force, bool $skip_server_errors = false, int $quality_level = null ) {
+	public function init_conversion( array $paths, bool $regenerate_force, bool $skip_server_errors = false, ?int $quality_level = null ): ?array {
 		if ( ! $skip_server_errors && apply_filters( 'webpc_server_errors', [], true ) ) {
 			return null;
 		}
@@ -86,7 +86,7 @@ class MethodIntegrator {
 	 *
 	 * @return MethodInterface|null Object of conversion method.
 	 */
-	public function get_method_used() {
+	public function get_method_used(): ?MethodInterface {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		$output_formats  = $plugin_settings[ OutputFormatsOption::OPTION_NAME ] ?? null;
 		if ( ! $output_formats ) {

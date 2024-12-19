@@ -30,7 +30,7 @@ class RegenerateEndpoint extends EndpointAbstract {
 	public function __construct(
 		PluginData $plugin_data,
 		MethodFactory $method_factory,
-		CronStatusManager $cron_status_manager = null
+		?CronStatusManager $cron_status_manager = null
 	) {
 		$this->plugin_data         = $plugin_data;
 		$this->method_factory      = $method_factory;

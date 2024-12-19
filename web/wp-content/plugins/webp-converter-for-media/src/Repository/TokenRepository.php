@@ -23,7 +23,7 @@ class TokenRepository {
 	 */
 	private $token = null;
 
-	public function get_token( string $token_value = null ): Token {
+	public function get_token( ?string $token_value = null ): Token {
 		if ( $this->token ) {
 			return $this->token;
 		}

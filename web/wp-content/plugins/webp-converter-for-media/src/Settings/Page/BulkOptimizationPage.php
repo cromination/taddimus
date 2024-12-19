@@ -11,7 +11,7 @@ class BulkOptimizationPage extends GeneralSettingsPage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_slug() {
+	public function get_slug(): ?string {
 		return null;
 	}
 
@@ -25,7 +25,7 @@ class BulkOptimizationPage extends GeneralSettingsPage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_menu_url() {
+	public function get_menu_url(): ?string {
 		if ( ( $_GET['page'] ?? '' ) !== PageIntegrator::UPLOAD_MENU_PAGE ) { // phpcs:ignore WordPress.Security
 			return null;
 		}

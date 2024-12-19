@@ -112,14 +112,14 @@ class LoaderTypeOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
+	public function get_default_value( ?array $settings = null ): string {
 		return HtaccessLoader::LOADER_TYPE;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function validate_value( $current_value, ?array $available_values = null, ?array $disabled_values = null ) {
 		if ( ! array_key_exists( $current_value, $available_values ?: [] )
 			|| in_array( $current_value, $disabled_values ?: [] ) ) {
 			return null;

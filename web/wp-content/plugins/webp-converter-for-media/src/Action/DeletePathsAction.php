@@ -22,7 +22,7 @@ class DeletePathsAction implements HookableInterface {
 
 	public function __construct(
 		FormatFactory $format_factory,
-		OutputPathGenerator $output_path = null
+		?OutputPathGenerator $output_path = null
 	) {
 		$this->output_path = $output_path ?: new OutputPathGenerator( $format_factory );
 	}

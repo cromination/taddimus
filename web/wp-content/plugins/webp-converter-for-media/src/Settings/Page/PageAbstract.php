@@ -24,7 +24,7 @@ abstract class PageAbstract implements PageInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_menu_url() {
+	public function get_menu_url(): ?string {
 		return PageIntegrator::get_settings_page_url( $this->get_slug() );
 	}
 }

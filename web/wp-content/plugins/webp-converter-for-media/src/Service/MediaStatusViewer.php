@@ -50,7 +50,7 @@ class MediaStatusViewer implements HookableInterface {
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
 		FormatFactory $format_factory,
-		OutputPathGenerator $output_path = null
+		?OutputPathGenerator $output_path = null
 	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository;
@@ -89,7 +89,7 @@ class MediaStatusViewer implements HookableInterface {
 	 * @return string|null
 	 * @internal
 	 */
-	public function get_conversion_stats_for_attachment( string $current_value, int $post_id, int $strategy_level = null ) {
+	public function get_conversion_stats_for_attachment( string $current_value, int $post_id, ?int $strategy_level = null ): ?string {
 		$conversion_status = $this->get_conversion_status( $post_id, $strategy_level );
 		if ( $conversion_status === null ) {
 			return null;
@@ -126,7 +126,7 @@ class MediaStatusViewer implements HookableInterface {
 			return;
 		}
 
-		echo sprintf(
+		printf(
 			'<div id="webpc-attachment-trigger-%1$s-wrapper">%2$s</div>',
 			esc_attr( (string) $post_id ),
 			wp_kses( $conversion_stats, $this->get_allowed_html_tags() )
@@ -208,7 +208,7 @@ class MediaStatusViewer implements HookableInterface {
 	 *
 	 * @return string[]|null
 	 */
-	private function get_conversion_status( int $post_id, int $strategy_level = null ) {
+	private function get_conversion_status( int $post_id, ?int $strategy_level = null ): ?array {
 		$this->attachment = $this->attachment ?: new AttachmentPathsGenerator( $this->plugin_data );
 		$this->token      = $this->token ?: $this->token_repository->get_token();
 

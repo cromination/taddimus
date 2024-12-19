@@ -31,8 +31,8 @@ class TokenStatusDetector implements DetectorInterface {
 
 	public function __construct(
 		PluginData $plugin_data,
-		TokenRepository $token_repository = null,
-		TokenValidator $token_validator = null
+		?TokenRepository $token_repository = null,
+		?TokenValidator $token_validator = null
 	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository ?: new TokenRepository();

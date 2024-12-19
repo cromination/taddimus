@@ -295,7 +295,7 @@ class RemoteMethod extends MethodAbstract {
 				$http_code = curl_getinfo( $mh_item, CURLINFO_HTTP_CODE );
 				$response  = curl_multi_getcontent( $mh_item );
 
-				if ( ( $http_code === 200 ) && ( strlen( $response ) > 10 ) ) {
+				if ( ( $http_code === 200 ) && ( strlen( $response ?: '' ) > 10 ) ) {
 					$values[ $output_format ]                 = $values[ $output_format ] ?? [];
 					$values[ $output_format ][ $resource_id ] = $response;
 				} else {
@@ -411,7 +411,7 @@ class RemoteMethod extends MethodAbstract {
 		int $resource_id,
 		array $plugin_settings,
 		int $http_code,
-		string $response = null
+		?string $response = null
 	) {
 		$response_value     = ( $response ) ? json_decode( $response, true ) : [];
 		$error_message      = $response_value[ WebpConverterConstants::API_RESPONSE_VALUE_ERROR_MESSAGE ] ?? '';

@@ -29,8 +29,8 @@ class CronConversionEndpoint extends EndpointAbstract {
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
 		FormatFactory $format_factory,
-		CronInitiator $cron_initiator = null,
-		CronStatusManager $cron_status_manager = null
+		?CronInitiator $cron_initiator = null,
+		?CronStatusManager $cron_status_manager = null
 	) {
 		$this->cron_initiator      = $cron_initiator ?: new CronInitiator( $plugin_data, $token_repository, $format_factory );
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();

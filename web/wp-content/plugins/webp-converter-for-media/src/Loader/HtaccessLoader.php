@@ -249,7 +249,7 @@ class HtaccessLoader extends LoaderAbstract {
 	 *
 	 * @return string Rules for .htaccess file.
 	 */
-	protected function get_mod_rewrite_rules( array $settings, string $output_path_suffix = null ): string {
+	protected function get_mod_rewrite_rules( array $settings, ?string $output_path_suffix = null ): string {
 		$content = '';
 		if ( ! $settings[ SupportedExtensionsOption::OPTION_NAME ] ) {
 			return $content;

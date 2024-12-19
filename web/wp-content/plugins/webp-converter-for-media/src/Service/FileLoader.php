@@ -19,7 +19,7 @@ class FileLoader {
 	 *
 	 * @return int
 	 */
-	public function get_file_size_by_url( string $url, bool $set_headers = true, string $ver_param = null, string $debug_context = null ): int {
+	public function get_file_size_by_url( string $url, bool $set_headers = true, ?string $ver_param = null, ?string $debug_context = null ): int {
 		$request_url     = $this->get_curl_url( $url, $ver_param );
 		$request_headers = $this->get_curl_headers( $set_headers );
 		$connect         = $this->get_curl_connection( $request_url, $request_headers );
@@ -53,7 +53,7 @@ class FileLoader {
 	 *
 	 * @return int
 	 */
-	public function get_file_status_by_url( string $url, bool $set_headers = true, string $ver_param = null, string $debug_context = null ): int {
+	public function get_file_status_by_url( string $url, bool $set_headers = true, ?string $ver_param = null, ?string $debug_context = null ): int {
 		$request_url     = $this->get_curl_url( $url, $ver_param );
 		$request_headers = $this->get_curl_headers( $set_headers );
 		$connect         = $this->get_curl_connection( $request_url, $request_headers );
@@ -90,7 +90,7 @@ class FileLoader {
 	 *
 	 * @return string
 	 */
-	private function get_curl_url( string $url, string $ver_param = null ): string {
+	private function get_curl_url( string $url, ?string $ver_param = null ): string {
 		$image_url = $url;
 		if ( $ver_param !== null ) {
 			$image_url = add_query_arg( 'ver', $ver_param, $image_url );
@@ -167,8 +167,8 @@ class FileLoader {
 		string $url,
 		bool $is_webp_request,
 		int $response_code,
-		string $curl_error = null,
-		int $response_length = null
+		?string $curl_error = null,
+		?int $response_length = null
 	) {
 		if ( ! isset( $GLOBALS[ self::GLOBAL_LOGS_VARIABLE ] ) ) {
 			$GLOBALS[ self::GLOBAL_LOGS_VARIABLE ] = [];

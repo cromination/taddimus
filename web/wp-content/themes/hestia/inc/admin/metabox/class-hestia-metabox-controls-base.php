@@ -38,10 +38,17 @@ abstract class Hestia_Metabox_Controls_Base {
 	 * Init function
 	 */
 	public function init() {
-		$this->add_controls();
-		$this->order_by_priority();
+		add_action( 'init', array( $this, 'set_controls' ) );
 		add_action( 'save_post', array( $this, 'save' ) );
 		add_action( 'hestia_settings_render_metabox_controls', array( $this, 'render_controls' ) );
+	}
+
+	/**
+	 * Set controls .
+	 */
+	public function set_controls() {
+		$this->add_controls();
+		$this->order_by_priority();
 	}
 
 	/**

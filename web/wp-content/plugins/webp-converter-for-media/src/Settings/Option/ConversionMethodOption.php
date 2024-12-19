@@ -61,7 +61,7 @@ class ConversionMethodOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_notice_lines() {
+	public function get_notice_lines(): ?array {
 		$notice = [
 			__( 'The remote server allows you to reduce the server load, because your images are converted by our server. This option is also useful when the server does not meet all the technical requirements of the plugin.', 'webp-converter-for-media' ),
 		];
@@ -100,7 +100,7 @@ class ConversionMethodOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
+	public function get_default_value( ?array $settings = null ): string {
 		$methods_available = $this->method_factory->get_available_methods();
 		return array_keys( $methods_available )[0] ?? '';
 	}
@@ -108,7 +108,7 @@ class ConversionMethodOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function validate_value( $current_value, ?array $available_values = null, ?array $disabled_values = null ) {
 		if ( ! array_key_exists( $current_value, $available_values ?: [] ) ) {
 			return null;
 		}

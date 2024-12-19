@@ -47,7 +47,7 @@ class ExcludedDirectoriesOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_placeholder() {
+	public function get_placeholder(): string {
 		return 'directory-1,directory-2';
 	}
 
@@ -63,14 +63,14 @@ class ExcludedDirectoriesOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
+	public function get_default_value( ?array $settings = null ): string {
 		return '';
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ): string {
+	public function validate_value( $current_value, ?array $available_values = null, ?array $disabled_values = null ): string {
 		$valid_values = explode( ',', $current_value );
 		$valid_values = array_map(
 			function ( $value ) {

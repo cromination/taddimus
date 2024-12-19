@@ -4,8 +4,8 @@ Donate link: https://url.mattplugins.com/converter-readme-donate-link
 Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.7
-Requires PHP: 7.0
-Stable tag: 6.1.3
+Requires PHP: 7.1
+Stable tag: 6.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -305,6 +305,10 @@ Current list of supported CDN servers:
 
 == Changelog ==
 
+= 6.2.0 (2024-12-18)
+* `[Changed]` Minimum required PHP version from 7.0 to 7.1
+* `[Added]` Compatibility with PHP 8.4
+
 = 6.1.3 (2024-11-19) =
 * `[Fixed]` Translations in command registration for WP-CLI
 * `[Added]` Support for WordPress 6.7
@@ -327,13 +331,6 @@ Current list of supported CDN servers:
 * `[Fixed]` Restoring original images in Media Library
 * `[Changed]` Optimization statistics in Media Library
 * `[Added]` Warnings with explanations in plugin settings field: Image loading mode
-
-= 5.13.1 (2024-08-04) =
-* `[Changed]` Optimization statistics in Media Library
-
-= 5.13.0 (2024-06-27) =
-* `[Fixed]` Filter `webpc_option_quality_levels` to change conversion quality levels
-* `[Added]` Support for WordPress 6.6
 
 See [changelog.txt](https://url.mattplugins.com/converter-readme-changelog) for previous versions.
 

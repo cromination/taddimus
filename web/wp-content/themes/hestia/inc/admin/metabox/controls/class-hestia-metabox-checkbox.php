@@ -44,8 +44,14 @@ class Hestia_Metabox_Checkbox extends Hestia_Metabox_Control_Base {
 		$markup .= '/>';
 		$markup .= esc_html( $this->settings['input_label'] ) . '</label>';
 		if ( $show_notice && ! empty( $this->settings['upsell_data'] ) ) {
-			// translators: %1$s field, %2$s upgrade link.
-			$markup .= '<p class="notice notice-info" style="margin: 5px 0;">' . sprintf( __( 'Refine %1$s with <a href="%2$s" target="_blank">Hestia PRO!</a>', 'hestia' ), $this->settings['upsell_data']['text'], esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', $this->settings['upsell_data']['utm_tag'] ), 'query' ) ) ) . '</p>';
+			$upsell_link = tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', $this->settings['upsell_data']['utm_tag'] ), 'query' );
+				$markup .= '<p class="notice notice-info" style="margin: 5px 0;">'
+				. sprintf(
+					// translators: %1$s: field name, %2$s: a link with label 'Hestia PRO'.
+					__( 'Refine %1$s with %2$s', 'hestia' ),
+					$this->settings['upsell_data']['text'],
+					'<a href="' . esc_url( $upsell_link ) . '" target="_blank">' . __( 'Hestia PRO', 'hestia' ) . '!</a>'
+				) . '</p>';
 		}
 		$markup .= '</div>';
 		$markup .= '</p>';

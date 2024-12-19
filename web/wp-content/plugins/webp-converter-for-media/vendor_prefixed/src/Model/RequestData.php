@@ -34,7 +34,7 @@ class RequestData
     {
         return $this->plugin_slug;
     }
-    public function set_reason_key(string $reason_key = null) : self
+    public function set_reason_key(?string $reason_key = null) : self
     {
         $this->reason_key = $reason_key;
         return $this;
@@ -46,7 +46,7 @@ class RequestData
     {
         return $this->reason_key;
     }
-    public function set_additional_info(string $additional_info = null) : self
+    public function set_additional_info(?string $additional_info = null) : self
     {
         $this->additional_info = $additional_info;
         return $this;

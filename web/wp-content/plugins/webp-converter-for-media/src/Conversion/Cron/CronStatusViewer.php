@@ -20,7 +20,7 @@ class CronStatusViewer implements HookableInterface {
 	 */
 	private $paths_preview_count = 0;
 
-	public function __construct( CronStatusManager $cron_status_manager = null ) {
+	public function __construct( ?CronStatusManager $cron_status_manager = null ) {
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
 	}
 

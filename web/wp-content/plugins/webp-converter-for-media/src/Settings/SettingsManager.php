@@ -36,7 +36,7 @@ class SettingsManager {
 	public function __construct(
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
-		TokenValidator $token_validator = null
+		?TokenValidator $token_validator = null
 	) {
 		$this->plugin_data     = $plugin_data;
 		$this->token_validator = $token_validator ?: new TokenValidator( $token_repository );
@@ -47,7 +47,7 @@ class SettingsManager {
 	 *
 	 * @return void
 	 */
-	public function save_settings( array $post_data = null ) {
+	public function save_settings( ?array $post_data = null ) {
 		$previous_settings = $this->plugin_data->get_plugin_settings();
 		$posted_settings   = ( $post_data !== null )
 			? $this->plugin_data->validate_plugin_settings( $post_data, $post_data[ self::FORM_TYPE_PARAM_KEY ] ?? null )

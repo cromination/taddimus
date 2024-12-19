@@ -65,7 +65,7 @@ class ImagickMethod extends LibraryMethodAbstract {
 	 *
 	 * @return string|null Supported format using for conversion.
 	 */
-	private static function get_format_extension( string $format ) {
+	private static function get_format_extension( string $format ): ?string {
 		switch ( $format ) {
 			case WebpFormat::FORMAT_EXTENSION:
 				return 'WEBP';

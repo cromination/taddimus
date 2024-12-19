@@ -41,7 +41,7 @@ class PluginSettingsManager {
 		PluginInfo $plugin_info,
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
-		StatsManager $stats_manager = null
+		?StatsManager $stats_manager = null
 	) {
 		$this->plugin_info      = $plugin_info;
 		$this->plugin_data      = $plugin_data;

@@ -24,7 +24,7 @@ class DirectoryFilesFinder {
 
 	public function __construct(
 		PluginData $plugin_data,
-		ServerConfigurator $server_configurator = null
+		?ServerConfigurator $server_configurator = null
 	) {
 		$this->plugin_data         = $plugin_data;
 		$this->server_configurator = $server_configurator ?: new ServerConfigurator();
@@ -87,7 +87,7 @@ class DirectoryFilesFinder {
 			} else {
 				$filename = basename( $current_path );
 				$parts    = array_reverse( explode( '.', $filename ) );
-				if ( in_array( strtolower( $parts[0] ?? '' ), $allowed_source_exts ) && ! in_array( strtolower( $parts[1] ?? '' ), ExcludedPathsOperator::EXCLUDED_SUB_EXTENSIONS ) ) {
+				if ( in_array( strtolower( $parts[0] ), $allowed_source_exts ) && ! in_array( strtolower( $parts[1] ?? '' ), ExcludedPathsOperator::EXCLUDED_SUB_EXTENSIONS ) ) {
 					if ( apply_filters( 'webpc_supported_source_file', true, $filename, $current_path ) ) {
 						$list[] = trim( $path_prefix . '/' . $path, '/' );
 					}

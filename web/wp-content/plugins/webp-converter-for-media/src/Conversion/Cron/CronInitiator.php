@@ -34,8 +34,8 @@ class CronInitiator {
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
 		FormatFactory $format_factory,
-		CronStatusManager $cron_status_manager = null,
-		PathsFinder $paths_finder = null
+		?CronStatusManager $cron_status_manager = null,
+		?PathsFinder $paths_finder = null
 	) {
 		$this->plugin_data         = $plugin_data;
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
@@ -81,7 +81,7 @@ class CronInitiator {
 	 *
 	 * @return void
 	 */
-	public function init_conversion( string $request_id = null ) {
+	public function init_conversion( ?string $request_id = null ) {
 		$saved_request_id = $this->cron_status_manager->get_conversion_request_id();
 		if ( $this->cron_status_manager->is_conversion_locked()
 			|| ( ( $saved_request_id !== null ) && ( $request_id !== $saved_request_id ) ) ) {

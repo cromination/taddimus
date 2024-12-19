@@ -36,7 +36,7 @@ class OptionsManager {
 	 *
 	 * @return mixed[] Options of plugin settings.
 	 */
-	public function get_options( string $form_name = null, bool $is_debug = false, array $posted_settings = null ): array {
+	public function get_options( ?string $form_name = null, bool $is_debug = false, ?array $posted_settings = null ): array {
 		$is_save  = ( $posted_settings !== null );
 		$settings = ( $is_save ) ? $posted_settings : OptionsAccessManager::get_option( SettingsManager::SETTINGS_OPTION, [] );
 
@@ -87,7 +87,7 @@ class OptionsManager {
 	 *
 	 * @return mixed[] Values of plugin settings.
 	 */
-	public function get_validated_values( array $posted_settings = null, string $form_name = null ): array {
+	public function get_validated_values( ?array $posted_settings = null, ?string $form_name = null ): array {
 		$values = [];
 		foreach ( $this->get_options( $form_name, false, $posted_settings ) as $option ) {
 			$values[ $option['name'] ] = $option['value'];

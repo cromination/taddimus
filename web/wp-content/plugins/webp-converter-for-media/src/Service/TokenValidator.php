@@ -24,11 +24,11 @@ class TokenValidator {
 	 */
 	private $token;
 
-	public function __construct( TokenRepository $token_repository = null ) {
+	public function __construct( ?TokenRepository $token_repository = null ) {
 		$this->token_repository = $token_repository ?: new TokenRepository();
 	}
 
-	public function validate_token( string $token_value = null ): Token {
+	public function validate_token( ?string $token_value = null ): Token {
 		$this->token = $this->token_repository->get_token( $token_value );
 		$status      = ( $token_value && $this->check_access_token( $token_value ) );
 

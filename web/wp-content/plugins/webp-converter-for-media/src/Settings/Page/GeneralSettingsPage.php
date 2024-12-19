@@ -57,7 +57,7 @@ class GeneralSettingsPage extends PageAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_slug() {
+	public function get_slug(): ?string {
 		return null;
 	}
 

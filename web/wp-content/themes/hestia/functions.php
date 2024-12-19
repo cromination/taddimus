@@ -6,7 +6,7 @@
  * @since   Hestia 1.0
  */
 
-define( 'HESTIA_VERSION', '3.2.6' );
+define( 'HESTIA_VERSION', '3.2.7' );
 define( 'HESTIA_VENDOR_VERSION', '1.0.2' );
 define( 'HESTIA_PHP_INCLUDE', trailingslashit( get_template_directory() ) . 'inc/' );
 define( 'HESTIA_ASSETS_URL', trailingslashit( get_template_directory_uri() ) . 'assets/' );
@@ -82,6 +82,13 @@ function hestia_run() {
 	if ( class_exists( 'Ti_White_Label', false ) ) {
 		Ti_White_Label::instance( get_template_directory() . '/style.css' );
 	}
+
+	require_once HESTIA_CORE_DIR . 'class-hestia-autoloader.php';
+	$autoloader = new Hestia_Autoloader();
+
+	spl_autoload_register( array( $autoloader, 'loader' ) );
+
+	new Hestia_Core();
 }
 
 /**
@@ -105,19 +112,6 @@ require_once( HESTIA_CORE_DIR . 'class-hestia-autoloader.php' );
  * @since   1.0.0
  */
 hestia_run();
-
-/**
- * Load core modules.
- */
-function hestia_core_loader() {
-	require_once HESTIA_CORE_DIR . 'class-hestia-autoloader.php';
-	$autoloader = new Hestia_Autoloader();
-
-	spl_autoload_register( array( $autoloader, 'loader' ) );
-
-	new Hestia_Core();
-}
-add_action( 'after_setup_theme', 'hestia_core_loader' );
 
 /**
  * Append theme name to the upgrade link

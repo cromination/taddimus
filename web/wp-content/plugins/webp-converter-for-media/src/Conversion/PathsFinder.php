@@ -52,8 +52,8 @@ class PathsFinder {
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
 		FormatFactory $format_factory,
-		StatsManager $stats_manager = null,
-		OutputPathGenerator $output_path = null
+		?StatsManager $stats_manager = null,
+		?OutputPathGenerator $output_path = null
 	) {
 		$this->plugin_data      = $plugin_data;
 		$this->token_repository = $token_repository;
@@ -73,7 +73,7 @@ class PathsFinder {
 	 * @type string[]       $files                  Files paths.
 	 *                                              }
 	 */
-	public function get_paths_by_chunks( bool $skip_converted = false, array $allowed_output_formats = null ): array {
+	public function get_paths_by_chunks( bool $skip_converted = false, ?array $allowed_output_formats = null ): array {
 		$allowed_output_formats = $allowed_output_formats
 			?: $this->plugin_data->get_plugin_settings()[ OutputFormatsOption::OPTION_NAME ];
 
@@ -101,7 +101,7 @@ class PathsFinder {
 	 *
 	 * @return string[] Server paths of source images to be converted.
 	 */
-	public function get_paths( bool $skip_converted = false, array $allowed_output_formats = null ): array {
+	public function get_paths( bool $skip_converted = false, ?array $allowed_output_formats = null ): array {
 		$allowed_output_formats = $allowed_output_formats
 			?: $this->plugin_data->get_plugin_settings()[ OutputFormatsOption::OPTION_NAME ];
 
@@ -127,7 +127,7 @@ class PathsFinder {
 	 */
 	public function skip_converted_paths(
 		array $source_paths,
-		array $allowed_output_formats = null,
+		?array $allowed_output_formats = null,
 		bool $force_convert_modified = false
 	): array {
 		$plugin_settings        = $this->plugin_data->get_plugin_settings();
@@ -162,7 +162,7 @@ class PathsFinder {
 	private function skip_converted_paths_chunks(
 		array $source_dirs,
 		bool $skip_converted,
-		array $allowed_output_formats = null
+		?array $allowed_output_formats = null
 	): array {
 		$plugin_settings        = $this->plugin_data->get_plugin_settings();
 		$allowed_output_formats = $allowed_output_formats ?: $plugin_settings[ OutputFormatsOption::OPTION_NAME ];

@@ -24,7 +24,7 @@ class DirectoryIntegrator implements HookableInterface {
 	 */
 	private $output_path;
 
-	public function __construct( FormatFactory $format_factory, OutputPathGenerator $output_path = null ) {
+	public function __construct( FormatFactory $format_factory, ?OutputPathGenerator $output_path = null ) {
 		$this->output_path = $output_path ?: new OutputPathGenerator( $format_factory );
 	}
 

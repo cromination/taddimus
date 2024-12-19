@@ -122,7 +122,7 @@ class CloudflareConfigurator implements HookableInterface {
 	 *
 	 * @return int|null
 	 */
-	private function send_request( string $api_url, string $request_method, array $request_data = [] ) {
+	private function send_request( string $api_url, string $request_method, array $request_data = [] ): ?int {
 		$plugin_setting = $this->plugin_data->get_plugin_settings();
 		if ( ! $plugin_setting[ CloudflareZoneIdOption::OPTION_NAME ] || ! $plugin_setting[ CloudflareApiTokenOption::OPTION_NAME ] ) {
 			return null;

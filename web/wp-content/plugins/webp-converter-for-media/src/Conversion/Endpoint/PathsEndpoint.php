@@ -37,7 +37,7 @@ class PathsEndpoint extends EndpointAbstract {
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
 		FormatFactory $format_factory,
-		CronStatusManager $cron_status_manager = null
+		?CronStatusManager $cron_status_manager = null
 	) {
 		$this->plugin_data         = $plugin_data;
 		$this->token_repository    = $token_repository;

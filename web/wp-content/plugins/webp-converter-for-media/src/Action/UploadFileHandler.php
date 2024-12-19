@@ -36,7 +36,7 @@ class UploadFileHandler implements HookableInterface {
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
 		FormatFactory $format_factory,
-		CronInitiator $cron_initiator = null
+		?CronInitiator $cron_initiator = null
 	) {
 		$this->plugin_data    = $plugin_data;
 		$this->cron_initiator = $cron_initiator ?: new CronInitiator( $plugin_data, $token_repository, $format_factory );
@@ -72,7 +72,7 @@ class UploadFileHandler implements HookableInterface {
 	 * @return mixed[]|null Attachment meta data.
 	 * @internal
 	 */
-	public function init_attachment_conversion( array $data = null, int $attachment_id = null ) {
+	public function init_attachment_conversion( ?array $data = null, ?int $attachment_id = null ): ?array {
 		if ( ( $data === null ) || ( $attachment_id === null )
 			|| ! isset( $data['file'] ) || ! isset( $data['sizes'] ) ) {
 			return $data;

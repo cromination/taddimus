@@ -41,7 +41,7 @@ abstract class MethodAbstract implements MethodInterface {
 		CrashedFilesOperator $skip_crashed,
 		LargerFilesOperator $skip_larger,
 		ServerConfigurator $server_configurator,
-		OutputPathGenerator $output_path = null
+		?OutputPathGenerator $output_path = null
 	) {
 		$this->skip_crashed        = $skip_crashed;
 		$this->skip_larger         = $skip_larger;

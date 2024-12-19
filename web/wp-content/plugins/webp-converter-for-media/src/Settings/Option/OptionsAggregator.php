@@ -57,7 +57,7 @@ class OptionsAggregator {
 	 *
 	 * @return OptionInterface[]
 	 */
-	public function get_options( string $form_name = null ): array {
+	public function get_options( ?string $form_name = null ): array {
 		$options = [];
 		foreach ( $this->options as $option ) {
 			if ( ( $form_name === null ) || ( $form_name === $option->get_form_name() ) ) {

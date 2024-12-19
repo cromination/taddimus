@@ -69,7 +69,7 @@ class PluginData {
 	 *
 	 * @return mixed[]
 	 */
-	public function get_plugin_options( string $form_name = null ): array {
+	public function get_plugin_options( ?string $form_name = null ): array {
 		return $this->settings_object->get_options( $form_name );
 	}
 
@@ -114,7 +114,7 @@ class PluginData {
 	 *
 	 * @return mixed[] Values of plugin settings.
 	 */
-	public function validate_plugin_settings( array $posted_settings = null, string $form_name = null ): array {
+	public function validate_plugin_settings( ?array $posted_settings = null, ?string $form_name = null ): array {
 		return $this->settings_object->get_validated_values( $posted_settings, $form_name );
 	}
 }

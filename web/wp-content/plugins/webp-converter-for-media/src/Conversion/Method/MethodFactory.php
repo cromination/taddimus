@@ -48,9 +48,9 @@ class MethodFactory {
 	public function __construct(
 		TokenRepository $token_repository,
 		FormatFactory $format_factory,
-		CrashedFilesOperator $skip_crashed = null,
-		LargerFilesOperator $skip_larger = null,
-		ServerConfigurator $server_configurator = null
+		?CrashedFilesOperator $skip_crashed = null,
+		?LargerFilesOperator $skip_larger = null,
+		?ServerConfigurator $server_configurator = null
 	) {
 		$this->token_repository    = $token_repository;
 		$this->format_factory      = $format_factory;

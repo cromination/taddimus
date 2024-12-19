@@ -33,7 +33,7 @@ class RewriteInheritanceOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label() {
+	public function get_label(): ?string {
 		return null;
 	}
 
@@ -51,14 +51,14 @@ class RewriteInheritanceOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_available_values( array $settings ) {
+	public function get_available_values( array $settings ): ?array {
 		return null;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( array $settings = null ): string {
+	public function get_default_value( ?array $settings = null ): string {
 		$features = ( $settings ) ? $settings[ ExtraFeaturesOption::OPTION_NAME ] : [];
 		if ( in_array( ExtraFeaturesOption::OPTION_VALUE_REWRITE_INHERIT, $features ) ) {
 			return 'yes';
@@ -72,7 +72,7 @@ class RewriteInheritanceOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ): string {
+	public function validate_value( $current_value, ?array $available_values = null, ?array $disabled_values = null ): string {
 		return ( $current_value === 'yes' ) ? 'yes' : '';
 	}
 

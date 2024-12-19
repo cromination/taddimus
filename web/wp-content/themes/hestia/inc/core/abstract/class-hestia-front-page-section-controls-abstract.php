@@ -29,6 +29,13 @@ abstract class Hestia_Front_Page_Section_Controls_Abstract extends Hestia_Regist
 	 */
 	public function init() {
 		parent::init();
+		add_action( 'init', array( $this, 'section_data' ) );
+	}
+
+	/**
+	 * Set section data.
+	 */
+	public function section_data() {
 		$this->section_data = $this->set_section_data();
 	}
 

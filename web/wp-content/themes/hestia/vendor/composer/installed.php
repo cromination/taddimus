@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'codeinwp/hestia-pro',
-        'pretty_version' => 'v3.2.6',
-        'version' => '3.2.6.0',
-        'reference' => 'bd1d76e829339746c735a91f98ff7af132c5016d',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => '0e38e63e68eb6de701239054169b7cd13ae11973',
         'type' => 'wordpress-theme',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'codeinwp/hestia-pro' => array(
-            'pretty_version' => 'v3.2.6',
-            'version' => '3.2.6.0',
-            'reference' => 'bd1d76e829339746c735a91f98ff7af132c5016d',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => '0e38e63e68eb6de701239054169b7cd13ae11973',
             'type' => 'wordpress-theme',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

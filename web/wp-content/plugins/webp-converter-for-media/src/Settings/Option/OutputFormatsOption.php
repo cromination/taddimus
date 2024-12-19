@@ -66,7 +66,7 @@ class OutputFormatsOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_notice_lines() {
+	public function get_notice_lines(): ?array {
 		$notice = [
 			__( 'The AVIF format is the successor to the WebP format. Images converted to the AVIF format weigh about 50% less than images converted only to the WebP format, while maintaining better image quality.', 'webp-converter-for-media' ),
 		];
@@ -112,7 +112,7 @@ class OutputFormatsOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_default_value( array $settings = null ): array {
+	public function get_default_value( ?array $settings = null ): array {
 		$method = $settings[ ConversionMethodOption::OPTION_NAME ] ?? null;
 		if ( ! $method ) {
 			$method = $this->conversion_method_option->get_default_value( $settings );
@@ -125,7 +125,7 @@ class OutputFormatsOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function validate_value( $current_value, array $available_values = null, array $disabled_values = null ) {
+	public function validate_value( $current_value, ?array $available_values = null, ?array $disabled_values = null ) {
 		$valid_values = [];
 		if ( ! $current_value ) {
 			return $valid_values;
