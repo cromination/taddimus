@@ -54,7 +54,7 @@ class ConversionMethodOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Conversion method', 'webp-converter-for-media' );
 	}
 
@@ -100,7 +100,7 @@ class ConversionMethodOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( ?array $settings = null ): string {
+	public function get_default_value(): string {
 		$methods_available = $this->method_factory->get_available_methods();
 		return array_keys( $methods_available )[0] ?? '';
 	}

@@ -3,7 +3,7 @@
 **Tags:** blog, custom-logo, portfolio, e-commerce, rtl-language-support, post-formats, grid-layout, one-column, two-columns, custom-background, custom-colors, custom-header, custom-menu, featured-image-header, featured-images, flexible-header, full-width-template, sticky-post, theme-options, threaded-comments, translation-ready, editor-style, footer-widgets, left-sidebar, right-sidebar, wide-blocks  
 **Requires at least:** 4.0  
 **Tested up to:** 5.8.2  
-**Stable tag:** 2.0.7  
+**Stable tag:** 3.2.8  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -17,6 +17,13 @@ Hestia WordPress theme, Copyright 2018 Themeisle.
 Hestia is distributed under the terms of the GNU GPLv2 or later
 
 ## Changelog ##
+
+##### [Version 3.2.8](https://github.com/Codeinwp/hestia-pro/compare/v3.2.7...v3.2.8) (2025-02-05)
+
+- Fix language pack loading
+
+
+
 
 ##### [Version 3.2.7](https://github.com/Codeinwp/hestia-pro/compare/v3.2.6...v3.2.7) (2024-12-09)
 

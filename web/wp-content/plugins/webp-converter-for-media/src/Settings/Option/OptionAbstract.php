@@ -14,11 +14,11 @@ abstract class OptionAbstract implements OptionInterface {
 	const OPTION_TYPE_TOKEN      = 'token';
 	const OPTION_TYPE_IMAGE_SIZE = 'image_size';
 	const OPTION_TYPE_TOGGLE     = 'toggle';
-	const FORM_TYPE_BASIC        = 'basic';
+	const FORM_TYPE_GENERAL      = 'settings_general';
 	const FORM_TYPE_ADVANCED     = 'settings_advanced';
 	const FORM_TYPE_CDN          = 'settings_cdn';
-	const FORM_TYPE_SIDEBAR      = 'settings_sidebar';
 	const FORM_TYPE_EXPERT       = 'settings_expert';
+	const FORM_TYPE_SIDEBAR      = 'settings_sidebar';
 
 	/**
 	 * {@inheritdoc}
@@ -52,7 +52,7 @@ abstract class OptionAbstract implements OptionInterface {
 	 * {@inheritdoc}
 	 */
 	public function get_debug_value( array $settings ) {
-		return $this->get_default_value( $settings );
+		return $this->get_default_value();
 	}
 
 	/**

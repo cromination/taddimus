@@ -164,7 +164,7 @@ class RemoteMethod extends MethodAbstract {
 			$this->save_conversion_error( $e->getMessage(), $plugin_settings, true );
 		}
 
-		$this->token_repository->update_token( $this->token );
+		$this->token_repository->save_token( $this->token );
 	}
 
 	/**

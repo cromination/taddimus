@@ -1,3 +1,11 @@
+##### [Version 3.3.41](https://github.com/Codeinwp/themeisle-sdk-main/compare/v3.3.40...v3.3.41) (2025-02-05)
+
+- fixed a minor issue that prevented the translation checking for Hestia PRO
+
+##### [Version 3.3.40](https://github.com/Codeinwp/themeisle-sdk-main/compare/v3.3.39...v3.3.40) (2024-12-29)
+
+Adds feadzy features.
+
 ##### [Version 3.3.39](https://github.com/Codeinwp/themeisle-sdk-main/compare/v3.3.38...v3.3.39) (2024-11-19)
 
 - Adds WPFS promo to About Page

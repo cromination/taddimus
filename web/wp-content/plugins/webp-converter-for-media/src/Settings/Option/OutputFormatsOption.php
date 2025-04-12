@@ -46,7 +46,7 @@ class OutputFormatsOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_form_name(): string {
-		return OptionAbstract::FORM_TYPE_BASIC;
+		return OptionAbstract::FORM_TYPE_GENERAL;
 	}
 
 	/**
@@ -59,7 +59,7 @@ class OutputFormatsOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Supported output formats', 'webp-converter-for-media' );
 	}
 
@@ -99,7 +99,7 @@ class OutputFormatsOption extends OptionAbstract {
 	public function get_disabled_values( array $settings ): array {
 		$method = $settings[ ConversionMethodOption::OPTION_NAME ] ?? null;
 		if ( ! $method || in_array( $method, $this->conversion_method_option->get_disabled_values( $settings ) ) ) {
-			$method = $this->conversion_method_option->get_default_value( $settings );
+			$method = $this->conversion_method_option->get_default_value();
 		}
 		$formats           = $this->format_factory->get_formats();
 		$formats_available = $this->format_factory->get_available_formats( $method );
@@ -112,14 +112,8 @@ class OutputFormatsOption extends OptionAbstract {
 	 *
 	 * @return string[]
 	 */
-	public function get_default_value( ?array $settings = null ): array {
-		$method = $settings[ ConversionMethodOption::OPTION_NAME ] ?? null;
-		if ( ! $method ) {
-			$method = $this->conversion_method_option->get_default_value( $settings );
-		}
-		$formats = array_keys( $this->format_factory->get_available_formats( $method ) );
-
-		return ( in_array( WebpFormat::FORMAT_EXTENSION, $formats ) ) ? [ WebpFormat::FORMAT_EXTENSION ] : [];
+	public function get_default_value(): array {
+		return [ WebpFormat::FORMAT_EXTENSION ];
 	}
 
 	/**

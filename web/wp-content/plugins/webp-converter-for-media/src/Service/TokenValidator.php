@@ -33,13 +33,13 @@ class TokenValidator {
 		$status      = ( $token_value && $this->check_access_token( $token_value ) );
 
 		if ( $status ) {
-			$this->token_repository->update_token(
+			$this->token_repository->save_token(
 				$this->token
 					->set_token_value( $token_value )
 					->set_valid_status( true )
 			);
 		} else {
-			$this->token_repository->reset_token();
+			$this->token_repository->remove_token();
 		}
 
 		return $this->token_repository->get_token( $token_value );

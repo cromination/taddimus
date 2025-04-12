@@ -89,6 +89,10 @@ class Settings_Manager implements Module_Interface {
 			'type'    => 'bool',
 			'default' => 1,
 		],
+		Constants::SETTING_KEEP_ON_DEACTIVATION        => [
+			'type'    => 'bool',
+			'default' => 1,
+		],
 	];
 	private const ALLOWED_FIELD_TYPES = [ 'type', 'bust_cache', 'default', 'sync_rules' ];
 
@@ -245,7 +249,7 @@ class Settings_Manager implements Module_Interface {
 	 *
 	 * @param string $key The setting key.
 	 *
-	 * @return int
+	 * @return bool
 	 */
 	public static function is_on( $key ) {
 		/**
@@ -256,8 +260,8 @@ class Settings_Manager implements Module_Interface {
 		$default_legacy   = $sw_cloudflare_pagecache->get_default_config();
 		$fallback_default = isset( $default_legacy[ $key ] ) ? $default_legacy[ $key ] : false;
 
-		$value = $sw_cloudflare_pagecache->get_single_config( $key, self::get_default_for_field( $key, $fallback_default ) );
+		$value = (int) $sw_cloudflare_pagecache->get_single_config( $key, self::get_default_for_field( $key, $fallback_default ) );
 
-		return (int) $value > 0;
+		return (bool) $value > 0;
 	}
 }

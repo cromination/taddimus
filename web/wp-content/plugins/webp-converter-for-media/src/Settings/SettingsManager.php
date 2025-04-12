@@ -3,6 +3,7 @@
 namespace WebpConverter\Settings;
 
 use WebpConverter\Conversion\Format\AvifFormat;
+use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Conversion\Format\WebpFormat;
 use WebpConverter\Conversion\Method\RemoteMethod;
 use WebpConverter\PluginData;
@@ -29,6 +30,11 @@ class SettingsManager {
 	private $plugin_data;
 
 	/**
+	 * @var FormatFactory
+	 */
+	private $format_factory;
+
+	/**
 	 * @var TokenValidator
 	 */
 	private $token_validator;
@@ -36,25 +42,29 @@ class SettingsManager {
 	public function __construct(
 		PluginData $plugin_data,
 		TokenRepository $token_repository,
+		FormatFactory $format_factory,
 		?TokenValidator $token_validator = null
 	) {
 		$this->plugin_data     = $plugin_data;
+		$this->format_factory  = $format_factory;
 		$this->token_validator = $token_validator ?: new TokenValidator( $token_repository );
 	}
 
 	/**
-	 * @param mixed[]|null $post_data .
-	 *
 	 * @return void
 	 */
-	public function save_settings( ?array $post_data = null ) {
-		$previous_settings = $this->plugin_data->get_plugin_settings();
-		$posted_settings   = ( $post_data !== null )
-			? $this->plugin_data->validate_plugin_settings( $post_data, $post_data[ self::FORM_TYPE_PARAM_KEY ] ?? null )
-			: [];
-		$plugin_settings   = array_merge( $previous_settings, $posted_settings );
+	public function save_settings() {
+		$posted_settings = $this->plugin_data->get_validated_posted_data();
+		if ( $posted_settings === null ) {
+			return;
+		}
 
-		$token = $this->token_validator->validate_token( $plugin_settings[ AccessTokenOption::OPTION_NAME ] );
+		$previous_settings = $this->plugin_data->get_plugin_settings();
+		$plugin_settings   = array_merge( $previous_settings, $posted_settings );
+		$token             = $this->token_validator->validate_token( $plugin_settings[ AccessTokenOption::OPTION_NAME ] );
+
+		$this->format_factory->reset_available_formats();
+
 		if ( $token->get_valid_status() ) {
 			$plugin_settings[ ConversionMethodOption::OPTION_NAME ] = RemoteMethod::METHOD_NAME;
 
@@ -66,11 +76,10 @@ class SettingsManager {
 			}
 		} elseif ( ( $plugin_settings[ ConversionMethodOption::OPTION_NAME ] === RemoteMethod::METHOD_NAME )
 			&& ! $plugin_settings[ AccessTokenOption::OPTION_NAME ] ) {
-			$plugin_settings[ ConversionMethodOption::OPTION_NAME ] = '';
+			$plugin_settings[ ConversionMethodOption::OPTION_NAME ] = null;
 		}
 
-		$plugin_settings = $this->plugin_data->validate_plugin_settings( $plugin_settings );
-
+		$plugin_settings = $this->plugin_data->get_validated_form_data( $plugin_settings );
 		OptionsAccessManager::update_option( self::SETTINGS_OPTION, $plugin_settings );
 		$this->plugin_data->invalidate_plugin_settings();
 

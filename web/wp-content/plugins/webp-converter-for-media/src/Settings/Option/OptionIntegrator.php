@@ -25,26 +25,20 @@ class OptionIntegrator {
 	 * Returns data of option based on plugin settings.
 	 *
 	 * @param mixed[] $settings Plugin settings.
-	 * @param bool    $is_debug Is debugging?
-	 * @param bool    $is_save  Is saving?
 	 *
-	 * @return mixed[] Data of option.
+	 * @return mixed[] Associative array containing field data.
 	 */
-	public function get_option_data( array $settings, bool $is_debug, bool $is_save ): array {
+	public function get_option_data( array $settings ): array {
 		$option_name     = $this->option->get_name();
 		$option_type     = $this->option->get_type();
 		$values          = $this->option->get_available_values( $settings );
 		$disabled_values = $this->option->get_disabled_values( $settings );
+		$value           = $this->option->validate_value(
+			( $settings[ $option_name ] ?? $this->option->get_default_value() ),
+			$values,
+			$disabled_values
+		);
 
-		if ( $is_debug ) {
-			$value = $this->option->get_debug_value( $settings );
-		} else {
-			$value = ( isset( $settings[ $option_name ] ) || $is_save )
-				? $this->option->validate_value( $settings[ $option_name ] ?? null, $values, $disabled_values )
-				: null;
-		}
-
-		$value = ( $value !== null ) ? $value : $this->option->get_default_value( $settings );
 		return [
 			'name'            => $this->option->get_name(),
 			'type'            => $option_type,

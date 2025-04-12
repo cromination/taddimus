@@ -71,11 +71,10 @@ class ExcludedPathsOperator implements HookableInterface {
 			: [];
 
 		foreach ( $saved_dirs as $saved_dir ) {
-			if ( preg_match( '/(\/|\\\)/', $saved_dir ) ) {
-				$this->excluded_paths[] = '/' . str_replace( '\\', '/', $saved_dir ) . '/';
-			} else {
+			if ( ! preg_match( '/(\/|\\\)/', $saved_dir ) ) {
 				$this->excluded_dirs[] = $saved_dir;
 			}
+			$this->excluded_paths[] = '/' . str_replace( '\\', '/', $saved_dir ) . '/';
 		}
 	}
 

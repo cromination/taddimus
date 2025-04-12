@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Error\Notice;
 
+use WebpConverter\Settings\Option\LoaderTypeOption;
 use WebpConverter\Settings\Page\AdvancedSettingsPage;
 use WebpConverter\Settings\Page\PageIntegrator;
 
@@ -66,13 +67,14 @@ class BypassingApacheNotice implements NoticeInterface {
 				'</strong>'
 			),
 			sprintf(
-			/* translators: %1$s: open strong tag, %2$s: close strong tag, %3$s: field value, %4$s: field label, %5$s: open anchor tag, %6$s: close anchor tag */
-				__( '%1$sThe alternative solution to avoid this problem%2$s may be to set the %3$s option for the %4$s field in %5$sthe Advanced Settings tab%6$s.', 'webp-converter-for-media' ),
+			/* translators: %1$s: open strong tag, %2$s: close strong tag, %3$s: field value, %4$s: field label, %5$s: open anchor tag, %6$s: settings tab label, %7$s: close anchor tag */
+				__( '%1$sThe alternative solution to avoid this problem%2$s may be to set the %3$s option for the %4$s field in %5$sthe %6$s tab%7$s.', 'webp-converter-for-media' ),
 				'<span id="bypassing-notice">',
 				'</span>',
 				'"' . __( 'Bypassing Nginx', 'webp-converter-for-media' ) . '"',
-				'"' . __( 'Image loading mode', 'webp-converter-for-media' ) . '"',
+				'"' . LoaderTypeOption::get_label() . '"',
 				'<a href="' . esc_attr( PageIntegrator::get_settings_page_url( AdvancedSettingsPage::PAGE_SLUG ) ) . '#bypassing-notice">',
+				AdvancedSettingsPage::get_label(),
 				'</a>'
 			),
 		];

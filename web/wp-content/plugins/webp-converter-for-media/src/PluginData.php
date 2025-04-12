@@ -51,8 +51,6 @@ class PluginData {
 	}
 
 	/**
-	 * Returns settings of plugin.
-	 *
 	 * @return mixed[]
 	 */
 	public function get_plugin_settings(): array {
@@ -63,22 +61,11 @@ class PluginData {
 	}
 
 	/**
-	 * Returns settings of plugin.
-	 *
-	 * @param string|null $form_name .
-	 *
-	 * @return mixed[]
-	 */
-	public function get_plugin_options( ?string $form_name = null ): array {
-		return $this->settings_object->get_options( $form_name );
-	}
-
-	/**
 	 * Returns settings of plugin without sensitive data.
 	 *
 	 * @return mixed[]
 	 */
-	public function get_public_settings(): array {
+	public function get_plugin_settings_public(): array {
 		if ( $this->plugin_public_settings === null ) {
 			$this->plugin_public_settings = $this->settings_object->get_public_values();
 		}
@@ -90,11 +77,20 @@ class PluginData {
 	 *
 	 * @return mixed[]
 	 */
-	public function get_debug_settings(): array {
+	public function get_plugin_settings_debug(): array {
 		if ( $this->debug_settings === null ) {
 			$this->debug_settings = $this->settings_object->get_values( true );
 		}
 		return $this->debug_settings;
+	}
+
+	/**
+	 * @param string|null $form_name .
+	 *
+	 * @return mixed[]
+	 */
+	public function get_settings_fields( ?string $form_name = null ): array {
+		return $this->settings_object->get_fields( $form_name );
 	}
 
 	/**
@@ -109,12 +105,22 @@ class PluginData {
 	}
 
 	/**
-	 * @param mixed[]|null $posted_settings Settings submitted in form.
-	 * @param string|null  $form_name       .
+	 * Retrieves and validates plugin settings submitted via POST.
 	 *
-	 * @return mixed[] Values of plugin settings.
+	 * @return mixed[]|null Validated plugin settings values. Returns null if form submission has not been verified.
 	 */
-	public function validate_plugin_settings( ?array $posted_settings = null, ?string $form_name = null ): array {
-		return $this->settings_object->get_validated_values( $posted_settings, $form_name );
+	public function get_validated_posted_data(): ?array {
+		return $this->settings_object->get_validated_posted_values();
+	}
+
+	/**
+	 * Validates provided plugin settings data.
+	 *
+	 * @param mixed[] $form_data Plugin settings data to validate.
+	 *
+	 * @return mixed[] Validated plugin settings values.
+	 */
+	public function get_validated_form_data( array $form_data ): array {
+		return $this->settings_object->get_validated_form_values( $form_data );
 	}
 }

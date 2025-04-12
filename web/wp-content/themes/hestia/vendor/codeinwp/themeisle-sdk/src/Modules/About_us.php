@@ -379,7 +379,7 @@ class About_Us extends Abstract_Module {
 				'name' => 'Hyve Lite',
 			],
 			'wp-full-stripe-free'                 => [
-				'name' => 'Stripe Payment forms for WordPress Plugin – WP Full Pay',
+				'name' => 'WP Full Pay',
 			],
 		];
 

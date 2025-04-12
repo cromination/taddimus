@@ -9,6 +9,8 @@ use WebpConverter\Conversion\Endpoint\PathsEndpoint;
 use WebpConverter\Conversion\Endpoint\RegenerateEndpoint;
 use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Loader\LoaderAbstract;
+use WebpConverter\Notice\NoticeIntegrator;
+use WebpConverter\Notice\WelcomeNotice;
 use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
 use WebpConverter\Repository\TokenRepository;
@@ -20,6 +22,7 @@ use WebpConverter\Settings\SettingsManager;
  */
 class GeneralSettingsPage extends PageAbstract {
 
+	const PAGE_SLUG      = null;
 	const PAGE_VIEW_PATH = 'views/settings.php';
 
 	/**
@@ -58,13 +61,13 @@ class GeneralSettingsPage extends PageAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_slug(): ?string {
-		return null;
+		return self::PAGE_SLUG;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'General Settings', 'webp-converter-for-media' );
 	}
 
@@ -84,10 +87,10 @@ class GeneralSettingsPage extends PageAbstract {
 		return [
 			'logo_url'                 => $this->plugin_info->get_plugin_directory_url() . 'assets/img/logo-headline.png',
 			'author_image_url'         => $this->plugin_info->get_plugin_directory_url() . 'assets/img/author.png',
-			'form_options'             => $this->plugin_data->get_plugin_options( OptionAbstract::FORM_TYPE_BASIC ),
-			'form_sidebar_options'     => $this->plugin_data->get_plugin_options( OptionAbstract::FORM_TYPE_SIDEBAR ),
+			'form_options'             => $this->plugin_data->get_settings_fields( OptionAbstract::FORM_TYPE_GENERAL ),
+			'form_sidebar_options'     => $this->plugin_data->get_settings_fields( OptionAbstract::FORM_TYPE_SIDEBAR ),
 			'form_input_name'          => SettingsManager::FORM_TYPE_PARAM_KEY,
-			'form_input_value'         => OptionAbstract::FORM_TYPE_BASIC,
+			'form_input_value'         => OptionAbstract::FORM_TYPE_GENERAL,
 			'form_sidebar_input_value' => OptionAbstract::FORM_TYPE_SIDEBAR,
 			'nonce_input_name'         => SettingsManager::NONCE_PARAM_KEY,
 			'nonce_input_value'        => wp_create_nonce( SettingsManager::NONCE_PARAM_VALUE ),
@@ -128,16 +131,11 @@ class GeneralSettingsPage extends PageAbstract {
 	 * {@inheritdoc}
 	 */
 	public function do_action_before_load() {
-		$post_data = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( isset( $post_data[ SettingsManager::FORM_TYPE_PARAM_KEY ] )
-			&& wp_verify_nonce( $post_data[ SettingsManager::NONCE_PARAM_KEY ] ?? '', SettingsManager::NONCE_PARAM_VALUE ) ) {
-			( new SettingsManager( $this->plugin_data, $this->token_repository ) )->save_settings( $post_data );
-		}
+		( new SettingsManager( $this->plugin_data, $this->token_repository, $this->format_factory ) )->save_settings();
+		( new NoticeIntegrator( $this->plugin_info, new WelcomeNotice() ) )->set_disable_value();
 
 		do_action( LoaderAbstract::ACTION_NAME, true );
 		wp_clear_scheduled_hook( CronEventGenerator::CRON_PATHS_ACTION );
-
-		$this->format_factory->reset_available_formats();
 	}
 
 	/**

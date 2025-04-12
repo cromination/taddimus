@@ -8,11 +8,13 @@ namespace WebpConverter\Settings\Page;
  */
 class BulkOptimizationPage extends GeneralSettingsPage {
 
+	const PAGE_SLUG = null;
+
 	/**
 	 * {@inheritdoc}
 	 */
 	public function get_slug(): ?string {
-		return null;
+		return self::PAGE_SLUG;
 	}
 
 	/**
@@ -36,7 +38,7 @@ class BulkOptimizationPage extends GeneralSettingsPage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Bulk Optimization', 'webp-converter-for-media' );
 	}
 

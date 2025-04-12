@@ -33,7 +33,7 @@ class ServiceModeOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): ?string {
+	public static function get_label(): ?string {
 		return null;
 	}
 
@@ -58,7 +58,7 @@ class ServiceModeOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( ?array $settings = null ): string {
+	public function get_default_value(): string {
 		return '';
 	}
 

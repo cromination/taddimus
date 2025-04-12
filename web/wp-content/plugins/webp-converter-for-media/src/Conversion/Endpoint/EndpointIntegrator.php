@@ -46,13 +46,13 @@ class EndpointIntegrator implements HookableInterface {
 					if ( $header_value === null ) {
 						return new \WP_Error(
 							'webpc_rest_token_not_found',
-							__( 'Sorry, you do not have permission to do that.' ), // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+							__( 'Sorry, you do not have permission to do that.', 'webp-converter-for-media' ),
 							[ 'status' => rest_authorization_required_code() ]
 						);
 					} elseif ( ! $this->endpoint_object->is_valid_request( $header_value ) ) {
 						return new \WP_Error(
 							'webpc_rest_token_invalid',
-							__( 'Sorry, you do not have permission to do that.' ), // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+							__( 'Sorry, you do not have permission to do that.', 'webp-converter-for-media' ),
 							[ 'status' => rest_authorization_required_code() ]
 						);
 					}

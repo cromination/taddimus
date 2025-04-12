@@ -4,6 +4,7 @@ namespace WebpConverter\Error;
 
 use WebpConverter\Conversion\Format\FormatFactory;
 use WebpConverter\Error\Detector\CloudflareStatusDetector;
+use WebpConverter\Error\Detector\CurlLibraryDetector;
 use WebpConverter\Error\Detector\LibsNotInstalledDetector;
 use WebpConverter\Error\Detector\LibsWithoutWebpSupportDetector;
 use WebpConverter\Error\Detector\PassthruExecutionDetector;
@@ -166,8 +167,6 @@ class ErrorDetectorAggregator implements HookableInterface {
 			$this->cached_errors[] = $new_error;
 		} elseif ( $new_error = ( new LibsWithoutWebpSupportDetector( $this->plugin_data ) )->get_error() ) {
 			$this->cached_errors[] = $new_error;
-		} elseif ( $new_error = ( new WebpFormatActivatedDetector( $this->plugin_data ) )->get_error() ) {
-			$this->cached_errors[] = $new_error;
 		}
 
 		if ( $new_error = ( new PathsErrorsDetector() )->get_error() ) {
@@ -177,6 +176,8 @@ class ErrorDetectorAggregator implements HookableInterface {
 		if ( $new_error = ( new PassthruExecutionDetector( $this->plugin_info, $this->plugin_data, $this->format_factory ) )->get_error() ) {
 			$this->cached_errors[] = $new_error;
 		} elseif ( $new_error = ( new RewritesErrorsDetector( $this->plugin_info, $this->plugin_data, $this->format_factory ) )->get_error() ) {
+			$this->cached_errors[] = $new_error;
+		} elseif ( $new_error = ( new CurlLibraryDetector() )->get_error() ) {
 			$this->cached_errors[] = $new_error;
 		}
 

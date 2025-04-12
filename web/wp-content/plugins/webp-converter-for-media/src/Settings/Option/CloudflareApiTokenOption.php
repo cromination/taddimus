@@ -33,7 +33,7 @@ class CloudflareApiTokenOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return 'Cloudflare API Token';
 	}
 
@@ -60,7 +60,7 @@ class CloudflareApiTokenOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( ?array $settings = null ): string {
+	public function get_default_value(): string {
 		return '';
 	}
 

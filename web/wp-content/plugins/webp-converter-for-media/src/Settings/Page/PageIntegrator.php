@@ -3,8 +3,6 @@
 namespace WebpConverter\Settings\Page;
 
 use WebpConverter\HookableInterface;
-use WebpConverter\Notice\NoticeIntegrator;
-use WebpConverter\Notice\WelcomeNotice;
 use WebpConverter\PluginInfo;
 use WebpConverter\Service\ViewLoader;
 
@@ -18,17 +16,11 @@ class PageIntegrator implements HookableInterface {
 	const UPLOAD_MENU_PAGE   = 'webpc_optimization_page';
 
 	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
-
-	/**
 	 * @var ViewLoader
 	 */
 	private $view_loader;
 
 	public function __construct( PluginInfo $plugin_info, ?ViewLoader $view_loader = null ) {
-		$this->plugin_info = $plugin_info;
 		$this->view_loader = $view_loader ?: new ViewLoader( $plugin_info );
 	}
 
@@ -128,7 +120,7 @@ class PageIntegrator implements HookableInterface {
 	 * @return void
 	 */
 	private function add_settings_page( string $parent_page, string $menu_page ) {
-		$page = add_submenu_page(
+		add_submenu_page(
 			$parent_page,
 			'Converter for Media',
 			'Converter for Media',
@@ -136,7 +128,6 @@ class PageIntegrator implements HookableInterface {
 			$menu_page,
 			[ $this, 'load_plugin_page' ]
 		);
-		add_action( 'load-' . $page, [ $this, 'load_scripts_for_page' ] );
 	}
 
 	/**
@@ -144,6 +135,10 @@ class PageIntegrator implements HookableInterface {
 	 * @internal
 	 */
 	public function load_plugin_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you do not have permission to do that.', 'webp-converter-for-media' ) );
+		}
+
 		$page = $this->get_current_page();
 		if ( $page === null ) {
 			return;
@@ -177,15 +172,5 @@ class PageIntegrator implements HookableInterface {
 		);
 
 		$page->do_action_after_load();
-	}
-
-	/**
-	 * Loads assets on plugin settings page.
-	 *
-	 * @return void
-	 * @internal
-	 */
-	public function load_scripts_for_page() {
-		( new NoticeIntegrator( $this->plugin_info, new WelcomeNotice() ) )->set_disable_value();
 	}
 }

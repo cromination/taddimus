@@ -33,6 +33,7 @@ return array(
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Peast\\' => array($vendorDir . '/mck89/peast/lib/Peast'),
     'Mustangostang\\' => array($vendorDir . '/wp-cli/mustangostang-spyc/src'),
+    'MabeEnum\\' => array($vendorDir . '/marc-mabe/php-enum/src'),
     'JsonSchema\\' => array($vendorDir . '/justinrainbow/json-schema/src/JsonSchema'),
     'Gettext\\Languages\\' => array($vendorDir . '/gettext/languages/src'),
     'Gettext\\' => array($vendorDir . '/gettext/gettext/src'),

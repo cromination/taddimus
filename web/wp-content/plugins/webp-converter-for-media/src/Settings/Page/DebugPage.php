@@ -52,7 +52,7 @@ class DebugPage extends PageAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Help Center', 'webp-converter-for-media' );
 	}
 
@@ -103,7 +103,7 @@ class DebugPage extends PageAbstract {
 				true,
 				$ver_param
 			),
-			'plugin_settings'       => $this->plugin_data->get_public_settings(),
+			'plugin_settings'       => $this->plugin_data->get_plugin_settings_public(),
 			'url_debug_page'        => PageIntegrator::get_settings_page_url( self::PAGE_SLUG ),
 			'errors_messages'       => $errors_messages,
 			'errors_codes'          => $errors_codes,

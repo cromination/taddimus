@@ -30,27 +30,24 @@ class OptionsManager {
 	}
 
 	/**
-	 * @param string|null  $form_name       .
-	 * @param bool         $is_debug        Is debugging?
-	 * @param mixed[]|null $posted_settings Settings submitted in form.
+	 * @param string|null $form_name .
 	 *
-	 * @return mixed[] Options of plugin settings.
+	 * @return mixed[] Fields of plugin settings.
 	 */
-	public function get_options( ?string $form_name = null, bool $is_debug = false, ?array $posted_settings = null ): array {
-		$is_save  = ( $posted_settings !== null );
-		$settings = ( $is_save ) ? $posted_settings : OptionsAccessManager::get_option( SettingsManager::SETTINGS_OPTION, [] );
+	public function get_fields( ?string $form_name = null ): array {
+		$settings = OptionsAccessManager::get_option( SettingsManager::SETTINGS_OPTION, [] );
 
 		$options = [];
 		foreach ( $this->options_aggregator->get_options( $form_name ) as $option_object ) {
-			$options[] = ( new OptionIntegrator( $option_object ) )->get_option_data( $settings, $is_debug, $is_save );
+			$options[] = ( new OptionIntegrator( $option_object ) )->get_option_data( $settings );
 		}
 		return $options;
 	}
 
 	/**
-	 * @param bool $is_debug Is debugging?
+	 * @param bool $is_debug .
 	 *
-	 * @return mixed[] Values of plugin settings.
+	 * @return mixed[] Associative array of setting names and their values.
 	 */
 	public function get_values( bool $is_debug = false ): array {
 		$settings = OptionsAccessManager::get_option( SettingsManager::SETTINGS_OPTION, [] );
@@ -59,7 +56,7 @@ class OptionsManager {
 		foreach ( $this->options_aggregator->get_options() as $option_object ) {
 			$values[ $option_object->get_name() ] = $option_object->sanitize_value(
 				( ! $is_debug )
-					? ( $settings[ $option_object->get_name() ] ?? $option_object->get_default_value( $settings ) )
+					? ( $settings[ $option_object->get_name() ] ?? $option_object->get_default_value() )
 					: $option_object->get_debug_value( $settings )
 			);
 		}
@@ -82,15 +79,52 @@ class OptionsManager {
 	}
 
 	/**
-	 * @param mixed[]|null $posted_settings Settings submitted in form.
-	 * @param string|null  $form_name       .
+	 * Retrieves and validates submitted plugin setting values from POST data.
 	 *
-	 * @return mixed[] Values of plugin settings.
+	 * @return mixed[]|null Array of validated setting names and their values.
+	 *                      Returns null if form submission verification fails.
 	 */
-	public function get_validated_values( ?array $posted_settings = null, ?string $form_name = null ): array {
+	public function get_validated_posted_values(): ?array {
+		$nonce_value = sanitize_text_field( wp_unslash( $_POST[ SettingsManager::NONCE_PARAM_KEY ] ?? '' ) );
+		if ( ! wp_verify_nonce( $nonce_value, SettingsManager::NONCE_PARAM_VALUE ) ) {
+			return null;
+		}
+
+		$form_type = ( isset( $_POST[ SettingsManager::FORM_TYPE_PARAM_KEY ] ) )
+			? sanitize_text_field( wp_unslash( $_POST[ SettingsManager::FORM_TYPE_PARAM_KEY ] ?? '' ) )
+			: '';
+		if ( $form_type === '' ) {
+			return [];
+		}
+
+		$settings = OptionsAccessManager::get_option( SettingsManager::SETTINGS_OPTION, [] );
+
 		$values = [];
-		foreach ( $this->get_options( $form_name, false, $posted_settings ) as $option ) {
-			$values[ $option['name'] ] = $option['value'];
+		foreach ( $this->options_aggregator->get_options( $form_type ) as $option_object ) {
+			$values[ $option_object->get_name() ] = $option_object->validate_value(
+				( isset( $_POST[ $option_object->get_name() ] ) ) ? wp_unslash( $_POST[ $option_object->get_name() ] ) : null, // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+				$option_object->get_available_values( $settings ),
+				$option_object->get_disabled_values( $settings )
+			);
+		}
+		return $values;
+	}
+
+	/**
+	 * Validates provided plugin setting values.
+	 *
+	 * @param mixed[] $form_data Plugin settings data to validate.
+	 *
+	 * @return mixed[] Array of validated setting names and their values.
+	 */
+	public function get_validated_form_values( array $form_data ): array {
+		$values = [];
+		foreach ( $this->options_aggregator->get_options() as $option_object ) {
+			$values[ $option_object->get_name() ] = $option_object->validate_value(
+				$form_data[ $option_object->get_name() ] ?? $option_object->get_default_value(),
+				$option_object->get_available_values( $form_data ),
+				$option_object->get_disabled_values( $form_data )
+			);
 		}
 		return $values;
 	}

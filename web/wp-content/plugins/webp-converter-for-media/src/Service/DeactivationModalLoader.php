@@ -173,7 +173,7 @@ class DeactivationModalLoader implements HookableInterface {
 					new DeactivationModal\Model\FormValue(
 						'request_plugin_settings',
 						function () {
-							$settings_json = json_encode( $this->plugin_data->get_public_settings() );
+							$settings_json = json_encode( $this->plugin_data->get_plugin_settings_public() );
 							return base64_encode( $settings_json ?: '' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 						}
 					)

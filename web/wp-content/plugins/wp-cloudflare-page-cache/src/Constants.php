@@ -19,6 +19,7 @@ class Constants {
 	public const SETTING_PREFETCH_ON_HOVER           = 'cf_prefetch_urls_on_hover';
 	public const SETTING_REMOVE_CACHE_BUSTER         = 'cf_remove_cache_buster';
 	public const SETTING_SHOW_ADVANCED               = 'show_advanced';
+	public const SETTING_KEEP_ON_DEACTIVATION        = 'keep_settings_on_deactivation';
 	public const SETTING_BROWSER_CACHE_STATIC_ASSETS = 'cf_browser_caching_htaccess';
 	public const DEFAULT_PRELOADED_SITEMAPS_URLS     = [
 		'/wp-sitemap.xml',

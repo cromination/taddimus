@@ -1,15 +1,15 @@
-# Copyright (C) 2024 Themeisle
+# Copyright (C) 2025 Themeisle
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Orbit Fox Companion 2.10.43\n"
+"Project-Id-Version: Orbit Fox Companion 2.10.46\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/Codeinwp/themeisle-companion/issues\n"
-"POT-Creation-Date: 2024-12-19 01:02:09+00:00\n"
+"POT-Creation-Date: 2025-03-26 23:00:09+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2024-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Themeisle Translate Team <friends@themeisle.com>\n"
 "Language-Team: Themeisle Translate <friends@themeisle.com>\n"
 "Language: en\n"
@@ -2948,27 +2948,27 @@ msgstr ""
 msgid "Next"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1713
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1714
 msgid "No reviews"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1713
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1714
 msgid "1 review"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1713
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1714
 msgid "% reviews"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1715
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1716
 msgid "No comments"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1715
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1716
 msgid "1 comment"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1715
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1716
 msgid "% comments"
 msgstr ""
 

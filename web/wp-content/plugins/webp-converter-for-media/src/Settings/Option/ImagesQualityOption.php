@@ -20,7 +20,7 @@ class ImagesQualityOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_form_name(): string {
-		return OptionAbstract::FORM_TYPE_BASIC;
+		return OptionAbstract::FORM_TYPE_GENERAL;
 	}
 
 	/**
@@ -33,7 +33,7 @@ class ImagesQualityOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Conversion strategy', 'webp-converter-for-media' );
 	}
 
@@ -92,7 +92,7 @@ class ImagesQualityOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( ?array $settings = null ): string {
+	public function get_default_value(): string {
 		return '85';
 	}
 

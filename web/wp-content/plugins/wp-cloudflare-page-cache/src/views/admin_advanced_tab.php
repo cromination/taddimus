@@ -940,7 +940,7 @@ render_description_section( __( 'This option is useful if you want to use Super 
 		<?php render_description( __( 'Keep settings on plugin deactivation.', 'wp-cloudflare-page-cache' ) ); ?>
 	</div>
 	<div class="right_column">
-		<?php render_switch( 'swcfpc_keep_settings_on_deactivation' ); ?>
+		<?php render_switch( Constants::SETTING_KEEP_ON_DEACTIVATION ); ?>
 	</div>
 	<div class="clear"></div>
 </div>

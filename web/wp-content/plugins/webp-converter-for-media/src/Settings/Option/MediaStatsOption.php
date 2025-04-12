@@ -33,7 +33,7 @@ class MediaStatsOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Optimization statistics', 'webp-converter-for-media' );
 	}
 
@@ -59,7 +59,7 @@ class MediaStatsOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( ?array $settings = null ): string {
+	public function get_default_value(): string {
 		return 'yes';
 	}
 

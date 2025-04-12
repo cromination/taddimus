@@ -378,6 +378,9 @@ class About_Us extends Abstract_Module {
 			'hyve-lite'                           => [
 				'name' => 'Hyve Lite',
 			],
+			'wp-full-stripe-free'                 => [
+				'name' => 'WP Full Pay',
+			],
 		];
 
 		foreach ( $products as $slug => $product ) {

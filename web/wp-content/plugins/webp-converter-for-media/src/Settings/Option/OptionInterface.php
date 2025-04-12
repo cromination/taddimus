@@ -31,7 +31,7 @@ interface OptionInterface {
 	 *
 	 * @return string|null
 	 */
-	public function get_label(): ?string;
+	public static function get_label(): ?string;
 
 	/**
 	 * @return string[]|null
@@ -74,11 +74,9 @@ interface OptionInterface {
 	/**
 	 * Returns default value of field.
 	 *
-	 * @param mixed[]|null $settings Plugin settings.
-	 *
 	 * @return string|string[]
 	 */
-	public function get_default_value( ?array $settings = null );
+	public function get_default_value();
 
 	/**
 	 * Returns verified value of field.

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
+class ComposerStaticInit7b5d83e8bea36920574bb988a96d27b0
 {
     public static $files = array (
         '81db02b30f563b92907e271b66bd7559' => __DIR__ . '/..' . '/yoast/whip/src/Facades/wordpress.php',
@@ -42,6 +42,7 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
         'Composer\\Installers\\BaseInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/BaseInstaller.php',
         'Composer\\Installers\\BitrixInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/BitrixInstaller.php',
         'Composer\\Installers\\BonefishInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/BonefishInstaller.php',
+        'Composer\\Installers\\BotbleInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/BotbleInstaller.php',
         'Composer\\Installers\\CakePHPInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CakePHPInstaller.php',
         'Composer\\Installers\\ChefInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ChefInstaller.php',
         'Composer\\Installers\\CiviCrmInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CiviCrmInstaller.php',
@@ -49,6 +50,7 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
         'Composer\\Installers\\CockpitInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CockpitInstaller.php',
         'Composer\\Installers\\CodeIgniterInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CodeIgniterInstaller.php',
         'Composer\\Installers\\Concrete5Installer' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/Concrete5Installer.php',
+        'Composer\\Installers\\ConcreteCMSInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ConcreteCMSInstaller.php',
         'Composer\\Installers\\CroogoInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/CroogoInstaller.php',
         'Composer\\Installers\\DecibelInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/DecibelInstaller.php',
         'Composer\\Installers\\DframeInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/DframeInstaller.php',
@@ -59,6 +61,7 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
         'Composer\\Installers\\EliasisInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/EliasisInstaller.php',
         'Composer\\Installers\\ExpressionEngineInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ExpressionEngineInstaller.php',
         'Composer\\Installers\\EzPlatformInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/EzPlatformInstaller.php',
+        'Composer\\Installers\\ForkCMSInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/ForkCMSInstaller.php',
         'Composer\\Installers\\FuelInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/FuelInstaller.php',
         'Composer\\Installers\\FuelphpInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/FuelphpInstaller.php',
         'Composer\\Installers\\GravInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/GravInstaller.php',
@@ -579,6 +582,7 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
         'Yoast\\WP\\SEO\\Conditionals\\Feature_Flag_Conditional' => __DIR__ . '/../..' . '/src/conditionals/feature-flag-conditional.php',
         'Yoast\\WP\\SEO\\Conditionals\\Front_End_Conditional' => __DIR__ . '/../..' . '/src/conditionals/front-end-conditional.php',
         'Yoast\\WP\\SEO\\Conditionals\\Get_Request_Conditional' => __DIR__ . '/../..' . '/src/conditionals/get-request-conditional.php',
+        'Yoast\\WP\\SEO\\Conditionals\\Google_Site_Kit_Feature_Conditional' => __DIR__ . '/../..' . '/src/conditionals/google-site-kit-feature-conditional.php',
         'Yoast\\WP\\SEO\\Conditionals\\Headless_Rest_Endpoints_Enabled_Conditional' => __DIR__ . '/../..' . '/src/conditionals/headless-rest-endpoints-enabled-conditional.php',
         'Yoast\\WP\\SEO\\Conditionals\\Import_Tool_Selected_Conditional' => __DIR__ . '/../..' . '/src/conditionals/import-tool-selected-conditional.php',
         'Yoast\\WP\\SEO\\Conditionals\\Jetpack_Conditional' => __DIR__ . '/../..' . '/src/conditionals/jetpack-conditional.php',
@@ -670,13 +674,26 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Content_Types\\Content_Types_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/content-types/content-types-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Endpoints\\Endpoints_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/endpoints/endpoints-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Filter_Pairs\\Filter_Pairs_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/filter-pairs/filter-pairs-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Application\\Score_Groups\\SEO_Score_Groups\\SEO_Score_Groups_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/score-groups/seo-score-groups/seo-score-groups-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Score_Results\\Abstract_Score_Results_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/score-results/abstract-score-results-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Score_Results\\Current_Scores_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/score-results/current-scores-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Score_Results\\Readability_Score_Results\\Readability_Score_Results_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/score-results/readability-score-results/readability-score-results-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Score_Results\\SEO_Score_Results\\SEO_Score_Results_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/score-results/seo-score-results/seo-score-results-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Application\\Search_Rankings\\Search_Ranking_Compare_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/search-rankings/search-ranking-compare-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Application\\Search_Rankings\\Top_Page_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/search-rankings/top-page-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Application\\Search_Rankings\\Top_Query_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/search-rankings/top-query-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Application\\Taxonomies\\Taxonomies_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/taxonomies/taxonomies-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Application\\Traffic\\Organic_Sessions_Compare_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/traffic/organic-sessions-compare-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Application\\Traffic\\Organic_Sessions_Daily_Repository' => __DIR__ . '/../..' . '/src/dashboard/application/traffic/organic-sessions-daily-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Analytics_4\\Failed_Request_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/analytics-4/failed-request-exception.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Analytics_4\\Invalid_Request_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/analytics-4/invalid-request-exception.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Analytics_4\\Unexpected_Response_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/analytics-4/unexpected-response-exception.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Content_Types\\Content_Type' => __DIR__ . '/../..' . '/src/dashboard/domain/content-types/content-type.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Content_Types\\Content_Types_List' => __DIR__ . '/../..' . '/src/dashboard/domain/content-types/content-types-list.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Data_Provider\\Dashboard_Repository_Interface' => __DIR__ . '/../..' . '/src/dashboard/domain/data-provider/dashboard-repository-interface.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Data_Provider\\Data_Container' => __DIR__ . '/../..' . '/src/dashboard/domain/data-provider/data-container.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Data_Provider\\Data_Interface' => __DIR__ . '/../..' . '/src/dashboard/domain/data-provider/data-interface.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Data_Provider\\Parameters' => __DIR__ . '/../..' . '/src/dashboard/domain/data-provider/parameters.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Endpoint\\Endpoint_Interface' => __DIR__ . '/../..' . '/src/dashboard/domain/endpoint/endpoint-interface.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Endpoint\\Endpoint_List' => __DIR__ . '/../..' . '/src/dashboard/domain/endpoint/endpoint-list.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Filter_Pairs\\Filter_Pairs_Interface' => __DIR__ . '/../..' . '/src/dashboard/domain/filter-pairs/filter-pairs-interface.php',
@@ -699,20 +716,48 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Score_Results\\Current_Scores_List' => __DIR__ . '/../..' . '/src/dashboard/domain/score-results/current-scores-list.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Score_Results\\Score_Result' => __DIR__ . '/../..' . '/src/dashboard/domain/score-results/score-result.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Score_Results\\Score_Results_Not_Found_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/score-results/score-results-not-found-exception.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Search_Console\\Failed_Request_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/search-console/failed-request-exception.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Search_Console\\Unexpected_Response_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/search-console/unexpected-response-exception.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Search_Rankings\\Comparison_Search_Ranking_Data' => __DIR__ . '/../..' . '/src/dashboard/domain/search-rankings/comparison-search-ranking-data.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Search_Rankings\\Search_Ranking_Data' => __DIR__ . '/../..' . '/src/dashboard/domain/search-rankings/search-ranking-data.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Search_Rankings\\Top_Page_Data' => __DIR__ . '/../..' . '/src/dashboard/domain/search-rankings/top-page-data.php',
         'Yoast\\WP\\SEO\\Dashboard\\Domain\\Taxonomies\\Taxonomy' => __DIR__ . '/../..' . '/src/dashboard/domain/taxonomies/taxonomy.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Time_Based_SEO_Metrics\\Repository_Not_Found_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/time-based-seo-metrics/repository-not-found-exception.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Time_Based_Seo_Metrics\\Data_Source_Not_Available_Exception' => __DIR__ . '/../..' . '/src/dashboard/domain/time-based-seo-metrics/data-source-not-available-exception.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Traffic\\Comparison_Traffic_Data' => __DIR__ . '/../..' . '/src/dashboard/domain/traffic/comparison-traffic-data.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Traffic\\Daily_Traffic_Data' => __DIR__ . '/../..' . '/src/dashboard/domain/traffic/daily-traffic-data.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Domain\\Traffic\\Traffic_Data' => __DIR__ . '/../..' . '/src/dashboard/domain/traffic/traffic-data.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Analytics_4\\Analytics_4_Parameters' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/analytics-4/analytics-4-parameters.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Analytics_4\\Site_Kit_Analytics_4_Adapter' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/analytics-4/site-kit-analytics-4-adapter.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Configuration\\Permanently_Dismissed_Site_Kit_Configuration_Repository' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/configuration/permanently-dismissed-site-kit-configuration-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Configuration\\Permanently_Dismissed_Site_Kit_Configuration_Repository_Interface' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/configuration/permanently-dismissed-site-kit-configuration-repository-interface.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Configuration\\Site_Kit_Consent_Repository' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/configuration/site-kit-consent-repository.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Configuration\\Site_Kit_Consent_Repository_Interface' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/configuration/site-kit-consent-repository-interface.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Content_Types\\Content_Types_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/content-types/content-types-collector.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Endpoints\\Readability_Scores_Endpoint' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/endpoints/readability-scores-endpoint.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Endpoints\\SEO_Scores_Endpoint' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/endpoints/seo-scores-endpoint.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Endpoints\\Site_Kit_Configuration_Dismissal_Endpoint' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/endpoints/site-kit-configuration-dismissal-endpoint.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Endpoints\\Site_Kit_Consent_Management_Endpoint' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/endpoints/site-kit-consent-management-endpoint.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Endpoints\\Time_Based_SEO_Metrics_Endpoint' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/endpoints/time-based-seo-metrics-endpoint.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Indexables\\Top_Page_Indexable_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/indexables/top-page-indexable-collector.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Integrations\\Site_Kit' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/integrations/site-kit.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Nonces\\Nonce_Repository' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/nonces/nonce-repository.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Score_Groups\\Score_Group_Link_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/score-groups/score-group-link-collector.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Score_Results\\Readability_Score_Results\\Cached_Readability_Score_Results_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/score-results/readability-score-results/cached-readability-score-results-collector.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Score_Results\\Readability_Score_Results\\Readability_Score_Results_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/score-results/readability-score-results/readability-score-results-collector.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Score_Results\\SEO_Score_Results\\Cached_SEO_Score_Results_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/score-results/seo-score-results/cached-seo-score-results-collector.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Score_Results\\SEO_Score_Results\\SEO_Score_Results_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/score-results/seo-score-results/seo-score-results-collector.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Score_Results\\Score_Results_Collector_Interface' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/score-results/score-results-collector-interface.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Search_Console\\Search_Console_Parameters' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/search-console/search-console-parameters.php',
+        'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Search_Console\\Site_Kit_Search_Console_Adapter' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/search-console/site-kit-search-console-adapter.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Taxonomies\\Taxonomies_Collector' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/taxonomies/taxonomies-collector.php',
         'Yoast\\WP\\SEO\\Dashboard\\Infrastructure\\Taxonomies\\Taxonomy_Validator' => __DIR__ . '/../..' . '/src/dashboard/infrastructure/taxonomies/taxonomy-validator.php',
+        'Yoast\\WP\\SEO\\Dashboard\\User_Interface\\Configuration\\Site_Kit_Configuration_Dismissal_Route' => __DIR__ . '/../..' . '/src/dashboard/user-interface/configuration/site-kit-configuration-dismissal-route.php',
+        'Yoast\\WP\\SEO\\Dashboard\\User_Interface\\Configuration\\Site_Kit_Consent_Management_Route' => __DIR__ . '/../..' . '/src/dashboard/user-interface/configuration/site-kit-consent-management-route.php',
         'Yoast\\WP\\SEO\\Dashboard\\User_Interface\\Scores\\Abstract_Scores_Route' => __DIR__ . '/../..' . '/src/dashboard/user-interface/scores/abstract-scores-route.php',
         'Yoast\\WP\\SEO\\Dashboard\\User_Interface\\Scores\\Readability_Scores_Route' => __DIR__ . '/../..' . '/src/dashboard/user-interface/scores/readability-scores-route.php',
         'Yoast\\WP\\SEO\\Dashboard\\User_Interface\\Scores\\SEO_Scores_Route' => __DIR__ . '/../..' . '/src/dashboard/user-interface/scores/seo-scores-route.php',
+        'Yoast\\WP\\SEO\\Dashboard\\User_Interface\\Time_Based_SEO_Metrics\\Time_Based_SEO_Metrics_Route' => __DIR__ . '/../..' . '/src/dashboard/user-interface/time-based-seo-metrics/time-based-seo-metrics-route.php',
         'Yoast\\WP\\SEO\\Editors\\Application\\Analysis_Features\\Enabled_Analysis_Features_Repository' => __DIR__ . '/../..' . '/src/editors/application/analysis-features/enabled-analysis-features-repository.php',
         'Yoast\\WP\\SEO\\Editors\\Application\\Integrations\\Integration_Information_Repository' => __DIR__ . '/../..' . '/src/editors/application/integrations/integration-information-repository.php',
         'Yoast\\WP\\SEO\\Editors\\Application\\Seo\\Post_Seo_Information_Repository' => __DIR__ . '/../..' . '/src/editors/application/seo/post-seo-information-repository.php',
@@ -901,6 +946,7 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
         'Yoast\\WP\\SEO\\Integrations\\Alerts\\Black_Friday_Sidebar_Checklist_Notification' => __DIR__ . '/../..' . '/src/integrations/alerts/black-friday-sidebar-checklist-notification.php',
         'Yoast\\WP\\SEO\\Integrations\\Alerts\\Trustpilot_Review_Notification' => __DIR__ . '/../..' . '/src/integrations/alerts/trustpilot-review-notification.php',
         'Yoast\\WP\\SEO\\Integrations\\Alerts\\Webinar_Promo_Notification' => __DIR__ . '/../..' . '/src/integrations/alerts/webinar-promo-notification.php',
+        'Yoast\\WP\\SEO\\Integrations\\Blocks\\Block_Editor_Integration' => __DIR__ . '/../..' . '/src/integrations/blocks/block-editor-integration.php',
         'Yoast\\WP\\SEO\\Integrations\\Blocks\\Breadcrumbs_Block' => __DIR__ . '/../..' . '/src/integrations/blocks/breadcrumbs-block.php',
         'Yoast\\WP\\SEO\\Integrations\\Blocks\\Dynamic_Block' => __DIR__ . '/../..' . '/src/integrations/blocks/abstract-dynamic-block.php',
         'Yoast\\WP\\SEO\\Integrations\\Blocks\\Dynamic_Block_V3' => __DIR__ . '/../..' . '/src/integrations/blocks/abstract-dynamic-block-v3.php',
@@ -1194,9 +1240,9 @@ class ComposerStaticInitcb3e526d89862c36ac53b003d66df64d
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitcb3e526d89862c36ac53b003d66df64d::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitcb3e526d89862c36ac53b003d66df64d::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitcb3e526d89862c36ac53b003d66df64d::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit7b5d83e8bea36920574bb988a96d27b0::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit7b5d83e8bea36920574bb988a96d27b0::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit7b5d83e8bea36920574bb988a96d27b0::$classMap;
 
         }, null, ClassLoader::class);
     }

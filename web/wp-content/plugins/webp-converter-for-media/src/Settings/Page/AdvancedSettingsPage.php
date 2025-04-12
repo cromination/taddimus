@@ -22,7 +22,7 @@ class AdvancedSettingsPage extends GeneralSettingsPage {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Advanced Settings', 'webp-converter-for-media' );
 	}
 
@@ -33,7 +33,7 @@ class AdvancedSettingsPage extends GeneralSettingsPage {
 		return array_merge(
 			parent::get_template_vars(),
 			[
-				'form_options'     => $this->plugin_data->get_plugin_options( OptionAbstract::FORM_TYPE_ADVANCED ),
+				'form_options'     => $this->plugin_data->get_settings_fields( OptionAbstract::FORM_TYPE_ADVANCED ),
 				'form_input_value' => OptionAbstract::FORM_TYPE_ADVANCED,
 			]
 		);

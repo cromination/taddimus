@@ -1,3 +1,7 @@
+##### [Version 3.2.8](https://github.com/Codeinwp/hestia-pro/compare/v3.2.7...v3.2.8) (2025-02-05)
+
+- Fix language pack loading
+
 ##### [Version 3.2.7](https://github.com/Codeinwp/hestia-pro/compare/v3.2.6...v3.2.7) (2024-12-09)
 
 - Fixed the Big Title options display issue

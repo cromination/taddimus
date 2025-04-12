@@ -2,6 +2,8 @@
 
 namespace WebpConverter\Error\Notice;
 
+use WebpConverter\Settings\Option\AccessTokenOption;
+
 /**
  * {@inheritdoc}
  */
@@ -24,7 +26,7 @@ class AccessTokenInvalidNotice implements NoticeInterface {
 			sprintf(
 			/* translators: %1$s: field label, %2$s: button label */
 				__( 'It appears that the value of the %1$s field is invalid or your subscription has expired. To use the service, please, check your subscription and click the %2$s button again.', 'webp-converter-for-media' ),
-				__( 'Access Token', 'webp-converter-for-media' ),
+				AccessTokenOption::get_label(),
 				__( 'Activate Token', 'webp-converter-for-media' )
 			),
 			sprintf(

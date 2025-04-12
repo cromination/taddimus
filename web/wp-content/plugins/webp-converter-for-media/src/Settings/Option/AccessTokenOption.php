@@ -44,7 +44,7 @@ class AccessTokenOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_label(): string {
+	public static function get_label(): string {
 		return __( 'Access Token', 'webp-converter-for-media' );
 	}
 
@@ -83,7 +83,7 @@ class AccessTokenOption extends OptionAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_default_value( ?array $settings = null ): string {
+	public function get_default_value(): string {
 		return '';
 	}
 

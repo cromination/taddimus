@@ -99,6 +99,13 @@ class Promotions extends Abstract_Module {
 	private $option_wp_full_pay = 'themeisle_sdk_promotions_wp_full_pay_installed';
 
 	/**
+	 * Option key for Feedzy.
+	 *
+	 * @var string
+	 */
+	private $option_feedzy = 'themeisle_sdk_promotions_feedzy_installed';
+
+	/**
 	 * Loaded promotion.
 	 *
 	 * @var string
@@ -134,8 +141,9 @@ class Promotions extends Abstract_Module {
 			return false;
 		}
 
-		$this->debug          = apply_filters( 'themeisle_sdk_promo_debug', $this->debug );
-		$promotions_to_load   = apply_filters( $product->get_key() . '_load_promotions', array() );
+		$this->debug        = apply_filters( 'themeisle_sdk_promo_debug', $this->debug );
+		$promotions_to_load = apply_filters( $product->get_key() . '_load_promotions', array() );
+
 		$promotions_to_load[] = 'optimole';
 		$promotions_to_load[] = 'rop';
 		$promotions_to_load[] = 'woo_plugins';
@@ -143,7 +151,11 @@ class Promotions extends Abstract_Module {
 		$promotions_to_load[] = 'redirection-cf7';
 		$promotions_to_load[] = 'hyve';
 		$promotions_to_load[] = 'wp_full_pay';
+		$promotions_to_load[] = 'feedzy_import';
 
+		if ( defined( 'NEVE_VERSION' ) || defined( 'WPMM_PATH' ) || defined( 'OTTER_BLOCKS_VERSION' ) || defined( 'OBFX_URL' ) ) {
+			$promotions_to_load[] = 'feedzy_embed';
+		}
 		$promotions_to_load = array_unique( $promotions_to_load );
 
 		$this->promotions = $this->get_promotions();
@@ -155,7 +167,6 @@ class Promotions extends Abstract_Module {
 				unset( $this->promotions[ $slug ] );
 			}
 		}
-
 		add_action( 'init', array( $this, 'register_settings' ), 99 );
 		add_action( 'admin_init', array( $this, 'register_reference' ), 99 );
 
@@ -245,6 +256,10 @@ class Promotions extends Abstract_Module {
 
 		if ( isset( $_GET['wp_full_pay_reference_key'] ) ) {
 			update_option( 'wp_full_pay_reference_key', sanitize_key( $_GET['wp_full_pay_reference_key'] ) );
+		}
+		if ( isset( $_GET['feedzy_reference_key'] ) || ( isset( $_GET['from'], $_GET['plugin'] ) && $_GET['from'] === 'import' && str_starts_with( sanitize_key( $_GET['plugin'] ), 'feedzy' ) ) ) {
+			update_option( 'feedzy_reference_key', sanitize_key( $_GET['feedzy_reference_key'] ?? 'i-' . $this->product->get_key() ) );
+			update_option( $this->option_feedzy, 1 );
 		}
 	}
 
@@ -402,6 +417,9 @@ class Promotions extends Abstract_Module {
 		$has_enough_old_posts      = $this->has_old_posts();
 		$is_min_php_8_1            = version_compare( PHP_VERSION, '8.1', '>=' );
 
+		$has_feedzy            = defined( 'FEEDZY_BASEFILE' ) || $this->is_plugin_installed( 'feedzy-rss-feedss' );
+		$had_feedzy_from_promo = get_option( $this->option_feedzy, false );
+
 		$all = [
 			'optimole'        => [
 				'om-editor'      => [
@@ -426,6 +444,19 @@ class Promotions extends Abstract_Module {
 					'env'     => ! $has_optimole && ! $had_optimole_from_promo && defined( 'ELEMENTOR_VERSION' ),
 					'screen'  => 'elementor',
 					'delayed' => true,
+				],
+			],
+			'feedzy_import'   => [
+				'feedzy-import' => [
+					'env'    => true,
+					'screen' => 'import',
+					'always' => true,
+				],
+			],
+			'feedzy_embed'    => [
+				'feedzy-editor' => [
+					'env'    => ! $has_feedzy && is_main_site() && ! $had_feedzy_from_promo,
+					'screen' => 'editor',
 				],
 			],
 			'otter'           => [
@@ -514,7 +545,6 @@ class Promotions extends Abstract_Module {
 				unset( $all[ $slug ] );
 			}
 		}
-
 		return $all;
 	}
 
@@ -564,31 +594,36 @@ class Promotions extends Abstract_Module {
 		$is_theme_install  = isset( $current_screen->id ) && ( $current_screen->id === 'theme-install' );
 		$is_plugin_install = isset( $current_screen->id ) && ( $current_screen->id === 'plugin-install' );
 		$is_product        = isset( $current_screen->id ) && $current_screen->id === 'product';
+		$is_import         = isset( $current_screen->id ) && $current_screen->id === 'import';
 		$is_cf7_install    = isset( $current_screen->id ) && function_exists( 'str_contains' ) ? str_contains( $current_screen->id, 'page_wpcf7' ) : false;
 
-		$return = [];
-		
+		$return               = [];
 		$product_install_time = (int) $this->product->get_install_time();
 		$is_older             = time() > ( $product_install_time + ( 3 * DAY_IN_SECONDS ) );
 		$is_newer             = time() < ( $product_install_time + ( 6 * HOUR_IN_SECONDS ) );
-
 		foreach ( $this->promotions as $slug => $promos ) {
 			foreach ( $promos as $key => $data ) {
 
-				$data = wp_parse_args( $data, [ 'delayed' => false ] );
+				$data = wp_parse_args(
+					$data,
+					[
+						'delayed' => false,
+						'always'  => false,
+					] 
+				);
 
 				if (
-					! $this->debug && 
+					! $this->debug &&
 					(
 						( $data['delayed'] === true && ! $is_older ) || // Skip promotions that are delayed for 3 days.
 						$is_newer // Skip promotions for the first 6 hours after install.
 					)
+					&& ! $data['always']
 				) {
 					unset( $this->promotions[ $slug ][ $key ] );
 
 					continue;
 				}
-
 				switch ( $data['screen'] ) {
 					case 'media-editor':
 						if ( ! $is_media && ! $is_editor ) {
@@ -602,6 +637,11 @@ class Promotions extends Abstract_Module {
 						break;
 					case 'editor':
 						if ( ! $is_editor || $is_elementor ) {
+							unset( $this->promotions[ $slug ][ $key ] );
+						}
+						break;
+					case 'import':
+						if ( ! $is_import ) {
 							unset( $this->promotions[ $slug ][ $key ] );
 						}
 						break;
@@ -683,11 +723,11 @@ class Promotions extends Abstract_Module {
 				add_action( 'admin_notices', [ $this, 'render_wp_full_pay_notice' ] );
 			}
 
+			add_action( 'load-import.php', [ $this, 'add_import' ] );
 			$this->load_woo_promos();
 
 			return;
 		}
-
 		switch ( $slug ) {
 			case 'om-editor':
 			case 'om-image-block':
@@ -706,6 +746,13 @@ class Promotions extends Abstract_Module {
 			case 'rop-posts':
 				add_action( 'admin_enqueue_scripts', [ $this, 'enqueue' ] );
 				add_action( 'admin_notices', [ $this, 'render_rop_dash_notice' ] );
+				break;
+			case 'feedzy-import':
+				add_action( 'load-import.php', [ $this, 'add_import' ] );
+
+				break;
+			case 'feedzy-editor':
+				add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue' ] );
 				break;
 			case 'ppom':
 			case 'sparks-wishlist':
@@ -745,6 +792,25 @@ class Promotions extends Abstract_Module {
 	}
 
 	/**
+	 * Add import row.
+	 *
+	 * @return void
+	 */
+	public function add_import() {
+		global $wp_importers;
+		if ( isset( $wp_importers['feedzy-rss-feeds'] ) ) {
+			return;
+		}
+		$wp_importers['feedzy-rss-feeds'] = array( // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+			'Feedzy',
+			sprintf( Loader::$labels['promotions']['feedzy']['import_desc'], '<span style="float: left; font-style: italic;margin-top:0.4em;">', $this->product->get_friendly_name(), '</span>' ),
+			'install' => 'feedzy-rss-feeds',
+		);
+		if ( defined( 'FEEDZY_BASEFILE' ) ) {
+			unset( $wp_importers['feedzy-rss-feeds']['install'] );
+		}
+	}
+	/**
 	 * Render dashboard notice.
 	 */
 	public function render_optimole_dash_notice() {
@@ -769,16 +835,30 @@ class Promotions extends Abstract_Module {
 		$asset_file        = require $themeisle_sdk_max_path . '/assets/js/build/promos/index.asset.php';
 		$deps              = array_merge( $asset_file['dependencies'], [ 'updates' ] );
 
-		$themes      = wp_get_themes();
-		$neve_action = isset( $themes['neve'] ) ? 'activate' : 'install';
-
+		$themes                                = wp_get_themes();
+		$neve_action                           = isset( $themes['neve'] ) ? 'activate' : 'install';
+		$labels                                = Loader::$labels['promotions'];
+		$labels['feedzy']['editor_recommends'] = sprintf(
+			$labels['feedzy']['editor_recommends'],
+			$this->product->get_friendly_name(),
+			'<a target="_blank" href="' . add_query_arg(
+				array(
+					'tab'                  => 'plugin-information',
+					'plugin'               => 'feedzy-rss-feeds',
+					'_wpnonce'             => wp_create_nonce( 'activate-plugin_feedzy-rss-feeds' ),
+					'feedzy_reference_key' => 'e-' . $this->product->get_key(),
+				),
+				network_admin_url( 'plugin-install.php' )
+			) . '">',
+			'</a>' 
+		);
 		wp_register_script( $handle, $themeisle_sdk_src . 'assets/js/build/promos/index.js', $deps, $asset_file['version'], true );
 		wp_localize_script(
 			$handle,
 			'themeisleSDKPromotions',
 			[
 				'debug'                  => $this->debug,
-				'labels'                 => Loader::$labels['promotions'],
+				'labels'                 => $labels,
 				'email'                  => $user->user_email,
 				'showPromotion'          => $this->loaded_promo,
 				'optionKey'              => $this->option_main,
@@ -810,7 +890,7 @@ class Promotions extends Abstract_Module {
 							'stylesheet' => 'neve',
 							'_wpnonce'   => wp_create_nonce( 'switch-theme_neve' ),
 						],
-						admin_url( 'themes.php' ) 
+						admin_url( 'themes.php' )
 					)
 				),
 			]

@@ -927,11 +927,6 @@ class SWCFPC_Backend {
 				$this->main_instance->set_single_config( 'cf_prefetch_urls_viewport', (int) $_POST['swcfpc_cf_prefetch_urls_viewport'] );
 			}
 
-			// Keep settings on deactivation
-			if ( isset( $_POST['swcfpc_keep_settings_on_deactivation'] ) ) {
-				$this->main_instance->set_single_config( 'keep_settings_on_deactivation', (int) $_POST['swcfpc_keep_settings_on_deactivation'] );
-			}
-
 			// Redirect (301) for all URLs that for any reason have been indexed together with the cache buster
 			if ( isset( $_POST['swcfpc_cf_seo_redirect'] ) ) {
 				$this->main_instance->set_single_config( 'cf_seo_redirect', (int) $_POST['swcfpc_cf_seo_redirect'] );
@@ -1104,14 +1099,14 @@ class SWCFPC_Backend {
 			$cloudflare->update_cache_rule_if_diff();
 		}
 
-		$this->load_survey();
+		add_filter( 'themeisle-sdk/survey/' . SWCFPC_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
+		do_action( 'themeisle_internal_page', SWCFPC_PRODUCT_SLUG, 'dashboard' );
 
 		if ( ! $has_pro ) {
 			do_action( 'themeisle_sdk_load_banner', 'spc' );
 		}
 
 		require_once SWCFPC_PLUGIN_PATH . 'libs/views/settings.php';
-
 	}
 
 
@@ -1228,63 +1223,57 @@ class SWCFPC_Backend {
 	/**
 	 * Get the survey metadata.
 	 *
+	 * @param array $data The data for survey in Formbrick format.
+	 * @param string $page_slug The slug of the page.
+	 * 
 	 * @return array The survey metadata.
 	 */
-	function get_survey_metadata() {
-		$plugin_slug      = basename( dirname( SWCFPC_BASEFILE ) );
-		$plugin_slug      = str_replace( '-', '_', strtolower( trim( $plugin_slug ) ) );
-		$install_date     = get_option( $plugin_slug . '_install', false );
-		$install_category = 0;
+	function get_survey_metadata( $data, $page_slug ) {
+		$free_slug_key    = 'wp_cloudflare_page_cache';
+		$current_slug_key = $this->get_product_key( SWCFPC_PRODUCT_SLUG );
+		
+		$current_time = time();
+		$install_date = get_option( $current_slug_key . '_install', $current_time );
+		$license_data = get_option( $current_slug_key . '_license_data', array() );
 
-		if ( false !== $install_date ) {
-			$days_since_install = round( ( time() - $install_date ) / DAY_IN_SECONDS );
-
-			if ( 0 === $days_since_install || 1 === $days_since_install ) {
-				$install_category = 0;
-			} elseif ( 1 < $days_since_install && 8 > $days_since_install ) {
-				$install_category = 7;
-			} elseif ( 8 <= $days_since_install && 31 > $days_since_install ) {
-				$install_category = 30;
-			} elseif ( 30 < $days_since_install && 90 > $days_since_install ) {
-				$install_category = 90;
-			} elseif ( 90 <= $days_since_install ) {
-				$install_category = 91;
-			}
+		if ( defined( 'SPC_PRO_PATH' ) ) {
+			$install_date = min( $install_date, get_option( $free_slug_key . '_install', $current_time ) );
 		}
+
+		$install_days_number = intval( ( $current_time - $install_date ) / DAY_IN_SECONDS );
 
 		$plugin_data    = get_plugin_data( SWCFPC_BASEFILE, false, false );
 		$plugin_version = '';
+
 		if ( ! empty( $plugin_data['Version'] ) ) {
 			$plugin_version = $plugin_data['Version'];
 		}
 
-		$user_id = 'swcfpc_' . preg_replace( '/[^\w\d]*/', '', get_site_url() ); // Use a normalized version of the site URL as a user ID.
-
-		return [
-			'userId'     => $user_id,
-			'attributes' => [
-				'days_since_install' => $install_category,
-				'plugin_version'     => $plugin_version,
+		$data = [
+			'environmentId' => 'clt8lntxw0zbu5zwkn3q2ybkq',
+			'attributes'    => [
+				'plugin_version'      => $plugin_version,
+				'install_days_number' => $install_days_number,
+				'license_status'      => isset( $license_data->license ) ? $license_data->license : 'invalid',
+				'plan'                => isset( $license_data->plan ) ? $license_data->plan : 0,
 			],
 		];
-	}
 
-
-	/**
-	 * Load the survey script.
-	 *
-	 * @return void
-	 */
-	function load_survey() {
-		$survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
-		if ( empty( $survey_handler ) ) {
-			return;
+		if ( isset( $license_data->key ) ) {
+			$data['attributes']['license_key'] = apply_filters( 'themeisle_sdk_secret_masking', $license_data->key );
 		}
 
-		$metadata = $this->get_survey_metadata();
+		return $data;
+	}
 
-		do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
-		wp_enqueue_script( 'swcfpc_survey', SWCFPC_PLUGIN_URL . 'assets/js/survey.js', [ $survey_handler ], $metadata['attributes']['plugin_version'], true );
-		wp_localize_script( 'swcfpc_survey', 'swcfpcSurveyData', $metadata );
+	/**
+	 * Get the product key based on the file path.
+	 * 
+	 * @param string $product_slug The slug of the product.
+	 * 
+	 * @return string - The product key.
+	 */
+	private function get_product_key( $product_slug ) {
+		return str_replace( '-', '_', strtolower( trim( $product_slug ) ) );
 	}
 }

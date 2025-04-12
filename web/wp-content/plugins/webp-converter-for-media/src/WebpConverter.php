@@ -49,7 +49,7 @@ class WebpConverter {
 		( new Loader\LoaderIntegrator( new Loader\HtaccessLoader( $plugin_info, $plugin_data, $format_factory ) ) )->init_hooks();
 		( new Loader\LoaderIntegrator( new Loader\HtaccessBypassingLoader( $plugin_info, $plugin_data, $format_factory ) ) )->init_hooks();
 		( new Loader\LoaderIntegrator( new Loader\PassthruLoader( $plugin_info, $plugin_data, $format_factory ) ) )->init_hooks();
-		( new Plugin\ActivationHandler( $plugin_info, $plugin_data, $token_repository ) )->init_hooks();
+		( new Plugin\ActivationHandler( $plugin_info ) )->init_hooks();
 		( new Plugin\DeactivationHandler( $plugin_info ) )->init_hooks();
 		( new Plugin\PluginLinksGenerator( $plugin_info, $token_repository ) )->init_hooks();
 		( new Plugin\UninstallHandler( $plugin_info ) )->init_hooks();

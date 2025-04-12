@@ -6,11 +6,8 @@ use WebpConverter\Notice\NoticeIntegrator;
 use WebpConverter\Notice\ThanksNotice;
 use WebpConverter\Notice\UpgradeNotice;
 use WebpConverter\Notice\WelcomeNotice;
-use WebpConverter\PluginData;
 use WebpConverter\PluginInfo;
-use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Service\StatsManager;
-use WebpConverter\Settings\SettingsManager;
 
 /**
  * Adds default options for plugin settings.
@@ -23,37 +20,16 @@ class PluginSettingsManager {
 	private $plugin_info;
 
 	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
-
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
-
-	/**
 	 * @var StatsManager
 	 */
 	private $stats_manager;
 
 	public function __construct(
 		PluginInfo $plugin_info,
-		PluginData $plugin_data,
-		TokenRepository $token_repository,
 		?StatsManager $stats_manager = null
 	) {
-		$this->plugin_info      = $plugin_info;
-		$this->plugin_data      = $plugin_data;
-		$this->token_repository = $token_repository;
-		$this->stats_manager    = $stats_manager ?: new StatsManager();
-	}
-
-	/**
-	 * @return void
-	 */
-	public function add_default_plugin_settings() {
-		( new SettingsManager( $this->plugin_data, $this->token_repository ) )->save_settings( null );
+		$this->plugin_info   = $plugin_info;
+		$this->stats_manager = $stats_manager ?: new StatsManager();
 	}
 
 	/**

@@ -2,6 +2,9 @@
 
 namespace WebpConverter\Error\Notice;
 
+use WebpConverter\Settings\Option\CloudflareApiTokenOption;
+use WebpConverter\Settings\Option\CloudflareZoneIdOption;
+
 /**
  * {@inheritdoc}
  */
@@ -24,7 +27,7 @@ class CloudflareSettingsIncorrectNotice implements NoticeInterface {
 			sprintf(
 			/* translators: %s: field labels */
 				__( 'Incorrect values were given in the plugin settings in the fields: %s.', 'webp-converter-for-media' ),
-				implode( ', ', [ 'Cloudflare Zone ID', 'Cloudflare API Token' ] )
+				implode( ', ', [ CloudflareZoneIdOption::get_label(), CloudflareApiTokenOption::get_label() ] )
 			),
 			sprintf(
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */

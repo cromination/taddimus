@@ -4,6 +4,7 @@
  */
 
 use SPC\Constants;
+use SPC\Modules\Settings_Manager;
 
 if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 	define( 'SPC_PATH', defined( 'SPC_PRO_PATH' ) ? SPC_PRO_PATH : SPC_FREE_PATH );
@@ -11,6 +12,7 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 	define( 'SWCFPC_PLUGIN_PATH', plugin_dir_path( SPC_PATH ) );
 	define( 'SWCFPC_PLUGIN_URL', plugin_dir_url( SPC_PATH ) );
 	define( 'SWCFPC_BASEFILE', SPC_PATH );
+	define( 'SWCFPC_PRODUCT_SLUG', basename( dirname( SPC_PATH ) ) );
 	define( 'SWCFPC_PLUGIN_REVIEWS_URL', 'https://wordpress.org/support/plugin/wp-cloudflare-page-cache/reviews/' );
 	define( 'SWCFPC_PLUGIN_FORUM_URL', 'https://wordpress.org/support/plugin/wp-cloudflare-page-cache/' );
 	define( 'SWCFPC_AUTH_MODE_API_KEY', 0 );
@@ -42,7 +44,7 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 
 		private $config  = false;
 		private $modules = [];
-		private $version = '5.0.9';
+		private $version = '5.0.11';
 
 		public const REDIRECT_KEY = 'swcfpc_dashboard_redirect';
 
@@ -325,7 +327,6 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 			$config['cf_purge_roles']                      = [];
 			$config['cf_prefetch_urls_viewport']           = 0;
 			$config['cf_prefetch_urls_viewport_timestamp'] = time();
-			$config['keep_settings_on_deactivation']       = 1;
 
 			return apply_filters( 'swcfpc_main_config_defaults', $config );
 		}
@@ -403,7 +404,7 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 						$this->set_single_config( 'cf_auto_purge_on_upgrader_process_complete', 0 );
 						$this->set_single_config( 'cf_bypass_wp_json_rest', 0 );
 						$this->set_single_config( 'cf_bypass_woo_account_page', 1 );
-						$this->set_single_config( 'keep_settings_on_deactivation', 1 );
+						$this->set_single_config( Constants::SETTING_KEEP_ON_DEACTIVATION, 1 );
 
 						$excluded_urls = $this->get_single_config( Constants::SETTING_EXCLUDED_URLS, [] );
 
@@ -617,11 +618,8 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 				return;
 			}
 
-			if ( $this->get_single_config( 'keep_settings_on_deactivation', 1 ) > 0 ) {
-				$this->modules['cache_controller']->reset_all( true );
-			} else {
-				$this->modules['cache_controller']->reset_all();
-			}
+			$cache_controller = $this->get_cache_controller();
+			$cache_controller->reset_all( Settings_Manager::is_on( Constants::SETTING_KEEP_ON_DEACTIVATION ) );
 
 			$this->delete_plugin_wp_content_directory();
 		}

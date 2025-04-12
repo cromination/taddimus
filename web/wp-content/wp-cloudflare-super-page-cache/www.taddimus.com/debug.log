@@ -1,22 +1,4 @@
-[2024-12-07 00:31:33] [upgrader::run_update_migrations] Running migrations.
-[2024-12-07 00:31:33] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2024-12-07 00:31:33] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2024-12-07 00:31:33] [upgrader::update_cache_rule] Cache rule updated.
-[2024-12-07 00:31:33] [upgrader::migrate_to_5_0_5] Migrating to 5.0.5
-[2024-12-07 00:31:33] [upgrader::migrate_to_5_0_6] Migrating to 5.0.6
-[2024-12-07 00:31:34] [upgrader::run_update_migrations] Running migrations.
-[2024-12-07 00:31:34] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2024-12-07 00:31:34] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2024-12-07 00:31:34] [upgrader::run_update_migrations] Running migrations.
-[2024-12-07 00:31:34] [upgrader::update_cache_rule] Cache rule updated.
-[2024-12-07 00:31:34] [upgrader::migrate_to_5_0_5] Migrating to 5.0.5
-[2024-12-07 00:31:34] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2024-12-07 00:31:34] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2024-12-07 00:31:34] [upgrader::update_cache_rule] Cache rule updated.
-[2024-12-07 00:31:34] [upgrader::migrate_to_5_0_5] Migrating to 5.0.5
-[2024-12-07 00:31:34] [upgrader::migrate_to_5_0_6] Migrating to 5.0.6
-[2024-12-07 00:31:34] [upgrader::run_update_migrations] Running migrations.
-[2024-12-07 00:31:34] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2024-12-07 00:31:34] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2024-12-07 00:31:34] [upgrader::update_cache_rule] Cache rule updated.
-[2024-12-07 00:31:34] [upgrader::migrate_to_5_0_6] Migrating to 5.0.6
+[2025-04-12 12:05:58] [upgrader::run_update_migrations] Running migrations.
+[2025-04-12 12:05:58] [upgrader::update_cache_rule] Start cache rule upgrade.
+[2025-04-12 12:05:58] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
+[2025-04-12 12:05:58] [upgrader::update_cache_rule] Cache rule updated.

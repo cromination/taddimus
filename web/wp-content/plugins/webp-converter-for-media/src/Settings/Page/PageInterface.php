@@ -30,7 +30,7 @@ interface PageInterface {
 	/**
 	 * @return string
 	 */
-	public function get_label(): string;
+	public static function get_label(): string;
 
 	/**
 	 * @return string

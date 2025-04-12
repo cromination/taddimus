@@ -28,7 +28,7 @@
         "version": {
             "type": "string",
             "description": "Package version, see https://getcomposer.org/doc/04-schema.md#version for more info on valid schemes.",
-            "pattern": "^v?\\d+(\\.\\d+){0,3}|^dev-"
+            "pattern": "^v?\\d+(?:[.-]\\d+){0,3}[._-]?(?:(?:stable|beta|b|RC|rc|alpha|a|patch|pl|p)(?:(?:[.-]?\\d+)*+)?)?(?:[.-]?dev|\\.x-dev)?(?:\\+.*)?$|^dev-.*$"
         },
         "default-branch": {
             "type": ["boolean"],
@@ -322,6 +322,12 @@
                     "description": "If specified, this is the subdirectory that will be used to build the extension instead of the root of the project.",
                     "example": "my-extension-source",
                     "default": null
+                },
+                "download-url-method": {
+                    "type": "string",
+                    "description": "If specified, this technique will be used to override the URL that PIE uses to download the asset. The default, if not specified, is composer-default.",
+                    "enum": ["composer-default", "pre-packaged-source"],
+                    "example": "composer-default"
                 },
                 "os-families": {
                     "type": "array",
@@ -963,7 +969,10 @@
                 "options": {
                     "type": "object",
                     "properties": {
-                        "symlink": { "type": ["boolean", "null"] }
+                        "reference": { "type": ["string"], "enum": ["none", "config", "auto"] },
+                        "symlink": { "type": ["boolean", "null"] },
+                        "relative": { "type": ["boolean"] },
+                        "versions": { "type": "object", "additionalProperties": { "type": "string" } }
                     },
                     "additionalProperties": true
                 }

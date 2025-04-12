@@ -40,7 +40,7 @@ class PassthruLoader extends LoaderAbstract {
 	 * {@inheritdoc}
 	 */
 	public function activate_loader( bool $is_debug = false ) {
-		$settings    = ( ! $is_debug ) ? $this->plugin_data->get_plugin_settings() : $this->plugin_data->get_debug_settings();
+		$settings    = ( ! $is_debug ) ? $this->plugin_data->get_plugin_settings() : $this->plugin_data->get_plugin_settings_debug();
 		$path_source = $this->plugin_info->get_plugin_directory_path() . self::LOADER_SOURCE;
 		$source_code = ( is_readable( $path_source ) ) ? file_get_contents( $path_source ) ?: '' : '';
 		if ( ! $source_code ) {
@@ -110,7 +110,7 @@ class PassthruLoader extends LoaderAbstract {
 	 * @internal
 	 */
 	public function update_image_urls( string $buffer, bool $is_debug = false ): string {
-		$settings   = ( ! $is_debug ) ? $this->plugin_data->get_plugin_settings() : $this->plugin_data->get_debug_settings();
+		$settings   = ( ! $is_debug ) ? $this->plugin_data->get_plugin_settings() : $this->plugin_data->get_plugin_settings_debug();
 		$extensions = implode( '|', $settings[ SupportedExtensionsOption::OPTION_NAME ] );
 		if ( ! $extensions ) {
 			return $buffer;

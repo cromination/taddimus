@@ -95,6 +95,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'M' => 
         array (
             'Mustangostang\\' => 14,
+            'MabeEnum\\' => 9,
         ),
         'J' => 
         array (
@@ -227,6 +228,10 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'Mustangostang\\' => 
         array (
             0 => __DIR__ . '/..' . '/wp-cli/mustangostang-spyc/src',
+        ),
+        'MabeEnum\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/marc-mabe/php-enum/src',
         ),
         'JsonSchema\\' => 
         array (

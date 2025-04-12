@@ -51,7 +51,7 @@ class HtaccessLoader extends LoaderAbstract {
 	 * {@inheritdoc}
 	 */
 	public function activate_loader( bool $is_debug = false ) {
-		$settings = ( ! $is_debug ) ? $this->plugin_data->get_plugin_settings() : $this->plugin_data->get_debug_settings();
+		$settings = ( ! $is_debug ) ? $this->plugin_data->get_plugin_settings() : $this->plugin_data->get_plugin_settings_debug();
 
 		$this->deactivate_loader();
 

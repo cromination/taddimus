@@ -1,6 +1,11 @@
 == Changelog ==
 
-= 6.2.0 (2024-12-18)
+= 6.2.1 (2025-04-01) =
+* `[Fixed]` Handling of excluded directories when uploading new images
+* `[Added]` Error detection of required functions in disable_functions list in PHP configuration
+* `[Added]` Support for WordPress 6.8
+
+= 6.2.0 (2024-12-18) =
 * `[Changed]` Minimum required PHP version from 7.0 to 7.1
 * `[Added]` Compatibility with PHP 8.4
 
