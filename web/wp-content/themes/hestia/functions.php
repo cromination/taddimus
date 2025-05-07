@@ -6,11 +6,12 @@
  * @since   Hestia 1.0
  */
 
-define( 'HESTIA_VERSION', '3.2.8' );
+define( 'HESTIA_VERSION', '3.2.9' );
 define( 'HESTIA_VENDOR_VERSION', '1.0.2' );
 define( 'HESTIA_PHP_INCLUDE', trailingslashit( get_template_directory() ) . 'inc/' );
 define( 'HESTIA_ASSETS_URL', trailingslashit( get_template_directory_uri() ) . 'assets/' );
 define( 'HESTIA_CORE_DIR', HESTIA_PHP_INCLUDE . 'core/' );
+define( 'HESTIA_PRODUCT_SLUG', basename( trailingslashit( get_template_directory() ) ) );
 
 if ( ! defined( 'HESTIA_DEBUG' ) ) {
 	define( 'HESTIA_DEBUG', false );

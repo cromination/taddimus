@@ -1,3 +1,9 @@
+##### [Version 3.2.9](https://github.com/Codeinwp/hestia-pro/compare/v3.2.8...v3.2.9) (2025-04-15)
+
+- Fixed gap spacing issue with buttons
+- Fixed compatibility issue with Jetpack Portfolio
+- Updated dependencies
+
 ##### [Version 3.2.8](https://github.com/Codeinwp/hestia-pro/compare/v3.2.7...v3.2.8) (2025-02-05)
 
 - Fix language pack loading

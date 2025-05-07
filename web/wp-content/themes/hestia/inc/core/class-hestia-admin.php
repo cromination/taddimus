@@ -666,77 +666,39 @@ class Hestia_Admin {
 	/**
 	 * Get the data used for the survey.
 	 *
+	 * @param array  $data The survey data in Formbricks format.
+	 * @param string $page_slug The slug of the page.
+	 *
 	 * @return array
-	 * @see survey.js
 	 */
-	public function get_survey_metadata() {
+	public function get_survey_metadata( $data, $page_slug ) {
+		$license_saved       = get_option( 'hestia_pro_license_data', array() );
+		$install_time        = min( get_option( 'hestia_pro_install', time() ), get_option( 'hestia_install', time() ) );
+		$install_days_number = intval( ( time() - $install_time ) / DAY_IN_SECONDS );
 
-		$user_id       = 'hestia_';
-		$license_saved = get_option( 'hestia_pro_license_data', array() );
-
-		if ( ! empty( $license_saved->key ) ) {
-			$user_id .= $license_saved->key;
-		} else {
-			$user_id .= preg_replace( '/[^\w\d]*/', '', get_site_url() ); // Use a normalized version of the site URL as a user ID for free users.
-		}
-
-		$install_time = array_filter(
-			array(
-				get_option( 'hestia_pro_install', 0 ),
-				get_option( 'hestia_install', 0 ),
-			)
-		);
-
-		$install_time = (int) min( $install_time );
-
-		$days_since_install = round( ( time() - $install_time ) / DAY_IN_SECONDS );
-		$install_category   = 0;
-		if ( 0 === $days_since_install || 1 === $days_since_install ) {
-			$install_category = 0;
-		} elseif ( 1 < $days_since_install && 8 > $days_since_install ) {
-			$install_category = 7;
-		} elseif ( 8 <= $days_since_install && 31 > $days_since_install ) {
-			$install_category = 30;
-		} elseif ( 30 < $days_since_install && 90 > $days_since_install ) {
-			$install_category = 90;
-		} elseif ( 90 <= $days_since_install ) {
-			$install_category = 91;
-		}
-
-		return array(
-			'userId'     => $user_id,
-			'attributes' => array(
-				'license_status'     => ! empty( $license_saved->license ) ? $license_saved->license : 'invalid',
-				'days_since_install' => $install_category,
-				'version'            => HESTIA_VERSION,
-				'plan'               => $this->plan_category( $license_saved ),
+		$data = array(
+			'environmentId' => 'clskegyyx7syhpodwo7llnqg6',
+			'attributes'    => array(
+				'license_status'      => ! empty( $license_saved->license ) ? $license_saved->license : 'invalid',
+				'install_days_number' => $install_days_number,
+				'version'             => HESTIA_VERSION,
+				'plan'                => $this->plan_category( $license_saved ),
 			),
 		);
-	}
 
-	/**
-	 * Register the survey script.
-	 */
-	public function register_survey() {
-
-		$survey_data = $this->get_survey_metadata();
-
-		if ( 1 >= $survey_data['attributes']['plan'] ) {
+		if ( 1 >= $data['attributes']['plan'] ) {
 			do_action( 'themeisle_sdk_load_banner', 'hestia' );
 		}
 
-		$survey_handler = apply_filters( 'themeisle_sdk_dependency_script_handler', 'survey' );
-		if ( ! empty( $survey_handler ) ) {
-			do_action( 'themeisle_sdk_dependency_enqueue_script', 'survey' );
-			wp_enqueue_script( 'hestia_survey', get_template_directory_uri() . '/assets/js/survey.js', array( $survey_handler ), HESTIA_VENDOR_VERSION, true );
-			wp_localize_script( 'hestia_survey', 'hestiaSurveyData', $survey_data );
-		}
+		return $data;
 	}
 
 	/**
 	 * Initialize dependencies for Hestia Options.
 	 */
 	public function hestia_options_init() {
+		add_filter( 'themeisle-sdk/survey/' . HESTIA_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
+
 		$screen = get_current_screen();
 		if ( ! in_array(
 			$screen->base,
@@ -749,7 +711,7 @@ class Hestia_Admin {
 			return;
 		}
 
-		$this->register_survey();
+		do_action( 'themeisle_internal_page', HESTIA_PRODUCT_SLUG, 'settings' );
 	}
 
 	/**

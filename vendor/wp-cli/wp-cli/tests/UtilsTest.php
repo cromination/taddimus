@@ -5,10 +5,12 @@ use WP_CLI\Loggers;
 use WP_CLI\Tests\TestCase;
 use WP_CLI\Utils;
 
-require_once dirname( __DIR__ ) . '/php/class-wp-cli.php';
-require_once __DIR__ . '/mock-requests-transport.php';
-
 class UtilsTest extends TestCase {
+
+	public static function set_up_before_class() {
+		require_once dirname( __DIR__ ) . '/php/class-wp-cli.php';
+		require_once __DIR__ . '/mock-requests-transport.php';
+	}
 
 	public function testIncrementVersion() {
 		// Keyword increments.
@@ -454,7 +456,7 @@ class UtilsTest extends TestCase {
 		$prev_logger = WP_CLI::get_logger();
 
 		// Enable exit exception.
-		$class_wp_cli_capture_exit->setValue( true );
+		$class_wp_cli_capture_exit->setValue( null, true );
 
 		$logger = new Loggers\Execution();
 		WP_CLI::set_logger( $logger );
@@ -472,7 +474,7 @@ class UtilsTest extends TestCase {
 		$this->assertTrue( 0 === strpos( $logger->stderr, 'Error: Failed to get url' ) );
 
 		// Restore.
-		$class_wp_cli_capture_exit->setValue( $prev_capture_exit );
+		$class_wp_cli_capture_exit->setValue( null, $prev_capture_exit );
 		WP_CLI::set_logger( $prev_logger );
 	}
 
@@ -481,12 +483,12 @@ class UtilsTest extends TestCase {
 			'default request'  => [
 				[],
 				RuntimeException::class,
-				'Failed to get url \'https://example.com\': cURL error 77: error setting certificate verify locations:',
+				'Failed to get url \'https://example.com\': cURL error 77: error setting certificate',
 			],
 			'secure request'   => [
 				[ 'insecure' => false ],
 				RuntimeException::class,
-				'Failed to get url \'https://example.com\': cURL error 77: error setting certificate verify locations:',
+				'Failed to get url \'https://example.com\': cURL error 77: error setting certificate',
 			],
 			'insecure request' => [
 				[ 'insecure' => true ],
@@ -675,7 +677,7 @@ class UtilsTest extends TestCase {
 		$prev_logger = WP_CLI::get_logger();
 
 		// Enable exit exception.
-		$class_wp_cli_capture_exit->setValue( true );
+		$class_wp_cli_capture_exit->setValue( null, true );
 
 		$logger = new Loggers\Execution();
 		WP_CLI::set_logger( $logger );
@@ -691,7 +693,7 @@ class UtilsTest extends TestCase {
 		$this->assertSame( $stderr, $logger->stderr );
 
 		// Restore.
-		$class_wp_cli_capture_exit->setValue( $prev_capture_exit );
+		$class_wp_cli_capture_exit->setValue( null, $prev_capture_exit );
 		WP_CLI::set_logger( $prev_logger );
 	}
 
@@ -775,28 +777,52 @@ class UtilsTest extends TestCase {
 		];
 	}
 
-	/**
-	 * Copied from core "tests/phpunit/tests/db.php" (adapted to not use `$wpdb`).
-	 */
-	public function test_esc_like() {
-		$inputs   = [
-			'howdy%', // Single Percent.
-			'howdy_', // Single Underscore.
-			'howdy\\', // Single slash.
-			'howdy\\howdy%howdy_', // The works.
-			'howdy\'"[[]*#[^howdy]!+)(*&$#@!~|}{=--`/.,<>?', // Plain text.
+	public static function dataEscLike() {
+		return [
+			[ 'howdy%', 'howdy\\%' ],
+			[ 'howdy_', 'howdy\\_' ],
+			[ 'howdy\\', 'howdy\\\\' ],
+			[ 'howdy\\howdy%howdy_', 'howdy\\\\howdy\\%howdy\\_' ],
+			[ 'howdy\'"[[]*#[^howdy]!+)(*&$#@!~|}{=--`/.,<>?', 'howdy\'"[[]*#[^howdy]!+)(*&$#@!~|}{=--`/.,<>?' ],
 		];
-		$expected = [
-			'howdy\\%',
-			'howdy\\_',
-			'howdy\\\\',
-			'howdy\\\\howdy\\%howdy\\_',
-			'howdy\'"[[]*#[^howdy]!+)(*&$#@!~|}{=--`/.,<>?',
-		];
+	}
 
-		foreach ( $inputs as $key => $input ) {
-			$this->assertEquals( $expected[ $key ], Utils\esc_like( $input ) );
+	/**
+	 * @dataProvider dataEscLike
+	 */
+	public function test_esc_like( $input, $expected ) {
+		$this->assertEquals( $expected, Utils\esc_like( $input ) );
+	}
+
+	/**
+	 * @dataProvider dataEscLike
+	 */
+	public function test_esc_like_with_wpdb( $input, $expected ) {
+		global $wpdb;
+		$wpdb = $this->getMockBuilder( 'stdClass' );
+
+		// Handle different PHPUnit versions (5.7 for PHP 5.6 vs newer versions)
+		// This can be simplified if we drop support for PHP 5.6.
+		if ( method_exists( $wpdb, 'addMethods' ) ) {
+			$wpdb = $wpdb->addMethods( [ 'esc_like' ] );
+		} else {
+			$wpdb = $wpdb->setMethods( [ 'esc_like' ] );
 		}
+
+		$wpdb = $wpdb->getMock();
+		$wpdb->method( 'esc_like' )
+			->willReturn( addcslashes( $input, '_%\\' ) );
+		$this->assertEquals( $expected, Utils\esc_like( $input ) );
+		$this->assertEquals( $expected, Utils\esc_like( $input ) );
+	}
+
+	/**
+	 * @dataProvider dataEscLike
+	 */
+	public function test_esc_like_with_wpdb_being_null( $input, $expected ) {
+		global $wpdb;
+		$wpdb = null;
+		$this->assertEquals( $expected, Utils\esc_like( $input ) );
 	}
 
 	/**
@@ -886,6 +912,155 @@ class UtilsTest extends TestCase {
 			[ 'example.com:9090/path?arg=value#anchor', -1, false, [ 'host' => 'example.com', 'port' => 9090, 'path' => '/path', 'query' => 'arg=value', 'fragment' => 'anchor' ] ],
 			[ 'https://example.com', PHP_URL_HOST, true, 'example.com' ],
 		];
+	}
+
+	/**
+	 * @dataProvider dataEscapeCsvValue
+	 */
+	public function testEscapeCsvValue( $input, $expected ) {
+		$this->assertEquals( $expected, Utils\escape_csv_value( $input ) );
+	}
+
+	public static function dataEscapeCsvValue() {
+		return [
+			// Values starting with special characters that should be escaped.
+			[ '=formula', "'=formula" ],
+			[ '+positive', "'+positive" ],
+			[ '-negative', "'-negative" ],
+			[ '@mention', "'@mention" ],
+			[ "\tindented", "'\tindented" ],
+			[ "\rcarriage", "'\rcarriage" ],
+
+			// Values that should not be escaped.
+			[ 'normal text', 'normal text' ],
+			[ 'text with = in middle', 'text with = in middle' ],
+			[ '123', '123' ],
+			[ '', '' ],
+			[ ' leading space', ' leading space' ],
+			[ 'trailing space ', 'trailing space ' ],
+			[ '=x==y=', "'=x==y=" ], // Only escapes when the first character is special
+		];
+	}
+
+	public function testWriteCsv() {
+		// Create a temporary file
+		$temp_file = tmpfile();
+
+		// Test data with various cases that need escaping
+		$headers = [ 'name', 'formula', 'quoted', 'comma', 'backslash' ];
+		$rows    = [
+			[
+				'name'      => 'John Doe',
+				'formula'   => '=SUM(A1:A2)',
+				'quoted'    => 'Contains "quotes"',
+				'comma'     => 'Item 1, Item 2',
+				'backslash' => 'C:\\path\\to\\file',
+			],
+			[
+				'name'      => '@username',
+				'formula'   => '+1234',
+				'quoted'    => "'Single quotes'",
+				'comma'     => '-123,45',
+				'backslash' => 'Escape \\this',
+			],
+		];
+
+		// Write to CSV
+		Utils\write_csv( $temp_file, $rows, $headers );
+
+		// Rewind file and read contents
+		rewind( $temp_file );
+		$csv_content = stream_get_contents( $temp_file );
+
+		// Normalize line endings for cross-platform testing
+		$csv_content = str_replace( "\r\n", "\n", $csv_content );
+
+		// Check individual components instead of the exact string
+		$this->assertStringContainsString( 'name,formula,quoted,comma,backslash', $csv_content );
+		$this->assertStringContainsString( '"John Doe"', $csv_content );
+		$this->assertStringContainsString( '\'=SUM(A1:A2)', $csv_content );
+		$this->assertStringContainsString( '"Contains ""quotes"""', $csv_content );
+		$this->assertStringContainsString( '"Item 1, Item 2"', $csv_content );
+		$this->assertStringContainsString( '\'@username', $csv_content );
+		$this->assertStringContainsString( '\'Single quotes\'', $csv_content );
+		$this->assertStringContainsString( '\'+1234', $csv_content );
+		$this->assertStringContainsString( '\'-123,45', $csv_content );
+	}
+
+	public function testWriteCsvWithoutHeaders() {
+		// Create a temporary file
+		$temp_file = tmpfile();
+
+		// Test data without using headers
+		$rows = [
+			[ 'John Doe', '=SUM(A1:A2)', 'Contains "quotes"' ],
+			[ '@username', '+1234', '-amount' ],
+		];
+
+		// Write to CSV without headers
+		Utils\write_csv( $temp_file, $rows );
+
+		// Rewind file and read contents
+		rewind( $temp_file );
+		$csv_content = stream_get_contents( $temp_file );
+
+		// Normalize line endings for cross-platform testing
+		$csv_content = str_replace( "\r\n", "\n", $csv_content );
+
+		// Check individual components instead of the exact string
+		$this->assertStringContainsString( '"John Doe"', $csv_content );
+		$this->assertStringContainsString( '\'=SUM(A1:A2)', $csv_content );
+		$this->assertStringContainsString( '"Contains ""quotes"""', $csv_content );
+		$this->assertStringContainsString( '\'@username', $csv_content );
+		$this->assertStringContainsString( '\'+1234', $csv_content );
+		$this->assertStringContainsString( '\'-amount', $csv_content );
+	}
+
+	public function testWriteCsvWithFieldPicking() {
+		// Create a temporary file
+		$temp_file = tmpfile();
+
+		// Test data with additional fields that should be filtered out
+		$rows = [
+			[
+				'id'      => 1,
+				'name'    => 'John Doe',
+				'email'   => 'john@example.com',
+				'formula' => '=HYPERLINK("http://malicious.com")',
+				'extra'   => 'Should not appear',
+			],
+			[
+				'id'      => 2,
+				'name'    => '@username',
+				'email'   => 'user@example.com',
+				'formula' => '+1234',
+				'extra'   => 'Should not appear',
+			],
+		];
+
+		// Only include these headers (should filter the rows accordingly)
+		$headers = [ 'id', 'name', 'email', 'formula' ];
+
+		// Write to CSV, which should filter fields based on headers
+		Utils\write_csv( $temp_file, $rows, $headers );
+
+		// Rewind file and read contents
+		rewind( $temp_file );
+		$csv_content = stream_get_contents( $temp_file );
+
+		// Normalize line endings for cross-platform testing
+		$csv_content = str_replace( "\r\n", "\n", $csv_content );
+
+		// Check individual components instead of the exact string
+		$this->assertStringContainsString( 'id,name,email,formula', $csv_content );
+		$this->assertStringContainsString( '1,"John Doe",john@example.com', $csv_content );
+		$this->assertStringContainsString( '\'=HYPERLINK', $csv_content );
+		$this->assertStringContainsString( '2,\'@username,user@example.com', $csv_content );
+		$this->assertStringContainsString( '\'+1234', $csv_content );
+
+		// Make sure 'extra' field is not in the output
+		$this->assertStringNotContainsString( 'extra', $csv_content );
+		$this->assertStringNotContainsString( 'Should not appear', $csv_content );
 	}
 
 	public function testReplacePathConstsAddSlashes() {

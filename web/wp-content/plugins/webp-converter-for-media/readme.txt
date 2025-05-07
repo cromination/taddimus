@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.8
 Requires PHP: 7.1
-Stable tag: 6.2.1
+Stable tag: 6.2.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -304,6 +304,9 @@ Current list of supported CDN servers:
 5. Ability to manually undo optimization of selected image
 
 == Changelog ==
+
+= 6.2.2 (2025-04-29) =
+* `[Security]` Update of Axios HTTP client
 
 = 6.2.1 (2025-04-01) =
 * `[Fixed]` Handling of excluded directories when uploading new images

@@ -251,12 +251,12 @@ class PathsFinder {
 	 */
 	private function get_paths_chunk_size( int $paths_count ): int {
 		$settings = $this->plugin_data->get_plugin_settings();
-		if ( $settings[ ConversionMethodOption::OPTION_NAME ] !== RemoteMethod::METHOD_NAME ) {
-			return self::PATHS_PER_REQUEST_LOCAL;
+		if ( $settings[ ServiceModeOption::OPTION_NAME ] === 'yes' ) {
+			return ( self::PATHS_PER_REQUEST_REMOTE_LARGE * 2 );
 		}
 
-		if ( $settings[ ServiceModeOption::OPTION_NAME ] === 'yes' ) {
-			return self::PATHS_PER_REQUEST_REMOTE_LARGE;
+		if ( $settings[ ConversionMethodOption::OPTION_NAME ] !== RemoteMethod::METHOD_NAME ) {
+			return self::PATHS_PER_REQUEST_LOCAL;
 		}
 
 		$output_formats       = count( $settings[ OutputFormatsOption::OPTION_NAME ] ) ?: 1;

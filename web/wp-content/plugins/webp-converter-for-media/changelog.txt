@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 6.2.2 (2025-04-29) =
+* `[Security]` Update of Axios HTTP client
+
 = 6.2.1 (2025-04-01) =
 * `[Fixed]` Handling of excluded directories when uploading new images
 * `[Added]` Error detection of required functions in disable_functions list in PHP configuration

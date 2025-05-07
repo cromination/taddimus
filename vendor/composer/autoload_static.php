@@ -10,8 +10,8 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         '3937806105cc8e221b8fa8db5b70d2f2' => __DIR__ . '/..' . '/wp-cli/mustangostang-spyc/includes/functions.php',
         'be01b9b16925dcb22165c40b46681ac6' => __DIR__ . '/..' . '/wp-cli/php-cli-tools/lib/cli/cli.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
-        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
@@ -183,7 +183,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         ),
         'Symfony\\Component\\Process\\' => 
         array (
-            0 => __DIR__ . '/..' . '/symfony/process',
+            0 => __DIR__ . '/..' . '/wp-cli/process',
         ),
         'Symfony\\Component\\Finder\\' => 
         array (
@@ -316,7 +316,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         array (
             'Mustache' => 
             array (
-                0 => __DIR__ . '/..' . '/mustache/mustache/src',
+                0 => __DIR__ . '/..' . '/wp-cli/mustache/src',
             ),
         ),
     );
