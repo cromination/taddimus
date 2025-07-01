@@ -40,11 +40,18 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 		define( 'SWCFPC_HOME_PAGE_SHOWS_POSTS', true );
 	}
 
+	add_filter(
+		'themesle_sdk_namespace_' . md5( SPC_PATH ),
+		function ( $namespace ) {
+			return 'spc';
+		}
+	);
+
 	class SW_CLOUDFLARE_PAGECACHE {
 
 		private $config  = false;
 		private $modules = [];
-		private $version = '5.0.11';
+		private $version = '5.0.12';
 
 		public const REDIRECT_KEY = 'swcfpc_dashboard_redirect';
 

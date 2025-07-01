@@ -442,33 +442,19 @@ class Hestia_Admin {
 			)
 		);
 
-		if ( defined( 'HESTIA_PRO_FLAG' ) ) {
-			return;
+		$is_black_friday = apply_filters( 'themeisle_sdk_is_black_friday_sale', false );
+		if ( class_exists( 'Ti_White_Label_Markup' ) && Ti_White_Label_Markup::is_theme_whitelabeld() ) {
+			$is_black_friday = false;
 		}
 
-		$sdk_announcements = apply_filters( 'themeisle_sdk_announcements', array() );
-
-		if ( is_array( $sdk_announcements ) && ! empty( $sdk_announcements ) ) {
-
-			$events_assets = array();
-
-			foreach ( $sdk_announcements as $announcement => $event_data ) {
-				if (
-					strpos( $announcement, 'black_friday' ) !== false &&
-					! empty( $event_data ) &&
-					is_array( $event_data ) &&
-					! empty( $event_data['active'] ) &&
-					! empty( $event_data['hestia_customizer_url'] )
-				) {
-					$events_assets['customizerBannerUrl']      = esc_url_raw( get_template_directory_uri() . '/assets/img/black-friday-customizer.png' );
-					$events_assets['customizerBannerStoreUrl'] = esc_url_raw( $event_data['hestia_customizer_url'] );
-				}
-			}
-
+		if ( $is_black_friday ) {
 			wp_localize_script(
 				'hestia_customize_controls',
 				'hestiaSaleEvents',
-				$events_assets
+				array(
+					'customizerBannerUrl'      => esc_url_raw( get_template_directory_uri() . '/assets/img/black-friday-customizer.png' ),
+					'customizerBannerStoreUrl' => esc_url_raw( ( $this->get_black_friday_data() )['sale_url'] ),
+				)
 			);
 		}
 	}
@@ -697,6 +683,17 @@ class Hestia_Admin {
 	 * Initialize dependencies for Hestia Options.
 	 */
 	public function hestia_options_init() {
+		if ( class_exists( 'Ti_White_Label_Markup' ) && Ti_White_Label_Markup::is_theme_whitelabeld() ) {
+			add_filter(
+				'themeisle_sdk_blackfriday_data',
+				function( $configs ) {
+					return array();
+				},
+				1000
+			);
+		} else {
+			add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'add_black_friday_data' ) );
+		}
 		add_filter( 'themeisle-sdk/survey/' . HESTIA_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
 
 		$screen = get_current_screen();
@@ -728,5 +725,57 @@ class Hestia_Admin {
 			'logo'       => get_template_directory_uri() . '/assets/img/logo.svg',
 			'cta_link'   => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/?discount=LOYALUSER583&dvalue=60#pricing', 'hestia-welcome', 'notice' ), 'query' ),
 		);
+	}
+
+	/**
+	 * Get Black Friday data.
+	 *
+	 * @param array $config The configuration for the loaded product.
+	 *
+	 * @return array
+	 */
+	private function get_black_friday_data( $config = array() ) {
+		// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+		$message_template = __( 'Our biggest sale of the year: %1$sup to %2$s OFF%3$s on %4$s. Don\'t miss this limited-time offer.', 'hestia' );
+		$product_label    = 'Hestia';
+		$discount         = '70%';
+
+		$plan    = apply_filters( 'product_hestia_license_plan', 0 );
+		$license = apply_filters( 'product_hestia_license_key', false );
+		$is_pro  = 0 < $plan;
+
+		if ( $is_pro ) {
+			// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+			$message_template = __( 'Get %1$sup to %2$s off%3$s when you upgrade your %4$s plan or renew early.', 'hestia' );
+			$product_label    = 'Hestia Pro';
+			$discount         = '30%';
+		}
+
+		$product_label = sprintf( '<strong>%s</strong>', $product_label );
+		$url_params    = array(
+			'utm_term' => $is_pro ? 'plan-' . $plan : 'free',
+			'lkey'     => ! empty( $license ) ? $license : false,
+		);
+
+		$config['message']  = sprintf( $message_template, '<strong>', $discount, '</strong>', $product_label );
+		$config['sale_url'] = add_query_arg(
+			$url_params,
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/hestia-bf', 'bfcm', 'hestia' ) )
+		);
+
+		return $config;
+	}
+
+	/**
+	 * Add Black Friday data.
+	 *
+	 * @param array $configs The configuration array for the loaded products.
+	 *
+	 * @return array
+	 */
+	public function add_black_friday_data( $configs ) {
+		$configs[ HESTIA_PRODUCT_SLUG ] = $this->get_black_friday_data( $configs['default'] );
+
+		return $configs;
 	}
 }

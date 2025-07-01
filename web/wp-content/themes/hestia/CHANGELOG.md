@@ -1,3 +1,11 @@
+##### [Version 3.2.11](https://github.com/Codeinwp/hestia-pro/compare/v3.2.10...v3.2.11) (2025-06-23)
+
+- Enhanced security
+
+##### [Version 3.2.10](https://github.com/Codeinwp/hestia-pro/compare/v3.2.9...v3.2.10) (2025-05-23)
+
+- Updated dependencies
+
 ##### [Version 3.2.9](https://github.com/Codeinwp/hestia-pro/compare/v3.2.8...v3.2.9) (2025-04-15)
 
 - Fixed gap spacing issue with buttons

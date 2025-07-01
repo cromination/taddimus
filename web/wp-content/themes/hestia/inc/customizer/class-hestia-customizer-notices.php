@@ -16,7 +16,6 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 	public function init() {
 		parent::init();
 		add_action( 'wp_ajax_dismissed_notice_handler', array( $this, 'ajax_notice_handler' ) );
-		add_action( 'wp_ajax_nopriv_dismissed_notice_handler', array( $this, 'ajax_notice_handler' ) );
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'enqueue_notices_handler' ), 0 );
 	}
 
@@ -24,6 +23,14 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 	 * AJAX handler to store the state of dismissible notices.
 	 */
 	final public function ajax_notice_handler() {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'hestia-customizer_notices_nonce' ) ) {
+			die( 'Invalid nonce.' );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			die( 'Unauthorized access.' );
+		}
+
 		$control_id = sanitize_text_field( wp_unslash( $_POST['control'] ) );
 		if ( empty( $control_id ) ) {
 			die();
@@ -42,6 +49,7 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 			'dismissNotices',
 			array(
 				'ajaxurl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'hestia-customizer_notices_nonce' ),
 			)
 		);
 

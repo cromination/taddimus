@@ -67,6 +67,15 @@ class SWCFPC_Backend {
 
 	}
 
+	/**
+	 * Load deps for dashboard dependencies.
+	 */
+	function load_dashboard_deps() {
+		add_filter( 'themeisle-sdk/survey/' . SWCFPC_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
+		add_filter( 'themeisle_sdk_blackfriday_data', array( $this, 'add_black_friday_data' ) );
+		do_action( 'themeisle_internal_page', SWCFPC_PRODUCT_SLUG, 'dashboard' );
+	}
+
 
 	function load_custom_wp_admin_styles_and_script() {
 		$screen = ( is_admin() && function_exists( 'get_current_screen' ) ) ? get_current_screen() : false;
@@ -109,7 +118,6 @@ class SWCFPC_Backend {
 			wp_enqueue_style( 'swcfpc_admin_css' );
 			wp_enqueue_script( 'swcfpc_admin_js' );
 		}
-
 	}
 
 	function modify_script_attributes( $tag, $handle ) {
@@ -239,7 +247,7 @@ class SWCFPC_Backend {
 
 	function add_admin_menu_pages() {
 
-		add_submenu_page(
+		$hook = add_submenu_page(
 			'options-general.php',
 			__( 'Super Page Cache', 'wp-cloudflare-page-cache' ),
 			__( 'Super Page Cache', 'wp-cloudflare-page-cache' ),
@@ -247,6 +255,13 @@ class SWCFPC_Backend {
 			'wp-cloudflare-super-page-cache-index',
 			[ $this, 'admin_menu_page_index' ]
 			// "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDUxMi4wMTYgNTEyLjAxNiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyLjAxNiA1MTIuMDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8cGF0aCBzdHlsZT0iZmlsbDojRkZDRTU0OyIgZD0iTTE3LjI1LDQ5My4xMzJjMy42MjUtMTAuMTg4LDguMzQ0LTIzLjE0MSwxMy42MjUtMzYuNTYzYzE5Ljg3NS01MC42NDIsMzAuNDA3LTY1Ljc4MiwzNC45MzgtNzAuMjk4DQoJYzYuNzgxLTYuNzk3LDE1LjE4OC0xMS4zNzUsMjQuMzEzLTEzLjI2NmwzLjE1Ni0wLjY1NmwzNS4zNDQtMzUuNzVsNDIuMzEyLDQ4Ljg3NWwtMzIuOTA2LDMxLjUxNmwtMC42ODgsMy4yMzUNCgljLTEuODc1LDkuMTI1LTYuNDY5LDE3LjUzMS0xMy4yNSwyNC4zNDRjLTQuNTMxLDQuNS0xOS42NTYsMTUuMDYyLTcwLjI4MiwzNC45MjNDNDAuMzc2LDQ4NC43NTcsMjcuNDA2LDQ4OS41MDcsMTcuMjUsNDkzLjEzMnoiLz4NCjxwYXRoIHN0eWxlPSJmaWxsOiNGNkJCNDI7IiBkPSJNMTI5LjE1OCwzMjAuOTQzTDg3Ljk3LDM2Mi41ODRjLTEwLjcxOSwyLjIxOS0yMS4xMjYsNy42MDktMjkuNjg4LDE2LjE3Mg0KCUMzNi40MDcsNDAwLjYzLDAsNTEwLjM2NiwwLDUxMC4zNjZzMTA5LjcyLTM2LjM5MSwxMzEuNjI2LTU4LjI4MmM4LjUzMS04LjU0NywxMy45MzgtMTguOTY5LDE2LjE1Ni0yOS43MDNsMzcuODEyLTM2LjIyDQoJTDEyOS4xNTgsMzIwLjk0M3ogTTEzMy4wNjQsNDA3LjAwNWwtNC43ODEsNC41OTRsLTEuMzQ0LDYuNDg0Yy0xLjQ2OSw3LjA3OS01LjA2MiwxMy42NDItMTAuMzc1LDE4Ljk1NA0KCWMtMS43NSwxLjc1LTEzLjIxOSwxMS41NzgtNjYuNTYzLDMyLjUxN2MtNS4wOTQsMS45ODQtMTAuMDk0LDMuOTA2LTE0LjkwNiw1LjcwM2MxLjgxMi00LjgxMiwzLjcxOS05LjgxMiw1LjcxOS0xNC44NzYNCgljMjAuOTM4LTUzLjM2LDMwLjc1LTY0LjgyOSwzMi41MzEtNjYuNTc5YzUuMzEzLTUuMzI4LDExLjg3Ni04LjkwNiwxOC45MzgtMTAuMzU5bDYuMzEyLTEuMzEybDQuNTMxLTQuNTc4bDI0Ljk2OS0yNS4yODENCglsMjguMTU2LDMyLjUxNkwxMzMuMDY0LDQwNy4wMDV6Ii8+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojREE0NDUzOyIgZD0iTTE5OS45MDksNDIzLjM5N2M1Ljk2OS0yLjc5NywxMS45MzgtNS43NjcsMTcuODc1LTguODc2bDEyMS41MDEtODYuNzgxDQoJCWM0Ljk2OS00LjY0MSw5Ljg3NS05LjM5MSwxNC43MTktMTQuMjAzYzIuNzgxLTIuODEyLDUuNTYzLTUuNjI1LDguMjgyLTguNDY5Yy0wLjQ2OSw1NS4zNTktMjUuODQ1LDExNS45MjMtNzQuMDMyLDE2NC4xMjcNCgkJYy0xNi4wNjIsMTYuMDQ3LTMzLjQ2OSwyOS41NjItNTEuNjI1LDQwLjQ4NGMtMC4xMjUsMC4wNzgtMC44NDUsMC41LTAuODQ1LDAuNWMtNC4wMzEsMi4xODgtOS4xODgsMS41NzgtMTIuNTk0LTEuODI4DQoJCWMtMS4xMjUtMS4xNDEtMS45MzgtMi40NjktMi40MzgtMy44NzVjMCwwLTAuMzc1LTEuMTA5LTAuNDY5LTEuNTk0bC0yMS45MzgtNzguNzY3DQoJCUMxOTguODc4LDQyMy44ODEsMTk5LjM3OCw0MjMuNjMxLDE5OS45MDksNDIzLjM5N3oiLz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojREE0NDUzOyIgZD0iTTIwNy41MzQsMTUwLjI2OWMtMi44NDQsMi43MzQtNS42NTYsNS41MTYtOC40NjksOC4zMTJjLTQuODEzLDQuODI4LTkuNTYzLDkuNzM0LTE0LjE4OCwxNC43MDMNCgkJYy0yMS4yODEsMy04Ni44MTIsMTIxLjUxNy04Ni44MTIsMTIxLjUxN2MtMy4wOTQsNS45MzgtNi4wNjIsMTEuODkyLTguODc1LDE3Ljg3NmMtMC4yNSwwLjUxNi0wLjQ2OSwxLjAzMS0wLjcxOSwxLjU0Nw0KCQlMOS42ODgsMjkyLjI4NWMtMC40NjktMC4wOTQtMS41OTQtMC40NjktMS41OTQtMC40NjljLTEuNDA2LTAuNS0yLjcxOS0xLjMxMi0zLjg3NS0yLjQ1M2MtMy40MDYtMy40MDYtNC04LjU0Ny0xLjgxMi0xMi41OTQNCgkJYzAsMCwwLjQwNi0wLjcwMywwLjUtMC44MjhjMTAuOTA2LTE4LjE1NywyNC40MDYtMzUuNTYzLDQwLjQ2OS01MS42MjVDOTEuNTk1LDE3Ni4wOTcsMTUyLjE1OCwxNTAuNzIyLDIwNy41MzQsMTUwLjI2OXoiLz4NCjwvZz4NCjxwYXRoIHN0eWxlPSJmaWxsOiNFNkU5RUQ7IiBkPSJNMTk3LjAwMywxNTEuMDVjLTYwLjQwOCw2MC40MjItMTAzLjk3LDEyOS40MzgtMTI4LjI1MiwxOTYuMjk5DQoJYy0xLjI4MSwzLjc1LTAuNDY5LDguMDMxLDIuNTMxLDExLjAxNmw4Mi45MDcsODIuOTM4YzMsMi45NjksNy4yODEsMy43OTcsMTEuMDMxLDIuNTE2DQoJYzY2Ljg3Ni0yNC4yODIsMTM1Ljg3Ny02Ny44MjksMTk2LjI4NS0xMjguMjUxYzkzLjg3Ni05My44NDUsMTQ2LjU2My0yMDcuMDgxLDE1MC41MDEtMzAzLjY0NWMwLjEyNS0yLjg3NS0wLjkwNi02LjA0Ny0zLjA5NC04LjI1DQoJYy0yLjIxOS0yLjIwMy01LjM3NS0zLjIzNC04LjI4MS0zLjEwOUM0MDQuMDY5LDQuNTAxLDI5MC44NDgsNTcuMjA1LDE5Ny4wMDMsMTUxLjA1eiIvPg0KPGc+DQoJPHBhdGggc3R5bGU9ImZpbGw6IzQzNEE1NDsiIGQ9Ik0zMTcuNTk4LDIzNy41MzVjLTExLjM3NSwwLTIyLjA2Mi00LjQzOC0zMC4wOTQtMTIuNDY5Yy04LjAzMS04LjA0Ny0xMi40NjktMTguNzM1LTEyLjQ2OS0zMC4xMQ0KCQlzNC40MzgtMjIuMDYzLDEyLjQ2OS0zMC4xMWM4LjAzMS04LjAzMSwxOC43NS0xMi40NjksMzAuMDk0LTEyLjQ2OWMxMS4zNzUsMCwyMi4wNjIsNC40MzgsMzAuMTI1LDEyLjQ2OQ0KCQljMTYuNTk1LDE2LjYxLDE2LjU5NSw0My42MjUsMCw2MC4yMmMtOC4wNjIsOC4wMzEtMTguNzUsMTIuNDY5LTMwLjA5NCwxMi40NjlDMzE3LjU5OCwyMzcuNTM1LDMxNy41OTgsMjM3LjUzNSwzMTcuNTk4LDIzNy41MzV6Ig0KCQkvPg0KCTxwYXRoIHN0eWxlPSJmaWxsOiM0MzRBNTQ7IiBkPSJNMjI3LjI4NCwzMjcuODQ5Yy0xMS4zNzUsMC0yMi4wNjItNC40MjItMzAuMDk0LTEyLjQ2OWMtOC4wMzItOC4wMzEtMTIuNDctMTguNzM1LTEyLjQ3LTMwLjA5NQ0KCQljMC0xMS4zNzUsNC40MzgtMjIuMDc4LDEyLjQ3LTMwLjEyNWM4LjAzMS04LjAzMSwxOC43MTktMTIuNDY5LDMwLjA5NC0xMi40NjljMTEuMzc2LDAsMjIuMDYzLDQuNDM4LDMwLjEyNiwxMi40NjkNCgkJYzE2LjU5NCwxNi42MSwxNi41OTQsNDMuNjI2LDAsNjAuMjJDMjQ5LjM0NywzMjMuNDI3LDIzOC42NiwzMjcuODQ5LDIyNy4yODQsMzI3Ljg0OUwyMjcuMjg0LDMyNy44NDl6Ii8+DQo8L2c+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojQ0NEMUQ5OyIgZD0iTTM1NS4yNTQsMTU3LjMzMWMtMTAuMDYyLTEwLjA0Ny0yMy40MzgtMTUuNTk0LTM3LjY1Ni0xNS41OTRjLTE0LjE4OCwwLTI3LjU2Miw1LjU0Ny0zNy42MjUsMTUuNTk0DQoJCWMtMTAuMDMxLDEwLjA0Ny0xNS41OTQsMjMuNDIyLTE1LjU5NCwzNy42MjVjMCwxNC4yMTksNS41NjIsMjcuNTc5LDE1LjU5NCwzNy42NDFjMTAuMDYyLDEwLjA0NiwyMy40MzgsMTUuNTc4LDM3LjYyNSwxNS41NzgNCgkJYzE0LjIxOSwwLDI3LjU5NC01LjUzMSwzNy42NTYtMTUuNTc4QzM3Ni4wMDUsMjExLjg0NywzNzYuMDA1LDE3OC4wODIsMzU1LjI1NCwxNTcuMzMxeiBNMzQwLjE5MiwyMTcuNTM1DQoJCWMtNi4yNSw2LjIzNC0xNC40MDYsOS4zNTktMjIuNTk0LDkuMzU5Yy04LjE1NiwwLTE2LjM0NC0zLjEyNS0yMi41NjItOS4zNTljLTEyLjQ2OS0xMi40NjktMTIuNDY5LTMyLjY4OCwwLTQ1LjE1Nw0KCQljNi4yMTktNi4yMzQsMTQuNDA2LTkuMzQ0LDIyLjU2Mi05LjM0NGM4LjE4OCwwLDE2LjM0NCwzLjEwOSwyMi41OTQsOS4zNDRDMzUyLjY2LDE4NC44NDcsMzUyLjY2LDIwNS4wNjYsMzQwLjE5MiwyMTcuNTM1eiIvPg0KCTxwYXRoIHN0eWxlPSJmaWxsOiNDQ0QxRDk7IiBkPSJNMjI3LjI4NCwyMzIuMDY3Yy0xNC4yMTksMC0yNy41NjIsNS41MzEtMzcuNjI2LDE1LjU3OGMtMTAuMDYyLDEwLjA0Ni0xNS41OTQsMjMuNDIyLTE1LjU5NCwzNy42NDENCgkJYzAsMTQuMjA0LDUuNTMxLDI3LjU2MywxNS41OTQsMzcuNjI2YzEwLjA2MywxMC4wNDcsMjMuNDA3LDE1LjU5NCwzNy42MjYsMTUuNTk0YzE0LjIyLDAsMjcuNTk1LTUuNTQ3LDM3LjY1OC0xNS41OTQNCgkJYzIwLjc1LTIwLjc1LDIwLjc1LTU0LjUxNywwLTc1LjI2N0MyNTQuODc5LDIzNy41OTgsMjQxLjUwNCwyMzIuMDY3LDIyNy4yODQsMjMyLjA2N3ogTTI0OS44NzksMzA3Ljg0OQ0KCQljLTYuMjUsNi4yNS0xNC40MDcsOS4zNTktMjIuNTk1LDkuMzU5Yy04LjE1NiwwLTE2LjM0NC0zLjEwOS0yMi41NjItOS4zNTljLTEyLjQ3LTEyLjQ3LTEyLjQ3LTMyLjY4OCwwLTQ1LjE1Nw0KCQljNi4yMTktNi4yMzUsMTQuNDA2LTkuMzQ0LDIyLjU2Mi05LjM0NGM4LjE4OCwwLDE2LjM0NSwzLjEwOSwyMi41OTUsOS4zNDRDMjYyLjM0OCwyNzUuMTYsMjYyLjM0OCwyOTUuMzc5LDI0OS44NzksMzA3Ljg0OXoiLz4NCjwvZz4NCjxwYXRoIHN0eWxlPSJmaWxsOiNEQTQ0NTM7IiBkPSJNNDc5LjIyNSwxNDUuODE2TDM2Ni43NTUsMzMuMzYxYzQ1LjgxMy0xOS45MjIsOTEuNDctMzEuMDYzLDEzMy44NzYtMzIuNzk3DQoJYzIuOTA2LTAuMTI1LDYuMDYyLDAuOTA2LDguMjgxLDMuMTA5YzIuMTg4LDIuMjAzLDMuMjE5LDUuMzc1LDMuMDk0LDguMjVDNTEwLjI4Nyw1NC4zNjEsNDk5LjEzMSwxMDAuMDAzLDQ3OS4yMjUsMTQ1LjgxNnoiLz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K"
+		);
+
+		add_action(
+			"load-$hook",
+			function() {
+				$this->load_dashboard_deps();
+			}
 		);
 
 		add_submenu_page(
@@ -1099,13 +1114,6 @@ class SWCFPC_Backend {
 			$cloudflare->update_cache_rule_if_diff();
 		}
 
-		add_filter( 'themeisle-sdk/survey/' . SWCFPC_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
-		do_action( 'themeisle_internal_page', SWCFPC_PRODUCT_SLUG, 'dashboard' );
-
-		if ( ! $has_pro ) {
-			do_action( 'themeisle_sdk_load_banner', 'spc' );
-		}
-
 		require_once SWCFPC_PLUGIN_PATH . 'libs/views/settings.php';
 	}
 
@@ -1234,7 +1242,6 @@ class SWCFPC_Backend {
 		
 		$current_time = time();
 		$install_date = get_option( $current_slug_key . '_install', $current_time );
-		$license_data = get_option( $current_slug_key . '_license_data', array() );
 
 		if ( defined( 'SPC_PRO_PATH' ) ) {
 			$install_date = min( $install_date, get_option( $free_slug_key . '_install', $current_time ) );
@@ -1254,13 +1261,14 @@ class SWCFPC_Backend {
 			'attributes'    => [
 				'plugin_version'      => $plugin_version,
 				'install_days_number' => $install_days_number,
-				'license_status'      => isset( $license_data->license ) ? $license_data->license : 'invalid',
-				'plan'                => isset( $license_data->plan ) ? $license_data->plan : 0,
+				'license_status'      => apply_filters( 'product_spc_license_status', 'invalid' ),
+				'plan'                => apply_filters( 'product_spc_license_plan', 0 ),
 			],
 		];
 
-		if ( isset( $license_data->key ) ) {
-			$data['attributes']['license_key'] = apply_filters( 'themeisle_sdk_secret_masking', $license_data->key );
+		$license = apply_filters( 'product_spc_license_key', false );
+		if ( ! empty( $license ) ) {
+			$data['attributes']['license_key'] = apply_filters( 'themeisle_sdk_secret_masking', $license );
 		}
 
 		return $data;
@@ -1275,5 +1283,47 @@ class SWCFPC_Backend {
 	 */
 	private function get_product_key( $product_slug ) {
 		return str_replace( '-', '_', strtolower( trim( $product_slug ) ) );
+	}
+
+	/**
+	 * Set the black friday data.
+	 *
+	 * @param array $configs The configuration array for the loaded products.
+	 * @return array
+	 */
+	public function add_black_friday_data( $configs ) {
+		$config = $configs['default'];
+
+		// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+		$message_template = __( 'Our biggest sale of the year: %1$sup to %2$s OFF%3$s on %4$s. Don\'t miss this limited-time offer.', 'wp-cloudflare-page-cache' );
+		$product_label    = 'Super Page Cache';
+		$discount         = '70%';
+		
+		$plan    = apply_filters( 'product_spc_license_plan', 0 );
+		$license = apply_filters( 'product_spc_license_key', false );
+		$is_pro  = 0 < $plan;
+
+		if ( $is_pro ) {
+			// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
+			$message_template = __( 'Get %1$sup to %2$s off%3$s when you upgrade your %4$s plan or renew early.', 'wp-cloudflare-page-cache' );
+			$product_label    = 'Super Page Cache Pro';
+			$discount         = '30%';
+		}
+
+		$product_label = sprintf( '<strong>%s</strong>', $product_label );
+		$url_params    = array(
+			'utm_term' => $is_pro ? 'plan-' . $plan : 'free',
+			'lkey'     => ! empty( $license ) ? $license : false,
+		);
+
+		$config['message']  = sprintf( $message_template, '<strong>', $discount, '</strong>', $product_label );
+		$config['sale_url'] = add_query_arg(
+			$url_params,
+			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/spc-bf', 'bfcm', 'spc' ) )
+		);
+
+		$configs[ SWCFPC_PRODUCT_SLUG ] = $config;
+
+		return $configs;
 	}
 }

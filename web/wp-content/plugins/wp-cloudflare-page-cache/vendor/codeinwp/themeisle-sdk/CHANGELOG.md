@@ -1,3 +1,13 @@
+##### [Version 3.3.46](https://github.com/Codeinwp/themeisle-sdk-main/compare/v3.3.45...v3.3.46) (2025-05-16)
+
+- Add masteriyo recommandation
+- Add bf helpers
+- update formbricks
+
+##### [Version 3.3.45](https://github.com/Codeinwp/themeisle-sdk-main/compare/v3.3.44...v3.3.45) (2025-04-28)
+
+- feat: add review_link param to about_us filter
+
 ##### [Version 3.3.44](https://github.com/Codeinwp/themeisle-sdk-main/compare/v3.3.43...v3.3.44) (2025-02-18)
 
 - Fix variable mismatch in the install category function.

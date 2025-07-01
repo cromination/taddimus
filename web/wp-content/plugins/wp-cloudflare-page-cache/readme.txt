@@ -3,7 +3,7 @@ Contributors: themeisle, salvatorefresta, isaumya
 Tags: cloudflare, caching ,performance, page caching, pagespeed
 Requires at least: 5.3
 Requires PHP: 7.4
-Tested up to: 6.7
+Tested up to: 6.8
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -166,6 +166,13 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 
 == Changelog ==
+
+#####   Version 5.0.12 (2025-05-23)
+
+- Updated dependencies
+
+
+
 
 #####   Version 5.0.11 (2025-04-09)
 
