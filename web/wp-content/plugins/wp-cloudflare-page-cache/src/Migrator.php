@@ -2,6 +2,8 @@
 
 namespace SPC;
 
+use SPC\Modules\Frontend;
+use SPC\Services\Settings_Store;
 use SW_CLOUDFLARE_PAGECACHE;
 
 class Migrator {
@@ -15,14 +17,14 @@ class Migrator {
 	 */
 	private $previous_version = '';
 	/**
-	 * @var string $current_version String in semver format.
-	 */
-	private $current_version = '';
-	/**
 	 * @var \SWCFPC_Logs $logger Logger instance.
 	 */
 	private $logger;
 
+	/**
+	 * @var \SPC\Services\Settings_Store $settings_store Settings store instance.
+	 */
+	private $settings_store;
 
 	/**
 	 * Constructor
@@ -31,8 +33,8 @@ class Migrator {
 	 */
 	public function __construct( SW_CLOUDFLARE_PAGECACHE $plugin ) {
 		$this->plugin           = $plugin;
+		$this->settings_store   = Settings_Store::get_instance();
 		$this->previous_version = get_option( 'swcfpc_version', '' );
-		$this->current_version  = $this->plugin->get_plugin_version();
 		$this->logger           = $this->plugin->get_logger();
 	}
 
@@ -61,6 +63,9 @@ class Migrator {
 			$this->migrate_to_5_0_6();
 		}
 
+		if ( version_compare( $this->previous_version, '5.1.0', '<' ) ) {
+			$this->migrate_to_5_1_0();
+		}
 		do_action( 'swcfpc_after_plugin_upgrader_run' );
 	}
 
@@ -80,6 +85,21 @@ class Migrator {
 
 		$this->logger->add_log( 'upgrader::update_cache_rule', 'Cache rule updated.' );
 	}
+	/**
+	 * Migrate to 5.1.0 from previous versions.
+	 *
+	 * @return void
+	 */
+	private function migrate_to_5_1_0() {
+		$this->plugin->get_logger()->add_log( 'upgrader::migrate_to_5_1_0', 'Migrating to 5.1.0' );
+
+		$setting = $this->settings_store->get( Constants::SETTING_LAZY_LOAD_SKIP_IMAGES, 2 );
+		if ( $setting > 0 ) {
+			$this->settings_store->set( Constants::SETTING_LAZY_LOAD_BEHAVIOUR, Frontend::LAZY_LOAD_BEHAVIOUR_FIXED )->save();
+		} else {
+			$this->settings_store->set( Constants::SETTING_LAZY_LOAD_BEHAVIOUR, Frontend::LAZY_LOAD_BEHAVIOUR_ALL )->save();
+		}
+	}
 
 	/**
 	 * Migrate to 5.0.6 from previous versions.
@@ -91,7 +111,7 @@ class Migrator {
 	private function migrate_to_5_0_6() {
 		$this->plugin->get_logger()->add_log( 'upgrader::migrate_to_5_0_6', 'Migrating to 5.0.6' );
 
-		$setting_data = $this->plugin->get_single_config( Constants::SETTING_EXCLUDED_COOKIES, Constants::DEFAULT_EXCLUDED_COOKIES );
+		$setting_data = $this->settings_store->get( Constants::SETTING_EXCLUDED_COOKIES, Constants::DEFAULT_EXCLUDED_COOKIES );
 
 		if ( ! is_array( $setting_data ) ) {
 			return;
@@ -99,13 +119,14 @@ class Migrator {
 
 		$setting_data = array_filter(
 			$setting_data,
-			function( $cookie ) {
+			function ( $cookie ) {
 				return ! in_array( $cookie, [ 'wp-', '^wp-' ], true );
-			} 
+			}
 		);
 
-		$this->plugin->set_single_config( Constants::SETTING_EXCLUDED_COOKIES, $setting_data );
-		$this->plugin->update_config();
+		$this->settings_store
+			->set( Constants::SETTING_EXCLUDED_COOKIES, $setting_data )
+			->save();
 	}
 
 	/**
@@ -133,7 +154,7 @@ class Migrator {
 			'bookly',
 		];
 
-		$old_setting = $this->plugin->get_single_config( Constants::SETTING_EXCLUDED_COOKIES, Constants::DEFAULT_EXCLUDED_COOKIES );
+		$old_setting = $this->settings_store->get( Constants::SETTING_EXCLUDED_COOKIES, Constants::DEFAULT_EXCLUDED_COOKIES );
 		$old_setting = array_filter(
 			$old_setting,
 			function ( $cookie ) use ( $new_values ) {
@@ -147,8 +168,9 @@ class Migrator {
 
 		$new_setting = array_unique( array_merge( $old_setting, $new_values ) );
 
-		$this->plugin->set_single_config( Constants::SETTING_EXCLUDED_COOKIES, $new_setting );
-		$this->plugin->update_config();
+		$this->settings_store
+			->set( Constants::SETTING_EXCLUDED_COOKIES, $new_setting )
+			->save();
 	}
 
 	/**
@@ -160,10 +182,14 @@ class Migrator {
 		if ( ! defined( 'SWCFPC_ADVANCED_CACHE' ) ) {
 			return;
 		}
-		
-		if ( (int) $this->plugin->get_single_config( 'cf_cache_enabled', 0 ) > 0 && (int) $this->plugin->get_single_config( 'cf_fallback_cache', 0 ) > 0 && (int) $this->plugin->get_single_config( 'cf_fallback_cache_curl', 0 ) === 0 ) {
+
+		$cache_enabled  = $this->settings_store->get( Constants::SETTING_CF_CACHE_ENABLED );
+		$fallback_cache = $this->settings_store->get( Constants::SETTING_ENABLE_FALLBACK_CACHE );
+		$curl_enabled   = $this->settings_store->get( Constants::SETTING_FALLBACK_CACHE_CURL );
+
+		if ( $cache_enabled > 0 && $fallback_cache > 0 && ! $curl_enabled ) {
 			$handler = $this->plugin->get_fallback_cache_handler();
-			
+
 			$handler->fallback_cache_advanced_cache_disable();
 			$handler->fallback_cache_advanced_cache_enable();
 		}

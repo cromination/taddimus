@@ -286,7 +286,7 @@
         "utm_term",
         "wbraid"
     ],
-    "pgcache.migrated.qsexempts": 1751336132,
+    "pgcache.migrated.qsexempts": 1752624506,
     "pgcache.late_init": false,
     "pgcache.late_caching": false,
     "pgcache.mirrors.enabled": false,
@@ -366,8 +366,8 @@
     "stats.cpu.enabled": false,
     "stats.access_log.enabled": false,
     "stats.access_log.filename": "",
-    "stats.access_log.format": "%h %l %u %t \\\"%r\\\" %>s %O \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\"",
-    "stats.access_log.webserver": "apache",
+    "stats.access_log.format": "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"",
+    "stats.access_log.webserver": "nginx",
     "minify.configuration_overloaded": false,
     "minify.enabled": false,
     "minify.auto": true,
@@ -1010,9 +1010,5 @@
     "imageservice.configuration_overloaded": true,
     "fragmentcache": {
         "engine": "file"
-    },
-    "pgcache.bad_behavior_path": "",
-    "newrelic": {
-        "monitoring_type": "apm"
     }
 }

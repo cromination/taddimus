@@ -1,3 +1,34 @@
+#####   Version 5.1.1 (2025-07-15)
+
+### New Features
+
+- **Adds cached pages listing** when user has the `Purge HTML pages only` option enabled.
+
+####   Version 5.1.0 (2025-07-14)
+
+### New Features
+
+- **Complete dashboard redesign** with improved user experience and intuitive navigation for easier plugin management.
+- **Reorganized settings structure** that groups related options together, making configuration more straightforward.
+- **Integrated documentation** directly within the dashboard, providing helpful tips and guidance without leaving your WordPress admin.
+- **Basic metrics system** to track cache performance and give you insights into your site's caching effectiveness.
+- **Font optimization features** including Google Fonts combining and local hosting options to improve loading speeds and reduce external dependencies.
+- **New Assets Manager** with frontend modal interface for selectively disabling CSS/JS files based on different contexts, helping you eliminate unused scripts and optimize page performance. [Learn More](https://docs.themeisle.com/article/2277-how-to-use-the-asset-manager)
+- **Database optimization tools** to clean up post revisions, auto-drafts, trashed content, spam comments, and transients with both manual and scheduled cleanup options.
+- **Intelligent viewport-based lazy loading** that automatically detects above-the-fold images and loads them immediately while lazy loading below-the-fold content, optimizing for both mobile and desktop viewports. [Learn More](https://docs.themeisle.com/article/2278-seting-up-lazy-loading)
+- **Improved background processing system** by migrating to Action Scheduler for more reliable background task handling.
+- **Enhanced Defer JS functionality** with new `spc_defer_script` filter hook allowing developers to exclude specific scripts from being deferred, providing more granular control over JavaScript optimization.
+
+### Fixes
+
+- **Fixed AJAX cache bypass logic** to properly respect the bypass AJAX requests setting when enabled or disabled.
+- **Improved POST request handling** to ensure dynamic AJAX operations using POST methods are never cached while allowing GET-based AJAX requests to be cached when appropriate.
+- **Fixed PHP warning during wp-cron execution** that was generating Cannot modify header information warnings in error logs every time WordPress cron jobs ran.
+- **Resolved undefined variable errors** in advanced-cache.php when cache configuration files become corrupted, preventing PHP warnings and ensuring more reliable cache operation.
+- **Fixed undefined array key warning** for Cloudflare Worker settings that was generating PHP notices in the backend interface.
+- **Improve wp-config.php file handling** to prevent accidental corruption of the WordPress configuration file in some edge cases that was causing 500 errors on some sites.
+- **Fixed fatal error when updating settings** on hosting environments without OPcache enabled by adding proper function existence checks before calling OPcache functions.
+
 #####   Version 5.0.12 (2025-05-23)
 
 - Updated dependencies

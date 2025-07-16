@@ -17,15 +17,19 @@ Speed up your website by using our WebP & AVIF Converter. Optimize images and se
 
 [youtube https://www.youtube.com/watch?v=Ls2h38avpRw]
 
-After installing the plugin you do not have to do anything more. Your current images will be converted into a new format. When image optimization by our image optimizer is finished, users will automatically receive new, much lighter images than the original ones.
+After installing the plugin, you can optimize your entire Media Library with a single click — no further action required. When image optimization finishes, every visitor will automatically receive new images with significantly reduced file sizes.
 
-As of today, over 90% of users use browsers that support the WebP format. The loading time of your website depends to a large extent on its weight and the level of image optimization. **Using our WebP Converter, now you can and speed up it in a few seconds without much effort!**
+As of today, over 95% of users use browsers that support the WebP format. The loading time of your website depends to a large extent on its weight and the level of image optimization. **Using our WebP Converter, now you can and speed up it in a few seconds without much effort!**
 
 This will be a profit both for your users who will not have to download so much data, but also for a server that will be less loaded. Remember that a better optimized website also affects your Google ranking. Image optimization is very important.
 
 #### AVIF support
 
-Now in [the PRO version](https://url.mattplugins.com/converter-readme-avif-support-upgrade) you can use AVIF as the output format for your images. The AVIF format is a new extension - is the successor to WebP. **AVIF allows you to achieve even higher levels of image compression**, and the quality of the converted images after image optimization is better than in WebP.
+Now in [the PRO version](https://url.mattplugins.com/converter-readme-avif-support-upgrade) you can use AVIF as the output format for your images. The AVIF format is a new extension — is the successor to WebP. **Images converted to the AVIF format weigh about 50% less than images converted only to the WebP format**, while maintaining better image quality.
+
+Enjoy peace of mind knowing that AVIF is supported by over 90% of browsers. And if any visitor has an older browser, our plugin will automatically fall back to WebP — so every user gets fast, high-quality images without a hitch.
+
+Unlock the magic of AVIF in our PRO version — [upgrade today](https://url.mattplugins.com/converter-readme-avif-support-upgrade-2) for unparalleled image performance.
 
 #### How does this work?
 
@@ -43,15 +47,15 @@ A guide on how to test whether the plugin is working properly can be found [here
 
 Optimize images and raise your website to a new level now! Install the plugin and enjoy the website that loads faster by image optimization. Surely you and your users will appreciate it.
 
+Converting images to WebP and AVIF simultaneously guarantees the lowest weight of your images and compatibility with all browsers. By using [the AVIF format](https://url.mattplugins.com/converter-readme-both-formats-upgrade) you will reduce the weight of your images even more compared to WebP.
+
 #### Support for additional directories
 
 You can convert WebP and AVIF, and optimize images not only from `/uploads` directory but also from `/plugins` and `/themes` directories. This allows full integration with WebP and AVIF formats!
 
-#### Support to the development of plugin
+#### Development of the plugin
 
-We spend hours working on the development of this plugin. Technical support also requires a lot of time, but we do it because we want to offer you the best plugin. We enjoy every new plugin installation.
-
-If you would like to appreciate it, you can try [the PRO version](https://url.mattplugins.com/converter-readme-development-support-upgrade). In addition, you will gain access to extra functionalities that will allow you to achieve **even better image optimization results**.
+If you love our plugin, [leave a ★★★★★ review on WordPress.org](https://url.mattplugins.com/converter-readme-development-support-review) — it really makes our day and helps others discover it!
 
 #### Please also read the FAQ below. Thank you for being with us!
 
@@ -71,7 +75,7 @@ That's all! Your website is already loading faster!
 
 You can report security bugs through the Patchstack Vulnerability Disclosure Program. The Patchstack team help validate, triage and handle any security vulnerabilities.
 
-[Report a security vulnerability.](https://patchstack.com/database/vdp/webp-converter-for-media)
+[Report a security vulnerability](https://patchstack.com/database/vdp/webp-converter-for-media)
 
 = How to get technical support? (before you ask for help) =
 
