@@ -313,7 +313,12 @@ class Metrics {
 					break;
 				}
 			}
-			if ( strtoupper( $disk_hit ) !== 'HIT' ) {
+
+			if ( is_array( $disk_hit ) ) {
+				$disk_hit = reset( $disk_hit );
+			}
+
+			if ( ! is_string( $disk_hit ) || strtoupper( $disk_hit ) !== 'HIT' ) {
 				return null;
 			}
 		}

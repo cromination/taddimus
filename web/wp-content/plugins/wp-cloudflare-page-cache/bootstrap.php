@@ -4,7 +4,7 @@
  */
 
 use SPC\Constants;
-use SPC\Models\Assets_Manager;
+use SPC\Models\Asset_Rules;
 use SPC\Modules\Third_Party;
 use SPC\Services\Settings_Store;
 
@@ -21,7 +21,7 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 	define( 'SWCFPC_AUTH_MODE_API_TOKEN', 1 );
 	define( 'SWCFPC_LOGS_STANDARD_VERBOSITY', 1 );
 	define( 'SWCFPC_LOGS_HIGH_VERBOSITY', 2 );
-	define( 'SWCFPC_VERSION', '5.1.1' );
+	define( 'SWCFPC_VERSION', '5.1.5' );
 	if ( ! defined( 'SPC_METRICS_DIR' ) ) {
 		$home_url_parts = parse_url( home_url() );
 		define( 'SPC_METRICS_DIR', WP_CONTENT_DIR . "/wp-cloudflare-super-page-cache/{$home_url_parts['host']}/metrics" );
@@ -460,7 +460,7 @@ if ( ! class_exists( 'SW_CLOUDFLARE_PAGECACHE' ) ) {
 
 			if ( ! $keep_settings ) {
 				Settings_Store::get_instance()->reset();
-				Assets_Manager::remove_database_table();
+				Asset_Rules::remove_database_table();
 			}
 
 			$this->delete_plugin_wp_content_directory();

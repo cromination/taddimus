@@ -30,8 +30,10 @@ class Hestia_Metabox_Radio_Image extends Hestia_Metabox_Control_Base {
 		$choices          = $this->settings['choices'];
 		$selected         = $this->get_value( $post_id );
 		$control_content .= '<div id="control-' . esc_attr( $this->id ) . '">';
+		$show_notice      = isset( $this->settings['show_notice'] ) ? 'show' === $this->settings['show_notice'] : false;
+		$content_opaticy  = $show_notice ? 'opacity: .4; pointer-events: none' : '';
 
-		$control_content .= '<div class="buttonset">';
+		$control_content .= '<div class="buttonset"' . '" style="' . esc_attr( $content_opaticy ) . '">';
 		foreach ( $choices as $choice => $choice_setting ) {
 			if ( empty( $choice_setting['url'] ) ) {
 				continue;

@@ -64,6 +64,7 @@ class Hestia_Compatibility_Style {
 		$this->load_sib();
 		$this->load_top_bar_social_menu();
 		$this->load_footer_social_menu();
+		$this->load_primary_menu_social_menu();
 	}
 
 	/**
@@ -922,7 +923,7 @@ class Hestia_Compatibility_Style {
 		if ( empty( $menu ) ) {
 			return false;
 		}
-		$social_networks = array( 'facebook', 'twitter', 'pinterest', 'google', 'linkedin', 'dribbble', 'github', 'youtube', 'instagram', 'reddit', 'tumblr', 'behance', 'snapchat', 'deviantart', 'vimeo' );
+		$social_networks = array( 'facebook', 'twitter', 'pinterest', 'google', 'linkedin', 'dribbble', 'github', 'youtube', 'instagram', 'reddit', 'tumblr', 'behance', 'snapchat', 'deviantart', 'vimeo', 'x' );
 		$regex           = '(' . implode( '|', $social_networks ) . ')';
 
 		foreach ( $menu as $menu_item ) {
@@ -951,7 +952,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="facebook.com"]:before {
-				  content: "";
+				  content: "\f39e";
 				}
 				.hestia-top-bar li a[href*="facebook.com"]:hover:before {
 				  color: #3b5998;
@@ -961,7 +962,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="twitter.com"]:before {
-				  content: "";
+				  content: "\f099";
 				}
 				.hestia-top-bar li a[href*="twitter.com"]:hover:before {
 				  color: #000;
@@ -971,7 +972,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="pinterest.com"]:before {
-				  content: "";
+				  content: "\f231";
 				}
 				.hestia-top-bar li a[href*="pinterest.com"]:hover:before {
 				  color: #cc2127;
@@ -981,7 +982,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="google.com"]:before {
-				  content: "";
+				  content: "\f1a0";
 				}
 				.hestia-top-bar li a[href*="google.com"]:hover:before {
 				  color: #dd4b39;
@@ -991,7 +992,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="linkedin.com"]:before {
-				  content: "";
+				  content: "\f0e1";
 				}
 				.hestia-top-bar li a[href*="linkedin.com"]:hover:before {
 				  color: #0976b4;
@@ -1001,7 +1002,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="dribbble.com"]:before {
-				  content: "";
+				  content: "\f17d";
 				}
 				.hestia-top-bar li a[href*="dribbble.com"]:hover:before {
 				  color: #ea4c89;
@@ -1011,7 +1012,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="github.com"]:before {
-				  content: "";
+				  content: "\f09b";
 				}
 				.hestia-top-bar li a[href*="github.com"]:hover:before {
 				  color: #000;
@@ -1021,7 +1022,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="youtube.com"]:before {
-				  content: "";
+				  content: "\f167";
 				}
 				.hestia-top-bar li a[href*="youtube.com"]:hover:before {
 				  color: #e52d27;
@@ -1031,7 +1032,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="instagram.com"]:before {
-				  content: "";
+				  content: "\f16d";
 				}
 				.hestia-top-bar li a[href*="instagram.com"]:hover:before {
 				  color: #125688;
@@ -1041,7 +1042,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="reddit.com"]:before {
-				  content: "";
+				  content: "\f281";
 				}
 				.hestia-top-bar li a[href*="reddit.com"]:hover:before {
 				  color: #ff4500;
@@ -1051,7 +1052,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="tumblr.com"]:before {
-				  content: "";
+				  content: "\f173";
 				}
 				.hestia-top-bar li a[href*="tumblr.com"]:hover:before {
 				  color: #35465c;
@@ -1061,7 +1062,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="behance.com"]:before {
-				  content: "";
+				  content: "\f1b4";
 				}
 				.hestia-top-bar li a[href*="behance.com"]:hover:before {
 				  color: #1769ff;
@@ -1071,7 +1072,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="snapchat.com"]:before {
-				  content: "";
+				  content: "\f2ab";
 				}
 				.hestia-top-bar li a[href*="snapchat.com"]:hover:before {
 				  color: #fffc00;
@@ -1081,7 +1082,7 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="deviantart.com"]:before {
-				  content: "";
+				  content: "\f1bd";
 				}
 				.hestia-top-bar li a[href*="deviantart.com"]:hover:before {
 				  color: #05cc47;
@@ -1091,10 +1092,29 @@ class Hestia_Compatibility_Style {
 				  font-size: 0;
 				}
 				.hestia-top-bar li a[href*="vimeo.com"]:before {
-				  content: "";
+				  content: "\f27d";
 				}
 				.hestia-top-bar li a[href*="vimeo.com"]:hover:before {
 				  color: #1ab7ea;
+				}
+
+				.hestia-top-bar li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				) {
+				  font-size: 0;
+				}
+				.hestia-top-bar li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):before {
+				  content: "\e61b";
+				}
+				.hestia-top-bar li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):hover:before {
+				  color: #000;
 				}
 			';
 
@@ -1119,6 +1139,10 @@ class Hestia_Compatibility_Style {
 			$css = '
 				.footer-big .footer-menu li a[href*="facebook.com"],
 				.footer-big .footer-menu li a[href*="twitter.com"],
+				.footer-big .footer-menu li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				),
 				.footer-big .footer-menu li a[href*="pinterest.com"],
 				.footer-big .footer-menu li a[href*="google.com"],
 				.footer-big .footer-menu li a[href*="linkedin.com"],
@@ -1151,7 +1175,11 @@ class Hestia_Compatibility_Style {
 				.footer-big .footer-menu li a[href*="behance.com"]:hover,
 				.footer-big .footer-menu li a[href*="snapchat.com"]:hover,
 				.footer-big .footer-menu li a[href*="deviantart.com"]:hover,
-				.footer-big .footer-menu li a[href*="vimeo.com"]:hover {
+				.footer-big .footer-menu li a[href*="vimeo.com"]:hover,
+				.footer-big .footer-menu li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):hover {
 				  opacity: 1 !important;
 				}
 				
@@ -1200,7 +1228,12 @@ class Hestia_Compatibility_Style {
 				.footer-big .footer-menu li a[href*="vimeo.com"]:hover:before {
 				    color: #1ab7ea;
 				}
-				
+				.footer-big .footer-menu li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):hover:before {
+					color: #000;
+				}
 				
 				.footer-big .footer-menu li a[href*="facebook.com"]:before,
 				.footer-big .footer-menu li a[href*="twitter.com"]:before,
@@ -1216,7 +1249,11 @@ class Hestia_Compatibility_Style {
 				.footer-big .footer-menu li a[href*="behance.com"]:before,
 				.footer-big .footer-menu li a[href*="snapchat.com"]:before,
 				.footer-big .footer-menu li a[href*="deviantart.com"]:before,
-				.footer-big .footer-menu li a[href*="vimeo.com"]:before {
+				.footer-big .footer-menu li a[href*="vimeo.com"]:before,
+				.footer-big .footer-menu li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):before {
 				    font-family: "Font Awesome 5 Brands";
 				    font-weight: 900;
 				    color: #3c4858;
@@ -1237,69 +1274,80 @@ class Hestia_Compatibility_Style {
 				.footer-black .footer-menu li a[href*="behance.com"]:before,
 				.footer-black .footer-menu li a[href*="snapchat.com"]:before,
 				.footer-black .footer-menu li a[href*="deviantart.com"]:before,
-				.footer-black .footer-menu li a[href*="vimeo.com"]:before {
+				.footer-black .footer-menu li a[href*="vimeo.com"]:before,
+				.footer-big .footer-menu li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):before {
 				  color: #fff;
 				}
 				
 				.footer-big .footer-menu li a[href*="facebook.com"]:before {
-				    content: "";
+				    content: "\f39e";
 				}
 				
 				.footer-big .footer-menu li a[href*="twitter.com"]:before {
-				    content: "";
+				    content: "\f099";
 				}
 				
 				
 				.footer-big .footer-menu li a[href*="pinterest.com"]:before {
-				  content: "";
+				  content: "\f231";
 				}
 				
 				.footer-big .footer-menu li a[href*="google.com"]:before {
-				  content: "";
+				  content: "\f1a0";
 				}
 				
 				.footer-big .footer-menu li a[href*="linkedin.com"]:before {
-				  content: "";
+				  content: "\f0e1";
 				}
 				
 				.footer-big .footer-menu li a[href*="dribbble.com"]:before {
-				  content: "";
+				  content: "\f17d";
 				}
 				
 				.footer-big .footer-menu li a[href*="github.com"]:before {
-				  content: "";
+				  content: "\f09b";
 				}
 				
 				.footer-big .footer-menu li a[href*="youtube.com"]:before {
-				  content: "";
+				  content: "\f167";
 				}
 				
 				.footer-big .footer-menu li a[href*="instagram.com"]:before {
-				  content: "";
+				  content: "\f16d";
 				}
 				
 				.footer-big .footer-menu li a[href*="reddit.com"]:before {
-				  content: "";
+				  content: "\f281";
 				}
 				
 				.footer-big .footer-menu li a[href*="tumblr.com"]:before {
-				  content: "";
+				  content: "\f173";
 				}
 				
 				.footer-big .footer-menu li a[href*="behance.com"]:before {
-				  content: "";
+				  content: "\f1b4";
 				}
 				
 				.footer-big .footer-menu li a[href*="snapchat.com"]:before {
-				  content: "";
+				  content: "\f2ab";
 				}
 				
 				.footer-big .footer-menu li a[href*="deviantart.com"]:before {
-				  content: "";
+				  content: "\f1bd";
 				}
 				
 				.footer-big .footer-menu li a[href*="vimeo.com"]:before {
-				  content: "";
+				  content: "\f27d";
+				}
+
+				.footer-big .footer-menu li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):before {
+				  content: "\e61b";
 				}
 			';
 
@@ -1310,4 +1358,191 @@ class Hestia_Compatibility_Style {
 		return false;
 	}
 
+	/**
+	 * Check if primary menu is using social icons and load font awesome.
+	 * Add social icons styling.
+	 *
+	 * @return bool
+	 */
+	private function load_primary_menu_social_menu() {
+		$should_load = $this->maybe_should_load_menu_social_fa( 'primary' );
+
+		if ( $should_load ) {
+			$css = '
+				.navbar .navbar-nav li a[href*="facebook.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="facebook.com"]:before {
+				  content: "\f39e";
+				}
+				.navbar .navbar-nav li a[href*="facebook.com"]:hover:before {
+				  color: #3b5998;
+				}
+				
+				.navbar .navbar-nav li a[href*="twitter.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="twitter.com"]:before {
+				  content: "\f099";
+				}
+				.navbar .navbar-nav li a[href*="twitter.com"]:hover:before {
+				  color: #000;
+				}
+				
+				.navbar .navbar-nav li a[href*="pinterest.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="pinterest.com"]:before {
+				  content: "\f231";
+				}
+				.navbar .navbar-nav li a[href*="pinterest.com"]:hover:before {
+				  color: #cc2127;
+				}
+				
+				.navbar .navbar-nav li a[href*="google.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="google.com"]:before {
+				  content: "\f1a0";
+				}
+				.navbar .navbar-nav li a[href*="google.com"]:hover:before {
+				  color: #dd4b39;
+				}
+				
+				.navbar .navbar-nav li a[href*="linkedin.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="linkedin.com"]:before {
+				  content: "\f0e1";
+				}
+				.navbar .navbar-nav li a[href*="linkedin.com"]:hover:before {
+				  color: #0976b4;
+				}
+				
+				.navbar .navbar-nav li a[href*="dribbble.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="dribbble.com"]:before {
+				  content: "\f17d";
+				}
+				.navbar .navbar-nav li a[href*="dribbble.com"]:hover:before {
+				  color: #ea4c89;
+				}
+				
+				.navbar .navbar-nav li a[href*="github.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="github.com"]:before {
+				  content: "\f09b";
+				}
+				.navbar .navbar-nav li a[href*="github.com"]:hover:before {
+				  color: #000;
+				}
+				
+				.navbar .navbar-nav li a[href*="youtube.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="youtube.com"]:before {
+				  content: "\f167";
+				}
+				.navbar .navbar-nav li a[href*="youtube.com"]:hover:before {
+				  color: #e52d27;
+				}
+				
+				.navbar .navbar-nav li a[href*="instagram.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="instagram.com"]:before {
+				  content: "\f16d";
+				}
+				.navbar .navbar-nav li a[href*="instagram.com"]:hover:before {
+				  color: #125688;
+				}
+				
+				.navbar .navbar-nav li a[href*="reddit.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="reddit.com"]:before {
+				  content: "\f281";
+				}
+				.navbar .navbar-nav li a[href*="reddit.com"]:hover:before {
+				  color: #ff4500;
+				}
+				
+				.navbar .navbar-nav li a[href*="tumblr.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="tumblr.com"]:before {
+				  content: "\f173";
+				}
+				.navbar .navbar-nav li a[href*="tumblr.com"]:hover:before {
+				  color: #35465c;
+				}
+				
+				.navbar .navbar-nav li a[href*="behance.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="behance.com"]:before {
+				  content: "\f1b4";
+				}
+				.navbar .navbar-nav li a[href*="behance.com"]:hover:before {
+				  color: #1769ff;
+				}
+				
+				.navbar .navbar-nav li a[href*="snapchat.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="snapchat.com"]:before {
+				  content: "\f2ab";
+				}
+				.navbar .navbar-nav li a[href*="snapchat.com"]:hover:before {
+				  color: #fffc00;
+				}
+				
+				.navbar .navbar-nav li a[href*="deviantart.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="deviantart.com"]:before {
+				  content: "\f1bd";
+				}
+				.navbar .navbar-nav li a[href*="deviantart.com"]:hover:before {
+				  color: #05cc47;
+				}
+				
+				.navbar .navbar-nav li a[href*="vimeo.com"] {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a[href*="vimeo.com"]:before {
+				  content: "\f27d";
+				}
+				.navbar .navbar-nav li a[href*="vimeo.com"]:hover:before {
+				  color: #1ab7ea;
+				}
+
+				.navbar .navbar-nav li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				) {
+				  font-size: 0;
+				}
+				.navbar .navbar-nav li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):before {
+				  content: "\e61b";
+				}
+				.navbar .navbar-nav li a:is(
+					[href*="://x.com"],
+					[href*="://www.x.com"]
+				):hover:before {
+				  color: #000;
+				}
+			';
+
+			$this->add_css( $css );
+			return true;
+		}
+
+		return false;
+	}
 }

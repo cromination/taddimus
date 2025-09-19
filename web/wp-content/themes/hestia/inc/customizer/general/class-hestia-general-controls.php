@@ -28,7 +28,6 @@ class Hestia_General_Controls extends Hestia_Register_Customizer_Controls {
 		$this->add_general_settings_section();
 		$this->add_page_sidebar_layout();
 		$this->add_blog_sidebar_layout();
-		$this->add_sharing_icons_toggle();
 		$this->add_scrolltop_toggle();
 		$this->add_boxed_layout_toggle();
 		$this->add_shop_sidebar_layout_controls();
@@ -92,27 +91,6 @@ class Hestia_General_Controls extends Hestia_Register_Customizer_Controls {
 					'choices'  => $this->get_layout_choices(),
 				),
 				'Hestia_Customize_Control_Radio_Image'
-			)
-		);
-	}
-
-	/**
-	 * Sharing icons control.
-	 */
-	private function add_sharing_icons_toggle() {
-		$this->add_control(
-			new Hestia_Customizer_Control(
-				'hestia_enable_sharing_icons',
-				array(
-					'default'           => true,
-					'sanitize_callback' => 'hestia_sanitize_checkbox',
-				),
-				array(
-					'label'    => esc_html__( 'Enable Sharing Icons', 'hestia' ),
-					'section'  => 'hestia_general',
-					'priority' => 30,
-					'type'     => 'checkbox',
-				)
 			)
 		);
 	}

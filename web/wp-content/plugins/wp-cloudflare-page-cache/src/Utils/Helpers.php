@@ -139,4 +139,23 @@ class Helpers {
 		srand();
 		return $random_id;
 	}
+
+	/**
+	 * Get the wp-config.php path.
+	 *
+	 * wp-config.php can be placed one level up from the root directory.
+	 *
+	 * @return string
+	 */
+	public static function get_wp_config_path() {
+		if ( is_file( ABSPATH . 'wp-config.php' ) ) {
+			return ABSPATH . 'wp-config.php';
+		}
+
+		if ( is_file( dirname( ABSPATH ) . '/wp-config.php' ) ) {
+			return dirname( ABSPATH ) . '/wp-config.php';
+		}
+
+		return ABSPATH . 'wp-config.php';
+	}
 }

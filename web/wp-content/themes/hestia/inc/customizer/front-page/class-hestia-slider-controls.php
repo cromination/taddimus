@@ -72,7 +72,7 @@ class Hestia_Slider_Controls extends Hestia_Big_Title_Controls {
 			esc_html__( 'big title section', 'hestia' ),
 			/* translators: %s is the Learn more label*/
 			sprintf(
-				'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'bigtitlesection' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
+				'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', 'bigtitlesection' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
 				__( 'Upgrade to Unlock', 'hestia' )
 			)
 		);

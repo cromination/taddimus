@@ -69,17 +69,17 @@ export function formatBytes(bytes: number) {
  * @returns The formatted number.
  * 
  * @example
- * formatNumberToReadableFormat(20) // 20
- * formatNumberToReadableFormat(100) // 100
- * formatNumberToReadableFormat(1000) // 1k
- * formatNumberToReadableFormat(1500) // 1.5k
- * formatNumberToReadableFormat(15000) // 15k
- * formatNumberToReadableFormat(150000) // 150k
- * formatNumberToReadableFormat(1500000) // 1.5M
- * formatNumberToReadableFormat(15000000) // 15M
- * formatNumberToReadableFormat(150000000) // 150M
+ * formatNumberToReadable(20) // 20
+ * formatNumberToReadable(100) // 100
+ * formatNumberToReadable(1000) // 1k
+ * formatNumberToReadable(1500) // 1.5k
+ * formatNumberToReadable(15000) // 15k
+ * formatNumberToReadable(150000) // 150k
+ * formatNumberToReadable(1500000) // 1.5M
+ * formatNumberToReadable(15000000) // 15M
+ * formatNumberToReadable(150000000) // 150M
  */
-export const formatNumberToReadableFormat = (number: number) => {
+export const formatNumberToReadable = (number: number) => {
   if (number >= 1000000) {
     return `${(number / 1000000).toFixed(2)}M`;
   }

@@ -350,10 +350,11 @@ class Hestia_Blog_Post_Layout {
 		if ( $this->is_full_content() ) {
 			return '';
 		}
+		$read_more_text    = get_theme_mod( 'hestia_blog_read_more', esc_html__( 'Read more', 'hestia' ) );
 		$read_more_button  = '';
 		$read_more_button .= '<div class="text-center">';
 		$read_more_button .= '<a href="' . esc_url( get_the_permalink() ) . '" class="btn colored-button">';
-		$read_more_button .= apply_filters( 'hestia_blog_posts_button_text', esc_html__( 'Read more', 'hestia' ) );
+		$read_more_button .= apply_filters( 'hestia_blog_posts_button_text', $read_more_text );
 		$read_more_button .= '</a>';
 		$read_more_button .= '</div>';
 

@@ -124,6 +124,13 @@ class Hestia_Core {
 					'big-title-section',
 				)
 			);
+		} elseif ( ! hestia_is_license_valid() ) {
+			$this->features_to_load = array_merge(
+				$this->features_to_load,
+				array(
+					'view-hooks-with-upsell',
+				)
+			);
 		}
 	}
 
@@ -170,12 +177,16 @@ class Hestia_Core {
 		add_action( 'customize_controls_enqueue_scripts', array( $admin, 'enqueue_customizer_controls' ) );
 		add_filter( 'tiny_mce_before_init', array( $admin, 'editor_inline_style' ) );
 		add_action( 'init', array( $admin, 'load_site_import' ), 998 );
-		add_action( 'init', array( $admin, 'do_about_page' ), 999 );
+		add_action( 'init', array( $admin, 'prepare_ti_about_config' ), 999 );
+		add_action( 'init', array( $admin, 'should_show_welcome_notice' ), 999 );
 		add_filter( 'after_switch_theme', array( $admin, 'maybe_switched_from_zerif' ) );
 		add_filter( 'admin_init', array( $admin, 'add_zerif_frontpage_import' ) );
 		add_filter( 'admin_enqueue_scripts', array( $admin, 'hestia_options_init' ) );
 		add_action( 'themeisle_ob_after_customizer_import', array( $admin, 'dismiss_welcome_notice' ) );
 		add_filter( 'hestia_welcome_metadata', array( $admin, 'get_welcome_metadata' ) );
+		add_action( 'admin_menu', array( $admin, 'register_menu_pages' ) );
+		add_action( 'init', array( $admin, 'register_about_page' ), 1 );
+		add_action( 'themeisle_ob_after_single_plugin_activation', array( $admin, 'hestia_after_plugin_activation' ) );
 
 		$front_end = new Hestia_Public();
 		add_filter( 'frontpage_template', array( $front_end, 'filter_front_page_template' ) );

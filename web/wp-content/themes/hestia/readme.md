@@ -3,7 +3,7 @@
 **Tags:** blog, custom-logo, portfolio, e-commerce, rtl-language-support, post-formats, grid-layout, one-column, two-columns, custom-background, custom-colors, custom-header, custom-menu, featured-image-header, featured-images, flexible-header, full-width-template, sticky-post, theme-options, threaded-comments, translation-ready, editor-style, footer-widgets, left-sidebar, right-sidebar, wide-blocks  
 **Requires at least:** 4.0  
 **Tested up to:** 5.8.2  
-**Stable tag:** 3.2.11  
+**Stable tag:** 3.3.3  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -17,6 +17,60 @@ Hestia WordPress theme, Copyright 2018 Themeisle.
 Hestia is distributed under the terms of the GNU GPLv2 or later
 
 ## Changelog ##
+
+##### [Version 3.3.3](https://github.com/Codeinwp/hestia-pro/compare/v3.3.2...v3.3.3) (2025-09-04)
+
+- Updated dependencies
+
+
+
+
+##### [Version 3.3.2](https://github.com/Codeinwp/hestia-pro/compare/v3.3.1...v3.3.2) (2025-08-11)
+
+- Fixed issue with domains ending with x.com being converted to X icon
+
+
+
+
+##### [Version 3.3.1](https://github.com/Codeinwp/hestia-pro/compare/v3.3.0...v3.3.1) (2025-07-24)
+
+- Fixed the fourth Shop Sidebar option not working
+- Updated dependencies
+
+
+
+
+#### [Version 3.3.0](https://github.com/Codeinwp/hestia-pro/compare/v3.2.11...v3.3.0) (2025-07-21)
+
+### New Features
+
+- New option to update the post meta on the Blog and Single post pages [PRO]
+- New WooCommerce options to reorder/hide single product page elements [PRO]
+- New WooCommerce options to show/hide Breadcrumbs and Product Tabs on single product page [PRO]
+- New dedicated color controls in the Footer area [PRO]
+- New Scroll to Top advanced options [PRO]
+- Added Social icons support to the Primary and Footer menus
+- New option to change the Read more text on the Blog page
+- New option to Show/Hide categories and tags on the Single post page
+- New option to Show/Hide Related Posts on the Single post page
+- Moved all Hestia options under one WP dashboard menu item
+- Moved License field to Hestia PRO Options page [PRO]
+- Better organized crowded Customizer options
+- Brought in all header options in one panel for better visibility
+- Refactored colors control in Customizer
+
+### Fixes
+
+- Better organized WooCommerce options [PRO]
+- Added scroll to top button title for accessibility
+- Fixed the double arrow in the menu when the Font Awesome plugin is enabled
+- Fixed issue with clicking to install Jetpack or WooCommerce from Frontpage sections breaking the Customizer
+- Fixed the recommended plugins notice position in Customizer
+- Fixed issue with migrating the Big Title Section to the PRO version
+- Fixed issue with the Fitness Starter Site requiring wrong plugin
+
+
+
 
 ##### [Version 3.2.11](https://github.com/Codeinwp/hestia-pro/compare/v3.2.10...v3.2.11) (2025-06-23)
 

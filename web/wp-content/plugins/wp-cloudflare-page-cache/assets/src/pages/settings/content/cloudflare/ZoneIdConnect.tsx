@@ -25,7 +25,7 @@ const ZoneIdConnect = () => {
 
   const options = [
     {
-      label: __('Select a zone', 'wp-cloudflare-page-cache'),
+      label: __('Select a domain', 'wp-cloudflare-page-cache'),
       value: ''
     },
     ...Object.entries(settings.cf_zoneid_list).map(([domain, zoneId]) => ({ label: domain, value: zoneId }))];
@@ -137,7 +137,7 @@ const ZoneIdConnect = () => {
       {(!cloudflareConnected || isEditingZoneId) && (
         <form className="mt-6" onSubmit={handleSubmit}>
           <label htmlFor="auth-mode" className="block text-sm font-medium text-foreground/80 mb-2">
-            {__('Select Zone', 'wp-cloudflare-page-cache')}
+            {__('Select Domain', 'wp-cloudflare-page-cache')}
           </label>
           <Select
             id="zone-id"
@@ -166,7 +166,7 @@ const ZoneIdConnect = () => {
 
               {loading ?
                 __('Saving', 'wp-cloudflare-page-cache') + '...' :
-                __('Save Zone', 'wp-cloudflare-page-cache')
+                __('Save Domain', 'wp-cloudflare-page-cache')
               }
             </Button>
             {isEditingZoneId && (
@@ -187,7 +187,7 @@ const ZoneIdConnect = () => {
       {(cloudflareConnected && !isEditingZoneId) && (
         <div className="mt-6">
           <p className="block text-sm font-medium text-foreground/80 mb-2">
-            {__('Active Zone', 'wp-cloudflare-page-cache')}
+            {__('Active domain', 'wp-cloudflare-page-cache')}
           </p>
 
           <div className="flex items-center justify-between p-3 bg-muted border border-muted-foreground/20 rounded-md">
@@ -201,7 +201,7 @@ const ZoneIdConnect = () => {
               className="p-0 h-auto text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 font-medium"
             >
               <PenLine className="size-3 mr-1" />
-              {__('Change Zone', 'wp-cloudflare-page-cache')}
+              {__('Change Domain', 'wp-cloudflare-page-cache')}
             </Button>
           </div>
 

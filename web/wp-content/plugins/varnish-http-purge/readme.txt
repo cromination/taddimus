@@ -2,8 +2,8 @@
 Contributors: Ipstenu, mikeschroder, techpriester, danielbachhuber, dvershinin
 Tags: proxy, purge, cache, varnish, nginx
 Requires at least: 5.0
-Tested up to: 6.8
-Stable tag: 5.2.2
+Tested up to: 6.7
+Stable tag: 5.3.0
 Requires PHP: 5.6
 
 Automatically empty proxy cached content when your site is modified.
@@ -135,6 +135,38 @@ You can change this value in your settings, or via the define VHP_VARNISH_MAXPOS
 
 Keep in mind, the count of 50 <em>does not</em> include category/tags, API, or RSS pages. It's just the sheer number of individual posts/pages you're trying to purge at once.
 
+= Can I prevent purges for drafts or other post statuses? =
+
+Yes. If your environment doesn't cache logged-in users and you want to avoid purge noise from autosaves/drafts, you can exclude specific statuses network‑wide via `wp-config.php` (multisite‑friendly).
+
+Add a define to exclude drafts:
+
+<code>
+define( 'VHP_EXCLUDED_POST_STATUSES', 'draft' );
+</code>
+
+Exclude multiple statuses (comma‑separated):
+
+<code>
+define( 'VHP_EXCLUDED_POST_STATUSES', 'draft,pending' );
+</code>
+
+Or pass an array:
+
+<code>
+define( 'VHP_EXCLUDED_POST_STATUSES', array( 'draft', 'pending' ) );
+</code>
+
+Developers can also use a filter to adjust the valid statuses programmatically:
+
+<code>
+add_filter( 'varnish_http_purge_valid_post_statuses', function( $statuses, $post_id ) {
+    return array_diff( $statuses, array( 'draft' ) );
+}, 10, 2 );
+</code>
+
+By default, the plugin considers these statuses for purge URL generation: `publish`, `private`, `trash`, `pending`, `draft`.
+
 = Can I delete the entire cache? =
 
 Yes. Click the 'Empty Cache' button on the "Right Now" Dashboard (see the screenshot if you can't find it). There's also an "Empty Cache" button on the admin toolbar.
@@ -242,6 +274,40 @@ This is a question beyond the support of plugin. I do not have the resources ava
 * When flushing the whole cache, the plugin sends a PURGE command of <code>/.*</code> and sets the `X-Purge-Method` header to `regex`
 * Nginx expects the IP address to be 'localhost'
 
+= How do I pass a Varnish control key or auth header? =
+
+Some providers require a control key, token, or Authorization header to accept PURGE requests. The plugin doesn’t have a dedicated constant for this, but you can inject any required header via a filter.
+
+1. Set where PURGE requests should be sent (host:port, no scheme):
+
+<code>
+define( 'VHP_VARNISH_IP', 'varnish.example.com:6081' );
+</code>
+
+2. Add your control key/auth header via a small MU plugin so it loads on every request. Create <code>wp-content/mu-plugins/varnish-purge-auth.php</code> with:
+
+<code>
+<?php
+add_filter( 'varnish_http_purge_headers', function( $headers ) {
+    // Example: provider expects a custom key header
+    $headers['X-Control-Key'] = 'YOUR_CONTROL_KEY_HERE';
+
+    // Or use Authorization headers:
+    // $headers['Authorization'] = 'Basic ' . base64_encode( 'username:password' );
+    // $headers['Authorization'] = 'Bearer ' . 'YOUR_TOKEN_HERE';
+
+    return $headers;
+} );
+</code>
+
+If your provider requires HTTPS for the purge endpoint, force the schema:
+
+<code>
+add_filter( 'varnish_http_purge_schema', function() { return 'https://'; } );
+</code>
+
+Important: This plugin sends HTTP PURGE requests to your cache service. It does not use the Varnish management interface (varnishadm/secret on port 6082).
+
 = How can I see what the plugin is sending to the cache service? =
 
 Yes _IF_ the service has an interface. Sadly Nginx does not. [Detailed directions can be found on the debugging section on GitHub](https://github.com/dvershinin/varnish-http-purge/wiki). Bear in mind, these interfaces tend to be command-line only.
@@ -263,9 +329,17 @@ add_filter( 'varnish_http_purge_x_varnish_header_name', 'change_varnish_header' 
 
 == Changelog ==
 
-= 5.2.2 =
-* August 2024
-* Fix undefined variable $rest_api_route
+= 5.3.0 =
+* September 2025
+* New: `VHP_EXCLUDED_POST_STATUSES` define to exclude statuses (e.g. drafts) from purge triggers.
+* New: `varnish_http_purge_valid_post_statuses` filter to customize statuses programmatically.
+* Fix: REST URL generation for tags and custom taxonomies; respect `rest_base` and use term IDs.
+* Fix: Avoid booleans in generated URL lists for REST entries.
+* Fix: Correct WP version check (pre-4.7 only) for deactivation logic.
+* Fix: Correct per-host IP loop in purge header filtering.
+* Fix: Properly strip query strings when deduplicating purge URLs.
+* Fix: Debugger `wp_remote_get` args and header checks (Via header scalar/array).
+* Minor: Typo fix in Devmode settings message.
 
 = 5.2.1 =
 * January 2024

@@ -15,7 +15,7 @@
  * Plugin Name:       Orbit Fox Companion
  * Plugin URI:        https://orbitfox.com/
  * Description:       This swiss-knife plugin comes with a quality template library, menu/sharing icons modules, Gutenberg blocks, and newly added Elementor/BeaverBuilder page builder widgets on each release.
- * Version:           2.10.47
+ * Version:           3.0.1
  * Author:            Themeisle
  * Author URI:        https://orbitfox.com/
  * License:           GPL-2.0+
@@ -66,12 +66,14 @@ function run_orbit_fox() {
 	define( 'OBX_PATH', dirname( __FILE__ ) );
 	define( 'OBX_PRODUCT_SLUG', basename( OBX_PATH ) );
 
-	$plugin = new Orbit_Fox();
-	$plugin->run();
+	// Load Composer autoloader before plugin initialization
 	$vendor_file = OBX_PATH . '/vendor/autoload.php';
 	if ( is_readable( $vendor_file ) ) {
 		require_once $vendor_file;
 	}
+
+	$plugin = new Orbit_Fox();
+	$plugin->run();
 	add_filter(
 		'themeisle_sdk_products',
 		function ( $products ) {

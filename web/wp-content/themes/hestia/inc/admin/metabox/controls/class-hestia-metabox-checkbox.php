@@ -44,7 +44,7 @@ class Hestia_Metabox_Checkbox extends Hestia_Metabox_Control_Base {
 		$markup .= '/>';
 		$markup .= esc_html( $this->settings['input_label'] ) . '</label>';
 		if ( $show_notice && ! empty( $this->settings['upsell_data'] ) ) {
-			$upsell_link = tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', $this->settings['upsell_data']['utm_tag'] ), 'query' );
+			$upsell_link = tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', $this->settings['upsell_data']['utm_tag'] ), 'query' );
 				$markup .= '<p class="notice notice-info" style="margin: 5px 0;">'
 				. sprintf(
 					// translators: %1$s: field name, %2$s: a link with label 'Hestia PRO'.

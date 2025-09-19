@@ -25,6 +25,13 @@ class Hestia_Admin {
 	public $theme_slug = '';
 
 	/**
+	 * About page config.
+	 *
+	 * @var array $config About us page config.
+	 */
+	private $config = array();
+
+	/**
 	 * Register the stylesheets for the admin area.
 	 *
 	 * @since    1.0.0
@@ -33,17 +40,39 @@ class Hestia_Admin {
 	}
 
 	/**
-	 * Add the about page.
+	 * Register about us page.
 	 */
-	public function do_about_page() {
+	public function register_about_page() {
 		$theme_args       = wp_get_theme();
 		$this->theme_name = apply_filters( 'ti_wl_theme_name', $theme_args->__get( 'Name' ) );
-		$this->theme_slug = $theme_args->__get( 'stylesheet' );
+		$this->theme_slug = null !== $theme_args->__get( 'Template' ) ? $theme_args->__get( 'Template' ) : $theme_args->__get( 'stylesheet' );
 
+		if ( class_exists( 'Ti_White_Label_Markup' ) && Ti_White_Label_Markup::is_theme_whitelabeld() ) {
+			return;
+		}
+
+		add_filter(
+			str_replace( '-', '_', $this->theme_slug ) . '_about_us_metadata',
+			function () {
+				return array(
+					'location'         => $this->theme_slug . '-welcome',
+					'logo'             => get_template_directory_uri() . '/assets/img/logo.svg',
+					'has_upgrade_menu' => ! defined( 'HESTIA_PRO_FLAG' ) || ! hestia_is_license_valid(),
+					'upgrade_link'     => tsdk_translate_link( tsdk_utmify( esc_url( 'https://themeisle.com/themes/hestia/upgrade/' ), 'aboutfilter', 'hastiadashboard' ), 'query' ),
+					'upgrade_text'     => __( 'Upgrade Now', 'hestia' ),
+				);
+			}
+		);
+	}
+
+	/**
+	 * Add the about page.
+	 */
+	public function prepare_ti_about_config() {
 		/*
 		 * About page instance
 		 */
-		$config = array(
+		$this->config = array(
 			'footer_messages'     => array(
 				'type'     => 'custom',
 				'messages' => array(
@@ -54,6 +83,7 @@ class Hestia_Admin {
 						'text'      => sprintf( __( 'Join the community of %s users. Get connected, share opinions, ask questions and help each other!', 'hestia' ), $this->theme_name ),
 						'link_text' => __( 'Join our Facebook Group', 'hestia' ),
 						'link'      => apply_filters( 'ti_wl_agency_url', 'https://www.facebook.com/groups/2024469201114053/' ),
+						'blank'     => true,
 					),
 					array(
 						'heading'   => __( 'Leave us a review', 'hestia' ),
@@ -61,6 +91,7 @@ class Hestia_Admin {
 						'text'      => sprintf( __( 'Are you are enjoying %s? We would love to hear your feedback.', 'hestia' ), $this->theme_name ),
 						'link_text' => __( 'Submit a review', 'hestia' ),
 						'link'      => apply_filters( 'ti_wl_agency_url', 'https://wordpress.org/support/theme/hestia/reviews/#new-post' ),
+						'blank'     => true,
 					),
 					array(
 						'heading'   => __( 'Contact Support', 'hestia' ),
@@ -68,6 +99,7 @@ class Hestia_Admin {
 						'text'      => esc_html__( 'We want to make sure you have the best experience using Hestia, and that is why we have gathered all the necessary information here for you. We hope you will enjoy using Hestia as much as we enjoy creating great products.', 'hestia' ),
 						'link_text' => __( 'Contact Support', 'hestia' ),
 						'link'      => apply_filters( 'hestia_contact_support_link', 'https://wordpress.org/support/theme/hestia/' ),
+						'blank'     => true,
 					),
 				),
 			),
@@ -196,28 +228,137 @@ class Hestia_Admin {
 				'type'  => 'changelog',
 				'title' => __( 'Changelog', 'hestia' ),
 			),
-			'custom_tabs'         => array(
+		);
+
+		$has_pro = defined( 'HESTIA_PRO_FLAG' );
+		if ( ! $has_pro ) {
+			$this->config['custom_tabs'] = array(
 				'free_pro' => array(
 					'title'           => __( 'Free vs PRO', 'hestia' ),
 					'render_callback' => array( $this, 'free_pro_render' ),
 				),
-			),
-		);
+			);
+		}
 
+		$this->config = apply_filters( 'ti_about_config_filter', $this->config );
+	}
+
+	/**
+	 * Check if we should show the Welcome notice in Theme page.
+	 *
+	 * @return void
+	 */
+	public function should_show_welcome_notice() {
 		$has_pro = defined( 'HESTIA_PRO_FLAG' );
+		if ( ! $has_pro && ! (bool) get_option( 'fresh_site', false ) ) {
+			return;
+		}
 
-		if ( $has_pro || (bool) get_option( 'fresh_site', false ) ) {
-			$config['welcome_notice'] = array(
+		Hestia_Welcome_Notice_Manager::instance()->set_notice_data(
+			array(
 				'type'            => 'custom',
 				'notice_class'    => 'ti-welcome-notice notice notice-info',
 				'dismiss_option'  => $has_pro ? 'hestia_pro_welcome_notice_dismissed' : 'hestia_notice_dismissed',
 				'render_callback' => array( $this, 'welcome_notice_content' ),
-			);
+			)
+		)->init();
+	}
+
+
+	/**
+	 * Register admin menu pages.
+	 */
+	public function register_menu_pages() {
+		$theme_page = $this->theme_slug . '-welcome';
+		$icon       = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEwOC44IDEwMi41Ij4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjZmZmOwogICAgICAgIHN0cm9rZS13aWR0aDogMHB4OwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0wLDB2MTAyLjVoMTA4LjhWMEgwWk04OC43LDMyLjloLTI0Ljd2MTMuN2gxNC41djkuNGgtMTQuOXYxNC4xaDI1LjF2MTAuMWgtMzUuNnYtMjQuNWgtMjEuNnYyMy43aC0xMS41VjIyLjNoMTEuNHYyNC4zaDIydi0yNC4zaDM1LjN2MTAuNloiLz4KPC9zdmc+';
+		$priority   = apply_filters( 'hestia_menu_priority', 59 );
+
+		if ( class_exists( 'Ti_White_Label_Markup' ) && Ti_White_Label_Markup::is_theme_whitelabeld() ) {
+			$icon = 'dashicons-admin-appearance';
 		}
 
-		if ( class_exists( 'TI_About_Page', false ) ) {
-			TI_About_Page::init( apply_filters( 'hestia_about_page_array', $config ) );
+		add_menu_page(
+			$this->theme_name,
+			$this->theme_name,
+			'manage_options',
+			$theme_page,
+			array( $this, 'render_welcome_page' ),
+			$icon,
+			$priority
+		);
+
+		add_submenu_page(
+			$theme_page,
+			// translators: %s - Theme name
+			sprintf( __( '%s Options', 'hestia' ), $this->theme_name ),
+			// translators: %s - Theme name
+			sprintf( __( '%s Options', 'hestia' ), $this->theme_name ),
+			'manage_options',
+			$theme_page,
+			array( $this, 'render_welcome_page' ),
+			0
+		);
+
+		$this->copy_customizer_page( $theme_page );
+	}
+
+	/**
+	 * Copy the customizer page to the dashboard.
+	 *
+	 * @param string $theme_page The theme page slug.
+	 *
+	 * @return void
+	 */
+	private function copy_customizer_page( $theme_page ) {
+		global $submenu;
+		if ( ! isset( $submenu['themes.php'] ) ) {
+			return;
 		}
+		$themes_menu = $submenu['themes.php'];
+		if ( empty( $themes_menu ) ) {
+			return;
+		}
+		$customize_pos = array_search( 'customize', array_column( $themes_menu, 1 ), true );
+		if ( false === $customize_pos ) {
+			return;
+		}
+		$themes_page_keys = array_keys( $themes_menu );
+		if ( ! isset( $themes_page_keys[ $customize_pos ] ) ) {
+			return;
+		}
+
+		$customizer_menu_item = array_splice( $themes_menu, $customize_pos, 1 );
+		$customizer_menu_item = reset( $customizer_menu_item );
+		if ( empty( $customizer_menu_item ) ) {
+			return;
+		}
+
+		add_submenu_page(
+			$theme_page,
+			$customizer_menu_item[0],
+			$customizer_menu_item[0],
+			'manage_options',
+			'customize.php',
+			'',
+			1
+		);
+	}
+
+	/**
+	 * Render the application stub.
+	 *
+	 * @return void
+	 */
+	public function render_welcome_page() {
+		$theme = wp_get_theme();
+
+		$theme_args['name']        = apply_filters( 'ti_wl_theme_name', $theme->__get( 'Name' ) );
+		$theme_args['template']    = $theme->get( 'Template' );
+		$theme_args['version']     = $theme->__get( 'Version' );
+		$theme_args['description'] = apply_filters( 'ti_wl_theme_description', $theme->__get( 'Description' ) );
+		$theme_args['slug']        = $theme->__get( 'stylesheet' );
+
+		new Hestia_Dashboard_Render( $theme_args, $this->config, new Hestia_Dashboard() );
 	}
 
 	/**
@@ -228,9 +369,9 @@ class Hestia_Admin {
 	 * @hooked themeisle_ob_after_customizer_import
 	 */
 	public function dismiss_welcome_notice() {
-		$dismiss_option = defined( 'HESTIA_PRO_FLAG' ) ? 'hestia_pro_welcome_notice_dismissed' : 'hestia_notice_dismissed';
+		// $dismiss_option = defined( 'HESTIA_PRO_FLAG' ) ? 'hestia_pro_welcome_notice_dismissed' : 'hestia_notice_dismissed';
 
-		update_option( $dismiss_option, 'yes' );
+		// update_option( $dismiss_option, 'yes' );
 	}
 
 
@@ -241,7 +382,7 @@ class Hestia_Admin {
 		$free_pro = array(
 			'free_theme_name'     => 'Hestia',
 			'pro_theme_name'      => 'Hestia Pro',
-			'pro_theme_link'      => apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'freevspro', 'abouthestia' ), 'query' ) ),
+			'pro_theme_link'      => apply_filters( 'hestia_upgrade_link_from_child_theme_filter', tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', 'freevspro', 'abouthestia' ), 'query' ) ),
 			/* translators: s - theme name */
 			'get_pro_theme_label' => sprintf( __( 'Get %s now!', 'hestia' ), 'Hestia Pro' ),
 			'banner_link'         => 'http://docs.themeisle.com/article/647-what-is-the-difference-between-hestia-and-hestia-pro',
@@ -697,6 +838,15 @@ class Hestia_Admin {
 		add_filter( 'themeisle-sdk/survey/' . HESTIA_PRODUCT_SLUG, array( $this, 'get_survey_metadata' ), 10, 2 );
 
 		$screen = get_current_screen();
+
+		if ( 'customize' === $screen->id ) {
+			do_action( 'themeisle_internal_page', HESTIA_PRODUCT_SLUG, 'customize' );
+		}
+
+		if ( 'toplevel_page_' . $this->theme_slug . '-welcome' === $screen->id ) {
+			( new Hestia_Dashboard() )->load_page_deps();
+		}
+
 		if ( ! in_array(
 			$screen->base,
 			array(
@@ -777,5 +927,14 @@ class Hestia_Admin {
 		$configs[ HESTIA_PRODUCT_SLUG ] = $this->get_black_friday_data( $configs['default'] );
 
 		return $configs;
+	}
+
+	/**
+	 * Run after plugin activate while site libray import.
+	 */
+	public function hestia_after_plugin_activation( $plugin_slug ) {
+		if ( 'otter-blocks' === $plugin_slug ) {
+			update_option( 'themeisle_blocks_settings_redirect', '' );
+		}
 	}
 }

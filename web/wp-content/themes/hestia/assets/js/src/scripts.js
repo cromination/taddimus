@@ -395,6 +395,7 @@
 				var y_scroll_pos = window.pageYOffset;
 				var headerElement = $( '.page-header' );
 				var scroll_pos_test = 0;
+				var scroll_offset =  Number( requestpost.scroll_offset );
 				if ( headerElement.length > 0 ) {
 					scroll_pos_test = headerElement.height();
 				} else {
@@ -402,6 +403,7 @@
 					scroll_pos_test = headerElement.offset().top - $( '.navbar' ).height();
 					scroll_pos_test = scroll_pos_test > 0 ? scroll_pos_test : 0;
 				}
+				scroll_pos_test += scroll_offset;
 				if ( y_scroll_pos >= scroll_pos_test && showScrollToTop === 0 ) {
 					$( '.hestia-scroll-to-top' ).addClass( 'hestia-fade' );
 					showScrollToTop = 1;

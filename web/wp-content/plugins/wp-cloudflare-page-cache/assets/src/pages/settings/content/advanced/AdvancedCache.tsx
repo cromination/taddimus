@@ -51,7 +51,7 @@ const AdvancedCache = () => {
       id: 'cf_auto_purge_on_upgrader_process_complete',
       type: 'toggle',
       label: __('Auto-purge on Updates', 'wp-cloudflare-page-cache'),
-      description: __('Automatically purge the cache when the upgrader process is complete', 'wp-cloudflare-page-cache'),
+      description: __('Automatically purge the cache when the plugin update process is complete', 'wp-cloudflare-page-cache'),
     }, 
     {
       id: 'cf_strip_cookies',

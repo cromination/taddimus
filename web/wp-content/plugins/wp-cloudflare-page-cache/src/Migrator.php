@@ -66,6 +66,11 @@ class Migrator {
 		if ( version_compare( $this->previous_version, '5.1.0', '<' ) ) {
 			$this->migrate_to_5_1_0();
 		}
+
+		if ( version_compare( $this->previous_version, '5.1.2', '<' ) ) {
+			$this->migrate_to_5_1_2();
+		}
+
 		do_action( 'swcfpc_after_plugin_upgrader_run' );
 	}
 
@@ -171,6 +176,32 @@ class Migrator {
 		$this->settings_store
 			->set( Constants::SETTING_EXCLUDED_COOKIES, $new_setting )
 			->save();
+	}
+
+	/**
+	 * Migrate to 5.1.2 from previous versions.
+	 *
+	 * "ENABLE_CACHE_RULE" was previously not saved and its display value was based on the presence of a rule ID.
+	 *
+	 * @return void
+	 */
+	private function migrate_to_5_1_2() {
+		$this->plugin->get_logger()->add_log( 'upgrader::migrate_to_5_1_2', 'Migrating to 5.1.2' );
+
+		$enable_cache_rule = (bool) $this->settings_store->get( Constants::ENABLE_CACHE_RULE );
+
+		// Already enabled. Bail.
+		if ( $enable_cache_rule ) {
+			return;
+		}
+
+		$rule_id = $this->settings_store->get( Constants::RULE_ID_CACHE, '' );
+
+		if ( empty( $rule_id ) ) {
+			return;
+		}
+
+		$this->settings_store->set( Constants::ENABLE_CACHE_RULE, 1 )->save();
 	}
 
 	/**

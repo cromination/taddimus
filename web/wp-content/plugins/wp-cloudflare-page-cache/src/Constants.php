@@ -89,7 +89,6 @@ class Constants {
 	public const SETTING_SEO_REDIRECT                = 'cf_seo_redirect';
 	public const SETTING_PURGE_ROLES                 = 'cf_purge_roles';
 	public const SETTING_PREFETCH_URLS_VIEWPORT      = 'cf_prefetch_urls_viewport';
-	public const SETTING_PREFETCH_URLS_MOUSEOVER     = 'cf_prefetch_urls_mouseover';
 	public const SETTING_PREFETCH_URLS_TIMESTAMP     = 'cf_prefetch_urls_viewport_timestamp';
 
 	public const SETTING_AUTH_MODE      = 'cf_auth_mode';

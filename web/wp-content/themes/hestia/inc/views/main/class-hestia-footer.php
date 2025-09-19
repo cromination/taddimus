@@ -17,6 +17,7 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 		add_action( 'hestia_do_footer', array( $this, 'the_footer_content' ) );
 		add_filter( 'wp_nav_menu_args', array( $this, 'modify_footer_menu_classes' ) );
 		add_action( 'hestia_do_bottom_footer_content', array( $this, 'bottom_footer_content' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'footer_style' ) );
 	}
 
 	/**
@@ -79,6 +80,25 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 			return;
 		}
 
+		$hestia_general_credits = get_theme_mod(
+			'hestia_general_credits',
+			sprintf(
+			/* translators: %1$s is Theme Name, %2$s is WordPress */
+				esc_html__( '%1$s | Developed by %2$s', 'hestia' ),
+				esc_html__( 'Hestia', 'hestia' ),
+				/* translators: %1$s is URL, %2$s is WordPress */
+				sprintf(
+					'<a href="%1$s" rel="nofollow">%2$s</a>',
+					esc_url( __( 'https://themeisle.com', 'hestia' ) ),
+					'ThemeIsle'
+				)
+			)
+		);
+
+		if ( ! $this->does_footer_have_widgets() && ! has_nav_menu( 'footer' ) && empty( $hestia_general_credits ) ) {
+			return;
+		}
+
 		hestia_before_footer_trigger();
 
 		?>
@@ -138,14 +158,16 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 			)
 		);
 
-		wp_nav_menu(
-			array(
-				'theme_location' => 'footer',
-				'depth'          => 1,
-				'container'      => 'ul',
-				'menu_class'     => 'footer-menu',
-			)
-		);
+		if ( has_nav_menu( 'footer' ) ) {
+			wp_nav_menu(
+				array(
+					'theme_location' => 'footer',
+					'depth'          => 1,
+					'container'      => 'ul',
+					'menu_class'     => 'footer-menu',
+				)
+			);
+		}
 
 		echo '<div class="copyright ' . esc_attr( $this->add_footer_copyright_alignment_class() ) . '">';
 		echo wp_kses_post( $hestia_general_credits );
@@ -190,10 +212,10 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 	 * Utility to get the footer class for color changes.
 	 */
 	private function the_footer_class() {
-		$footer_style = get_theme_mod( 'hestia_alternative_footer_style', 'black_footer' );
-		$class        = 'footer-black';
+		$background_color = get_theme_mod( 'hestia_footer_background_color', '#323437' );
+		$class            = 'footer-black';
 
-		if ( $footer_style === 'white_footer' ) {
+		if ( $background_color !== '#323437' ) {
 			$class = '';
 		}
 
@@ -239,4 +261,43 @@ class Hestia_Footer extends Hestia_Abstract_Main {
 		return false;
 	}
 
+	/**
+	 * Add footer style.
+	 */
+	public function footer_style() {
+		wp_add_inline_style( 'hestia_style', hestia_minimize_css( $this->footer_css() ) );
+	}
+
+	/**
+	 * Footer css.
+	 */
+	private function footer_css() {
+		$custom_css = '';
+
+		$footer_background_color  = get_theme_mod( 'hestia_footer_background_color', '#323437' );
+		$footer_text_color        = get_theme_mod( 'hestia_footer_text_color', '#fff' );
+		$footer_widget_text_color = get_theme_mod( 'hestia_footer_widget_text_color', '#5e5e5e' );
+
+		if ( '#323437' !== $footer_background_color ) {
+			$selector = 'footer.footer';
+		} else {
+			$selector = 'footer.footer.footer-black';
+		}
+
+		if ( ! empty( $footer_background_color ) ) {
+			$custom_css .= $selector . ' { background: ' . esc_html( $footer_background_color ) . '}';
+		}
+
+		if ( ! empty( $footer_text_color ) ) {
+			$custom_css .= $selector . '.footer-big { color: ' . esc_html( $footer_text_color ) . ' }';
+			$custom_css .= $selector . ' a { color: ' . esc_html( $footer_text_color ) . '}';
+		}
+
+		if ( ! empty( $footer_widget_text_color ) ) {
+			$custom_css .= $selector . ' hr { border-color: ' . esc_html( $footer_widget_text_color ) . '}';
+			$custom_css .= '.footer-big p, .widget, .widget code, .widget pre { color: ' . esc_html( $footer_widget_text_color ) . '}';
+		}
+
+		return $custom_css;
+	}
 }

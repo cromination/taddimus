@@ -2143,6 +2143,10 @@ class SWCFPC_Cache_Controller {
 			file_put_contents( $this->main_instance->get_plugin_wp_content_directory() . '/nginx.conf', '' );
 		}
 
+		if ( ! function_exists( 'insert_with_markers' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/misc.php';
+		}
+
 		if ( function_exists( 'insert_with_markers' ) && ! insert_with_markers( $this->htaccess_path, 'WP Cloudflare Super Page Cache', $htaccess_lines ) ) {
 			// translators: %s is the path to the .htaccess file
 			$error_msg = sprintf( __( 'The .htaccess file (%s) could not be edited. Check if the file has write permissions.', 'wp-cloudflare-page-cache' ), $this->htaccess_path );

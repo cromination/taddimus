@@ -75,6 +75,7 @@ class Hestia_Public {
 				'ajaxurl'           => admin_url( 'admin-ajax.php' ),
 				'disable_autoslide' => get_theme_mod( 'hestia_slider_disable_autoplay' ),
 				'masonry'           => self::should_enqueue_masonry() ? true : false,
+				'scroll_offset'     => (int) get_theme_mod( 'hestia_scroll_to_top_offset', 0 ),
 			)
 		);
 		wp_enqueue_script( 'hestia_scripts' );
@@ -560,7 +561,7 @@ class Hestia_Public {
 					),
 				),
 			),
-			'pro_link'    => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'startersites' ), 'query' ),
+			'pro_link'    => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', 'startersites' ), 'query' ),
 		);
 
 		return apply_filters( 'hestia_filter_onboarding_data', $onboarding_sites );

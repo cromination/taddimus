@@ -58,6 +58,16 @@ function tryAddLockIcon( elementId, elementSuffix) {
 	}
 }
 
+function toggleControls( isChecked ) {
+	var $controls = jQuery('#customize-control-hestia_top_bar_alignment, #customize-control-hestia_link_to_top_menu, #customize-control-hestia_link_to_top_widgets');
+
+	if ( isChecked ) {
+		$controls.addClass( 'customize-locked-control' );
+	} else {
+		$controls.removeClass( 'customize-locked-control' );
+	}
+}
+
 jQuery( document ).ready(
 	function () {
 		'use strict';
@@ -69,6 +79,7 @@ jQuery( document ).ready(
 				this.updateBackgroundControlBuffer();
 				this.focusMenu();
 				this.updateEditorLink();
+				this.scrollToTop();
             },
 
             updateBackgroundControl: function () {
@@ -168,7 +179,49 @@ jQuery( document ).ready(
 						);
                     }
 				);
-            }
+            },
+
+			/**
+			 * Scroll to top feature
+			 */
+			scrollToTop: function () {
+				wp.customize( 'hestia_scroll_to_top_offset', function ( value ) {
+					value.bind( function ( newval ) {
+						var showScrollToTop = 0;
+						jQuery( window ).on( 'scroll', function () {
+							console.log(newval);
+							var y_scroll_pos = window.pageYOffset;
+							var headerElement = jQuery( '.page-header' );
+							var scroll_pos_test = 0;
+							if ( headerElement.length > 0 ) {
+								scroll_pos_test = headerElement.height();
+							} else {
+								headerElement = jQuery( '.container' );
+								scroll_pos_test = headerElement.offset().top - jQuery( '.navbar' ).height();
+								scroll_pos_test = scroll_pos_test > 0 ? scroll_pos_test : 0;
+							}
+							scroll_pos_test += newval;
+							if ( y_scroll_pos >= scroll_pos_test && showScrollToTop === 0 ) {
+								jQuery( '.hestia-scroll-to-top' ).addClass( 'hestia-fade' );
+								showScrollToTop = 1;
+							}
+		
+							if ( y_scroll_pos <= scroll_pos_test && showScrollToTop === 1 ) {
+								jQuery( '.hestia-scroll-to-top' ).removeClass( 'hestia-fade' );
+								showScrollToTop = 0;
+							}
+		
+						} );
+		
+						jQuery( '.hestia-scroll-to-top' ).on( 'click', function () {
+							window.scroll( {
+								top: 0,
+								behavior: 'smooth'
+							} );
+						} );
+					} );
+				} );
+			},
 		};
 
         jQuery.aboutBackground.init();
@@ -297,7 +350,44 @@ jQuery( document ).ready(
         	} );
         	jQuery( 'input:checkbox:checked', control.container ).trigger( 'change' );
         } );
-		
+
+		wp.customize.control( 'hestia_top_bar_hide', function( control ) {
+			wp.customize.section('hestia_top_bar', function( section ) {
+				section.expanded.bind(function( isExpanded ) {
+					if ( isExpanded ) {
+						var isChecked = control.container.find('input:checkbox').is(':checked');
+						toggleControls( isChecked );
+					}
+				});
+			});
+			control.container.on( 'change', 'input:checkbox', function() {
+				var isChecked = jQuery(this).is(':checked');
+				toggleControls( isChecked );
+			});
+		});
+
+		wp.customize.control( 'hestia_navbar_transparent', function( control ) {
+			wp.customize.section('hestia_navigation', function( section ) {
+				section.expanded.bind(function( isExpanded ) {
+					if ( isExpanded ) {
+						if ( control.container.find('input:checkbox').is(':checked') ) {
+							wp.customize.control('hestia_link_to_add_icon').container.show();
+						} else {
+							wp.customize.control('hestia_link_to_add_icon').container.hide();
+						}
+					}
+				});
+			});
+
+			control.container.on( 'change', 'input:checkbox', function() {
+				if ( jQuery(this).is(':checked') ) {
+					wp.customize.control('hestia_link_to_add_icon').container.show();
+				} else {
+					wp.customize.control('hestia_link_to_add_icon').container.hide();
+				}
+			});
+		});
+
 		tryAddSaleBanner();
 	}
 );

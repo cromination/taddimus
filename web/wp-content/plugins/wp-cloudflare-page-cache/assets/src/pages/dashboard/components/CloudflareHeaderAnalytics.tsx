@@ -1,26 +1,12 @@
-import { spcApi } from "@/lib/api";
-import { formatBytes, formatNumberToReadableFormat } from "@/lib/utils";
-import { useEffect, useState } from "@wordpress/element";
+import { formatBytes, formatNumberToReadable } from "@/lib/utils";
+import { useDashboardStore } from "@/store/dashboardStore";
 import { __ } from "@wordpress/i18n";
 import { ArrowUpDown, HardDrive } from "lucide-react";
 
 const CloudflareHeaderAnalytics = () => {
-  const [analytics, setAnalytics] = useState<Record<string, any> | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(true);
-    spcApi.getCloudflareAnalytics().then((response) => {
-      setIsLoading(false);
-      if (response.success && response.data?.requests && response.data?.bytes) {
-        setAnalytics(response.data || null);
-      }
-    }).catch(() => {
-      setIsLoading(false);
-    });
-  }, []);
-
-  if (isLoading) {
+  const { analyticsData, loadingAnalytics } = useDashboardStore();
+  
+  if (loadingAnalytics) {
     return <div className="flex gap-2 items-center">
       <span className="w-12 md:w-30 h-4 bg-muted-foreground/20 rounded animate-pulse" />
       <span>•</span>
@@ -28,13 +14,13 @@ const CloudflareHeaderAnalytics = () => {
     </div>;
   }
 
-  if (!analytics) {
+  if (!analyticsData) {
     return null;
   }
 
-  const { requests, bytes } = analytics;
+  const { requests, bytes } = analyticsData;
 
-  const requestsPerSecond = formatNumberToReadableFormat(requests / 24 / 60 / 60);
+  const requestsPerSecond = formatNumberToReadable(requests / 24 / 60 / 60);
 
   return (
     <div className="gap-2 text-xs hidden sm:flex md:text-sm font-medium text-muted-foreground">

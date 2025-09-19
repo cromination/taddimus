@@ -114,7 +114,7 @@ class Settings_Manager implements Module_Interface {
 		Constants::SETTING_PREFETCH_ON_HOVER            => [
 			'type'       => self::SETTING_TYPE_BOOLEAN,
 			'bust_cache' => true,
-			'default'    => 1,
+			'default'    => 0,
 		],
 		Constants::SETTING_REMOVE_CACHE_BUSTER          => [
 			'type'    => self::SETTING_TYPE_BOOLEAN,
@@ -344,10 +344,6 @@ class Settings_Manager implements Module_Interface {
 		],
 		Constants::SETTING_PREFETCH_URLS_VIEWPORT       => [
 			'type'    => self::SETTING_TYPE_BOOLEAN,
-			'default' => 0,
-		],
-		Constants::SETTING_PREFETCH_URLS_MOUSEOVER      => [
-			'type'    => self::SETTING_TYPE_INTEGER,
 			'default' => 0,
 		],
 		Constants::SETTING_AUTH_MODE                    => [

@@ -12,10 +12,10 @@ use WebpConverter\Settings\Page\PageIntegrator;
  */
 class BlackFridayNotice extends NoticeAbstract implements NoticeInterface {
 
-	const NOTICE_OPTION     = 'webpc_notice_bf2024';
+	const NOTICE_OPTION     = 'webpc_notice_bf2025';
 	const NOTICE_VIEW_PATH  = 'components/notices/discount-coupon.php';
-	const NOTICE_DATE_START = '2024-11-25';
-	const NOTICE_DATE_END   = '2024-12-02';
+	const NOTICE_DATE_START = '2025-11-24';
+	const NOTICE_DATE_END   = '2025-12-01';
 
 	/**
 	 * @var PluginData
@@ -83,9 +83,9 @@ class BlackFridayNotice extends NoticeAbstract implements NoticeInterface {
 		return [
 			'ajax_url'       => admin_url( 'admin-ajax.php' ),
 			'close_action'   => self::NOTICE_OPTION,
-			'coupon_code'    => 'BF2024',
+			'coupon_code'    => 'BF2025',
 			'discount_value' => '50%',
-			'button_url'     => 'https://url.mattplugins.com/converter-notice-bf2024-button-read',
+			'button_url'     => 'https://url.mattplugins.com/converter-notice-bf2025-button-read',
 			'promotion_date' => self::NOTICE_DATE_END,
 		];
 	}

@@ -35,7 +35,7 @@ class Hestia_Pricing_Upsell_Controls extends Hestia_Front_Page_Section_Controls_
 			esc_html__( 'Pricing', 'hestia' ),
 			/* translators: %s is the Learn more label*/
 			sprintf(
-				'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'pricingsection' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
+				'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', 'pricingsection' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
 				__( 'Upgrade to Unlock', 'hestia' )
 			)
 		);

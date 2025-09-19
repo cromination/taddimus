@@ -195,7 +195,7 @@ class SWCFPC_Fallback_Cache {
 		}
 
 
-		$config_file_path = ABSPATH . 'wp-config.php';
+		$config_file_path = Helpers::get_wp_config_path();
 
 		if ( ! file_exists( $config_file_path ) ) {
 			$this->modules['logs']->add_log( 'fallback_cache::fallback_cache_add_define_cache_wp_config', 'Unable to find wp-config.php' );
@@ -278,7 +278,7 @@ class SWCFPC_Fallback_Cache {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		WP_Filesystem();
 		global $wp_filesystem;
-		$config_file_path = ABSPATH . 'wp-config.php';
+		$config_file_path = Helpers::get_wp_config_path();
 
 		return $wp_filesystem->is_writable( $config_file_path );
 	}

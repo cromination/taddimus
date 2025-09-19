@@ -265,7 +265,7 @@ class Dashboard implements Module_Interface {
 				'zoneIdList'                          => Settings_Store::get_instance()->get( Constants::ZONE_ID_LIST ),
 
 				// File System Permissions
-				'wpConfigWritable'                    => is_writable( ABSPATH . 'wp-config.php' ),
+				'wpConfigWritable'                    => is_writable( Helpers::get_wp_config_path() ),
 				'wpContentWritable'                   => is_writable( WP_CONTENT_DIR ),
 
 				// Third Party Integrations & Conflicts

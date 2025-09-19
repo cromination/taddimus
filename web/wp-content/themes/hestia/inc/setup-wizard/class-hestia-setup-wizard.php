@@ -374,7 +374,7 @@ class Hestia_Setup_Wizard {
 					delete_transient( 'optml_fresh_install' );
 				}
 				if ( 'otter-blocks' === $slug ) {
-					update_option( 'themeisle_blocks_settings_redirect', false );
+					update_option( 'themeisle_blocks_settings_redirect', '' );
 				}
 			}
 		}

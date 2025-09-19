@@ -1,5 +1,4 @@
 .customize-control-hestia-dimensions ul {
-    width: 100%;
     display: flex;
     align-items: center;
 }
@@ -66,7 +65,7 @@
 }
 
 .has-media-queries .control-wrap.active {
-    display: block;
+    display: flex;
 }
 
 .customize-control span.reset-dimensions {

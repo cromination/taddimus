@@ -13,6 +13,7 @@ import SidebarUpsellCard from "./SidebarUpsellCard";
 import TransitionWrapper from "@/common/TransitionWrapper";
 import BlackFridayBanner from "@/common/BlackFridayBanner";
 import PluginConflictsNotice from "./PluginConflictsNotice";
+import { DashboardProvider } from "@/store/dashboardStore";
 
 const DashboardContent = () => {
   const { isPro } = window.SPCDash;
@@ -20,58 +21,35 @@ const DashboardContent = () => {
   const { cloudflareConnected } = useSettingsStore();
 
   return (
-    <PageWrap>
-      <Header backButton={false}>
-        {cloudflareConnected && (
-          <HeaderLeft>
-            <CloudflareHeaderAnalytics />
-          </HeaderLeft>
-        )}
-      </Header>
+    <DashboardProvider>
+      <PageWrap>
+        <Header backButton={false}>
+          {cloudflareConnected && (
+            <HeaderLeft>
+              <CloudflareHeaderAnalytics />
+            </HeaderLeft>
+          )}
+        </Header>
 
 
-      <Container className="py-8">
-        <BlackFridayBanner />
+        <Container className="py-8">
+          <BlackFridayBanner />
 
-        {unlicensedPro && (
-          <TransitionWrapper from="top">
-            <LicenseNotice />
-          </TransitionWrapper>
-        )}
-
-        {window.SPCDash.conflicts.length > 0 && (
-          <TransitionWrapper from="top" className="delay-100">
-            <PluginConflictsNotice />
-          </TransitionWrapper>
-        )}
-
-        <CacheMetrics />
-
-        <div className="grid gap-6 lg:hidden mb-6">
-          <TransitionWrapper from="right" className="delay-300">
-            <SidebarActions />
-          </TransitionWrapper>
-
-          <TransitionWrapper from="right" className="delay-400">
-            <SidebarSystemStatus />
-          </TransitionWrapper>
-
-          {!isPro && (
-            <TransitionWrapper from="right" className="delay-500">
-              <SidebarUpsellCard />
+          {unlicensedPro && (
+            <TransitionWrapper from="top">
+              <LicenseNotice />
             </TransitionWrapper>
           )}
-        </div>
 
-        <div className="grid lg:grid-cols-12 gap-6">
-
-          <div className="lg:col-span-8">
-            <TransitionWrapper from="bottom" className="delay-300">
-              <ActivityLog />
+          {window.SPCDash.conflicts.length > 0 && (
+            <TransitionWrapper from="top" className="delay-100">
+              <PluginConflictsNotice />
             </TransitionWrapper>
-          </div>
+          )}
 
-          <div className="hidden lg:block lg:col-span-4 space-y-6">
+          <CacheMetrics />
+
+          <div className="grid gap-6 lg:hidden mb-6">
             <TransitionWrapper from="right" className="delay-300">
               <SidebarActions />
             </TransitionWrapper>
@@ -86,10 +64,35 @@ const DashboardContent = () => {
               </TransitionWrapper>
             )}
           </div>
-        </div>
 
-      </Container>
-    </PageWrap>
+          <div className="grid lg:grid-cols-12 gap-6">
+
+            <div className="lg:col-span-8">
+              <TransitionWrapper from="bottom" className="delay-300">
+                <ActivityLog />
+              </TransitionWrapper>
+            </div>
+
+            <div className="hidden lg:block lg:col-span-4 space-y-6">
+              <TransitionWrapper from="right" className="delay-300">
+                <SidebarActions />
+              </TransitionWrapper>
+
+              <TransitionWrapper from="right" className="delay-400">
+                <SidebarSystemStatus />
+              </TransitionWrapper>
+
+              {!isPro && (
+                <TransitionWrapper from="right" className="delay-500">
+                  <SidebarUpsellCard />
+                </TransitionWrapper>
+              )}
+            </div>
+          </div>
+
+        </Container>
+      </PageWrap>
+    </DashboardProvider>
   );
 };
 

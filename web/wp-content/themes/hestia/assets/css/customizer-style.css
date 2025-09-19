@@ -1955,20 +1955,20 @@ select.is-pro-option + span.dashicons-lock {
   pointer-events: none;
 }
 
-ul:where([id*=hestia_footer], [id*=hestia_buttons_style], [id*=hestia_top_bar]) [id*=upsell] {
+ul:where([id*=hestia_footer_content], [id*=hestia_buttons_style], [id*=hestia_top_bar]) [id*=upsell] {
   opacity: 0.4;
   pointer-events: none;
 }
-ul:where([id*=hestia_footer], [id*=hestia_buttons_style], [id*=hestia_top_bar]) [id*=upsell]:not([id*=top_bar][id*=color]) .customize-control-title::after,
-ul:where([id*=hestia_footer], [id*=hestia_buttons_style], [id*=hestia_top_bar]) [id*=upsell] :where(.customize-control-content:has(.wp-picker-container), li > .wp-picker-container)::after {
+ul:where([id*=hestia_footer_content], [id*=hestia_buttons_style], [id*=hestia_top_bar]) [id*=upsell]:not([id*=hestia_footer][id*=color]) .customize-control-title::after {
   content: "\f160";
   font-family: "dashicons";
   line-height: 0;
   font-size: 16px;
   margin-left: 2px;
   vertical-align: -2px;
+  margin-top: 10px;
 }
-ul:where([id*=hestia_footer], [id*=hestia_buttons_style], [id*=hestia_top_bar]) [id*=upsell] :is(.customize-control-content:has(.wp-picker-container), li > .wp-picker-container)::after {
+ul:where([id*=hestia_footer_content], [id*=hestia_buttons_style], [id*=hestia_top_bar]) [id*=upsell] :is(.customize-control-content:has(.wp-picker-container), li > .wp-picker-container)::after {
   font-size: 19px;
   vertical-align: -9px;
 }
@@ -2002,4 +2002,87 @@ ul:where([id*=hestia_footer], [id*=hestia_buttons_style], [id*=hestia_top_bar]) 
 
 #accordion-section-hestia_docs_section .accordion-section-title:after {
   content: "";
+}
+
+.customize-hide-control {
+  display: none !important;
+}
+
+.radio-pagination {
+  border: 1px solid #ccc;
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  height: 30px;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+.radio-pagination input[type=radio] {
+  display: none;
+}
+.radio-pagination label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border-left: 1px solid #ccc;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+  transition: background 0.3s, color 0.3s;
+  flex: 1 0 auto;
+  text-align: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.radio-pagination label:first-of-type {
+  border-left: none;
+}
+.radio-pagination input[type=radio]:checked + label {
+  background-color: #4b4e52;
+  color: #fff;
+}
+
+#customize-theme-controls .hestia-notice .hestia-notice-body {
+  background-color: #fff;
+  padding: 5px 18px 2px;
+}
+#customize-theme-controls .hestia-notice .accordion-section-title::after {
+  content: "";
+}
+
+.customize-control-color:not([id*=upsell_notice]), .customize-control-alpha-color:not([id*=upsell_notice]) {
+  width: 100%;
+  display: flex;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.customize-control-color:not([id*=upsell_notice]) .customize-control-title, .customize-control-alpha-color:not([id*=upsell_notice]) .customize-control-title {
+  display: flex;
+  width: 70%;
+}
+
+.wp-picker-container .wp-color-result.button {
+  padding: 0 0 0 60px;
+}
+.wp-picker-container .wp-color-result.button span.wp-color-result-text {
+  display: none;
+}
+
+.customize-control-hestia-dimensions .customize-control-title {
+  display: flex;
+  gap: 10px;
+}
+.customize-control-hestia-dimensions .dimensions-wrap ul li {
+  margin-bottom: 0px;
+  width: 10px;
+}
+
+[class*=alpha-color]:has(.alpha-color-locked) {
+  opacity: 0.4;
 }

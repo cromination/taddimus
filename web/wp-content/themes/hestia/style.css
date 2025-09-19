@@ -7,7 +7,7 @@ Author URI:     https://themeisle.com
 Tested up to:   5.8.2
 Requires PHP:   5.4.0
 Description:    Hestia is a modern WordPress theme for professionals. It fits creative business, small businesses (restaurants, wedding planners, sport/medical shops), startups, corporate businesses, online agencies and firms, portfolios, ecommerce (WooCommerce), and freelancers. It has a multipurpose one-page design, widgetized footer, blog/news page and a clean look, is compatible with: Flat Parallax Slider, Photo Gallery, Travel Map and Elementor Page Builder . The theme is responsive, WPML, Retina ready, SEO friendly, and uses Material Kit for design.
-Version:        3.2.11
+Version:        3.3.3
 License:        GNU General Public License v2 or later
 License URI:    http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:    hestia
@@ -2390,6 +2390,11 @@ body.admin-bar .navbar {
   margin-top: -4px;
   margin-right: 4px;
 }
+.navbar .navbar-nav > li a:before {
+  display: contents;
+  font-family: "Font Awesome 5 Brands";
+  font-size: 16px;
+}
 .navbar .navbar-nav > li.btn {
   padding: 0 10px;
 }
@@ -4432,7 +4437,6 @@ footer.footer.footer-black hr {
 .hestia-scroll-to-top {
   position: fixed;
   bottom: 15px;
-  right: 15px;
   z-index: 999;
   opacity: 0;
   transition: opacity 0.25s ease-in-out;
@@ -4441,14 +4445,23 @@ footer.footer.footer-black hr {
   padding: 0;
   margin: 0;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
   text-align: center;
   line-height: 50px;
   font-size: 20px;
   background-color: #999999;
   -webkit-box-shadow: none;
   box-shadow: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 19px;
+  gap: 5px;
+}
+.hestia-scroll-to-top.hestia-scroll-left {
+  left: 15px;
+}
+.hestia-scroll-to-top.hestia-scroll-right {
+  right: 15px;
 }
 .hestia-scroll-to-top:hover {
   background-color: #999999;
@@ -4460,14 +4473,28 @@ footer.footer.footer-black hr {
   -webkit-box-shadow: 0 14px 26px -12px rgba(49, 49, 49, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(49, 49, 49, 0.42);
   box-shadow: 0 14px 26px -12px rgba(49, 49, 49, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(49, 49, 49, 0.2);
 }
-.hestia-scroll-to-top svg {
+.hestia-scroll-to-top svg, .hestia-scroll-to-top img {
   fill: #ffffff;
+  width: 12.5px;
+  height: 20px;
+  display: block;
+  flex-shrink: 0;
+}
+.hestia-scroll-to-top p {
+  text-transform: none;
+  margin: 0px;
+  font-size: 14px;
 }
 
 .hestia-fade {
   opacity: 1;
 }
 
+@media (max-width: 425px) {
+  .hestia-scroll-to-top.hestia-scroll-hide-on-mobile {
+    display: none;
+  }
+}
 /*--------------------------------------------------------------
 ## Top bar
 --------------------------------------------------------------*/
@@ -5743,6 +5770,9 @@ body:not(.home) .wrapper .content-area {
     margin-top: 1px;
     opacity: 1;
     z-index: 100;
+  }
+  .navbar .navbar-nav .dropdown a .caret svg {
+    height: 0;
   }
 }
 @media (max-width: 768px) {

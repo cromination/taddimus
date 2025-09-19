@@ -1,0 +1,207 @@
+/**
+ * Sortable Elements Control Styles
+ *
+ * @package Hestia
+ */
+
+/* Control Container */
+.hestia-sortable-elements-control {
+	margin-bottom: 12px;
+}
+
+.hestia-sortable-wrapper {
+	margin-top: 12px;
+}
+
+/* Elements List */
+.hestia-sortable-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* Element Item */
+.hestia-sortable-item {
+	margin: 0 0 8px 0;
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	transition: all 0.15s ease-in-out;
+}
+
+.hestia-sortable-item:last-child {
+	margin-bottom: 0;
+}
+
+.hestia-sortable-item:hover {
+	border-color: #8c8f94;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hestia-sortable-item.hestia-item-hidden {
+	opacity: 0.6;
+	transition: opacity 0.2s ease-in-out;
+}
+
+.hestia-sortable-item.hestia-item-sorting {
+	z-index: 1000;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	transform: rotate(2deg);
+}
+
+/* Sortable Placeholder */
+.hestia-sortable-placeholder {
+	background: #f0f0f1;
+	border: 2px dashed #8c8f94;
+	border-radius: 4px;
+	margin: 0 0 8px 0;
+	visibility: visible !important;
+	opacity: 0.7;
+}
+
+/* Element Wrapper */
+.hestia-item-inner {
+	display: flex;
+	align-items: center;
+	min-height: 48px;
+}
+
+/* Drag Handle */
+.hestia-item-handle {
+	padding: 0 12px;
+	color: #787c82;
+	cursor: grab;
+	flex-shrink: 0;
+	user-select: none;
+}
+
+.hestia-item-handle:active {
+	cursor: grabbing;
+}
+
+.hestia-item-handle .dashicons {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+/* Element Content */
+.hestia-item-content {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 8px;
+	min-width: 0;
+}
+
+/* Element Label */
+.hestia-item-label {
+	font-size: 13px;
+	line-height: 1.5;
+	color: #1d2327;
+	font-weight: 600;
+	margin-right: 12px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	user-select: none;
+}
+
+/* Visibility Toggle */
+.hestia-item-visibility {
+	padding: 0 12px;
+	border-left: 1px solid #e0e0e0;
+	flex-shrink: 0;
+}
+
+.hestia-visibility-toggle {
+	background: transparent;
+	border: none;
+	color: #2271b1;
+	cursor: pointer;
+	height: 36px;
+	width: 36px;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.15s ease-in-out;
+	border-radius: 50%;
+}
+
+.hestia-visibility-toggle:hover {
+	background: #f0f6fc;
+	color: #135e96;
+}
+
+.hestia-visibility-toggle[data-visible="false"] {
+	color: #787c82;
+}
+
+.hestia-visibility-toggle[data-visible="false"]:hover {
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.hestia-visibility-toggle .dashicons {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.hestia-visibility-toggle:active {
+	transform: scale(0.9);
+}
+
+/* Focus States */
+.hestia-visibility-toggle:focus {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.hestia-visibility-toggle:focus:not(:focus-visible) {
+	outline: none;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	.hestia-sortable-item,
+	.hestia-visibility-toggle {
+		transition: none;
+	}
+	
+	.hestia-sortable-item.hestia-item-sorting {
+		transform: none;
+	}
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+	.hestia-item-label {
+		font-size: 14px;
+	}
+	
+	.hestia-item-inner {
+		min-height: 52px;
+	}
+	
+	.hestia-item-content {
+		padding: 10px 6px;
+	}
+	
+	.hestia-item-visibility {
+		padding: 0 10px;
+	}
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+	.hestia-sortable-item {
+		border-width: 2px;
+	}
+	
+	.hestia-item-button:disabled {
+		opacity: 0.5;
+	}
+}

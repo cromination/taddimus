@@ -106,6 +106,7 @@ class Hestia_Metabox_Main extends Hestia_Metabox_Controls_Base {
 	private function content_toggles() {
 
 		$is_pro           = class_exists( 'Hestia_Addon_Manager' );
+		$is_license_valid = hestia_is_license_valid();
 		$content_controls = array(
 			'hestia_disable_navigation' => array(
 				'default'     => 'off',
@@ -123,7 +124,7 @@ class Hestia_Metabox_Main extends Hestia_Metabox_Controls_Base {
 				'input_label'        => __( 'Disable Title', 'hestia' ),
 				'active_callback'    => array( $this, 'hide_on_single_product' ),
 				'priority'           => 5,
-				'show_upsell_notice' => ! $is_pro ? 'show' : 'hide',
+				'show_upsell_notice' => ! $is_pro || ! $is_license_valid ? 'show' : 'hide',
 				'upsell_data'        => array(
 					'text'    => __( 'your page title & header', 'hestia' ),
 					'utm_tag' => 'disabletitle',
@@ -133,7 +134,7 @@ class Hestia_Metabox_Main extends Hestia_Metabox_Controls_Base {
 				'default'            => 'off',
 				'input_label'        => __( 'Enable transparent header', 'hestia' ),
 				'priority'           => 6,
-				'show_upsell_notice' => ! $is_pro ? 'show' : 'hide',
+				'show_upsell_notice' => ! $is_pro || ! $is_license_valid ? 'show' : 'hide',
 				'upsell_data'        => array(
 					'text'    => __( 'the transparent header', 'hestia' ),
 					'utm_tag' => 'transparentHeader',

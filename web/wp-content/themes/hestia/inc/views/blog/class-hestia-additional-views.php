@@ -22,6 +22,108 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 		add_action( 'hestia_blog_related_posts', array( $this, 'related_posts' ) );
 
 		add_action( 'hestia_before_header_hook', array( $this, 'hidden_sidebars' ) );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'add_inline_icon_styles' ) );
+	}
+
+	/**
+	 * Add inline styles for icons.
+	 */
+	public function add_inline_icon_styles() {
+		wp_add_inline_style( 'hestia_style', hestia_minimize_css( $this->icon_inline_style() ) );
+	}
+
+	/**
+	 * Icon styles.
+	 */
+	private function icon_inline_style() {
+		$icon_padding        = json_decode( get_theme_mod( 'hestia_scroll_button_padding_dimensions', '' ), true );
+		$icon_size           = json_decode( get_theme_mod( 'hestia_scroll_icon_size', '' ), true );
+		$border_radius       = get_theme_mod( 'hestia_scroll_button_border_radius', 50 );
+		$icon_color          = get_theme_mod( 'hestia_scroll_icon_color', '#fff' );
+		$icon_hover_color    = get_theme_mod( 'hestia_scroll_icon_hover_color', '#fff' );
+		$icon_bg_color       = get_theme_mod( 'hestia_scroll_icon_bg_color', '#999' );
+		$icon_bg_hover_color = get_theme_mod( 'hestia_scroll_icon_bg_hover_color', '#999' );
+
+		$devices = array(
+			'mobile'  => '',
+			'tablet'  => 'min-width: 480px',
+			'desktop' => 'min-width: 768px',
+		);
+
+		$css = '';
+
+		foreach ( $devices as $device => $media_query ) {
+			$padding_css = $this->get_icon_padding_css( $icon_padding, $device );
+			$size_css    = $this->get_icon_size_css( $icon_size, $device );
+
+			if ( $media_query ) {
+				$css .= "@media( $media_query ) { $padding_css $size_css }";
+			} else {
+				$css .= $padding_css . $size_css;
+			}
+		}
+
+		$css .= '
+		.hestia-scroll-to-top {
+			border-radius : ' . esc_attr( $border_radius ) . '%;
+			background-color: ' . esc_attr( $icon_bg_color ) . ';
+		}
+		.hestia-scroll-to-top:hover {
+			background-color: ' . esc_attr( $icon_bg_hover_color ) . ';
+		}
+		.hestia-scroll-to-top:hover svg, .hestia-scroll-to-top:hover p {
+			color: ' . esc_attr( $icon_hover_color ) . ';
+		}
+		.hestia-scroll-to-top svg, .hestia-scroll-to-top p {
+			color: ' . esc_attr( $icon_color ) . ';
+		}
+		';
+		return $css;
+	}
+
+	/**
+	 * Get icon padding css.
+	 *
+	 * @param array  $property padding property value.
+	 * @param string $device Device type.
+	 * @return string
+	 */
+	private function get_icon_padding_css( $property, $device ) {
+		if ( empty( $property[ $device ] ) ) {
+			return '';
+		}
+
+		$values = json_decode( $property[ $device ], true );
+		if ( ! is_array( $values ) ) {
+			return '';
+		}
+
+		$css = '.hestia-scroll-to-top {';
+		foreach ( $values as $key => $value ) {
+			$side = str_replace( $device . '_', '', $key );
+			$css .= "padding-$side: " . intval( $value ) . 'px;';
+		}
+		$css .= '}';
+
+		return $css;
+	}
+
+	/**
+	 * Get icon size css.
+	 *
+	 * @param array  $property padding property value.
+	 * @param string $device Device type.
+	 * @return string
+	 */
+	private function get_icon_size_css( $property, $device ) {
+		if ( empty( $property[ $device ] ) ) {
+			return '';
+		}
+
+		$size = intval( $property[ $device ] );
+
+		return ".hestia-scroll-to-top svg, .hestia-scroll-to-top img { width: {$size}px; height: {$size}px; }";
 	}
 
 	/**
@@ -99,22 +201,29 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 	 */
 	public function post_after_article() {
 		global $post;
-		$categories = get_the_category( $post->ID );
+		$categories           = get_the_category( $post->ID );
+		$enable_categories    = get_theme_mod( 'hestia_enable_categories', true );
+		$enable_tags          = get_theme_mod( 'hestia_enable_tags', true );
+		$enable_shareing_icon = get_theme_mod( 'hestia_enable_sharing_icons', true );
 		?>
 
 		<div class="section section-blog-info">
 			<div class="row">
-				<div class="col-md-6">
-					<div class="entry-categories"><?php esc_html_e( 'Categories:', 'hestia' ); ?>
-						<?php
-						foreach ( $categories as $category ) {
-							echo '<span class="label label-primary"><a href="' . esc_url( get_category_link( $category->term_id ) ) . '">' . esc_html( $category->name ) . '</a></span>';
-						}
-						?>
+				<?php if ( $enable_categories || $enable_tags || $enable_shareing_icon ) : ?>
+					<div class="col-md-6">
+						<?php if ( $enable_categories ) : ?>
+							<div class="entry-categories"><?php esc_html_e( 'Categories:', 'hestia' ); ?>
+								<?php
+								foreach ( $categories as $category ) {
+									echo '<span class="label label-primary"><a href="' . esc_url( get_category_link( $category->term_id ) ) . '">' . esc_html( $category->name ) . '</a></span>';
+								}
+								?>
+							</div>
+						<?php endif; ?>
+						<?php $enable_tags ? the_tags( '<div class="entry-tags">' . esc_html__( 'Tags:', 'hestia' ) . ' ' . '<span class="entry-tag">', '</span><span class="entry-tag">', '</span></div>' ) : ''; ?>
 					</div>
-					<?php the_tags( '<div class="entry-tags">' . esc_html__( 'Tags:', 'hestia' ) . ' ' . '<span class="entry-tag">', '</span><span class="entry-tag">', '</span></div>' ); ?>
-				</div>
-				<?php do_action( 'hestia_blog_social_icons' ); ?>
+					<?php do_action( 'hestia_blog_social_icons' ); ?>
+				<?php endif; ?>
 			</div>
 			<hr>
 			<?php
@@ -164,10 +273,31 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 		if ( (bool) $hestia_enable_scroll_to_top === false ) {
 			return;
 		}
+		$icon_type      = get_theme_mod( 'hestia_scroll_to_top_icon_type', 'icon' );
+		$button_side    = get_theme_mod( 'hestia_scroll_to_top_side', 'right' );
+		$scroll_icons   = hestia_scroll_icons();
+		$scroll_icon    = get_theme_mod( 'hestia_scroll_to_top_icon', 'stt-icon-style-1' );
+		$scroll_icon    = $scroll_icons[ $scroll_icon ];
+		$scroll_label   = get_theme_mod( 'hestia_scroll_to_top_label', '' );
+		$hide_on_mobile = get_theme_mod( 'hestia_scroll_to_top_hide_mobile', false );
+		$image_url      = get_theme_mod( 'hestia_scroll_to_top_image', '' );
+
+		if ( empty( $scroll_icon ) ) {
+			return;
+		}
+		$button_class  = esc_attr( 'right' === $button_side ? 'hestia-scroll-right ' : 'hestia-scroll-left ' );
+		$button_class .= $hide_on_mobile ? 'hestia-scroll-hide-on-mobile ' : '';
 		?>
 
-		<button class="hestia-scroll-to-top">
-			<svg  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" width="12.5px" height="20px"><path d="M177 255.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 351.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 425.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1zm-34-192L7 199.7c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l96.4-96.4 96.4 96.4c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9l-136-136c-9.2-9.4-24.4-9.4-33.8 0z"></path></svg>
+		<button class="hestia-scroll-to-top <?php echo esc_attr( $button_class ); ?>" title="<?php esc_attr_e( 'Enable Scroll to Top', 'hestia' ); ?>">
+			<?php if ( 'icon' === $icon_type ) { ?>
+				<?php echo wp_kses( $scroll_icon, hestia_allow_icon_tag() ); ?>
+			<?php } elseif ( 'image' === $icon_type && ! empty( $image_url ) ) { ?>
+				<img src="<?php echo esc_attr( $image_url ); ?>" alt="<?php esc_attr_e( 'Enable Scroll to Top', 'hestia' ); ?>">
+			<?php } ?>
+			<?php if ( ! empty( $scroll_label ) ) { ?>
+				<p><?php echo esc_html( $scroll_label ); ?></p>
+			<?php } ?>
 		</button>
 		<?php
 	}
@@ -178,6 +308,12 @@ class Hestia_Additional_Views extends Hestia_Abstract_Main {
 	 * @since Hestia 1.0
 	 */
 	public function related_posts() {
+		$enable_related_posts = get_theme_mod( 'hestia_enable_related_posts', true );
+
+		if ( ! $enable_related_posts ) {
+			return;
+		}
+
 		global $post;
 		$cats = wp_get_object_terms(
 			$post->ID,

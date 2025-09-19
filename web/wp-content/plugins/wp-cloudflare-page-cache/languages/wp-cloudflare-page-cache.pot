@@ -15,27 +15,28 @@ msgstr ""
 "X-Domain: wp-cloudflare-page-cache\n"
 
 #. Plugin Name of the plugin
-#: wp-cloudflare-super-page-cache-pro.php
-msgid "Super Page Cache Pro"
+#: wp-cloudflare-super-page-cache.php
+#: src/Modules/Dashboard.php:131
+msgid "Super Page Cache"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: wp-cloudflare-super-page-cache-pro.php
+#: wp-cloudflare-super-page-cache.php
 msgid "https://wordpress.org/plugins/wp-cloudflare-page-cache/"
 msgstr ""
 
 #. Description of the plugin
-#: wp-cloudflare-super-page-cache-pro.php
+#: wp-cloudflare-super-page-cache.php
 msgid "A WordPress performance plugin that lets you get Edge Caching enabled on a Cloudflare free plan."
 msgstr ""
 
 #. Author of the plugin
-#: wp-cloudflare-super-page-cache-pro.php
+#: wp-cloudflare-super-page-cache.php
 msgid "Themeisle"
 msgstr ""
 
 #. Author URI of the plugin
-#: wp-cloudflare-super-page-cache-pro.php
+#: wp-cloudflare-super-page-cache.php
 msgid "https://themeisle.com"
 msgstr ""
 
@@ -90,33 +91,33 @@ msgid "Yes"
 msgstr ""
 
 #. translators: %s is the path to the .htaccess file
-#: libs/cache_controller.class.php:2148
+#: libs/cache_controller.class.php:2152
 #, php-format
 msgid "The .htaccess file (%s) could not be edited. Check if the file has write permissions."
 msgstr ""
 
-#: libs/cache_controller.class.php:2198
-#: libs/cache_controller.class.php:2218
-#: libs/cache_controller.class.php:2241
+#: libs/cache_controller.class.php:2202
+#: libs/cache_controller.class.php:2222
+#: libs/cache_controller.class.php:2245
 msgid "Permission denied"
 msgstr ""
 
-#: libs/cache_controller.class.php:2205
-#: libs/cache_controller.class.php:2225
-#: libs/cache_controller.class.php:2257
+#: libs/cache_controller.class.php:2209
+#: libs/cache_controller.class.php:2229
+#: libs/cache_controller.class.php:2261
 msgid "Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned."
 msgstr ""
 
-#: libs/cache_controller.class.php:2251
+#: libs/cache_controller.class.php:2255
 msgid "An error occurred while cleaning the cache. Please check log file for further details."
 msgstr ""
 
-#: libs/cache_controller.class.php:2377
+#: libs/cache_controller.class.php:2381
 msgid "Super Page Cache - Purge Cache Cron Interval"
 msgstr ""
 
 #. translators: %1$s is the name of the sitemap, %2$s is the error message
-#: libs/cache_controller.class.php:2572
+#: libs/cache_controller.class.php:2576
 #, php-format
 msgid "Connection error while retriving the sitemap %1$s: %2$s"
 msgstr ""
@@ -444,10 +445,6 @@ msgstr ""
 #: src/Modules/Dashboard.php:130
 #: src/Modules/Dashboard.php:140
 msgid "Dashboard - Super Page Cache"
-msgstr ""
-
-#: src/Modules/Dashboard.php:131
-msgid "Super Page Cache"
 msgstr ""
 
 #: src/Modules/Dashboard.php:141

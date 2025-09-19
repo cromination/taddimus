@@ -33,6 +33,20 @@ class Hestia_Main_Notice_Section extends Hestia_Generic_Notice_Section {
 	public $slug;
 
 	/**
+	 * Notice dismissed button is visible.
+	 *
+	 * @var bool
+	 */
+	public $dismissed_button = true;
+
+	/**
+	 * Notice type.
+	 *
+	 * @var string
+	 */
+	public $notice_type = 'info';
+
+	/**
 	 * Control options.
 	 *
 	 * Ex: redirect link after install
@@ -68,6 +82,9 @@ class Hestia_Main_Notice_Section extends Hestia_Generic_Notice_Section {
 		$json['description']           = ! empty( $this->description ) ? $this->description : '';
 		$json['plugin_install_button'] = $this->create_plugin_install_button( $this->slug, $this->options );
 		$json['hide_notice']           = $this->hide_notice;
+		$json['dismissed_button']      = $this->dismissed_button;
+		$json['notice_type']           = $this->notice_type;
+		$json['options']               = $this->options;
 
 		return $json;
 
@@ -84,14 +101,16 @@ class Hestia_Main_Notice_Section extends Hestia_Generic_Notice_Section {
 		?>
 		<# if ( ! data.hide_notice ) { #>
 		<li id="accordion-section-{{ data.id }}"
-				class="hestia-notice control-section-{{ data.type }} cannot-expand" style="margin-bottom: 1px;">
+				class="hestia-notice control-section control-section-{{ data.type }} cannot-expand" style="margin-bottom: 1px;">
 			<# if ( data.title ) { #>
 			<h3 class="accordion-section-title">
 				{{{ data.title }}}
 			</h3>
 			<# } #>
-			<div class="notice notice-info" style="position: relative; margin-top:0; margin-bottom: 1px;">
-				<button type="button" class="notice-dismiss" style="z-index: 1;"></button>
+			<div class="<# if ( data.options && data.options.fixed ) { #>hestia-notice-body<# } else { #>notice<# } #> notice-{{{data.notice_type}}}" style="position: relative; margin-top:0; margin-bottom: 1px;">
+				<# if ( data.dismissed_button ) { #>
+					<button type="button" class="notice-dismiss" style="z-index: 1;"></button>
+				<# } #>
 				<# if ( data.name ) { #>
 				<h3 style="padding-right: 36px">
 					{{{data.name}}}
@@ -105,6 +124,8 @@ class Hestia_Main_Notice_Section extends Hestia_Generic_Notice_Section {
 				<# } #>
 				<# if ( data.plugin_install_button ) { #>
 				{{{data.plugin_install_button}}}
+				<# } else if ( data.options && data.options['redirect'] && data.options['title'] )  { #>
+					<a href="{{{data.options['redirect']}}}" style="text-decoration: none;">{{{data.options['title']}}}</a>
 				<# } #>
 			</div>
 		</li>

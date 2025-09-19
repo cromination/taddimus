@@ -18,7 +18,7 @@ const DashboardPlaceholder = () => {
                   <div className="w-16 h-4 bg-muted-foreground/50 rounded animate-pulse"></div>
                   <div className="w-6 h-6 bg-muted-foreground/50 rounded animate-pulse"></div>
                 </div>
-                <div className="w-20 h-8 bg-muted-foreground/50 rounded animate-pulse"></div>
+                <div className="w-20 h-4 bg-muted-foreground/50 rounded animate-pulse"></div>
               </div>
             ))}
           </div>

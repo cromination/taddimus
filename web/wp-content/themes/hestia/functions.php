@@ -6,7 +6,7 @@
  * @since   Hestia 1.0
  */
 
-define( 'HESTIA_VERSION', '3.2.11' );
+define( 'HESTIA_VERSION', '3.3.3' );
 define( 'HESTIA_VENDOR_VERSION', '1.0.2' );
 define( 'HESTIA_PHP_INCLUDE', trailingslashit( get_template_directory() ) . 'inc/' );
 define( 'HESTIA_ASSETS_URL', trailingslashit( get_template_directory_uri() ) . 'assets/' );
@@ -84,6 +84,14 @@ function hestia_run() {
 		'themesle_sdk_namespace_' . md5( get_template_directory() . '/style.css' ),
 		function () {
 			return 'hestia';
+		}
+	);
+	add_filter( 'hestia_pro_hide_license_field', '__return_true' );
+	add_filter(
+		'hestia_pro_lc_no_valid_string',
+		function ( $message ) {
+			$license_page = add_query_arg( array( 'page' => 'hestia-welcome' ), 'admin.php' );
+			return str_replace( '<a href="%s">', '<a href="' . esc_url( $license_page ) . '">', $message );
 		}
 	);
 

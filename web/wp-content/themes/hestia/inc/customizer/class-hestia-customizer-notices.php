@@ -44,13 +44,30 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 	 */
 	public function enqueue_notices_handler() {
 		wp_register_script( 'hestia-customizer-notices-handler', trailingslashit( get_template_directory_uri() ) . 'assets/js/admin/customizer-notices-handler.js', array( 'customize-controls' ), HESTIA_VERSION );
+
+		$admin_data = array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'hestia-customizer_notices_nonce' ),
+		);
+
+		if ( class_exists( 'WooCommerce' ) && ! class_exists( 'Hestia_Addon_Manager' ) ) {
+			$woocommerce_upsell_markup = sprintf(
+				// translators: %s is the feature name.
+				__( 'More Options Available for %s in the PRO version.', 'hestia' ),
+				'WooCommerce'
+			);
+			$woocommerce_upsell_markup .= sprintf(
+				'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', 'woocommerce' ) ) . '" style="width: fit-content; margin: 15px 0;">%s</a>',
+				__( 'Upgrade to Unlock', 'hestia' )
+			);
+
+			$admin_data['upsell']['woocommerce_panel'] = $woocommerce_upsell_markup;
+		}
+
 		wp_localize_script(
 			'hestia-customizer-notices-handler',
 			'dismissNotices',
-			array(
-				'ajaxurl' => admin_url( 'admin-ajax.php' ),
-				'nonce'   => wp_create_nonce( 'hestia-customizer_notices_nonce' ),
-			)
+			$admin_data
 		);
 
 		wp_enqueue_script( 'hestia-customizer-notices-handler' );
@@ -166,6 +183,7 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 						'title'       => __( 'Recommended Plugins', 'hestia' ),
 						'options'     => array(
 							'redirect' => admin_url( 'customize.php' ),
+							'fixed'    => true,
 						),
 						/* translators: Orbit Fox Companion */
 						'description' => sprintf( esc_html__( 'If you want to take full advantage of the options this theme has to offer, please install and activate %s.', 'hestia' ), sprintf( '<strong>%s</strong>', 'Orbit Fox Companion' ) ),
@@ -206,6 +224,7 @@ class Hestia_Customizer_Notices extends Hestia_Register_Customizer_Controls {
 					'title'       => __( 'Recommended Plugins', 'hestia' ),
 					'options'     => array(
 						'redirect' => admin_url( 'customize.php' ),
+						'fixed'    => true,
 					),
 					/* translators: Orbit Fox Companion */
 					'description' => esc_html__( 'Quickly create WordPress pages with 20+ blocks, 100+ ready-to-import designs, and advanced editor extensions.', 'hestia' ),

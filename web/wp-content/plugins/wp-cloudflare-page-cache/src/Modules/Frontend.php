@@ -4,6 +4,7 @@ namespace SPC\Modules;
 
 use SPC\Constants;
 use SPC\Loader;
+use SPC\Services\Settings_Store;
 
 /**
  * Frontend module.
@@ -112,17 +113,18 @@ class Frontend implements Module_Interface {
 	 * @return void
 	 */
 	public function enqueue_uncached() {
-		global $sw_cloudflare_pagecache;
-
 		if ( $this->is_amp_or_customizer() ) {
 			return;
 		}
 
-		if ( (int) $sw_cloudflare_pagecache->get_single_config( Constants::SETTING_PREFETCH_ON_HOVER, 0 ) > 0 ) {
+		if ( Settings_Store::get_instance()->get( Constants::SETTING_PREFETCH_ON_HOVER ) ) {
 			wp_enqueue_script( 'swcfpc_instantpage', SWCFPC_PLUGIN_URL . 'assets/js/instantpage.min.js', [], '5.2.0', true );
 		}
 
-		if ( (int) $sw_cloudflare_pagecache->get_single_config( Constants::SETTING_PREFETCH_ON_HOVER, 0 ) > 0 || (int) $sw_cloudflare_pagecache->get_single_config( 'cf_prefetch_urls_viewport', 0 ) > 0 ) {
+		if (
+			Settings_Store::get_instance()->get( Constants::SETTING_PREFETCH_ON_HOVER ) ||
+			Settings_Store::get_instance()->get( Constants::SETTING_PREFETCH_URLS_VIEWPORT )
+		) {
 			$this->enqueue_auto_prefetch_viewport();
 		}
 	}

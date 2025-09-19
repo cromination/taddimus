@@ -21,7 +21,6 @@ const ApiKeyForm = () => {
   const [formData, setFormData] = useState({
     email: settings.cf_email as string,
     apiKey: settings.cf_apikey as string,
-    zoneId: settings.cf_zoneid_list ? Object.values(settings.cf_zoneid_list)[0] : '',
   });
 
   const getZoneDomainList = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -51,9 +50,8 @@ const ApiKeyForm = () => {
 
     setErrorMessage(response.message);
   }
-
-  const hasZoneIds = Object.keys(settings.cf_zoneid_list || {}).length > 0;
-  const isFormInvalid = !hasZoneIds ? (!formData.email || !formData.apiKey) : !formData.zoneId;
+  
+  const isFormInvalid = (!formData.email || !formData.apiKey);
 
   return (
     <form onSubmit={getZoneDomainList}>
@@ -64,7 +62,7 @@ const ApiKeyForm = () => {
           <Input
             type="email"
             id="cf_email"
-            disabled={asyncLocked || !!settings.cf_zoneid_list}
+            disabled={asyncLocked}
             value={formData.email as string}
             onChange={(e) => {
               setFormData({ ...formData, email: e.target.value });
@@ -82,7 +80,7 @@ const ApiKeyForm = () => {
           <PasswordInput
             type="password"
             id="cf_api_key"
-            disabled={asyncLocked || !!settings.cf_zoneid_list}
+            disabled={asyncLocked}
             value={formData.apiKey as string}
             className="w-full max-w-full h-10 m-0"
             autoComplete="off"

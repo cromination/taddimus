@@ -142,18 +142,18 @@ abstract class MethodAbstract implements MethodInterface {
 	/**
 	 * Checks server path of source image.
 	 *
-	 * @param string $source_path Server path of source image.
-	 *
-	 * @return string Server path of source image.
+	 * @param string   $source_path  Server path of source image.
+	 * @param int|null $max_filesize Maximum allowed filesize in bytes.
 	 *
 	 * @throws Exception\SourcePathException
+	 * @throws Exception\FilesizeOversizeException
 	 */
-	protected function get_image_source_path( string $source_path ): string {
+	protected function check_image_source_path( string $source_path, ?int $max_filesize = null ): void {
 		if ( ! is_readable( $source_path ) ) {
 			throw new Exception\SourcePathException( $source_path );
+		} elseif ( ( $max_filesize !== null ) && ( filesize( $source_path ) > $max_filesize ) ) {
+			throw new Exception\FilesizeOversizeException( [ $max_filesize, $source_path ] );
 		}
-
-		return $source_path;
 	}
 
 	/**

@@ -2,10 +2,10 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Orbit Fox Companion 2.10.47\n"
+"Project-Id-Version: Orbit Fox Companion 3.0.1\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/Codeinwp/themeisle-companion/issues\n"
-"POT-Creation-Date: 2025-05-27 06:46:49+00:00\n"
+"POT-Creation-Date: 2025-08-27 07:38:34+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,11 +23,11 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
-"X-Generator: grunt-wp-i18n 1.0.3\n"
+"X-Generator: grunt-wp-i18n 1.0.4\n"
 
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:70
 #: obfx_modules/beaver-widgets/modules/services/services.php:65
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:510
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:519
 msgid "1"
 msgstr ""
 
@@ -51,7 +51,7 @@ msgstr ""
 msgid "5"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:183
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:192
 msgid "50"
 msgstr ""
 
@@ -67,53 +67,53 @@ msgstr ""
 msgid "Data unchanged!"
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:257
-#: core/app/class-orbit-fox-admin.php:258 core/app/views/modules-page.php:45
+#: core/app/class-orbit-fox-admin.php:258
+#: core/app/class-orbit-fox-admin.php:259 core/app/views/modules-page.php:45
 msgid "Orbit Fox"
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:268
+#: core/app/class-orbit-fox-admin.php:270
 msgid "Orbit Fox General Options"
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:268
+#: core/app/class-orbit-fox-admin.php:270
 msgid "General Settings"
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:299
+#: core/app/class-orbit-fox-admin.php:339
 #. translators: Go to url.
 msgid ""
 "You have activated Orbit Fox plugin! Go to the %s to get started with the "
 "extra features."
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:299
+#: core/app/class-orbit-fox-admin.php:339
 msgid "Dashboard Page"
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:355
+#: core/app/class-orbit-fox-admin.php:395
 msgid "No module found! No data was updated."
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:361
+#: core/app/class-orbit-fox-admin.php:401
 msgid "Something went wrong, data might not be saved!"
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:365
+#: core/app/class-orbit-fox-admin.php:405
 msgid "Options updated, successfully!"
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:390
+#: core/app/class-orbit-fox-admin.php:430
 msgid ""
 "Turn WordPress into a landing page powerhouse with Landing Kit. Map domains "
 "to pages or any other published resource."
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:402
+#: core/app/class-orbit-fox-admin.php:442
 msgid "Conversion-focused features for your online store."
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:483
+#: core/app/class-orbit-fox-admin.php:523
 #. translators: %1$s - plugin name, %2$s - HTML tag, %3$s - discount, %4$s -
 #. HTML tag, %5$s - company name.
 msgid ""
@@ -196,17 +196,18 @@ msgstr ""
 
 #: obfx_modules/beaver-widgets/inc/common-functions.php:26
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:361
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:781
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:836
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:853
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:530
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:790
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:845
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:862
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:539
 msgid "Padding"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/inc/common-functions.php:30
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:218
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:384
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:239
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:393
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:248
+#: obfx_modules/reading-progress-bar/init.php:210
 msgid "Top"
 msgstr ""
 
@@ -224,7 +225,8 @@ msgstr ""
 
 #: obfx_modules/beaver-widgets/inc/common-functions.php:36
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:220
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:386
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:395
+#: obfx_modules/reading-progress-bar/init.php:211
 msgid "Bottom"
 msgstr ""
 
@@ -246,16 +248,17 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/services/services.php:107
 #: obfx_modules/beaver-widgets/modules/services/services.php:186
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:147
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:364
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:840
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:373
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:849
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:186
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:121
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:650
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:686
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:732
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:302
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:235
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:345
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:659
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:695
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:741
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:311
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:244
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:354
+#: obfx_modules/reading-progress-bar/init.php:213
 msgid "Left"
 msgstr ""
 
@@ -277,16 +280,17 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/services/services.php:109
 #: obfx_modules/beaver-widgets/modules/services/services.php:188
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:155
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:372
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:848
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:381
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:857
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:194
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:129
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:658
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:694
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:740
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:310
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:243
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:353
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:667
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:703
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:749
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:319
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:252
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:362
+#: obfx_modules/reading-progress-bar/init.php:212
 msgid "Right"
 msgstr ""
 
@@ -294,7 +298,7 @@ msgstr ""
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:288
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:333
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:375
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:830
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:839
 msgid "Typography"
 msgstr ""
 
@@ -311,8 +315,8 @@ msgid "Transform"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/inc/common-functions.php:89
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:461
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:568
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:470
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:577
 msgid "None"
 msgstr ""
 
@@ -333,11 +337,11 @@ msgid "Font style"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/inc/common-functions.php:100
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:403
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:631
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1257
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:897
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:565
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:412
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:640
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1266
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:906
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:574
 msgid "Normal"
 msgstr ""
 
@@ -358,15 +362,11 @@ msgid "Letter spacing"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/init.php:37
-#: obfx_modules/elementor-widgets/init.php:42
-msgid "Page builder widgets"
+msgid "Beaver Builder widgets"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/init.php:38
-#: obfx_modules/elementor-widgets/init.php:43
-msgid ""
-"Adds widgets to the most popular builders: Elementor or Beaver. More to "
-"come!"
+msgid "Adds widgets to the Beaver Builder."
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/frontend.php:101
@@ -379,22 +379,22 @@ msgid "Custom Query"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:33
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:192
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:201
 msgid "Post Type"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:43
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:291
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:300
 msgid "Order"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:45
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:295
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:304
 msgid "Descending"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:46
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:294
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:303
 msgid "Ascending"
 msgstr ""
 
@@ -406,7 +406,7 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:216
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:212
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-testimonial.php:178
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:494
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:503
 msgid "Author"
 msgstr ""
 
@@ -417,8 +417,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:61
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:217
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:213
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:277
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:495
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:286
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:504
 msgid "Date"
 msgstr ""
 
@@ -443,7 +443,7 @@ msgid "Meta Value (Numeric)"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:67
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:281
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:290
 msgid "Random"
 msgstr ""
 
@@ -456,12 +456,12 @@ msgstr ""
 #: obfx_modules/companion-legacy/inc/shop-isle/customizer.php:297
 #: obfx_modules/companion-legacy/inc/shop-isle/customizer.php:389
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-focus.php:181
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:278
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:415
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:953
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:112
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:113
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:367
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:287
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:424
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:962
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:121
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:122
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:376
 msgid "Title"
 msgstr ""
 
@@ -517,7 +517,7 @@ msgid "Vertical align"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:219
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:385
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:394
 msgid "Middle"
 msgstr ""
 
@@ -526,13 +526,13 @@ msgid "Display type"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:234
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:233
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:458
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:242
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:467
 msgid "Grid"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/includes/loop-settings.php:235
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:234
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:243
 msgid "List"
 msgstr ""
 
@@ -619,13 +619,13 @@ msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:87
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:83
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:348
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:357
 msgid "Image size"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:94
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:90
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:380
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:389
 msgid "Image alignment"
 msgstr ""
 
@@ -646,15 +646,15 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/services/services.php:108
 #: obfx_modules/beaver-widgets/modules/services/services.php:187
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:151
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:368
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:844
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:377
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:853
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:190
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:125
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:654
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:690
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:736
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:306
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:349
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:663
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:699
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:745
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:315
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:358
 msgid "Center"
 msgstr ""
 
@@ -726,8 +726,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:103
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:75
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:98
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:131
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:159
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:140
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:168
 msgid "p"
 msgstr ""
 
@@ -758,28 +758,29 @@ msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:213
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:209
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:488
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:497
+#: obfx_modules/reading-progress-bar/init.php:221
 msgid "Display"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:218
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:214
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:203
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:217
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:496
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:212
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:226
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:505
 #: obfx_modules/elementor-extra-widgets/widgets/wp/eaw-posts-widget-plus.php:173
 msgid "Category"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:219
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:215
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:497
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:506
 msgid "Tags"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:220
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:216
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:498
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:507
 msgid "Comments"
 msgstr ""
 
@@ -815,14 +816,14 @@ msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:283
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:279
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:620
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:621
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:629
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:630
 msgid "Read more"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/post-grid/obfx-post-grid.php:293
 #: obfx_modules/beaver-widgets/modules/post-grid/post-grid.php:289
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:358
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:367
 msgid "Text alignment"
 msgstr ""
 
@@ -857,9 +858,9 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:50
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:53
 #: obfx_modules/beaver-widgets/modules/services/services.php:48
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:550
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1091
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:331
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:559
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1100
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:340
 msgid "Content"
 msgstr ""
 
@@ -877,8 +878,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:97
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:69
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:92
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:125
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:153
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:134
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:162
 msgid "h1"
 msgstr ""
 
@@ -886,8 +887,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:98
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:70
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:93
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:126
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:154
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:135
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:163
 msgid "h2"
 msgstr ""
 
@@ -895,8 +896,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:99
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:71
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:94
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:127
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:155
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:136
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:164
 msgid "h3"
 msgstr ""
 
@@ -904,8 +905,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:100
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:72
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:95
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:128
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:156
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:137
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:165
 msgid "h4"
 msgstr ""
 
@@ -913,8 +914,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:101
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:73
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:96
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:129
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:157
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:138
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:166
 msgid "h5"
 msgstr ""
 
@@ -922,8 +923,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:102
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:74
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:97
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:130
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:158
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:139
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:167
 msgid "h6"
 msgstr ""
 
@@ -931,8 +932,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:80
 #: obfx_modules/companion-legacy/inc/shop-isle/customizer.php:179
 #: obfx_modules/companion-legacy/inc/shop-isle/customizer.php:315
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:140
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:141
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:149
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:150
 msgid "Subtitle"
 msgstr ""
 
@@ -948,26 +949,26 @@ msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:109
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:104
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:173
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:500
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:182
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:509
 msgid "Price Tag"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:113
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:108
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:592
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1149
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:181
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:182
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:565
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:601
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1158
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:190
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:191
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:574
 msgid "Price"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:122
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:117
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:192
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:193
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:530
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:201
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:202
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:539
 msgid "Currency"
 msgstr ""
 
@@ -978,29 +979,29 @@ msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:134
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:129
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:205
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:374
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:214
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:383
 msgid "Before"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:135
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:130
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:206
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:375
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:215
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:384
 msgid "After"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:140
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:135
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:215
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:600
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:224
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:609
 msgid "Period"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:141
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:136
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:216
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:217
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:225
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:226
 msgid "/month"
 msgstr ""
 
@@ -1014,11 +1015,11 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:150
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:562
 #: obfx_modules/companion-legacy/inc/hestia/inc/features/feature-features-section.php:115
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:254
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:279
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:283
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:287
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:132
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:263
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:288
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:292
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:296
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:141
 msgid "Feature"
 msgstr ""
 
@@ -1026,18 +1027,18 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:167
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:157
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:162
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:621
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:605
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:633
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1225
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:335
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:811
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:630
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:614
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:642
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1234
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:344
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:820
 msgid "Button"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:166
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:161
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:619
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:628
 msgid "Button text"
 msgstr ""
 
@@ -1100,8 +1101,8 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/pricing-table/obfx-pricing-table.php:266
 #: obfx_modules/beaver-widgets/modules/pricing-table/pricing-table.php:261
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:516
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:103
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:100
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:112
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:109
 msgid "Type"
 msgstr ""
 
@@ -1111,12 +1112,13 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:198
 #: obfx_modules/beaver-widgets/modules/services/services.php:154
 #: obfx_modules/beaver-widgets/modules/services/services.php:193
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:978
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1038
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1116
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1180
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:393
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:425
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:987
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1047
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1125
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1189
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:402
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:434
+#: obfx_modules/reading-progress-bar/init.php:245
 msgid "Color"
 msgstr ""
 
@@ -1224,9 +1226,9 @@ msgstr ""
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:51
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:415
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:450
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:61
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:250
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:343
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:70
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:259
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:352
 msgid "Text"
 msgstr ""
 
@@ -1268,18 +1270,18 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:244
 #: obfx_modules/beaver-widgets/modules/services/services.php:239
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:132
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:261
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:362
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:106
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:139
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:270
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:371
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:115
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:148
 msgid "Icon"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:36
 #: obfx_modules/beaver-widgets/modules/services/services.php:31
 #: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:43
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:92
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:189
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:101
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:198
 msgid "Services"
 msgstr ""
 
@@ -1303,12 +1305,13 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:109
 #: obfx_modules/beaver-widgets/modules/services/services.php:104
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-team.php:299
+#: obfx_modules/reading-progress-bar/init.php:206
 msgid "Position"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:119
 #: obfx_modules/beaver-widgets/modules/services/services.php:114
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:309
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:318
 msgid "Size"
 msgstr ""
 
@@ -1326,19 +1329,19 @@ msgstr ""
 #: obfx_modules/beaver-widgets/modules/services/services.php:183
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:617
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:141
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:834
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:843
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:180
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:115
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:682
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:728
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:298
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:339
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:691
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:737
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:307
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:348
 msgid "Alignment"
 msgstr ""
 
 #: obfx_modules/beaver-widgets/modules/services/obfx-services.php:254
 #: obfx_modules/beaver-widgets/modules/services/services.php:249
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:179
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:188
 msgid "Link to"
 msgstr ""
 
@@ -1408,9 +1411,9 @@ msgstr ""
 
 #: obfx_modules/companion-legacy/inc/hestia/inc/features/feature-features-section.php:26
 #: obfx_modules/companion-legacy/inc/hestia/inc/features/feature-features-section.php:37
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:231
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:641
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:706
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:240
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:650
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:715
 msgid "Features"
 msgstr ""
 
@@ -1460,9 +1463,9 @@ msgstr ""
 #: obfx_modules/companion-legacy/inc/hestia/inc/features/feature-ribbon-section.php:140
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-clients.php:120
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-focus.php:207
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:399
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:454
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:353
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:408
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:463
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:362
 msgid "Link"
 msgstr ""
 
@@ -1793,10 +1796,10 @@ msgstr ""
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-focus.php:221
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-team.php:407
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-testimonial.php:232
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:320
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:889
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:110
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:168
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:329
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:898
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:119
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:177
 msgid "Image"
 msgstr ""
 
@@ -1855,8 +1858,8 @@ msgid "Name"
 msgstr ""
 
 #: obfx_modules/companion-legacy/inc/zerif-lite/widgets/widget-team.php:311
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:142
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:416
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:151
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:425
 msgid "Description"
 msgstr ""
 
@@ -1904,8 +1907,8 @@ msgstr ""
 msgid "Module containing frontpage improvements for %s theme."
 msgstr ""
 
-#: obfx_modules/content-forms/form_manager.php:198
-#: obfx_modules/content-forms/form_manager.php:210
+#: obfx_modules/content-forms/form_manager.php:200
+#: obfx_modules/content-forms/form_manager.php:212
 #: obfx_modules/elementor-extra-widgets/class-elementor-extra-widgets.php:275
 #: obfx_modules/elementor-extra-widgets/class-elementor-extra-widgets.php:287
 #: vendor/codeinwp/full-width-page-templates/builders/class-elementor-full-width-templates.php:107
@@ -1960,7 +1963,7 @@ msgstr ""
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-registration.php:97
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:63
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:65
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:63
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:72
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:54
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:56
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:74
@@ -1970,7 +1973,7 @@ msgid "Email"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:53
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:64
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:73
 msgid "Textarea"
 msgstr ""
 
@@ -1978,7 +1981,7 @@ msgstr ""
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-registration.php:57
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-registration.php:58
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-registration.php:95
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:62
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:71
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:83
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:85
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:156
@@ -1986,47 +1989,47 @@ msgid "Password"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:111
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:276
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:288
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:376
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:285
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:297
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:385
 msgid "Spacing"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:117
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:225
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:234
 msgid "Columns Gap"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:141
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:246
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:255
 msgid "Rows Gap"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:156
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:508
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:141
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:267
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:150
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:276
 msgid "Label"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:160
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:197
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:301
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:410
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:517
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:652
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:730
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:878
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:918
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1270
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1336
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:905
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:952
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:310
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:419
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:526
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:661
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:739
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:887
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:927
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1279
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1345
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:914
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:961
 msgid "Text Color"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:172
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:315
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:324
 msgid "Mark Color"
 msgstr ""
 
@@ -2039,21 +2042,21 @@ msgstr ""
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:565
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:568
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:571
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:339
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:348
 msgid "Field"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:208
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:429
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:536
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:638
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:719
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:867
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:907
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1288
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1356
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:919
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:966
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:438
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:545
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:647
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:728
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:876
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:916
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1297
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1365
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:928
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:975
 msgid "Background Color"
 msgstr ""
 
@@ -2065,8 +2068,8 @@ msgstr ""
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:297
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:426
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:461
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:890
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:930
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:899
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:939
 msgid "Border"
 msgstr ""
 
@@ -2076,7 +2079,7 @@ msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:243
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:366
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:793
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:802
 msgid "Width"
 msgstr ""
 
@@ -2103,23 +2106,23 @@ msgid "Border Hover"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:352
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:761
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:770
 msgid "Notification"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:356
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:769
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:930
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:993
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1071
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1133
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1198
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1444
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:778
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:939
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1002
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1080
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1142
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1207
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1453
 msgid "Margin"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:384
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:826
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:835
 msgid "Box Shadow"
 msgstr ""
 
@@ -2136,20 +2139,20 @@ msgid "Notification Error"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:482
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:81
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:90
 msgid "Fields"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:494
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:179
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:188
 msgid "Hide Label"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:497
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:328
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:423
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:478
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:558
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:337
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:432
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:487
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:567
 msgid "Hide"
 msgstr ""
 
@@ -2158,12 +2161,12 @@ msgid "Show"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:512
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:150
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:159
 msgid "Placeholder"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:541
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:121
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:130
 msgid "Field Width"
 msgstr ""
 
@@ -2172,7 +2175,7 @@ msgid "Is required?"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:556
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:89
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:98
 msgid "Required"
 msgstr ""
 
@@ -2181,7 +2184,7 @@ msgid "Optional"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:594
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:197
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:206
 msgid "Form Settings"
 msgstr ""
 
@@ -2190,7 +2193,7 @@ msgstr ""
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/includes/frontend.php:13
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:133
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/contact_admin.php:134
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:960
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:969
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:124
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/registration_admin.php:107
 msgid "Submit"
@@ -2213,50 +2216,50 @@ msgid "Block"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:637
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:230
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:239
 msgid "Style"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:675
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1116
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1125
 msgid "This is a preview of how the success notification will look"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:679
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1120
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1129
 msgid "This is a preview of how the error notification will look"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:723
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:733
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:765
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:996
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1006
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1040
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1005
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1015
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1049
 msgid "The %s setting is required!"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:724
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/class-themeisle-content-forms-beaver-newsletter.php:111
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:997
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1006
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:223
 msgid "Access Key"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:734
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1007
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1016
 msgid "List id"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:747
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1020
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1029
 msgid ""
 "The %s field is mapped to multiple form fields. Please check your field "
 "settings."
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/beaver/beaver_widget_base.php:766
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1041
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:1050
 msgid "Send to Email Address"
 msgstr ""
 
@@ -2481,60 +2484,60 @@ msgstr ""
 msgid "Display Name"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:113
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:122
 msgid "Key"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:165
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:174
 msgid "Form Fields"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:217
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:226
 msgid "Form"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:387
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:698
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:396
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:707
 msgid "Text Padding"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:444
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:551
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:741
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:453
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:560
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:750
 msgid "Border Color"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:479
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:586
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:488
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:595
 msgid "Border Width"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:494
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:601
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:686
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:849
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:901
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:841
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:543
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:503
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:610
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:695
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:858
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:910
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:850
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:552
 msgid "Border Radius"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:510
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:519
 msgid "Focus"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:712
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1323
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:944
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:591
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:721
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1332
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:953
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:600
 msgid "Hover"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:860
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:869
 msgid "Success"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:900
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:909
 msgid "Error"
 msgstr ""
 
@@ -2544,14 +2547,14 @@ msgid "Orbit Fox Addons"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:141
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:766
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:866
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:775
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:875
 msgid "Icon Size"
 msgstr ""
 
 #: obfx_modules/content-forms/includes/widgets-admin/elementor/newsletter_admin.php:161
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:387
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:786
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:396
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:795
 msgid "Icon Spacing"
 msgstr ""
 
@@ -2823,161 +2826,177 @@ msgstr ""
 msgid "Upload custom fonts and use them anywhere on your site."
 msgstr ""
 
+#: obfx_modules/custom-fonts/init.php:45
+msgid "Upload Fonts"
+msgstr ""
+
+#: obfx_modules/disable-comments/init.php:26
+msgid "Disable Comments"
+msgstr ""
+
+#: obfx_modules/disable-comments/init.php:27
+msgid ""
+"A global kill switch for comments. Instantly closes comments on all "
+"existing posts and pages, removes the Comments section from admin menu, "
+"completely hides comment forms from your website frontend, and removes "
+"comment blocks from the editor."
+msgstr ""
+
 #: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:38
 msgid "Post Type Grid"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:126
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:135
 msgid "All Categories"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:183
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:764
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:192
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:773
 msgid "Grid Options"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:244
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:826
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:520
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:253
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:835
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:529
 msgid "Items"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:245
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:254
 msgid "How many items?"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:255
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:258
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:264
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:267
 msgid "Columns"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:274
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:283
 msgid "Order by"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:279
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:288
 msgid "Modified date"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:280
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:289
 msgid "Comment count"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:304
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:717
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1432
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:313
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:726
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1441
 msgid "Pagination"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:334
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:343
 msgid "Full size"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:358
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:367
 msgid "Image height"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:434
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:443
 msgid "Tag"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:470
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1013
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:479
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1022
 msgid "Meta"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:508
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:517
 msgid "No. of Categories"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:509
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:518
 msgid "How many categories to display?"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:522
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:531
 msgid "No. of Tags"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:523
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:532
 msgid "How many tags to display?"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:534
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:543
 msgid "Remove icons"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:568
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:577
 msgid "Show full content"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:579
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:588
 msgid "Length (words)"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:580
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:589
 msgid "Length of content (words)"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:646
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:655
 msgid "Button alignment"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:662
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:314
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:671
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:323
 msgid "Justified"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:773
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:467
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:782
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:476
 msgid "Columns margin"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:795
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:489
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:804
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:498
 msgid "Rows margin"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1053
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1062
 msgid "Icons spacing"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1393
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1402
 msgid "Button padding"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1410
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1419
 msgid "Button border radius"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1575
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1589
 msgid "Previous"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1576
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1590
 msgid "Next"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1714
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1728
 msgid "No reviews"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1714
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1728
 msgid "1 review"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1714
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1728
 msgid "% reviews"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1716
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1730
 msgid "No comments"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1716
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1730
 msgid "1 comment"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1716
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/posts-grid.php:1730
 msgid "% comments"
 msgstr ""
 
@@ -2985,171 +3004,171 @@ msgstr ""
 msgid "Pricing Table"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:104
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:113
 msgid "Plan Title"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:114
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:123
 msgid "Pricing Plan"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:122
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:131
 msgid "Title HTML tag"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:150
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:159
 msgid "Subtitle HTML Tag"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:194
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:203
 msgid "$"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:202
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:211
 msgid "Currency Position"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:239
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:248
 msgid "Accented Text"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:242
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:251
 msgid "Appears before feature text"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:243
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:252
 msgid "Accent"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:253
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:274
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:131
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:262
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:283
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:140
 msgid "Plan Features"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:278
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:287
 msgid "First"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:282
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:291
 msgid "Second"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:286
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:295
 msgid "Third"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:344
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:345
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:353
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:354
 msgid "Buy Now"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:354
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:182
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:363
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:191
 msgid "https://example.com"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:371
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:231
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:380
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:240
 msgid "Icon Position"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:412
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:421
 msgid "Header"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:420
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:429
 msgid "Header Padding"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:433
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:442
 msgid "Title Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:459
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:468
 msgid "Subtitle Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:485
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:521
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:650
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:820
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:494
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:530
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:659
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:829
 msgid "Section Background"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:509
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:518
 msgid "Price Box Padding"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:539
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:548
 msgid "Currency Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:574
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:583
 msgid "Price Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:609
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:618
 msgid "Period Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:660
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:669
 msgid "Features List Padding"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:671
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:680
 msgid "Accented"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:681
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:690
 msgid "Accented Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:715
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:724
 msgid "Features Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:741
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:750
 msgid "Icons"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:750
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:155
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:759
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:164
 msgid "Icon Color"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:989
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:615
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/pricing-table.php:998
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:624
 msgid "Transition Duration"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:120
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:129
 msgid "Title & Description"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:123
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:132
 msgid "Service Title"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:193
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:202
 msgid "Award-Winning​"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:194
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:204
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:214
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:203
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:213
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:223
 msgid "Add some text here to describe your services to the page visitors.​"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:203
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:212
 msgid "Professional​"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:213
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:222
 msgid "Consulting​"
 msgstr ""
 
-#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:281
+#: obfx_modules/elementor-extra-widgets/widgets/elementor/services.php:290
 msgid "Icon / Image"
 msgstr ""
 
@@ -3299,18 +3318,26 @@ msgstr ""
 msgid "EAW: Elementor Recent Posts"
 msgstr ""
 
-#: obfx_modules/elementor-widgets/init.php:50
+#: obfx_modules/elementor-widgets/init.php:42
+msgid "Elementor widgets"
+msgstr ""
+
+#: obfx_modules/elementor-widgets/init.php:43
+msgid "Adds widgets to the Elementor page builder."
+msgstr ""
+
+#: obfx_modules/elementor-widgets/init.php:51
 #. translators: %1$s is the features, %2$s is the plugin name
 msgid ""
 "You can get access to %1$s, including Instagram integration, display "
 "conditions and more in %2$s."
 msgstr ""
 
-#: obfx_modules/elementor-widgets/init.php:53
+#: obfx_modules/elementor-widgets/init.php:54
 msgid "10+ more Elementor and Gutenberg widgets"
 msgstr ""
 
-#: obfx_modules/elementor-widgets/init.php:69
+#: obfx_modules/elementor-widgets/init.php:70
 msgid "Learn more"
 msgstr ""
 
@@ -3346,39 +3373,43 @@ msgid ""
 msgstr ""
 
 #: obfx_modules/header-footer-scripts/init.php:45
-#: obfx_modules/header-footer-scripts/init.php:189
+msgid "Add Global Scripts"
+msgstr ""
+
+#: obfx_modules/header-footer-scripts/init.php:51
+#: obfx_modules/header-footer-scripts/init.php:195
 msgid "Header scripts"
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:48
+#: obfx_modules/header-footer-scripts/init.php:54
 #. translators: %s is head tag
 msgid "Output before the closing %s tag, after sitewide header scripts."
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:54
-#: obfx_modules/header-footer-scripts/init.php:219
+#: obfx_modules/header-footer-scripts/init.php:60
+#: obfx_modules/header-footer-scripts/init.php:225
 msgid "Footer scripts"
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:57
+#: obfx_modules/header-footer-scripts/init.php:63
 #. translators: %s is body tag
 msgid "Output before the closing %s tag, after sitewide footer scripts."
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:162
+#: obfx_modules/header-footer-scripts/init.php:168
 msgid "Header/Footer scripts"
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:174
-#: obfx_modules/header-footer-scripts/init.php:204
-#: obfx_modules/header-footer-scripts/init.php:360
-#: obfx_modules/header-footer-scripts/init.php:393
+#: obfx_modules/header-footer-scripts/init.php:180
+#: obfx_modules/header-footer-scripts/init.php:210
+#: obfx_modules/header-footer-scripts/init.php:366
+#: obfx_modules/header-footer-scripts/init.php:399
 #. translators: %s is placeholder value
 msgid "Enter your scripts here"
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:192
-#: obfx_modules/header-footer-scripts/init.php:222
+#: obfx_modules/header-footer-scripts/init.php:198
+#: obfx_modules/header-footer-scripts/init.php:228
 #. translators: %s is head tag
 #. translators: %s is body tag
 msgid ""
@@ -3386,8 +3417,31 @@ msgid ""
 "source."
 msgstr ""
 
-#: obfx_modules/header-footer-scripts/init.php:239
+#: obfx_modules/header-footer-scripts/init.php:245
 msgid "Scripts"
+msgstr ""
+
+#: obfx_modules/login-customizer/inc/class-obfx-login-values.php:296
+msgid "The value must be an array."
+msgstr ""
+
+#: obfx_modules/login-customizer/init.php:47
+msgid "Login Page Customizer"
+msgstr ""
+
+#: obfx_modules/login-customizer/init.php:48
+msgid ""
+"Customize your WordPress login page with a dedicated customizer interface. "
+"Change logos, colors, backgrounds, and branding to match your website "
+"design without needing separate plugins."
+msgstr ""
+
+#: obfx_modules/login-customizer/init.php:58
+msgid "Customize Login Page"
+msgstr ""
+
+#: obfx_modules/login-customizer/init.php:206
+msgid "Login Customizer"
 msgstr ""
 
 #: obfx_modules/menu-icons/init.php:45
@@ -3398,20 +3452,30 @@ msgstr ""
 msgid "Module to define menu icons for navigation."
 msgstr ""
 
-#: obfx_modules/menu-icons/init.php:201
+#: obfx_modules/menu-icons/init.php:53
+msgid ""
+"Your current theme uses Full Site Editing (FSE) and does not support "
+"traditional nav menus, so this module won't work as expected."
+msgstr ""
+
+#: obfx_modules/menu-icons/init.php:62
+msgid "Configure Menu Icons"
+msgstr ""
+
+#: obfx_modules/menu-icons/init.php:219
 #. translators: %s Plugin name
 msgid "Powered by %s plugin"
 msgstr ""
 
-#: obfx_modules/menu-icons/init.php:305
+#: obfx_modules/menu-icons/init.php:323
 msgid "theme"
 msgstr ""
 
-#: obfx_modules/menu-icons/init.php:315
+#: obfx_modules/menu-icons/init.php:333
 msgid "plugin"
 msgstr ""
 
-#: obfx_modules/menu-icons/init.php:320
+#: obfx_modules/menu-icons/init.php:338
 #. translators: %1$s Component name %2$s Component type
 msgid ""
 "There appears to be a conflict with the %1$s %2$s. This module may not work "
@@ -3430,114 +3494,184 @@ msgstr ""
 msgid "Module to import images directly from"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:146
+#: obfx_modules/mystock-import/init.php:147
 msgid "There was an error getting image details from the request, please try again."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:151
+#: obfx_modules/mystock-import/init.php:152
 msgid "The current user does not have permission to upload files."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:157
+#: obfx_modules/mystock-import/init.php:158
 msgid "Invalid nonce."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:162
+#: obfx_modules/mystock-import/init.php:163
 msgid "The URL of the image does not exist."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:176
+#: obfx_modules/mystock-import/init.php:177
 msgid "Image download failed, please try again."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:183
+#: obfx_modules/mystock-import/init.php:184
 msgid "Image type could not be determined"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:194
+#: obfx_modules/mystock-import/init.php:195
 msgid "Image successfully uploaded to the media library!"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:284
+#: obfx_modules/mystock-import/init.php:285
 msgid "Fetching data"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:285
+#: obfx_modules/mystock-import/init.php:286
 msgid "Downloading image. Please wait..."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:286
+#: obfx_modules/mystock-import/init.php:287
 msgid "Your image was imported. Go to Media Library tab to use it."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:287
+#: obfx_modules/mystock-import/init.php:288
 msgid "Loading more photos..."
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:288
+#: obfx_modules/mystock-import/init.php:289
 msgid "MyStock Library"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:289
+#: obfx_modules/mystock-import/init.php:290
 msgid "Import & set featured image"
 msgstr ""
 
-#: obfx_modules/mystock-import/init.php:290
+#: obfx_modules/mystock-import/init.php:291
 msgid "Import & insert image"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:25
-msgid "Policy Notice"
+#: obfx_modules/policy-notice/init.php:39
+msgid "Cookie Notice"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:26
+#: obfx_modules/policy-notice/init.php:40
 msgid ""
 "A simple notice bar which will help you inform users about your website "
 "policy."
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:91
+#: obfx_modules/policy-notice/init.php:368
+msgid "Not Set"
+msgstr ""
+
+#: obfx_modules/policy-notice/init.php:371
+msgid "Default Core Policy"
+msgstr ""
+
+#: obfx_modules/policy-notice/init.php:402
 msgid ""
 "Allow OrbitFox to display a bottom bar with info about the website Private "
 "Policy."
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:98
+#: obfx_modules/policy-notice/init.php:405
 msgid "Policy description"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:100
+#: obfx_modules/policy-notice/init.php:406
 msgid ""
 "This website uses cookies to improve your experience. We'll assume you "
 "accept this policy as long as you are using this website"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:105
+#: obfx_modules/policy-notice/init.php:409
 msgid "Policy Page"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:113
+#: obfx_modules/policy-notice/init.php:413
 msgid "Policy Button Label"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:115
+#: obfx_modules/policy-notice/init.php:414
 msgid "View Policy"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:120
+#: obfx_modules/policy-notice/init.php:417
 msgid "Accept Cookie Button Label"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:122
+#: obfx_modules/policy-notice/init.php:418
 msgid "Accept"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:358
-msgid "Not Set"
+#: obfx_modules/post-duplicator/init.php:27
+msgid "Post Duplicator"
 msgstr ""
 
-#: obfx_modules/policy-notice/init.php:361
-msgid "Default Core Policy"
+#: obfx_modules/post-duplicator/init.php:28
+msgid ""
+"Adds \"Clone\" option to posts and pages in the WordPress admin list. "
+"Creates new drafts copying all content and settings - a huge time-saver for "
+"managing content with complex layouts."
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:111
+msgid "Create a duplicate of this post"
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:112
+msgid "Clone"
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:141
+msgid "Missing required parameters."
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:149
+msgid "Security check failed."
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:155
+msgid "Post not found."
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:159
+msgid "You do not have permission to duplicate this post."
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:177
+msgid "Failed to duplicate post."
+msgstr ""
+
+#: obfx_modules/post-duplicator/init.php:199
+msgid "Copy"
+msgstr ""
+
+#: obfx_modules/reading-progress-bar/init.php:25
+msgid "Reading Progress Bar"
+msgstr ""
+
+#: obfx_modules/reading-progress-bar/init.php:26
+msgid ""
+"Display a progress bar that shows readers how far they've scrolled through "
+"your posts and pages. Perfect for long-form content and improving user "
+"engagement."
+msgstr ""
+
+#: obfx_modules/reading-progress-bar/init.php:222
+msgid "Show on mobile"
+msgstr ""
+
+#: obfx_modules/reading-progress-bar/init.php:229
+msgid "Desktop Size (px)"
+msgstr ""
+
+#: obfx_modules/reading-progress-bar/init.php:236
+msgid "Mobile Size (px)"
+msgstr ""
+
+#: obfx_modules/reading-progress-bar/init.php:282
+msgid "Display on"
 msgstr ""
 
 #: obfx_modules/social-sharing/init.php:28
@@ -3546,17 +3680,36 @@ msgstr ""
 
 #: obfx_modules/social-sharing/init.php:32
 #. translators: %s Document anchor link.
-msgid ""
-"Add basic social sharing to your posts and pages. Check out the %s to learn "
-"more!"
+msgid "Add basic social sharing to your posts and pages."
 msgstr ""
 
-#: obfx_modules/social-sharing/init.php:32
-msgid "documentation"
-msgstr ""
-
-#: obfx_modules/social-sharing/views/hestia-social-sharing-tpl.php:38
+#: obfx_modules/social-sharing/views/hestia-social-sharing-tpl.php:48
 msgid "Share on "
+msgstr ""
+
+#: obfx_modules/svg-uploads/init.php:35
+msgid "SVG Support"
+msgstr ""
+
+#: obfx_modules/svg-uploads/init.php:36
+msgid ""
+"Enable SVG file uploads and media library support. By default, WordPress "
+"doesn't allow uploading SVG files for security reasons. This module safely "
+"enables SVG support with proper sanitization."
+msgstr ""
+
+#: obfx_modules/svg-uploads/init.php:40
+msgid ""
+"Only enable this if you trust all users who can upload files to your site. "
+"SVG files can contain malicious code if not properly sanitized."
+msgstr ""
+
+#: obfx_modules/svg-uploads/init.php:119
+msgid "You are not allowed to upload files."
+msgstr ""
+
+#: obfx_modules/svg-uploads/init.php:124
+msgid "This SVG can not be sanitized!"
 msgstr ""
 
 #: obfx_modules/template-directory/init.php:41
@@ -3569,36 +3722,40 @@ msgid ""
 "templates that you can import straight into your website."
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:82
-#: obfx_modules/template-directory/init.php:130
+#: obfx_modules/template-directory/init.php:46
+msgid "Open Template Directory"
+msgstr ""
+
+#: obfx_modules/template-directory/init.php:87
+#: obfx_modules/template-directory/init.php:113
 msgid "Orbit Fox Template Directory"
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:83
+#: obfx_modules/template-directory/init.php:88
 msgid "Template Directory"
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:226
+#: obfx_modules/template-directory/init.php:209
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to install and "
 "activate Neve."
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:227
+#: obfx_modules/template-directory/init.php:210
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to activate Neve."
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:228
+#: obfx_modules/template-directory/init.php:211
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to install and "
 "activate Templates Cloud."
 msgstr ""
 
-#: obfx_modules/template-directory/init.php:229
+#: obfx_modules/template-directory/init.php:212
 msgid ""
 "In order to import any starter sites, Neve theme & Templates Cloud plugin "
 "need to be installed and activated. Click the button below to activate "
@@ -3643,38 +3800,38 @@ msgctxt "How many posts to skip."
 msgid "Offset"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:458
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:565
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:467
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:574
 msgctxt "Border Control"
 msgid "Border Type"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:462
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:569
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:471
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:578
 msgctxt "Border Control"
 msgid "Solid"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:463
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:570
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:472
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:579
 msgctxt "Border Control"
 msgid "Double"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:464
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:571
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:473
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:580
 msgctxt "Border Control"
 msgid "Dotted"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:465
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:572
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:474
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:581
 msgctxt "Border Control"
 msgid "Dashed"
 msgstr ""
 
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:466
-#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:573
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:475
+#: obfx_modules/content-forms/includes/widgets-admin/elementor/elementor_widget_base.php:582
 msgctxt "Border Control"
 msgid "Groove"
 msgstr ""

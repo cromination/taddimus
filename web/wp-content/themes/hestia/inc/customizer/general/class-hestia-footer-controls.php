@@ -50,14 +50,15 @@ class Hestia_Footer_Controls extends Hestia_Register_Customizer_Controls {
 					'label'    => esc_html__( 'Number of widgets areas', 'hestia' ),
 					'section'  => 'hestia_footer_content',
 					'priority' => 20,
-					'type'     => 'select',
+					'type'     => 'radio',
 					'choices'  => array(
 						'1' => '1',
 						'2' => '2',
 						'3' => '3',
 						'4' => '4',
 					),
-				)
+				),
+				'Hestia_Customize_Control_Radio'
 			)
 		);
 
@@ -128,31 +129,6 @@ class Hestia_Footer_Controls extends Hestia_Register_Customizer_Controls {
 					'settings'        => 'hestia_copyright_alignment',
 					'render_callback' => array( $this, 'footer_alignment_callback' ),
 				)
-			)
-		);
-
-		$this->add_control(
-			new Hestia_Customizer_Control(
-				'hestia_alternative_footer_style_upsell',
-				array(
-					'default'           => 'black_footer',
-					'sanitize_callback' => 'hestia_sanitize_footer_layout_control',
-					'transport'         => $this->selective_refresh,
-				),
-				array(
-					'label'    => esc_html__( 'Color', 'hestia' ),
-					'section'  => 'hestia_footer_content',
-					'priority' => 40,
-					'choices'  => array(
-						'white_footer' => array(
-							'url' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqAQMAAABknzrDAAAABlBMVEX///8zMzM4VIyRAAAAJElEQVRIx2NgGAV0Auz/kcGBARUbBaNxNBpHo3E0GkejgCoAAEQ9gGhRALtTAAAAAElFTkSuQmCC',
-						),
-						'black_footer' => array(
-							'url' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABqAQMAAABknzrDAAAABlBMVEUzMzP///8jKH/HAAAAJElEQVRIx2NgGAV0Auz/kcGBARUbBaNxNBpHo3E0GkejgCoAAEQ9gGhRALtTAAAAAElFTkSuQmCC',
-						),
-					),
-				),
-				'Hestia_Customize_Control_Radio_Image'
 			)
 		);
 	}

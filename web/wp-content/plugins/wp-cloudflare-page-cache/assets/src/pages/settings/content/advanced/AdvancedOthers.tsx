@@ -71,7 +71,7 @@ const AdvancedOthers = () => {
 
     },
     {
-      id: 'cf_prefetch_urls_mouseover',
+      id: 'cf_prefetch_urls_on_hover',
       type: 'toggle',
       label: __('Auto prefetch URLs on mouse hover', 'wp-cloudflare-page-cache'),
       description: __('If enabled, the browser prefetches in background all the internal URLs found in the viewport.', 'wp-cloudflare-page-cache'),

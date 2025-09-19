@@ -68,7 +68,12 @@ class Hestia_Tweaks extends Hestia_Abstract_Main {
 	public function change_excerpt_more( $more ) {
 		global $post;
 
-		$custom_more_tag = '<a class="moretag" href="' . esc_url( get_permalink( $post->ID ) ) . '"> ' . esc_html__( 'Read more', 'hestia' ) . '&hellip;</a>';
+		$read_more_text  = get_theme_mod( 'hestia_blog_read_more', esc_html__( 'Read more', 'hestia' ) );
+		$custom_more_tag = '';
+
+		if ( $read_more_text ) {
+			$custom_more_tag = '<a class="moretag" href="' . esc_url( get_permalink( $post->ID ) ) . '"> ' . $read_more_text . '</a>';
+		}
 
 		if ( 'page' === get_option( 'show_on_front' ) && is_front_page() ) {
 			return $custom_more_tag;

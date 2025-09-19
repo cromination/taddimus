@@ -74,8 +74,10 @@ class Hestia_Customizer_Dimensions extends WP_Customize_Control {
 		$media_queries = array( 'desktop', 'tablet', 'mobile' );
 		foreach ( $media_queries as $query ) {
 			$json[ $query ] = array(
-				$query . '_vertical'   => '',
-				$query . '_horizontal' => '',
+				$query . '_top'    => '',
+				$query . '_right'  => '',
+				$query . '_bottom' => '',
+				$query . '_left'   => '',
 			);
 		}
 		if ( ! empty( $value ) ) {
@@ -169,6 +171,9 @@ class Hestia_Customizer_Dimensions extends WP_Customize_Control {
 							<span class="dashicons dashicons-editor-unlink hestia-unlinked" data-element="{{ data.id }}_tablet"></span>
 						</div>
 					</li>
+					<li class="dimensions-reset-container" data-default="{{data.default_value}}">
+						<span class="reset-dimensions"><span class="dashicons dashicons-image-rotate"></span></span>
+					</li>
 		</ul>
 
 		<ul class="mobile control-wrap">
@@ -185,6 +190,9 @@ class Hestia_Customizer_Dimensions extends WP_Customize_Control {
 							<span class="dashicons dashicons-admin-links hestia-linked" data-element="{{ data.id }}_mobile"></span>
 							<span class="dashicons dashicons-editor-unlink hestia-unlinked" data-element="{{ data.id }}_mobile"></span>
 						</div>
+					</li>
+					<li class="dimensions-reset-container" data-default="{{data.default_value}}">
+						<span class="reset-dimensions"><span class="dashicons dashicons-image-rotate"></span></span>
 					</li>
 		</ul>
 		<# } #>

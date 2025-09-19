@@ -1,3 +1,34 @@
+#####   Version 5.1.5 (2025-08-27)
+
+- Fixed the error preventing plugin from uninstallation
+- Fixed issue related to problems updating htaccess file
+
+#####   Version 5.1.4 (2025-08-07)
+
+### Fixes
+- **Fixed viewport prefetch using incorrect setting slug** to ensure the prefetch feature properly reads and applies user preferences.
+- **Resolved fatal error when Keep settings on deactivation was disabled** by adding proper checks to prevent errors during plugin deactivation.
+- **Fixed advanced cache functionality when wp-config.php is located above WordPress root** to support non-standard WordPress installations where the configuration file is placed one directory level up.
+- **Updated internal dependencies** to latest versions for improved security and performance.
+
+#####   Version 5.1.3 (2025-07-21)
+
+### Fixes
+- **Edge case where Cloudflare tab inputs were disabled** when zone id list is already saved to the website, but the user didn't connect the plugin
+
+#####   Version 5.1.2 (2025-07-16)
+
+### New Features
+- **Use Cloudflare data in metrics box if available** to provide more accurate performance insights when Cloudflare integration is active.
+
+### Fixes
+- **Fixed log lines overflowing activity log card** to ensure proper display within the dashboard interface.
+- **Prevent edge case fatal error where header might be array** by adding proper type checking.
+- **Fixed migration of Enable Cloudflare CDN & Caching toggle** to ensure proper preservation of cache rule status during plugin updates.
+- **Cached pages drawer loading state not adapted to dark mode** to maintain consistent visual appearance across light and dark themes.
+- **Fixed terminology in Cloudflare connection flow** by referring to zone as domain for better user understanding during the connection setup process.
+- **Updated description for auto-purge on plugin updates** to provide clearer information that the automatic cache clearing behavior happens when the plugin is updated.
+
 #####   Version 5.1.1 (2025-07-15)
 
 ### New Features

@@ -95,7 +95,7 @@ const ActivityLog = () => {
             <div className="size-1.5 rounded-full mr-3 bg-muted-foreground/50">
             </div>
             <div className="flex-1 min-w-0">
-              <span className="text-foreground/80">{log.message}</span>
+              <span className="text-foreground/80 break-all">{log.message}</span>
             </div>
             <span className="text-xs text-muted-foreground ml-4">{secondsToReadable(log.seconds_ago)} ago</span>
           </div>

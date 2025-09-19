@@ -192,20 +192,20 @@ const LoadingState = () => {
             <div className="flex-1 min-w-0 text-sm">
               {/* URL skeleton */}
               <div className="mb-2">
-                <div className="h-5 bg-gray-200 rounded w-3/4 max-w-md"/>
+                <div className="h-5 bg-muted-foreground/50 rounded w-3/4 max-w-md"/>
               </div>
                 
               {/* Timestamp skeleton */}
               <div className="flex items-center gap-2">
-                <div className="size-4 bg-gray-200 rounded flex-shrink-0"/>
-                <div className="h-4 bg-gray-200 rounded w-32"/>
+                <div className="size-4 bg-muted-foreground/50 rounded flex-shrink-0"/>
+                <div className="h-4 bg-muted-foreground/50 rounded w-32"/>
               </div>
             </div>
               
             {/* Action buttons skeleton */}
             <div className="flex items-center gap-1">
-              <div className="size-9 bg-gray-200 rounded"/>
-              <div className="size-9 bg-gray-200 rounded"/>
+              <div className="size-9 bg-muted-foreground/50 rounded"/>
+              <div className="size-9 bg-muted-foreground/50 rounded"/>
             </div>
           </div>
         </div>

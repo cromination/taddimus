@@ -28,7 +28,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 
 	// 5 minutes
 	private const ANALYTICS_CACHE_TIME = 300;
-	private const ANALYTICS_CACHE_KEY  = 'spc_cloudflare_analytics';
+	private const ANALYTICS_CACHE_KEY  = 'spc_cf_analytics';
 
 	/**
 	 * Account IDs list.
@@ -535,40 +535,40 @@ class Cloudflare_Client extends Cloudflare_Rule {
 			return $cache;
 		}
 
-		$start_date = gmdate( 'Y-m-d\TH:i:s\Z', strtotime( '-24 hours' ) );
-		$end_date   = gmdate( 'Y-m-d\TH:i:s\Z', strtotime( 'now' ) );
+		// This dates correspond exactly to what cloudflare shows in their dashboard for the last 24 hours.
+		$start_date = gmdate( 'Y-m-d\TH:00:00\Z', strtotime( '-24 hours' ) );
+		$end_date   = gmdate( 'Y-m-d\TH:00:00\Z', strtotime( 'now' ) );
 
 		$query = '
-        query($zoneTag: String!, $datetimeStart: Time!, $datetimeEnd: Time!) {
-            viewer {
-                zones(filter: {zoneTag: $zoneTag}) {
-                    httpRequests1hGroups(
-                        limit: 1000
-                        filter: {
-                            datetime_geq: $datetimeStart
-                            datetime_leq: $datetimeEnd
-                        }
-                    ) {
-                        dimensions {
-                            datetime
-                        }
-                        sum {
-                            requests
-                            bytes
-                        }
-                        uniq {
-                            uniques
-                        }
-                    }
-                }
-            }
+        query($zoneTag: String!, $dateStart: Time!) {
+					viewer {
+						zones(filter: {zoneTag: $zoneTag}) {
+							httpRequests1hGroups(
+								filter: { 
+									datetime_geq: $dateStart
+									datetime_lt: $dateEnd
+								}
+								limit: 10000
+								orderBy: [datetime_ASC]
+							) {
+								dimensions{
+									datetime
+								}
+								sum {
+									requests
+									cachedBytes
+									bytes
+								}
+							}
+						}
+					}
         }
     ';
 
 		$variables = array(
-			'zoneTag'       => $this->plugin->get_cloudflare_api_zone_id(),
-			'datetimeStart' => $start_date,
-			'datetimeEnd'   => $end_date,
+			'zoneTag'   => $this->plugin->get_cloudflare_api_zone_id(),
+			'dateStart' => $start_date,
+			'dateEnd'   => $end_date,
 		);
 
 		$response = wp_remote_post(
@@ -600,17 +600,20 @@ class Cloudflare_Client extends Cloudflare_Rule {
 
 		$analytics_data = $data['data']['viewer']['zones'][0]['httpRequests1hGroups'] ?? [];
 
-		$total_requests = 0;
-		$total_bytes    = 0;
+		$total_requests     = 0;
+		$total_bytes        = 0;
+		$total_cached_bytes = 0;
 
 		foreach ( $analytics_data as $point ) {
-			$total_requests += $point['sum']['requests'] ?? 0;
-			$total_bytes    += $point['sum']['bytes'] ?? 0;
+			$total_requests     += $point['sum']['requests'] ?? 0;
+			$total_bytes        += $point['sum']['bytes'] ?? 0;
+			$total_cached_bytes += $point['sum']['cachedBytes'] ?? 0;
 		}
 
 		$data = array(
-			'requests' => $total_requests,
-			'bytes'    => $total_bytes,
+			'requests'    => $total_requests,
+			'bytes'       => $total_bytes,
+			'cachedBytes' => $total_cached_bytes,
 		);
 
 		set_transient( self::ANALYTICS_CACHE_KEY, $data, self::ANALYTICS_CACHE_TIME );

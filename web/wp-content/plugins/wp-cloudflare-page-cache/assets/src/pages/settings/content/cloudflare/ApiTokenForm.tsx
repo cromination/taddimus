@@ -17,8 +17,7 @@ const ApiTokenForm = () => {
 
   const [isConnecting, setIsConnecting] = useState(false);
   const [formData, setFormData] = useState({
-    apiToken: settings.cf_apitoken as string,
-    domainName: settings.cf_apitoken_domain as string
+    apiToken: settings.cf_apitoken as string
   })
 
   const isFormInvalid = (!formData.apiToken);
@@ -58,7 +57,7 @@ const ApiTokenForm = () => {
           <PasswordInput
             type="password"
             id="cf_api_token"
-            disabled={asyncLocked || !!settings.cf_zoneid_list}
+            disabled={asyncLocked}
             value={formData.apiToken as string}
             className="w-full max-w-full h-10 m-0"
             autoComplete="off"

@@ -297,3 +297,49 @@ function hestia_sanitize_dimension( $val ) {
 	}
 	return $val;
 }
+
+/**
+ * Sanitize sortable elements control value for WooCommerce elements.
+ *
+ * @param mixed $value The value to sanitize.
+ * @return string JSON encoded sanitized value.
+ */
+function hestia_sanitize_sortable_elements( $value ) {
+	if ( is_string( $value ) ) {
+		$decoded = json_decode( $value, true );
+		if ( json_last_error() === JSON_ERROR_NONE ) {
+			$value = $decoded;
+		}
+	}
+
+	if ( ! is_array( $value ) || ! isset( $value['order'] ) || ! isset( $value['visibility'] ) ) {
+		return wp_json_encode(
+			array(
+				'order'      => array(),
+				'visibility' => array(),
+			)
+		);
+	}
+
+	// Sanitize order - ensure only strings
+	$sanitized_order = array();
+	if ( is_array( $value['order'] ) ) {
+		foreach ( $value['order'] as $element ) {
+			$sanitized_order[] = sanitize_key( $element );
+		}
+	}
+
+	$sanitized_visibility = array();
+	if ( is_array( $value['visibility'] ) ) {
+		foreach ( $value['visibility'] as $key => $visible ) {
+			$sanitized_visibility[ sanitize_key( $key ) ] = (bool) $visible;
+		}
+	}
+
+	return wp_json_encode(
+		array(
+			'order'      => $sanitized_order,
+			'visibility' => $sanitized_visibility,
+		)
+	);
+}

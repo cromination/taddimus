@@ -11,6 +11,14 @@
 class Hestia_Customizer_Main extends Hestia_Register_Customizer_Controls {
 
 	/**
+	 * Initialize customizer main.
+	 */
+	public function init() {
+		parent::init();
+		add_action( 'customize_register', array( $this, 'after_controls_registered' ), PHP_INT_MAX );
+	}
+
+	/**
 	 * Add controls.
 	 */
 	public function add_controls() {
@@ -89,6 +97,29 @@ class Hestia_Customizer_Main extends Hestia_Register_Customizer_Controls {
 				'Hestia_Button'
 			)
 		);
+
+		$this->add_section(
+			new Hestia_Customizer_Section(
+				'hestia_separator_main_panel',
+				array(
+					'priority' => 10400,
+				),
+				'Hestia_Separator_Section'
+			)
+		);
+
+		$this->add_control(
+			new Hestia_Customizer_Control(
+				'hestia_separator_control',
+				array(
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				array(
+					'section' => 'hestia_separator_main_panel',
+					'type'    => 'hidden',
+				)
+			)
+		);
 	}
 
 	/**
@@ -144,5 +175,15 @@ class Hestia_Customizer_Main extends Hestia_Register_Customizer_Controls {
 		}
 
 		return ! (bool) get_theme_mod( 'disable_frontpage_sections' );
+	}
+
+	/**
+	 * Run after all controls are registered.
+	 */
+	public function after_controls_registered() {
+		$this->change_customizer_object( 'section', 'static_front_page', 'priority', 10600 );
+		$this->change_customizer_object( 'section', 'custom_css', 'priority', 10610 );
+		$this->change_customizer_object( 'panel', 'nav_menus', 'priority', 10500 );
+		$this->change_customizer_object( 'panel', 'widgets', 'priority', 10510 );
 	}
 }

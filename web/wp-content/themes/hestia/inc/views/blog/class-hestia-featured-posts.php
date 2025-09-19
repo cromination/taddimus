@@ -76,6 +76,8 @@ class Hestia_Featured_Posts extends Hestia_Abstract_Main {
 			return;
 		}
 
+		$read_more_text = get_theme_mod( 'hestia_blog_read_more', esc_html__( 'Read more', 'hestia' ) );
+
 		/**
 		 * Index of the current post that is showed in loop.
 		 */
@@ -138,9 +140,11 @@ class Hestia_Featured_Posts extends Hestia_Abstract_Main {
 				echo '</p>';
 			}
 
-			echo '<a href="' . esc_url( $post_url ) . '" class="btn colored-button">';
-			echo apply_filters( 'hestia_features_blog_posts_button_text', esc_html__( 'Read more', 'hestia' ) );
-			echo '</a>';
+			if ( ! empty( $read_more_text ) ) {
+				echo '<a href="' . esc_url( $post_url ) . '" class="btn colored-button">';
+				echo apply_filters( 'hestia_features_blog_posts_button_text', $read_more_text );
+				echo '</a>';
+			}
 
 			echo '</div>';
 			echo '</div>';

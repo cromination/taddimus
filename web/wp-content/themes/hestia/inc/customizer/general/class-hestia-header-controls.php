@@ -51,7 +51,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 			new Hestia_Customizer_Section(
 				'hestia_top_bar',
 				array(
-					'title'    => esc_html__( 'Very Top Bar', 'hestia' ),
+					'title'    => esc_html__( 'Website', 'hestia' ) . ' - ' . esc_html__( 'Very Top Bar', 'hestia' ),
 					'panel'    => 'hestia_header_options',
 					'priority' => 10,
 				)
@@ -270,7 +270,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 						__( 'More Options Available for %1$s in the Pro version.', 'hestia' ),
 						esc_html__( 'Very Top Bar', 'hestia' )
 					),
-					'link'            => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'very-top-bar' ), 'query' ),
+					'link'            => tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', 'very-top-bar' ), 'query' ),
 					'button_text'     => __( 'Upgrade Now', 'hestia' ),
 					'new_tab'         => true,
 					'is_button'       => false,
@@ -293,7 +293,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 			new Hestia_Customizer_Section(
 				'hestia_navigation',
 				array(
-					'title'    => esc_html__( 'Navigation', 'hestia' ),
+					'title'    => esc_html__( 'Website', 'hestia' ) . ' - ' . esc_html__( 'Header', 'hestia' ),
 					'panel'    => 'hestia_header_options',
 					'priority' => 15,
 				)
@@ -307,7 +307,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 				esc_html__( 'Navigation', 'hestia' ),
 				/* translators: %s is the Learn more label*/
 				sprintf(
-					'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia-pro/upgrade/', 'navigation' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
+					'<a class="button button-primary" target="_blank" href="' . tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/themes/hestia/upgrade/', 'navigation' ), 'query' ) . '" style="display: block; clear: both; width: fit-content; margin: 15px 0;">%s</a>',
 					__( 'Upgrade to Unlock', 'hestia' )
 				)
 			);
@@ -340,6 +340,28 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 					'section'  => 'hestia_navigation',
 					'priority' => 15,
 				)
+			)
+		);
+
+		$this->add_control(
+			new Hestia_Customizer_Control(
+				'hestia_link_to_add_icon',
+				array(
+					'sanitize_callback' => 'sanitize_text_field',
+				),
+				array(
+					'container_class' => 'quick-links',
+					'text_before'     => '<span class="dashicons dashicons-info" style="margin-right: 3px"></span>' . __( 'Add new', 'hestia' ) . ' ' . __( 'Transparent Header Logo', 'hestia' ),
+					'text_after'      => '.',
+					'button_text'     => __( 'here', 'hestia' ),
+					'is_button'       => false,
+					'focus_type'      => 'section',
+					'focus'           => 'title_tagline',
+					'shortcut'        => true,
+					'section'         => 'hestia_navigation',
+					'priority'        => 15,
+				),
+				'Hestia_Button'
 			)
 		);
 
@@ -620,7 +642,7 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 
 		$header_image_section = $this->get_customizer_object( 'section', 'header_image' );
 		if ( ! empty( $header_image_section ) ) {
-			$header_image_section->title    = esc_html__( 'Header Settings', 'hestia' );
+			$header_image_section->title    = esc_html__( 'Posts & Pages', 'hestia' ) . ' - ' . esc_html__( 'Header', 'hestia' );
 			$header_image_section->panel    = 'hestia_header_options';
 			$header_image_section->priority = 20;
 		}
@@ -636,6 +658,9 @@ class Hestia_Header_Controls extends Hestia_Register_Customizer_Controls {
 		if ( ! empty( $header_image_data_control ) ) {
 			$header_image_data_control->priority = 20;
 		}
+
+		$this->change_customizer_object( 'section', 'title_tagline', 'panel', 'hestia_header_options' );
+		$this->change_customizer_object( 'section', 'title_tagline', 'priority', 5 );
 	}
 
 	/**

@@ -101,8 +101,7 @@ class Hestia_Generic_Notice_Section extends WP_Customize_Section {
 	protected function render_template() {
 		?>
 		<# if ( !data.hide_notice ) { #>
-		<li id="accordion-section-{{ data.id }}"
-				class="hestia-notice accordion-section control-section control-section-{{ data.type }} cannot-expand">
+		<li id="accordion-section-{{ data.id }}" class="hestia-notice control-section-{{ data.type }} cannot-expand no-tcollapse">
 			<button type="button" class="notice-dismiss" style="z-index: 1;"></button>
 			<h4 class="accordion-section-title" style="padding-right: 36px">
 				<# if ( data.section_text ) { #>
@@ -112,7 +111,6 @@ class Hestia_Generic_Notice_Section extends WP_Customize_Section {
 				{{{data.plugin_install_button}}}
 				<# } #>
 			</h4>
-
 		</li>
 		<# } #>
 		<?php
