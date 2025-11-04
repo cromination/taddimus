@@ -1,5 +1,9 @@
 == Changelog ==
 
+= 6.3.0 (2025-10-28) =
+* `[Changed]` Message about rewrites_uploads_blocked server configuration error
+* `[Added]` Support for WordPress 6.9
+
 = 6.2.4 (2025-09-09) =
 * `[Fixed]` Deprecated notice for implicitly nullable parameter when converting images
 

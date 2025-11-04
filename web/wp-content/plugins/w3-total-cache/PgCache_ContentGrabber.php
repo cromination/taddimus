@@ -1003,7 +1003,7 @@ class PgCache_ContentGrabber {
 					}
 
 					$engine_config = array(
-						'exclude'         => array(
+						'exclude'         => array( // phpcs:ignore WordPressVIPMinimum
 							'.htaccess',
 						),
 						'expire'          => $this->_lifetime,
@@ -2084,7 +2084,8 @@ class PgCache_ContentGrabber {
 	 * @return string The buffer with parsed dynamic content.
 	 */
 	public function _parse_dynamic( $buffer ) {
-		if ( ! defined( 'W3TC_DYNAMIC_SECURITY' ) ) {
+		// The W3TC_DYNAMIC_SECURITY constant should be a unique string and not an int or boolean.
+		if ( ! defined( 'W3TC_DYNAMIC_SECURITY' ) || empty( W3TC_DYNAMIC_SECURITY ) || 1 === (int) W3TC_DYNAMIC_SECURITY ) {
 			return $buffer;
 		}
 
@@ -2128,7 +2129,7 @@ class PgCache_ContentGrabber {
 
 			try {
 				ob_start();
-				$result = eval( $code );
+				$result = eval( $code ); // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
 				$output = ob_get_contents();
 				ob_end_clean();
 			} catch ( \Exception $ex ) {
