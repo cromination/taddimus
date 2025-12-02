@@ -44,6 +44,7 @@ class Dashboard implements Module_Interface {
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_print_styles', [ $this, 'truncate_menu_items' ], 100 );
 		add_action( 'admin_print_styles', [ $this, 'hide_menu_items' ], 100 );
+		add_action( 'admin_print_styles', [ $this, 'hide_all_notices' ], 100 );
 	}
 
 	/**
@@ -113,6 +114,20 @@ class Dashboard implements Module_Interface {
 			$style .= 'display: none; }';
 		}
 
+		$style .= '</style>';
+
+		echo $style;
+	}
+
+	public function hide_all_notices() {
+		if ( ! Helpers::is_spc_admin_page() ) {
+			return;
+		}
+
+		$style  = '<style>';
+		$style .= '#wpbody-content > *:not(#spc-dashboard) {
+			display: none !important;
+		}';
 		$style .= '</style>';
 
 		echo $style;
@@ -312,7 +327,6 @@ class Dashboard implements Module_Interface {
 	 * Load dependencies for dashboard.
 	 */
 	public function load_sdk_integrations( $hook ) {
-		remove_all_actions( 'admin_notices' );
 		add_filter( $this->sdk_service->get_product_key() . '_hide_license_notices', '__return_true' );
 		add_filter( 'themeisle-sdk/survey/' . SWCFPC_PRODUCT_SLUG, [ $this->sdk_service, 'get_survey_metadata' ], 10, 2 );
 		add_filter( 'themeisle_sdk_blackfriday_data', [ $this->sdk_service, 'add_black_friday_data' ] );

@@ -47,6 +47,7 @@ class WPSEO_Option_Wpseo extends WPSEO_Option {
 		'googleverify'                                         => '', // Text field.
 		'msverify'                                             => '', // Text field.
 		'yandexverify'                                         => '',
+		'ahrefsverify'                                         => '',
 		'site_type'                                            => '', // List of options.
 		'has_multiple_authors'                                 => '',
 		'environment_type'                                     => '',
@@ -149,6 +150,10 @@ class WPSEO_Option_Wpseo extends WPSEO_Option {
 		'google_site_kit_feature_enabled'                      => false,
 		'ai_free_sparks_started_on'                            => null,
 		'enable_llms_txt'                                      => false,
+		'last_updated_on'                                      => false,
+		'default_seo_title'                                    => [],
+		'default_seo_meta_desc'                                => [],
+		'first_activated_by'                                   => 0,
 	];
 
 	/**
@@ -163,6 +168,7 @@ class WPSEO_Option_Wpseo extends WPSEO_Option {
 		'googleverify',
 		'msverify',
 		'yandexverify',
+		'ahrefsverify',
 	];
 
 	/**
@@ -358,6 +364,7 @@ class WPSEO_Option_Wpseo extends WPSEO_Option {
 				case 'googleverify':
 				case 'msverify':
 				case 'yandexverify':
+				case 'ahrefsverify':
 					$this->validate_verification_string( $key, $dirty, $old, $clean );
 					break;
 
@@ -400,9 +407,20 @@ class WPSEO_Option_Wpseo extends WPSEO_Option {
 				case 'first_activated_on':
 				case 'indexing_started':
 				case 'activation_redirect_timestamp_free':
+				case 'last_updated_on':
 					$clean[ $key ] = false;
 					if ( isset( $dirty[ $key ] ) ) {
 						if ( $dirty[ $key ] === false || WPSEO_Utils::validate_int( $dirty[ $key ] ) ) {
+							$clean[ $key ] = $dirty[ $key ];
+						}
+					}
+					break;
+
+				case 'first_activated_by':
+					// A slight change from the other integer fields, as we want to allow '0' here, but don't want to have much impact elsewhere.
+					$clean[ $key ] = false;
+					if ( isset( $dirty[ $key ] ) ) {
+						if ( $dirty[ $key ] === false || WPSEO_Utils::validate_int( $dirty[ $key ] ) !== false ) {
 							$clean[ $key ] = $dirty[ $key ];
 						}
 					}
@@ -427,6 +445,8 @@ class WPSEO_Option_Wpseo extends WPSEO_Option {
 				case 'last_known_public_taxonomies':
 				case 'new_post_types':
 				case 'new_taxonomies':
+				case 'default_seo_title':
+				case 'default_seo_meta_desc':
 					$clean[ $key ] = $old[ $key ];
 
 					if ( isset( $dirty[ $key ] ) ) {

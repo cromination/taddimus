@@ -1,15 +1,18 @@
 import Button from "@/components/Button";
 import Card, { CardContent, CardHeader } from "@/components/Card";
 import { spcApi } from "@/lib/api";
+import { useSettingsStore } from "@/store/optionsStore";
 import { useEffect, useState } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
-import { Ban, BrushCleaning, RefreshCcw } from "lucide-react";
+import { Ban, BrushCleaning, RefreshCcw, AlertCircle } from "lucide-react";
 
 const ActivityLog = () => {
+  const { isToggleOn } = useSettingsStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [logs, setLogs] = useState([]);
   const { logViewURL } = window.SPCDash;
+  const isLogEnabled = isToggleOn('log_enabled');
 
   const fetchLogs = async () => {
     setError(false);
@@ -30,8 +33,12 @@ const ActivityLog = () => {
   };
 
   useEffect(() => {
-    fetchLogs();
-  }, []);
+    if (isLogEnabled) {
+      fetchLogs();
+    } else {
+      setLoading(false);
+    }
+  }, [isLogEnabled]);
 
 
   const secondsToReadable = (seconds: number) => {
@@ -64,23 +71,36 @@ const ActivityLog = () => {
           {__('Activity Log', 'wp-cloudflare-page-cache')}
         </h3>
 
-        <div className="flex items-center gap-2">
-          <Button icon={RefreshCcw} loader={loading} disabled={loading} size="icon" variant="ghost" className="size-8" onClick={refreshLogs} />
+        {isLogEnabled && (
+          <div className="flex items-center gap-2">
+            <Button icon={RefreshCcw} loader={loading} disabled={loading} size="icon" variant="ghost" className="size-8" onClick={refreshLogs} />
 
-          <Button
-            variant="link"
-            size="sm"
-            href={logViewURL}
-            target="_blank"
-            className="text-xs text-muted-foreground p-0"
-          >
-            {__('View All', 'wp-cloudflare-page-cache')}
-          </Button>
-        </div>
+            <Button
+              variant="link"
+              size="sm"
+              href={logViewURL}
+              target="_blank"
+              className="text-xs text-muted-foreground p-0"
+            >
+              {__('View All', 'wp-cloudflare-page-cache')}
+            </Button>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="p-0 divide-y divide-muted-foreground/10">
-        {loading && (
+        {!isLogEnabled && (
+          <div className="px-4 py-10 flex flex-col gap-4 items-center justify-center text-sm">
+            <span className="p-3 rounded-full bg-muted-foreground/10">
+              <AlertCircle className="size-12 text-muted-foreground" strokeWidth={1.5} />
+            </span>
+            <h4 className="text-muted-foreground font-semibold text-base">
+              {__('Activity logging is currently not enabled.', 'wp-cloudflare-page-cache')}
+            </h4>
+          </div>
+        )}
+
+        {isLogEnabled && loading && (
           Array.from({ length: 20 }).map((_, idx) => (
             <div key={idx} className="px-4 py-3 flex items-center text-sm animate-pulse">
               <div className="size-1.5 rounded-full bg-muted-foreground/50 mr-3" />
@@ -90,7 +110,7 @@ const ActivityLog = () => {
           ))
         )}
 
-        {(!loading && logs.length > 0) && logs.map((log, idx) => (
+        {isLogEnabled && (!loading && logs.length > 0) && logs.map((log, idx) => (
           <div key={idx} className="px-4 py-3 flex items-center text-sm">
             <div className="size-1.5 rounded-full mr-3 bg-muted-foreground/50">
             </div>
@@ -101,7 +121,7 @@ const ActivityLog = () => {
           </div>
         ))}
 
-        {(!loading && logs.length === 0 && !error) && (
+        {isLogEnabled && (!loading && logs.length === 0 && !error) && (
           <div className="px-4 py-10 flex flex-col gap-4 items-center justify-center text-sm">
             <span className="p-3 rounded-full bg-muted-foreground/10">
               <BrushCleaning className="size-12 text-muted-foreground" strokeWidth={1.5} />
@@ -116,7 +136,7 @@ const ActivityLog = () => {
           </div>
         )}
 
-        {(!loading && error) && (
+        {isLogEnabled && (!loading && error) && (
           <div className="px-4 py-10 flex flex-col gap-4 items-center justify-center text-sm">
             <span className="p-3 rounded-full bg-muted-foreground/10">
               <Ban className="size-12 text-muted-foreground" strokeWidth={1.5} />

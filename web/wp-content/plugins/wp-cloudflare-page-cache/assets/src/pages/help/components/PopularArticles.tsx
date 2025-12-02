@@ -18,9 +18,8 @@ const PopularArticles = () => {
             <h4 className="font-medium text-foreground mb-2">{article.title}</h4>
             <p className="text-sm text-muted-foreground mb-3">{article.content}</p>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">
-                {/* translators: %d is the number of minutes */}
-                {sprintf(__('%d min read', 'wp-cloudflare-page-cache'), article.read_time)}
+              <span className="text-xs text-muted-foreground"> 
+                {/* translators: %d is the number of minutes */ sprintf(__('%d min read', 'wp-cloudflare-page-cache'), article.read_time)}
               </span>
               <ChevronRight className="w-4 h-4 text-orange-600 dark:text-orange-500 group-hover:translate-x-1 transition-transform" />
             </div>

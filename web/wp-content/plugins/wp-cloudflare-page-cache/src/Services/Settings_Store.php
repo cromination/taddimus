@@ -84,6 +84,22 @@ class Settings_Store {
 		return class_exists( 'SPC_Pro\Modules\Frontend' ) && $this->get( Constants::SETTING_LAZY_LOAD_BEHAVIOUR ) === \SPC_Pro\Modules\Frontend::LAZY_LOAD_BEHAVIOUR_VIEWPORT;
 	}
 	/**
+	 * Check if unused CSS is enabled.
+	 *
+	 * @return bool
+	 */
+	public function is_unused_css_enabled() {
+		return class_exists( 'SPC_Pro\Modules\Frontend' ) && (bool) $this->get( Constants::SETTING_UNUSED_CSS );
+	}
+	/**
+	 * Check if client optimizations are enabled.
+	 *
+	 * @return bool
+	 */
+	public function is_client_optimizations_enabled() {
+		return $this->is_lazyload_viewport_enabled() || $this->is_unused_css_enabled();
+	}
+	/**
 	 * Check if Cloudflare is connected.
 	 *
 	 * @return bool

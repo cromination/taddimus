@@ -1,3 +1,17 @@
+####   Version 5.2.0 (2025-11-28)
+
+- Introduced a [CSS Optimization](https://docs.themeisle.com/article/2367-css-optimizations) feature that leverages a browser-based script to observe which CSS is used in the page, extract critical CSS, and defer the rest — greatly improving load speed and Core Web Vitals (PRO).
+- Updated the Activity Log UI to conditionally render content only when logging is enabled
+- Improved log messages for cache purges
+- Fixed dashboard display issues in RTL mode
+- Added a dedicated log message when sitemap preloading is skipped due to the site being private
+
+#####   Version 5.1.6 (2025-11-07)
+
+- The Manage Assets button now enables the assets manager via API before redirecting.
+- Reorganized the Assets and JavaScript Optimization sections in the settings for clarity.
+- Updated dependencies to the latest versions.
+
 #####   Version 5.1.5 (2025-08-27)
 
 - Fixed the error preventing plugin from uninstallation

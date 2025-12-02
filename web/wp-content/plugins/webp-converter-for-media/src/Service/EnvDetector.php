@@ -8,11 +8,11 @@ namespace WebpConverter\Service;
 class EnvDetector {
 
 	public static function is_cdn_bunny(): bool {
-		if ( ! class_exists( '\BunnyCDN' ) || ! is_callable( '\BunnyCDN::getOptions' ) ) {
+		if ( ! is_plugin_active( 'bunnycdn/bunnycdn.php' ) ) {
 			return false;
 		}
 
-		$options = \BunnyCDN::getOptions();
-		return ( ( $options['site_url'] ?? '' ) && ( $options['cdn_domain_name'] ?? '' ) );
+		$status = (int) get_option( 'bunnycdn_cdn_status', 0 );
+		return ( $status === 1 );
 	}
 }

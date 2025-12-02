@@ -17,7 +17,7 @@ const AdvancedLog = () => {
       id: 'log_enabled',
       type: 'toggle',
       label: __('Log mode', 'wp-cloudflare-page-cache'),
-      description: __('Enable this option if you want log all communications between Cloudflare and this plugin.', 'wp-cloudflare-page-cache'),
+      description: __('Enable this option if you want to log all activity of this plugin.', 'wp-cloudflare-page-cache'),
     },
     {
       id: 'log_max_file_size',

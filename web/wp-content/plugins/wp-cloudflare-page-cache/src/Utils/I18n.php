@@ -44,11 +44,18 @@ class I18n {
 				'<code>wp-content</code> '
 			),
 			'warningJsSection'          => sprintf(
-				/* translators: %s: 'General'. */
-				__( 'Javascript optimizations only work if the Disk Page cache is enabled. You have to turn it on in the %s tab before these options can take effect.', 'wp-cloudflare-page-cache' ),
+				/* translators: %1$s: 'Optimization Type'. %2$s: 'General'. */
+				__( '%1$s only work if the Disk Page cache is enabled. You have to turn it on in the %2$s tab before these options can take effect.', 'wp-cloudflare-page-cache' ),
+				__( 'Javascript optimizations', 'wp-cloudflare-page-cache' ),
 				'<strong>' . __( 'General', 'wp-cloudflare-page-cache' ) . '</strong>'
 			),
-			'excludeJsPagesDescription' => sprintf(
+			'warningCSSSection'         => sprintf(
+				/* translators: %1$s: 'Optimization Type'. %2$s: 'General'. */
+				__( '%1$s only work if the Disk Page cache is enabled. You have to turn it on in the %2$s tab before these options can take effect.', 'wp-cloudflare-page-cache' ),
+				__( 'CSS optimizations', 'wp-cloudflare-page-cache' ),
+				'<strong>' . __( 'General', 'wp-cloudflare-page-cache' ) . '</strong>'
+			),
+			'excludePagesDescription'   => sprintf(
 				/* translators: %s: '/' character. */
 				__( 'Enter keywords (one per line) to be matched against URL paths. Use %s for home page.', 'wp-cloudflare-page-cache' ),
 				'<code>/</code>'

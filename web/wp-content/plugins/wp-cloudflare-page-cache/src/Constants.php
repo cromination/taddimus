@@ -81,6 +81,9 @@ class Constants {
 	public const SETTING_LOG_MAX_FILESIZE = 'log_max_file_size';
 	public const SETTING_LOG_VERBOSITY    = 'log_verbosity';
 
+	public const SETTING_UNUSED_CSS                  = 'unused_css';
+	public const SETTING_UNUSED_CSS_EXCLUDED_PATHS   = 'unused_css_excluded_paths';
+	public const SETTING_UNUSED_CSS_EXCLUDED_CSS     = 'unused_css_excluded_css';
 	public const SETTING_OBJECT_CACHE_PURGE_ON_FLUSH = 'cf_object_cache_purge_on_flush';
 	public const SETTING_OPCACHE_PURGE_ON_FLUSH      = 'cf_opcache_purge_on_flush';
 	public const SETTING_PURGE_URL_SECRET_KEY        = 'cf_purge_url_secret_key';

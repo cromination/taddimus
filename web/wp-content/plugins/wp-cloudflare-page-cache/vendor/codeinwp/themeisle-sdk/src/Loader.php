@@ -344,6 +344,8 @@ final class Loader {
 				}
 			}
 			self::$available_modules = $modules;
+
+			add_action( 'themeisle_sdk_first_activation', array( __CLASS__, 'activate' ) );
 		}
 	}
 
@@ -390,6 +392,28 @@ final class Loader {
 		return self::$instance;
 	}
 
+	/**
+	 * Activate the product routine.
+	 *
+	 * @param string $file The base file of the product.
+	 *
+	 * @return void
+	 */
+	public static function activate( $file ) {
+
+		$dirname = trailingslashit( dirname( ( $file ) ) );
+		if ( ! file_exists( $dirname . '_reference.php' ) ) {
+			return;
+		}
+		$reference_data = require_once $dirname . '_reference.php';
+		if ( ! is_array( $reference_data ) || 
+		! isset( $reference_data['key'] ) || 
+		! isset( $reference_data['value'] ) ||
+		! preg_match( '/^[a-zA-Z0-9_]+_reference_key$/', $reference_data['key'] ) ) {
+			return;
+		} 
+		add_option( $reference_data['key'], sanitize_key( $reference_data['value'] ) );
+	}
 	/**
 	 * Get all registered modules by the SDK.
 	 *

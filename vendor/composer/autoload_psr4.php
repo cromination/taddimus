@@ -12,6 +12,7 @@ return array(
     'WP_CLI\\MaintenanceMode\\' => array($vendorDir . '/wp-cli/maintenance-mode-command/src'),
     'WP_CLI\\I18n\\' => array($vendorDir . '/wp-cli/i18n-command/src'),
     'WP_CLI\\Embeds\\' => array($vendorDir . '/wp-cli/embed-command/src'),
+    'Symfony\\Polyfill\\Php84\\' => array($vendorDir . '/symfony/polyfill-php84'),
     'Symfony\\Polyfill\\Php81\\' => array($vendorDir . '/symfony/polyfill-php81'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
     'Symfony\\Polyfill\\Php73\\' => array($vendorDir . '/symfony/polyfill-php73'),

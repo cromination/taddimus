@@ -843,9 +843,19 @@ class SWCFPC_Cache_Controller {
 				$this->start_cache_preloader_for_specific_urls( $urls );
 			}
 
-			// $this->unlock_cache_purge();
+		// $this->unlock_cache_purge();
 
-			$this->main_instance->get_logger()->add_log( 'cache_controller::purge_urls', 'Purged specific URLs from Cloudflare cache' );
+		// Build friendly log message with up to 3 URLs
+			$log_message = 'Purged cache for ';
+			$urls_to_show = array_slice( $urls, 0, 3 );
+			$log_message .= implode( ', ', $urls_to_show );
+			
+			if ( $count_urls > 3 ) {
+				$remaining = $count_urls - 3;
+				$log_message .= sprintf( ' + %d other%s', $remaining, $remaining > 1 ? 's' : '' );
+			}
+			
+			$this->main_instance->get_logger()->add_log( 'cache_controller::purge_urls', $log_message );
 
 			do_action( 'swcfpc_purge_urls', $urls );
 
@@ -2433,8 +2443,6 @@ class SWCFPC_Cache_Controller {
 
 
 	function purge_cache_queue_job() {
-		$this->main_instance->get_logger()->add_log( 'cache_controller::purge_cache_queue_job', 'I\'m the purge cache cronjob' );
-
 		$cache_queue_path = $this->purge_cache_queue_init_directory() . 'cache_queue.json';
 
 		if ( ! file_exists( $cache_queue_path ) ) {
@@ -2579,6 +2587,10 @@ class SWCFPC_Cache_Controller {
 					}
 
 					if ( wp_remote_retrieve_response_code( $response ) != 200 ) {
+						if( (bool)get_option( 'blog_public' ) === false ) {
+							$this->main_instance->get_logger()->add_log( 'cloudflare::start_preloader_for_all_urls', "The sitemap at {$single_sitemap_url} is not available, as WordPress only generates sitemaps for public blogs. Sitemap preloading has been skipped." );
+							continue;
+						}
 						$this->main_instance->get_logger()->add_log( 'cloudflare::start_preloader_for_all_urls', "Response code for {$single_sitemap_url} is not 200. Response code: " . wp_remote_retrieve_response_code( $response ) );
 						continue;
 					}

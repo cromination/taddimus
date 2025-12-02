@@ -127,6 +127,23 @@ class Helpers {
 		return function_exists( 'swcfpc_normalize_url' ) ? swcfpc_normalize_url( null ) : null;
 	}
 	/**
+	 * Get the current full url.
+	 *
+	 * @return string
+	 */
+	public static function get_current_absolute_url() {
+		$current_url = self::get_current_url();
+		$host        = $_SERVER['HTTP_HOST'] ?? '';
+		if ( empty( $host ) ) {
+			return $current_url;
+		}
+		/**
+		 * If the current url does not start with the host, add the host to the current url.
+		 * The scheme is just to normalize the url.
+		 */
+		return strpos( $current_url, $host ) === 0 ? "http://{$current_url}" : "http://{$host}/{$current_url}";
+	}
+	/**
 	 * Get the url id.
 	 *
 	 * @param string $url The url.

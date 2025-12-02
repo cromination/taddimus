@@ -123,7 +123,7 @@ class SWCFPC_Backend {
 			$admin_bar->add_menu(
 				[
 					'id'    => 'wp-cloudflare-super-page-cache-toolbar-container',
-					'title' => '<span class="ab-icon"></span><span class="ab-label">' . __('Cache', 'wp-cloudflare-page-cache') . '</span>',
+					'title' => '<span class="ab-icon"></span><span class="ab-label">' . __('Super Page Cache', 'wp-cloudflare-page-cache') . '</span>',
 					'href'  => current_user_can('manage_options') ? add_query_arg($swpfpc_toolbar_container_url_query_arg_admin, admin_url('admin.php')) : '#',
 				]
 			);

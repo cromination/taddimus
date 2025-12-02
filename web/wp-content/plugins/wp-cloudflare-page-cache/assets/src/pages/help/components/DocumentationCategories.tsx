@@ -49,8 +49,7 @@ const DocumentationCategories = () => {
                 <span className="text-xs text-muted-foreground">
                   {category.article_count && (
                     <>
-                      {/* translators: %d is the number of articles */}
-                      {sprintf(__('%d articles', 'wp-cloudflare-page-cache'), category.article_count)}
+                      {/* translators: %d is the number of articles */ sprintf(__('%d articles', 'wp-cloudflare-page-cache'), category.article_count)}
                     </>
                   )}
                 </span>

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.6.2] - 2025-11-28
+### Changed
+- Move PHP 8.5 to default add PHP 8.6 as experimental ([#852](https://github.com/jsonrainbow/json-schema/pull/852))
+### Fixed
+- Allow underscore and tilde in URI hostnames as per RFC 3986 ([#853](https://github.com/jsonrainbow/json-schema/pull/853))
+
+## [6.6.1] - 2025-11-07
+### Changed
+- Rename master to main ([#848](https://github.com/jsonrainbow/json-schema/pull/848))
+### Fixed
+- Don't skip ref expanding for property called enum when child of property called properties ([#851](https://github.com/jsonrainbow/json-schema/pull/851))
+
 ## [6.6.0] - 2025-10-10
 ### Added
 - Add lint check for class autoloading PSR compliance ([#845](https://github.com/jsonrainbow/json-schema/pull/845))

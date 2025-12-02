@@ -121,7 +121,7 @@ const PreloaderOperationCheckboxes = () => {
             value={(settings['cf_preloader_nav_menus'] as string[]).includes(id) || false}
             id={id}
             label={<span> {createInterpolateElement(
-              sprintf(__('Preload all internal links in <strong>%s</strong> WP Menu', 'wp-cloudflare-page-cache'), name),
+              /* translators: %s is the menu name */ sprintf(__('Preload all internal links in <strong>%s</strong> WP Menu', 'wp-cloudflare-page-cache'), name),
               {
                 strong: <strong className="font-bold opacity-75" />
               }

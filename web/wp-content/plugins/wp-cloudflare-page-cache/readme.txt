@@ -8,11 +8,11 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Supercharge Your Pagespeed and SEO by Powerful Caching, JS/CSS, Media, and Cloudflare's Global CDN.
+Boost PageSpeed, SEO, and Core Web Vitals with full page caching, JS/CSS optimization, media optimization, and Cloudflare CDN.
 
 == Description ==
 
-Super Page Cache takes your website caching to the next level, making your WordPress site blazing fast by caching not only static files (CSS, JS, images) but also HTML webpages, both at server disk-level and to the global Cloudflare CDN. With our completely redesigned dashboard and advanced optimization features, you get enterprise-level performance with zero configuration required.
+Super Page Cache is a powerful full page cache plugin for WordPress, making your WordPress site blazing fast by caching not only static files (CSS, JS, images) but also HTML webpages, both at server disk-level and to the global Cloudflare CDN. With our completely redesigned dashboard and advanced optimization features, you get enterprise-level performance with zero configuration required.
 
 This plugin works right out of the box. You can use it with or without Cloudflare. It offers powerful disk caching by saving files locally on your server, even without using a CDN. If you want to take advantage of the Cloudflare CDN, just enter your Cloudflare API Key or API Token, and the plugin will handle the rest. For advanced users, the intuitive dashboard features detailed settings and built-in documentation. Most users don’t need to make any changes because it runs smoothly with the default settings.
 
@@ -29,16 +29,20 @@ https://youtu.be/SYhoaL_fUY0?si=94atnvwHRF5r_U3U
 
 Super Page Cache provides blazing-fast performance through dual caching layers: intelligent disk caching that works completely standalone, plus optional Cloudflare CDN integration for global edge caching.
 
-#### Disk Caching (Works Without Cloudflare)
-The plugin provides powerful server-level disk caching by saving cached HTML pages and static files directly to your server. This works completely independently and delivers significant speed improvements even without any CDN integration. Your pages load instantly from locally cached files, dramatically reducing server processing time.
+Together, these layers dramatically improve loading speed and real-world performance metrics, including Google’s Core Web Vitals.
 
-#### Optional Cloudflare CDN Integration
+#### Disk Caching (Works Without Cloudflare)
+The plugin provides powerful server-level disk caching by saving cached HTML pages and static files directly to your server. This works completely independently and delivers significant speed improvements even without any CDN integration. Your pages load instantly from locally cached files, dramatically reducing server processing time and ensuring a true full page cache that serves complete HTML, not just static assets.
+
+#### Cloudflare WordPress Caching (Optional Integration)
 When you connect your Cloudflare account, the plugin leverages **Cloudflare's modern Cache Rules** (replacing outdated page rules and worker methods) to intelligently cache your content across Cloudflare's global network. This takes full advantage of the **FREE Cloudflare Plan** - no paid account required.
 
 #### Why This Matters for Your Website Speed
 Unlike most caching plugins that only provide disk caching (serving cached webpages from your web server), Super Page Cache caches your webpages and static files in the **Cloudflare CDN, one of the world's [fastest CDN networks](https://www.cdnperf.com/cdn-compare?type=performance&location=world&cdn=akamai-cdn,aws-cloudfront-cdn,azure-cdn,bunnycdn,cachefly,cdn-net,cdn77,cdnetworks,cloudflare-cdn,dorabase,fastly-cdn,g-core-labs-cdn,google-cloud-cdn,keycdn,nusec-cdn,ovh-cdn,stackpath-cdn,verizon-edgecast-cdn)**.
 
 With more than **[200 CDN edge locations](https://www.cloudflare.com/network/)** provided by Cloudflare, your webpage will be served from the nearest CDN location to the visitor, rather than sending requests to your web server, which might be on the other side of the world. This significantly reduces website loading speed by leveraging the Cloudflare CDN for both static files and HTML webpages.
+
+⚡️ Websites powered by Super Page Cache consistently achieve higher performance grades on testing tools like Pingdom and GTmetrix, thanks to faster response times and edge delivery.
 
 #### ✅ Works Out of the Box (With or Without Cloudflare)
 You don't need to configure anything. Just activate the plugin, and it works instantly with intelligent disk caching and default settings. Our completely redesigned dashboard with integrated documentation makes customization easier than ever when you need it.
@@ -66,13 +70,15 @@ Whether you use the **Free, Pro,** or **Enterprise** Cloudflare plan, the plugin
 
 #### ⚡ Performance Optimization
 
-- **Google Fonts Optimization:** Combine multiple font requests and serve fonts locally for improved privacy and loading speeds while reducing external dependencies.
+- **Google Fonts Optimization:** Super Page Cache helps you optimize Google Fonts by combining requests and serving them locally. This reduces external dependencies and improves both privacy and Web Vitals scores.
 - **Lazy Loading System:** Built-in lazy loading for images, videos, iframes, and background images to improve load performance.
 - **Flexible Lazy Load Exclusions:** Exclude specific media using keywords, URL patterns, or CSS class detection.
 - **Advanced Assets Manager:** Enable or disable specific CSS and JavaScript files based on page context with an intuitive frontend modal interface, helping you eliminate unused scripts and optimize page performance.
 - **Browser Caching Rules:** Automatically configure `.htaccess` rules for long-lived caching of static assets like images, scripts, and stylesheets.
 
 #### 🛠️ Advanced Cache Management
+
+Take full control of your cache with smart purging, intelligent preloading, and reliable background processing. Every update is handled seamlessly without slowing down your site.
 
 - **Smart Auto-Purging:** Automatically clear relevant cache entries when posts, pages, or custom post types are updated, including related content.
 - **Granular Purge Options:** Choose to purge only HTML pages or the entire cache, including assets.
@@ -85,6 +91,8 @@ Whether you use the **Free, Pro,** or **Enterprise** Cloudflare plan, the plugin
 
 #### 🔧 Developer & Power User Features
 
+Fine-tune caching behavior with advanced filters, role-based permissions, and API integrations. Includes export/import tools and built-in documentation for maximum flexibility.
+
 - **Redesigned Dashboard Experience:** Complete dashboard redesign with improved user experience, intuitive navigation, and reorganized settings structure that groups related options together.
 - **Integrated Documentation:** Helpful tips and guidance directly within the dashboard, providing context without leaving your WordPress admin.
 - **Multiple Cache Backends:** Choose between WordPress’s `advanced-cache.php` or a cURL-based approach for compatibility with other performance plugins.
@@ -96,12 +104,18 @@ Whether you use the **Free, Pro,** or **Enterprise** Cloudflare plan, the plugin
 
 #### 🗄️ Database Optimization
 
+Super Page Cache includes built-in database optimization tools to keep your WordPress site lean and fast. Regularly cleaning up revisions, spam, and transients ensures better overall performance.
+
 - **Automated Database Cleanup:** Remove post revisions, auto-drafts, trashed items, spam comments, and expired transients with both manual and scheduled cleanup options.
 - **Scheduled Maintenance:** Run cleanups automatically on a daily, weekly, or monthly basis.
 - **Table Optimization:** Run `SQL OPTIMIZE TABLE` commands to defragment and reclaim space.
 - **Selective Cleanup Options:** Select precisely which data types to clean based on your site's specific needs.
 
+With one click, you can clean your database and remove unnecessary data that slows down WordPress over time.
+
 #### 🌐 Universal Compatibility
+
+Works with all major WordPress themes, hosting providers, and plugins like WooCommerce and Easy Digital Downloads, plus advanced server caches such as Varnish and OPcache.
 
 - **Premium Host Integration:** Seamless compatibility with top-tier hosts like Kinsta, WP Engine, and SpinupWP.
 - **eCommerce Ready:** Fully integrated with WooCommerce and Easy Digital Downloads.
@@ -285,10 +299,13 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 == Changelog ==
 
-#####   Version 5.1.5 (2025-08-27)
+####   Version 5.2.0 (2025-11-28)
 
-- Fixed the error preventing plugin from uninstallation
-- Fixed issue related to problems updating htaccess file
+- Introduced a [CSS Optimization](https://docs.themeisle.com/article/2367-css-optimizations) feature that leverages a browser-based script to observe which CSS is used in the page, extract critical CSS, and defer the rest — greatly improving load speed and Core Web Vitals (PRO).
+- Updated the Activity Log UI to conditionally render content only when logging is enabled
+- Improved log messages for cache purges
+- Fixed dashboard display issues in RTL mode
+- Added a dedicated log message when sitemap preloading is skipped due to the site being private
 
 
 

@@ -333,6 +333,7 @@ class HtaccessLoader extends LoaderAbstract {
 		}
 		if ( apply_filters( 'webpc_htaccess_cache_control_private', $cache_control ) ) {
 			$content .= '    Header always set Cache-Control "private"' . PHP_EOL;
+			$content .= '    Header always set X-LiteSpeed-Cache-Control "no-cache"' . PHP_EOL;
 		}
 		$content .= '    Header append Vary "Accept"' . PHP_EOL;
 		if ( $extensions ) {

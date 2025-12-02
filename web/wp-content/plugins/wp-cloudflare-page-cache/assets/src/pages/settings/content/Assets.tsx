@@ -7,11 +7,20 @@ import { useSettingsStore } from "@/store/optionsStore";
 import { useAppStore } from "@/store/store";
 import { __ } from "@wordpress/i18n";
 import Button from "@/components/Button";
+import { spcApi } from "@/lib/api";
 
 const Assets = () => {
   const { i18n, homeURL } = window.SPCDash;
   const { validPro } = useAppStore();
   const { pageCacheOn, isToggleOn } = useSettingsStore();
+
+  const handleManageAssetsClick = async () => {
+    // Save enable_assets_manager as 1 before redirecting
+    await spcApi.updateSettings({ enable_assets_manager: 1 });
+    
+    // Redirect to the assets management page
+    window.open(homeURL + '?spc_assets=yes', '_blank');
+  };
 
   const controls = {
     "js": [{
@@ -57,9 +66,45 @@ const Assets = () => {
       type: 'textarea',
       placeholder: '/about-us\n/blog/awesome-post',
       label: __('Exclude pages', 'wp-cloudflare-page-cache'),
-      description: <span dangerouslySetInnerHTML={{ __html: i18n.excludeJsPagesDescription }} />,
+      description: <span dangerouslySetInnerHTML={{ __html: i18n.excludePagesDescription }} />,
       utmCampaign: 'delay-js-exclusion-paths',
       hide: validPro && !isToggleOn('cf_delay_js'),
+      locked: !validPro
+    },
+  ],
+  "css": [
+    {
+      id: 'unused_css',
+      type: 'toggle',
+      label: __('Remove Unused CSS', 'wp-cloudflare-page-cache'),
+      description: <>
+        {__('Make your pages load faster by keeping only the CSS that’s actually needed. The plugin automatically checks which styles are used on each page and rebuilds the cache so future visitors get a lighter, faster version.', 'wp-cloudflare-page-cache')}
+        {' '}
+        <ExternalLink url="https://docs.themeisle.com/article/2367-css-optimizations">
+          {__('More Info', 'wp-cloudflare-page-cache')}
+        </ExternalLink>
+      </>,
+      utmCampaign: 'unused-css',
+      locked: !validPro
+    },
+    {
+      id: 'unused_css_excluded_paths',
+      type: 'textarea',
+      placeholder: '/about-us\n/blog/awesome-post',
+      label: __('Exclude pages', 'wp-cloudflare-page-cache'),
+      description: <span dangerouslySetInnerHTML={{ __html: i18n.excludePagesDescription }} />,
+      utmCampaign: 'ucss-exclusion-paths',
+      hide: validPro && !isToggleOn('unused_css'),
+      locked: !validPro
+    },
+    {
+      id: 'unused_css_excluded_css',
+      type: 'textarea',
+      placeholder: 'example-1.min.css\nexample-2.min.css',
+      label: __('Exclude CSS', 'wp-cloudflare-page-cache'),
+      description: __('Add keywords (one per line) to skip certain CSS files or inline styles from being removed. Any file or CSS content that matches your keywords will be excluded from cleanup.', 'wp-cloudflare-page-cache'),
+      utmCampaign: 'ucss-exclusion-files',
+      hide: validPro && !isToggleOn('unused_css'),
       locked: !validPro
     },
   ],
@@ -86,10 +131,9 @@ const Assets = () => {
       children: isToggleOn('enable_assets_manager') && (
         <Button
           className="mt-2"
-          href={homeURL + '?spc_assets=yes'}
-          target="_blank"
           variant="orange"
-          size="sm">
+          size="sm"
+          onClick={handleManageAssetsClick}>
           {__('Manage assets', 'wp-cloudflare-page-cache')}
         </Button>
       )
@@ -98,6 +142,25 @@ const Assets = () => {
 
   return (
     <PageContent>
+
+<Card>
+        <CardHeader className="bg-muted">
+          <h3 className="font-semibold text-base flex items-center">{__('Assets Manager', 'wp-cloudflare-page-cache')}</h3>
+        </CardHeader>
+
+        <CardContent className="p-0">
+          <ControlsGroup controls={controls.assets} />
+        </CardContent>
+      </Card>
+  <Card>
+          <CardHeader className="bg-muted">
+            <h3 className="font-semibold text-base flex items-center">{__('Fonts Optimizations', 'wp-cloudflare-page-cache')}</h3>
+          </CardHeader>
+
+            <CardContent className="p-0">
+              <ControlsGroup controls={controls.fonts} /> 
+            </CardContent>
+      </Card>
       <Card>
           {(validPro && !pageCacheOn) && (
             <CardHeader>
@@ -113,6 +176,24 @@ const Assets = () => {
 
           <CardContent className="p-0">
             <ControlsGroup controls={controls.js} />
+          </CardContent>
+
+      </Card> 
+      <Card>
+          {(validPro && !pageCacheOn) && (
+            <CardHeader>
+              <Notice type="warning">
+                <span dangerouslySetInnerHTML={{ __html: i18n.warningCSSSection }} />
+              </Notice>
+            </CardHeader>
+          )}
+
+          <CardHeader className="bg-muted">
+            <h3 className="font-semibold text-base flex items-center">{__('CSS Optimizations', 'wp-cloudflare-page-cache')}</h3>
+          </CardHeader>
+
+          <CardContent className="p-0">
+            <ControlsGroup controls={controls.css} />
           </CardContent>
 
       </Card>
@@ -133,7 +214,7 @@ const Assets = () => {
         <CardContent className="p-0">
           <ControlsGroup controls={controls.assets} />
         </CardContent>
-      </Card>
+      </Card> 
     </PageContent>
   )
 }

@@ -1,0 +1,4 @@
+[2025-12-02 04:07:58] [upgrader::run_update_migrations] Running migrations.
+[2025-12-02 04:07:58] [upgrader::update_cache_rule] Start cache rule upgrade.
+[2025-12-02 04:07:58] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
+[2025-12-02 04:07:58] [upgrader::update_cache_rule] Cache rule updated.

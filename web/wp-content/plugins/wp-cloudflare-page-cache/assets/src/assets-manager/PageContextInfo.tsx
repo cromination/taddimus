@@ -10,9 +10,8 @@ const PageContextInfo = () => {
       // translators: %s is the post type label
       return sprintf(__(`Viewing a single %s`, 'wp-cloudflare-page-cache'), currentContext.postTypeLabel.toLowerCase());
     case 'is_archive':
-      if (currentContext.subType === 'is_tax') {
-        // translators: %1$s is the taxonomy label, %2$s is the taxonomy slug
-        return sprintf(__(`Viewing %1$s archive: %2$s`, 'wp-cloudflare-page-cache'), currentContext.taxonomyLabel.toLowerCase() , currentContext.taxonomySlug);
+      if (currentContext.subType === 'is_tax') { 
+        return /* translators: %1$s is the taxonomy label, %2$s is the taxonomy slug */ sprintf(__(`Viewing %1$s archive: %2$s`, 'wp-cloudflare-page-cache'), currentContext.taxonomyLabel.toLowerCase() , currentContext.taxonomySlug);
       }
       if (currentContext.subType === 'is_author') {
         return __('Viewing author archive', 'wp-cloudflare-page-cache');

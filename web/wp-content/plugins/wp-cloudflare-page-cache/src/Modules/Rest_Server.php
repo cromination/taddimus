@@ -415,12 +415,23 @@ class Rest_Server implements Module_Interface {
 	/**
 	 * Store optimization data.
 	 *
+	 * Expected request parameters:
+	 * - d: Device type (1=mobile, 2=desktop)
+	 * - a: Array of above-fold image IDs
+	 * - b: Background selectors object
+	 * - l: LCP data (imageId, bgSelector, bgUrls, type)
+	 * - c: Critical CSS data { css: structured_css_object }
+	 * - u: Profile URL/ID
+	 * - p: Base64 encoded page URL
+	 * - t: Timestamp
+	 * - h: HMAC signature
+	 *
 	 * @param WP_REST_Request $request Rest request.
 	 *
 	 * @return WP_REST_Response
 	 */
 	public function optimizations( WP_REST_Request $request ) {
-		if ( ! Settings_Store::get_instance()->is_lazyload_viewport_enabled() ) {
+		if ( ! Settings_Store::get_instance()->is_client_optimizations_enabled() ) {
 			return $this->message_response( 'Optimization is not enabled', 400 );
 		}
 		$time     = $request->get_param( 't' );
@@ -432,6 +443,7 @@ class Rest_Server implements Module_Interface {
 
 		$device_type       = $request->get_param( 'd' );
 		$above_fold_images = $request->get_param( 'a' );
+		$critical_css      = Settings_Store::get_instance()->get( Constants::SETTING_UNUSED_CSS ) ? $request->get_param( 'c' ) : [];
 		$url               = $request->get_param( 'u' );
 		if ( $time < time() - DAY_IN_SECONDS ) {
 			return $this->message_response( 'Invalid Signature.', 400 );
@@ -493,7 +505,7 @@ class Rest_Server implements Module_Interface {
 			$sanitized_lcp_data['type']   = empty( $sanitized_lcp_data['imageId'] ) ? 'bg' : 'img';
 		}
 		$profile = new \SPC_Pro\Modules\PageProfiler\Profile();
-		$profile->store( $url, $device_type, $above_fold_images, $sanitized_selectors, $sanitized_lcp_data );
+		$profile->store( $url, $device_type, $above_fold_images, $sanitized_selectors, $sanitized_lcp_data, $critical_css );
 		if ( $profile->exists_all( $url ) ) {
 			$page_url = base64_decode( $page_url );
 			add_filter(
@@ -507,7 +519,7 @@ class Rest_Server implements Module_Interface {
 			/**
 			 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
 			 */
-			$sw_cloudflare_pagecache->get_cache_controller()->purge_urls( [ home_url( $page_url ) ] );
+			$sw_cloudflare_pagecache->get_cache_controller()->purge_urls( [ ( $page_url ) ] );
 		}
 		return $this->message_response( 'Above fold data stored successfully' );
 	}
