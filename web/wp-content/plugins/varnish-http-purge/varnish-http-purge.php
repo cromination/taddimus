@@ -3,10 +3,13 @@
  * Plugin Name: Proxy Cache Purge
  * Plugin URI: https://github.com/dvershinin/varnish-http-purge
  * Description: Automatically empty cached pages when content on your site is modified.
- * Version: 5.3.0
+ * Version: 5.5.2
+ * Requires at least: 5.0
+ * Requires PHP: 5.6
  * Author: Mika Epstein, Danila Vershinin
  * Author URI: https://halfelf.org/
- * License: http://www.apache.org/licenses/LICENSE-2.0
+ * License: Apache License 2.0
+ * License URI: https://www.apache.org/licenses/LICENSE-2.0
  * Text Domain: varnish-http-purge
  * Network: true
  *
@@ -37,7 +40,7 @@ class VarnishPurger {
 	 * Version Number
 	 * @var string
 	 */
-	public static $version = '5.3.0';
+	public static $version = '5.5.2';
 
 	/**
 	 * List of URLs to be purged
@@ -61,6 +64,47 @@ class VarnishPurger {
 	public static $devmode = array();
 
 	/**
+	 * Site option name for the async purge queue.
+	 *
+	 * @since 5.5.0
+	 * @var string
+	 */
+	const PURGE_QUEUE_OPTION = 'vhp_varnish_purge_queue';
+
+	/**
+	 * Schema version for the async purge queue.
+	 *
+	 * @since 5.5.0
+	 * @var int
+	 */
+	const PURGE_QUEUE_VERSION = 1;
+
+	/**
+	 * Maximum number of URLs to keep in the async purge queue.
+	 *
+	 * @since 5.5.0
+	 * @var int
+	 */
+	const PURGE_QUEUE_MAX_URLS = 1000;
+
+	/**
+	 * Maximum number of tags to keep in the async purge queue.
+	 *
+	 * @since 5.5.0
+	 * @var int
+	 */
+	const PURGE_QUEUE_MAX_TAGS = 1000;
+
+	/**
+	 * Maximum age (in seconds) before a granular queue is upgraded
+	 * to a full-site purge for safety.
+	 *
+	 * @since 5.5.0
+	 * @var int
+	 */
+	const PURGE_QUEUE_MAX_AGE = 900;
+
+	/**
 	 * Init
 	 *
 	 * @since 2.0
@@ -70,7 +114,10 @@ class VarnishPurger {
 		defined( 'VHP_VARNISH_IP' ) || define( 'VHP_VARNISH_IP', false );
 		defined( 'VHP_DEVMODE' ) || define( 'VHP_DEVMODE', false );
 		defined( 'VHP_DOMAINS' ) || define( 'VHP_DOMAINS', false );
+		defined( 'VHP_VARNISH_EXTRA_PURGE_HEADER' ) || define( 'VHP_VARNISH_EXTRA_PURGE_HEADER', false );
 		defined( 'VHP_EXCLUDED_POST_STATUSES' ) || define( 'VHP_EXCLUDED_POST_STATUSES', false );
+
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'settings_link' ) );
 
 		// Development mode defaults to off.
 		self::$devmode = array(
@@ -203,6 +250,14 @@ class VarnishPurger {
 
 		add_action( 'shutdown', array( $this, 'execute_purge' ) );
 
+		// Register the async purge queue processor for WP-Cron.
+		add_action( 'vhp_process_purge_queue', array( $this, 'process_purge_queue' ) );
+
+		// Handle scheduled posts transitioning to publish (future → publish).
+		// This fires when WP-Cron publishes a scheduled post and ensures the
+		// cache is purged synchronously, bypassing the async queue.
+		add_action( 'transition_post_status', array( $this, 'purge_on_future_to_publish' ), 10, 3 );
+
 		// Success: Admin notice when purging.
 		if ( ( isset( $_GET['vhp_flush_all'] ) && check_admin_referer( 'vhp-flush-all' ) ) ||
 			( isset( $_GET['vhp_flush_do'] ) && check_admin_referer( 'vhp-flush-do' ) ) ) {
@@ -225,11 +280,11 @@ class VarnishPurger {
 	 * This runs for ALL upgrades (theme, plugin, and core) to account for
 	 * the complex nature that are upgrades.
 	 *
-	 * @param  array $object of upgrade data
-	 * @param  array $options picked for upgrade
+	 * @param  array $upgrader_object WP_Upgrader instance (unused).
+	 * @param  array $hook_extra Extra hook arguments (unused).
 	 * @since 4.8
 	 */
-	public function check_upgrades( $object, $options ) {
+	public function check_upgrades( $upgrader_object, $hook_extra ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		if ( file_exists( WP_CONTENT_DIR . '/object-cache.php' ) ) {
 			wp_cache_flush();
 		}
@@ -270,6 +325,319 @@ class VarnishPurger {
 	public function admin_message_devmode() {
 		$message = ( VarnishDebug::devmode_check() ) ? __( 'Development Mode activated for the next 24 hours.', 'varnish-http-purge' ) : __( 'Development Mode deactivated.', 'varnish-http-purge' );
 		echo '<div id="message" class="notice notice-success fade is-dismissible"><p><strong>' . wp_kses_post( $message ) . '</strong></p></div>';
+	}
+
+	/**
+	 * Add settings link on plugin list
+	 */
+	public function settings_link( $links ) {
+		$settings_link = '<a href="admin.php?page=varnish-page">' . __( 'Settings', 'varnish-http-purge' ) . '</a>';
+		array_unshift( $links, $settings_link );
+		return $links;
+	}
+
+	/**
+	 * Check if cron-based purging is enabled (static helper).
+	 *
+	 * This is safe to call without an instantiated VarnishPurger object and is
+	 * primarily used by tests and admin/health UIs.
+	 *
+	 * @since 5.5.0
+	 * @return bool
+	 */
+	public static function is_cron_purging_enabled_static() {
+		$enabled = ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON );
+
+		/**
+		 * Filter whether the async purge queue + WP-Cron should be used.
+		 *
+		 * Returning true here enables cron-mode, causing purge operations
+		 * initiated by this plugin to be queued and processed in the
+		 * background instead of being executed synchronously during the
+		 * request.
+		 *
+		 * This is primarily useful for environments that run a real system
+		 * cron hitting wp-cron.php, and for tests or hosts that wish to
+		 * override the default behaviour.
+		 *
+		 * @since 5.5.0
+		 *
+		 * @param bool $enabled Default value based on DISABLE_WP_CRON.
+		 */
+		return (bool) apply_filters( 'vhp_purge_use_cron', $enabled );
+	}
+
+	/**
+	 * Check if cron-based purging is enabled (instance wrapper).
+	 *
+	 * @since 5.5.0
+	 * @return bool
+	 */
+	protected function is_cron_purging_enabled() {
+		return self::is_cron_purging_enabled_static();
+	}
+
+	/**
+	 * Determine if a given queue array is effectively empty.
+	 *
+	 * @since 5.5.0
+	 * @param array $queue Queue data.
+	 * @return bool
+	 */
+	protected function is_purge_queue_empty( $queue ) {
+		if ( ! is_array( $queue ) ) {
+			return true;
+		}
+
+		$full = ! empty( $queue['full'] );
+		$urls = ( isset( $queue['urls'] ) && is_array( $queue['urls'] ) ) ? $queue['urls'] : array();
+		$tags = ( isset( $queue['tags'] ) && is_array( $queue['tags'] ) ) ? $queue['tags'] : array();
+
+		return ( ! $full && empty( $urls ) && empty( $tags ) );
+	}
+
+	/**
+	 * Load and normalize the async purge queue from the site option.
+	 *
+	 * @since 5.5.0
+	 * @return array Normalized queue structure.
+	 */
+	protected function get_purge_queue() {
+		$queue = get_site_option( self::PURGE_QUEUE_OPTION, array() );
+
+		if ( ! is_array( $queue ) ) {
+			$queue = array();
+		}
+
+		$defaults = array(
+			'version'         => self::PURGE_QUEUE_VERSION,
+			'full'            => false,
+			'urls'            => array(),
+			'tags'            => array(),
+			'created_at'      => 0,
+			'last_updated_at' => 0,
+		);
+
+		$queue = array_merge( $defaults, $queue );
+
+		// Normalise types.
+		$queue['full'] = (bool) $queue['full'];
+
+		if ( ! is_array( $queue['urls'] ) ) {
+			$queue['urls'] = array();
+		}
+
+		if ( ! is_array( $queue['tags'] ) ) {
+			$queue['tags'] = array();
+		}
+
+		$queue['urls'] = array_values( array_unique( array_filter( array_map( 'strval', $queue['urls'] ) ) ) );
+		$queue['tags'] = array_values( array_unique( array_filter( array_map( 'strval', $queue['tags'] ) ) ) );
+
+		$queue['created_at']      = (int) $queue['created_at'];
+		$queue['last_updated_at'] = (int) $queue['last_updated_at'];
+
+		return $queue;
+	}
+
+	/**
+	 * Persist the async purge queue back to the site option.
+	 *
+	 * This runs the vhp_purge_queue_before_save filter and will delete the
+	 * option entirely if the queue is effectively empty.
+	 *
+	 * @since 5.5.0
+	 * @param array $queue Queue data.
+	 */
+	protected function save_purge_queue( $queue ) {
+		if ( ! is_array( $queue ) ) {
+			$queue = array();
+		}
+
+		/**
+		 * Filter the async purge queue before it is persisted.
+		 *
+		 * This allows advanced integrations to coalesce, add, or remove
+		 * URLs/tags, or to otherwise adjust the queue semantics before
+		 * it is written to the database.
+		 *
+		 * @since 5.5.0
+		 *
+		 * @param array $queue Queue data about to be saved.
+		 */
+		$queue = apply_filters( 'vhp_purge_queue_before_save', $queue );
+
+		if ( $this->is_purge_queue_empty( $queue ) ) {
+			delete_site_option( self::PURGE_QUEUE_OPTION );
+			return;
+		}
+
+		update_site_option( self::PURGE_QUEUE_OPTION, $queue );
+	}
+
+	/**
+	 * Ensure a single-run cron event is scheduled to process the queue.
+	 *
+	 * @since 5.5.0
+	 */
+	protected function ensure_purge_queue_scheduled() {
+		if ( ! $this->is_cron_purging_enabled() ) {
+			return;
+		}
+
+		if ( ! wp_next_scheduled( 'vhp_process_purge_queue' ) ) {
+			wp_schedule_single_event( time(), 'vhp_process_purge_queue' );
+		}
+	}
+
+	/**
+	 * Enqueue a full-site purge into the async queue.
+	 *
+	 * Once a full purge is scheduled, granular URLs/tags are discarded.
+	 *
+	 * @since 5.5.0
+	 */
+	protected function enqueue_full_purge() {
+		$queue = $this->get_purge_queue();
+
+		$is_empty = $this->is_purge_queue_empty( $queue );
+
+		$queue['full']            = true;
+		$queue['urls']            = array();
+		$queue['tags']            = array();
+		$queue['last_updated_at'] = time();
+
+		if ( $is_empty ) {
+			$queue['created_at'] = time();
+		}
+
+		$this->save_purge_queue( $queue );
+		$this->ensure_purge_queue_scheduled();
+	}
+
+	/**
+	 * Enqueue specific URLs into the async purge queue.
+	 *
+	 * @since 5.5.0
+	 * @param array $urls List of URLs to be purged.
+	 */
+	protected function enqueue_urls( $urls ) {
+		if ( empty( $urls ) || ! is_array( $urls ) ) {
+			return;
+		}
+
+		$queue = $this->get_purge_queue();
+
+		// If a full purge is already scheduled, no need to track individual URLs.
+		if ( ! empty( $queue['full'] ) ) {
+			return;
+		}
+
+		$is_empty = $this->is_purge_queue_empty( $queue );
+
+		$normalized_urls = array();
+		foreach ( $urls as $url ) {
+			$url = (string) $url;
+
+			// Basic sanity check; purge_url() will validate further.
+			if ( '' === $url ) {
+				continue;
+			}
+
+			$normalized_urls[] = $url;
+		}
+
+		if ( empty( $normalized_urls ) ) {
+			return;
+		}
+
+		$queue['urls'] = array_values(
+			array_unique(
+				array_merge(
+					$queue['urls'],
+					$normalized_urls
+				)
+			)
+		);
+
+		// Enforce a hard cap on queued URLs to avoid unbounded growth.
+		$max_urls = (int) apply_filters( 'vhp_purge_queue_max_urls', self::PURGE_QUEUE_MAX_URLS );
+
+		if ( $max_urls > 0 && count( $queue['urls'] ) > $max_urls ) {
+			// Rather than silently dropping URLs, upgrade to a full purge.
+			$queue['full'] = true;
+			$queue['urls'] = array();
+			$queue['tags'] = array();
+		}
+
+		$queue['last_updated_at'] = time();
+		if ( $is_empty ) {
+			$queue['created_at'] = time();
+		}
+
+		$this->save_purge_queue( $queue );
+		$this->ensure_purge_queue_scheduled();
+	}
+
+	/**
+	 * Enqueue cache tags into the async purge queue.
+	 *
+	 * @since 5.5.0
+	 * @param array $tags List of cache tags to be purged.
+	 */
+	protected function enqueue_tags( $tags ) {
+		if ( empty( $tags ) || ! is_array( $tags ) ) {
+			return;
+		}
+
+		$queue = $this->get_purge_queue();
+
+		// If a full purge is already scheduled, no need to track individual tags.
+		if ( ! empty( $queue['full'] ) ) {
+			return;
+		}
+
+		$is_empty = $this->is_purge_queue_empty( $queue );
+
+		$normalized_tags = array();
+		foreach ( $tags as $tag ) {
+			$tag = trim( (string) $tag );
+			if ( '' === $tag ) {
+				continue;
+			}
+			$normalized_tags[] = $tag;
+		}
+
+		if ( empty( $normalized_tags ) ) {
+			return;
+		}
+
+		$queue['tags'] = array_values(
+			array_unique(
+				array_merge(
+					$queue['tags'],
+					$normalized_tags
+				)
+			)
+		);
+
+		// Enforce a hard cap on queued tags to avoid unbounded growth.
+		$max_tags = (int) apply_filters( 'vhp_purge_queue_max_tags', self::PURGE_QUEUE_MAX_TAGS );
+
+		if ( $max_tags > 0 && count( $queue['tags'] ) > $max_tags ) {
+			// Too many granular tags – upgrade to a full purge for safety.
+			$queue['full'] = true;
+			$queue['urls'] = array();
+			$queue['tags'] = array();
+		}
+
+		$queue['last_updated_at'] = time();
+		if ( $is_empty ) {
+			$queue['created_at'] = time();
+		}
+
+		$this->save_purge_queue( $queue );
+		$this->ensure_purge_queue_scheduled();
 	}
 
 	/**
@@ -361,6 +729,7 @@ class VarnishPurger {
 		global $wp;
 
 		$can_purge    = false;
+		$args         = array();
 		$cache_active = ( VarnishDebug::devmode_check() ) ? __( 'Inactive', 'varnish-http-purge' ) : __( 'Active', 'varnish-http-purge' );
 		// translators: %s is the state of cache.
 		$cache_titled = sprintf( __( 'Cache (%s)', 'varnish-http-purge' ), $cache_active );
@@ -386,7 +755,7 @@ class VarnishPurger {
 			// Multisite - Network Admin can always purge.
 			current_user_can( 'manage_network' ) ||
 			// Multisite - Site admins can purge UNLESS it's a subfolder install and we're on site #1.
-			( is_multisite() && current_user_can( 'activate_plugins' ) && ( SUBDOMAIN_INSTALL || ( ! SUBDOMAIN_INSTALL && ( BLOG_ID_CURRENT_SITE !== $blog_id ) ) ) )
+			( is_multisite() && current_user_can( 'activate_plugins' ) && ( SUBDOMAIN_INSTALL || ( ! SUBDOMAIN_INSTALL && ( BLOG_ID_CURRENT_SITE !== get_current_blog_id() ) ) ) )
 			) {
 
 			$args[] = array(
@@ -503,7 +872,7 @@ class VarnishPurger {
 	public function varnish_rightnow() {
 		global $blog_id;
 		// translators: %1$s links to the plugin's page on WordPress.org.
-		$intro    = sprintf( __( '<a href="%1$s">Proxy Cache Purge</a> automatically deletes your cached posts when published or updated. When making major site changes, such as with a new theme, plugins, or widgets, you may need to manually empty the cache.', 'varnish-http-purge' ), 'http://wordpress.org/plugins/varnish-http-purge/' );
+		$intro    = sprintf( __( '<a href="%1$s">Proxy Cache Purge</a> automatically deletes your cached posts when published or updated. When making major site changes, such as with a new theme, plugins, or widgets, you may need to manually empty the cache.', 'varnish-http-purge' ), 'https://wordpress.org/plugins/varnish-http-purge/' );
 		$url      = wp_nonce_url( add_query_arg( 'vhp_flush_do', 'all' ), 'vhp-flush-do' );
 		$button   = __( 'Press the button below to force it to empty your entire cache.', 'varnish-http-purge' );
 		$button  .= '</p><p><span class="button"><strong><a href="' . $url . '">';
@@ -588,13 +957,14 @@ class VarnishPurger {
 
 	/**
 	 * Execute Purge
-	 * Run the purge command for the URLs. Calls $this->purge_url for each URL
+	 * Run the purge command for the URLs or enqueue them for async handling.
 	 *
 	 * @since 1.0
 	 * @access protected
 	 */
 	public function execute_purge() {
 		$purge_urls = array_unique( $this->purge_urls );
+		$cron_mode  = $this->is_cron_purging_enabled();
 
 		if ( ! empty( $purge_urls ) && is_array( $purge_urls ) ) {
 
@@ -610,11 +980,57 @@ class VarnishPurger {
 				$max_posts = get_site_option( 'vhp_varnish_max_posts_before_all' );
 			}
 
+			// In cron-mode, allow specific requests to bypass the queue and run synchronously.
+			if ( $cron_mode ) {
+				$payload = array(
+					'urls'      => $purge_urls,
+					'count'     => $count,
+					'max_posts' => $max_posts,
+				);
+
+				/**
+				 * Decide whether this batch of URL purges should bypass the cron queue.
+				 *
+				 * When this filter returns true and cron-mode is enabled, the plugin
+				 * will behave as it did historically: sending PURGE requests
+				 * synchronously during the request instead of queuing them for
+				 * WP-Cron.
+				 *
+				 * @since 5.5.0
+				 *
+				 * @param bool  $bypass  Default false.
+				 * @param string $context Context string. Here: 'urls'.
+				 * @param array  $payload Array with 'urls', 'count', and 'max_posts'.
+				 */
+				$bypass = apply_filters( 'vhp_purge_bypass_cron_for_request', false, 'urls', $payload );
+
+				if ( $bypass ) {
+					// Preserve existing behaviour.
+					if ( $max_posts <= $count ) {
+						// Too many URLs, purge all instead.
+						$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+					} else {
+						// Purge each URL.
+						foreach ( $purge_urls as $url ) {
+							$this->purge_url( $url );
+						}
+					}
+
+					return;
+				}
+			}
+
 			// If there are more than vhp_varnish_max_posts_before_all URLs to purge (default 50),
-			// do a purge ALL instead. Else, do the normal.
-			if ( $max_posts <= $count ) {
-				// Too many URLs, purge all instead.
-				$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+			// do a purge ALL instead. Else, enqueue or purge the individual URLs.
+			if ( $cron_mode ) {
+				if ( $max_posts <= $count ) {
+					$this->enqueue_full_purge();
+				} else {
+					$this->enqueue_urls( $purge_urls );
+				}
+			} elseif ( $max_posts <= $count ) {
+					// Too many URLs, purge all instead.
+					$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
 			} else {
 				// Purge each URL.
 				foreach ( $purge_urls as $url ) {
@@ -625,7 +1041,16 @@ class VarnishPurger {
 			// Otherwise, if we've passed a GET call...
 			if ( isset( $_GET['vhp_flush_all'] ) && check_admin_referer( 'vhp-flush-all' ) ) {
 				// Flush Cache recursive.
-				$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+				if ( $cron_mode ) {
+					$bypass = apply_filters( 'vhp_purge_bypass_cron_for_request', false, 'manual_all', $this->the_home_url() );
+					if ( $bypass ) {
+						$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+					} else {
+						$this->enqueue_full_purge();
+					}
+				} else {
+					$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+				}
 			} elseif ( isset( $_GET['vhp_flush_do'] ) && check_admin_referer( 'vhp-flush-do' ) ) {
 				if ( 'object' === $_GET['vhp_flush_do'] ) {
 					// Flush Object Cache (with a double check).
@@ -634,17 +1059,152 @@ class VarnishPurger {
 					}
 				} elseif ( 'all' === $_GET['vhp_flush_do'] ) {
 					// Flush Cache recursive.
-					$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+					if ( $cron_mode ) {
+						$bypass = apply_filters( 'vhp_purge_bypass_cron_for_request', false, 'manual_all', $this->the_home_url() );
+						if ( $bypass ) {
+							$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+						} else {
+							$this->enqueue_full_purge();
+						}
+					} else {
+						$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+					}
 				} else {
 					// Flush the URL we're on.
 					$p = wp_parse_url( esc_url_raw( wp_unslash( $_GET['vhp_flush_do'] ) ) );
 					if ( ! isset( $p['host'] ) ) {
 						return;
 					}
-					$this->purge_url( esc_url_raw( wp_unslash( $_GET['vhp_flush_do'] ) ) );
+					$target_url = esc_url_raw( wp_unslash( $_GET['vhp_flush_do'] ) );
+
+					if ( $cron_mode ) {
+						$bypass = apply_filters( 'vhp_purge_bypass_cron_for_request', false, 'manual_url', $target_url );
+						if ( $bypass ) {
+							$this->purge_url( $target_url );
+						} else {
+							$this->enqueue_urls( array( $target_url ) );
+						}
+					} else {
+						$this->purge_url( $target_url );
+					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Process the async purge queue.
+	 *
+	 * This is invoked by the `vhp_process_purge_queue` cron hook as well as
+	 * tests and WP-CLI integrations. It is safe to invoke regardless of
+	 * whether cron-mode is currently enabled; if the queue is empty, it will
+	 * simply no-op.
+	 *
+	 * @since 5.5.0
+	 * @access public
+	 */
+	public function process_purge_queue() {
+		$queue      = $this->get_purge_queue();
+		$queue_at   = (int) ( isset( $queue['created_at'] ) ? $queue['created_at'] : 0 );
+		$is_empty   = $this->is_purge_queue_empty( $queue );
+		$start_time = microtime( true );
+
+		$summary = array(
+			'full'           => false,
+			'urls_processed' => 0,
+			'tags_processed' => 0,
+			'queue_age'      => 0,
+		);
+
+		if ( ! $is_empty && $queue_at > 0 ) {
+			$summary['queue_age'] = time() - $queue_at;
+		}
+
+		// If the queue has been sitting around for a long time with granular
+		// entries, upgrade it to a full purge for safety.
+		$max_age = (int) apply_filters( 'vhp_purge_queue_max_age', self::PURGE_QUEUE_MAX_AGE );
+		if ( $max_age > 0 && ! empty( $summary['queue_age'] ) && empty( $queue['full'] ) ) {
+			$has_granular = ( ! empty( $queue['urls'] ) || ! empty( $queue['tags'] ) );
+			if ( $has_granular && $summary['queue_age'] > $max_age ) {
+				$queue['full'] = true;
+				$queue['urls'] = array();
+				$queue['tags'] = array();
+			}
+		}
+
+		// Decide what to do with the current snapshot of the queue.
+		if ( ! empty( $queue['full'] ) ) {
+			// Full purge wins over everything else.
+			$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+			$summary['full'] = true;
+
+			// Clear the queue entirely once processed.
+			$queue['full']            = false;
+			$queue['urls']            = array();
+			$queue['tags']            = array();
+			$queue['created_at']      = 0;
+			$queue['last_updated_at'] = time();
+			$this->save_purge_queue( $queue );
+		} elseif ( ! $is_empty ) {
+			// Granular URLs and/or tags.
+
+			// Tags are processed as a single batch; batching into header-sized
+			// patterns is handled inside purge_tags().
+			if ( ! empty( $queue['tags'] ) && is_array( $queue['tags'] ) ) {
+				$this->purge_tags( $queue['tags'] );
+				$summary['tags_processed'] = count( $queue['tags'] );
+				$queue['tags']             = array();
+			}
+
+			$urls = ( isset( $queue['urls'] ) && is_array( $queue['urls'] ) ) ? $queue['urls'] : array();
+
+			// Process URLs in chunks to avoid excessively long cron runs.
+			$max_urls_per_run = (int) apply_filters( 'vhp_purge_queue_max_urls_per_run', 200 );
+			if ( $max_urls_per_run <= 0 ) {
+				$max_urls_per_run = 200;
+			}
+
+			$urls_to_process = array_slice( $urls, 0, $max_urls_per_run );
+
+			foreach ( $urls_to_process as $url ) {
+				$this->purge_url( $url );
+			}
+
+			$summary['urls_processed'] = count( $urls_to_process );
+
+			// Remove processed URLs from the queue.
+			$queue['urls']            = array_slice( $urls, $summary['urls_processed'] );
+			$queue['last_updated_at'] = time();
+
+			if ( $this->is_purge_queue_empty( $queue ) ) {
+				$queue['created_at'] = 0;
+			}
+
+			$this->save_purge_queue( $queue );
+
+			// If there is still work to do, schedule another run.
+			if ( ! $this->is_purge_queue_empty( $queue ) ) {
+				$this->ensure_purge_queue_scheduled();
+			}
+		}
+
+		$duration = microtime( true ) - $start_time;
+
+		update_site_option( 'vhp_varnish_last_queue_run', time() );
+
+		$summary['duration'] = $duration;
+
+		/**
+		 * Fires after an async purge queue run has completed.
+		 *
+		 * This action is primarily intended for logging and metrics.
+		 *
+		 * @since 5.5.0
+		 *
+		 * @param array $queue_snapshot Queue snapshot as loaded at the start of the run.
+		 * @param array $summary        Summary statistics about the processing.
+		 */
+		do_action( 'vhp_purge_queue_after_process', $queue, $summary );
 	}
 
 	/**
@@ -690,7 +1250,8 @@ class VarnishPurger {
 		// Now apply filters
 		if ( is_array( $varniship ) ) {
 			// To each ship:
-			for ( $i = 0; $i < count( $varniship ); $i++ ) {
+			$ship_count = count( $varniship );
+			for ( $i = 0; $i < $ship_count; $i++ ) {
 				$varniship[ $i ] = apply_filters( 'vhp_varnish_ip', $varniship[ $i ] );
 			}
 		} else {
@@ -776,6 +1337,26 @@ class VarnishPurger {
 			 */
 			$purgeme = apply_filters( 'vhp_purgeme_path', $purgeme, $schema, $one_host, $path, $pregex, $p );
 
+			$default_headers = array(
+				'host'           => $host_headers,
+				'X-Purge-Method' => $x_purge_method,
+			);
+			if ( VHP_VARNISH_EXTRA_PURGE_HEADER && strpos( VHP_VARNISH_EXTRA_PURGE_HEADER, ':' ) !== false ) {
+				// If this is set, extract name/value.
+				$header_parts        = explode( ':', VHP_VARNISH_EXTRA_PURGE_HEADER, 2 );
+				$custom_header_name  = trim( $header_parts[0] );
+				$custom_header_value = ( isset( $header_parts[1] ) ) ? trim( $header_parts[1] ) : '';
+				if ( ! empty( $custom_header_name ) && ! empty( $custom_header_value ) ) {
+					$default_headers[ $custom_header_name ] = $custom_header_value;
+				}
+			} elseif ( get_site_option( 'vhp_varnish_extra_purge_header_value' ) && get_site_option( 'vhp_varnish_extra_purge_header_name' ) ) {
+				$custom_header_name  = trim( get_site_option( 'vhp_varnish_extra_purge_header_name' ) );
+				$custom_header_value = trim( get_site_option( 'vhp_varnish_extra_purge_header_value' ) );
+				if ( ! empty( $custom_header_name ) && ! empty( $custom_header_value ) ) {
+					$default_headers[ $custom_header_name ] = $custom_header_value;
+				}
+			}
+
 			/**
 			 * Filters the HTTP headers to send with a PURGE request.
 			 *
@@ -783,10 +1364,7 @@ class VarnishPurger {
 			 */
 			$headers = apply_filters(
 				'varnish_http_purge_headers',
-				array(
-					'host'           => $host_headers,
-					'X-Purge-Method' => $x_purge_method,
-				)
+				$default_headers
 			);
 
 			// Send response.
@@ -805,15 +1383,288 @@ class VarnishPurger {
 	}
 
 	/**
+	 * Purge Tags
+	 *
+	 * @since 5.4.0
+	 * @param array $tags - The tags to be purged.
+	 * @access public
+	 */
+	public function purge_tags( $tags ) {
+		// Bail early if no tags.
+		if ( empty( $tags ) ) {
+			return;
+		}
+
+		// Unique tags only.
+		$tags = array_unique( array_filter( array_map( 'strval', $tags ) ) );
+
+		if ( empty( $tags ) ) {
+			return;
+		}
+
+		/**
+		 * Allow filtering of tags prior to batching and purging.
+		 *
+		 * @since 5.4.0
+		 *
+		 * @param array $tags List of cache tags to purge.
+		 */
+		$tags = apply_filters( 'vhp_purge_tags', $tags );
+
+		if ( empty( $tags ) || ! is_array( $tags ) ) {
+			return;
+		}
+
+		/**
+		 * Maximum length (in bytes) of the header value used for tag patterns.
+		 * Defaults to 7680 bytes, which is a safe value below common Varnish
+		 * and HTTP header limits, and helps avoid oversized BAN expressions.
+		 *
+		 * @since 5.4.0
+		 *
+		 * @param int $max_header_size Maximum header size in bytes.
+		 */
+		$max_header_size = (int) apply_filters( 'vhp_purge_tags_max_header_size', 7680 );
+		if ( $max_header_size <= 0 ) {
+			$max_header_size = 7680;
+		}
+
+		// Build batched patterns like "tag-one|tag-two|tag-three" to be used in a single BAN.
+		$patterns     = array();
+		$current_tags = array();
+		$current_size = 0;
+		foreach ( $tags as $tag ) {
+			$tag        = trim( (string) $tag );
+			$tag_length = strlen( $tag );
+			if ( '' === $tag || 0 === $tag_length ) {
+				continue;
+			}
+
+			// Extra 1 byte for the '|' delimiter when there are existing tags in the batch.
+			$additional = $tag_length + ( empty( $current_tags ) ? 0 : 1 );
+
+			// If adding this tag would exceed the header size, flush the current batch first.
+			if ( $current_size > 0 && ( $current_size + $additional ) > $max_header_size ) {
+				$patterns[]   = implode( '|', $current_tags );
+				$current_tags = array();
+				$current_size = 0;
+				$additional   = $tag_length; // first tag in the new batch, no delimiter yet.
+			}
+
+			$current_tags[] = $tag;
+			$current_size  += $additional;
+		}
+
+		if ( ! empty( $current_tags ) ) {
+			$patterns[] = implode( '|', $current_tags );
+		}
+
+		if ( empty( $patterns ) ) {
+			return;
+		}
+
+		// Build a varniship to sail. ⛵️
+		$varniship = ( VHP_VARNISH_IP !== false ) ? VHP_VARNISH_IP : get_site_option( 'vhp_varnish_ip' );
+
+		// If there are commas, and for whatever reason this didn't become an array
+		// properly, force it.
+		if ( ! is_array( $varniship ) && strpos( $varniship, ',' ) !== false ) {
+			$varniship = array_map( 'trim', explode( ',', $varniship ) );
+		}
+
+		// Now apply filters
+		if ( is_array( $varniship ) ) {
+			// To each ship:
+			$ship_count = count( $varniship );
+			for ( $i = 0; $i < $ship_count; $i++ ) {
+				$varniship[ $i ] = apply_filters( 'vhp_varnish_ip', $varniship[ $i ] );
+			}
+		} else {
+			// To the only ship:
+			$varniship = apply_filters( 'vhp_varnish_ip', $varniship );
+		}
+
+		// This is a very annoying check for DreamHost who needs to default to HTTPS without breaking
+		// people who've been around before.
+		$server_hostname = gethostname();
+		switch ( substr( $server_hostname, 0, 3 ) ) {
+			case 'dp-':
+				$schema_type = 'https://';
+				break;
+			default:
+				$schema_type = 'http://';
+				break;
+		}
+		$schema = apply_filters( 'varnish_http_purge_schema', $schema_type );
+
+		// Get home URL parts
+		$p = wp_parse_url( $this->the_home_url() );
+
+		// When we have Varnish IPs, we use them in lieu of hosts.
+		if ( isset( $varniship ) && ! empty( $varniship ) ) {
+			$all_hosts = ( ! is_array( $varniship ) ) ? array( $varniship ) : $varniship;
+		} else {
+			// The default is the main host, converted into an array.
+			$all_hosts = array( $p['host'] );
+		}
+
+		// Since the ship is always an array now, let's loop.
+		foreach ( $all_hosts as $one_host ) {
+
+			$host_headers = $p['host'];
+
+			// If the URL to be purged has a port, we're going to re-use it.
+			if ( isset( $p['port'] ) ) {
+				$host_headers .= ':' . $p['port'];
+			}
+
+			// Filter URL based on the Proxy IP for nginx compatibility.
+			// Note: For localhost (nginx), no URL rewrite is needed for tag-based purges.
+
+			// Create path to purge.
+			$purgeme = $schema . $one_host . '/';
+
+			// Send one PURGE per pattern so VCL can invalidate by regex in a single BAN.
+			foreach ( $patterns as $pattern ) {
+				/**
+				 * Filters the HTTP headers to send with a PURGE request.
+				 *
+				 * @since 4.1
+				 */
+				$headers = apply_filters(
+					'varnish_http_purge_headers',
+					array(
+						'host'                 => $host_headers,
+						'X-Purge-Method'       => 'tags',
+						'X-Cache-Tags-Pattern' => $pattern,
+					)
+				);
+
+				// Send response.
+				// SSL Verify is required here since Varnish is HTTP only, but proxies are a thing.
+				$response = wp_remote_request(
+					$purgeme,
+					array(
+						'sslverify' => false,
+						'method'    => 'PURGE',
+						'headers'   => $headers,
+					)
+				);
+
+				/**
+				 * Fires after a tag-pattern purge request has been sent.
+				 *
+				 * @since 5.4.0
+				 *
+				 * @param array  $tags     Full list of tags requested for purge.
+				 * @param string $pattern  The pattern string used for this PURGE (e.g. "tag-one|tag-two").
+				 * @param string $purgeme  The URL that was purged.
+				 * @param mixed  $response The response from wp_remote_request().
+				 * @param array  $headers  The headers sent with the PURGE request.
+				 */
+				do_action( 'after_purge_tags', $tags, $pattern, $purgeme, $response, $headers );
+			}
+		}
+	}
+
+	/**
+	 * Purge on Scheduled Post Publish
+	 *
+	 * When a scheduled post transitions from 'future' to 'publish' (typically
+	 * via WP-Cron), this method ensures the cache is purged synchronously.
+	 * This bypasses the async queue because we're already in a cron context
+	 * and the user expects immediate cache invalidation.
+	 *
+	 * Additionally, this method purges the shortlink URL (?p=XXX) which may
+	 * have been cached with a 404 response while the post was scheduled.
+	 *
+	 * @since 5.5.0
+	 * @access public
+	 * @param string  $new_status New post status.
+	 * @param string  $old_status Old post status.
+	 * @param WP_Post $post       Post object.
+	 * @return void
+	 */
+	public function purge_on_future_to_publish( $new_status, $old_status, $post ) {
+		// Only act on future → publish transitions (scheduled posts being published).
+		if ( 'future' !== $old_status || 'publish' !== $new_status ) {
+			return;
+		}
+
+		// Bail if not a valid post object.
+		if ( ! is_object( $post ) || ! isset( $post->ID ) ) {
+			return;
+		}
+
+		$post_id = $post->ID;
+
+		// Skip invalid post types.
+		$invalid_post_type = array( 'nav_menu_item', 'revision' );
+		$this_post_type    = get_post_type( $post_id );
+		if ( in_array( $this_post_type, $invalid_post_type, true ) ) {
+			return;
+		}
+
+		// If using tag-based purging, purge by tags synchronously.
+		if ( get_site_option( 'vhp_varnish_use_tags' ) && class_exists( 'VarnishTags' ) ) {
+			$tags = VarnishTags::get_purge_tags_for_post( $post_id );
+			$this->purge_tags( $tags );
+
+			// Also purge the shortlink URL which may have cached 404/redirect.
+			$shortlink = $this->the_home_url() . '/?p=' . $post_id;
+			$this->purge_url( $shortlink );
+
+			return;
+		}
+
+		// Generate purge URLs for this post using the existing logic, but store
+		// them temporarily so we can purge synchronously.
+		$original_purge_urls = $this->purge_urls;
+		$this->purge_urls    = array();
+
+		// Call purge_post to populate $this->purge_urls with the URLs to purge.
+		$this->purge_post( $post_id );
+
+		$urls_to_purge    = array_unique( $this->purge_urls );
+		$this->purge_urls = $original_purge_urls;
+
+		// Also add the shortlink URL which may have been cached with a 404 or
+		// redirect while the post was in 'future' status.
+		$shortlink       = $this->the_home_url() . '/?p=' . $post_id;
+		$urls_to_purge[] = $shortlink;
+		$urls_to_purge   = array_unique( $urls_to_purge );
+
+		// Purge each URL synchronously (bypass the cron queue).
+		if ( ! empty( $urls_to_purge ) ) {
+			// Check against max posts limit.
+			$count = count( $urls_to_purge );
+			if ( defined( 'VHP_VARNISH_MAXPOSTS' ) && false !== VHP_VARNISH_MAXPOSTS ) {
+				$max_posts = VHP_VARNISH_MAXPOSTS;
+			} else {
+				$max_posts = get_site_option( 'vhp_varnish_max_posts_before_all' );
+			}
+
+			if ( $max_posts <= $count ) {
+				// Too many URLs, purge all instead.
+				$this->purge_url( $this->the_home_url() . '/?vhp-regex' );
+			} else {
+				foreach ( $urls_to_purge as $url ) {
+					$this->purge_url( $url );
+				}
+			}
+		}
+	}
+
+	/**
 	 * Purge - No IDs
 	 * Flush the whole cache
 	 *
 	 * @access public
-	 * @param mixed $post_id - the post ID that triggered this (we don't use it yet).
+	 * @param mixed $post_id The post ID that triggered this (unused, kept for hook compatibility).
 	 * @return void
 	 * @since 3.9
 	 */
-	public function execute_purge_no_id( $post_id ) {
+	public function execute_purge_no_id( $post_id ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		$listofurls = array();
 
 		array_push( $listofurls, $this->the_home_url() . '/?vhp-regex' );
@@ -915,6 +1766,43 @@ class VarnishPurger {
 		// Verify we have a permalink and that we're a valid post status and type.
 		if ( false !== get_permalink( $post_id ) && in_array( $this_post_status, $valid_post_status, true ) && ! in_array( $this_post_type, $invalid_post_type, true ) ) {
 
+			// If we're using tags, purge by tags and return.
+			if ( get_site_option( 'vhp_varnish_use_tags' ) && class_exists( 'VarnishTags' ) ) {
+				$tags = VarnishTags::get_purge_tags_for_post( $post_id );
+
+				if ( $this->is_cron_purging_enabled() ) {
+					$payload = array(
+						'post_id' => $post_id,
+						'tags'    => $tags,
+					);
+
+					/**
+					 * Decide whether this tag-based purge for a post should bypass the cron queue.
+					 *
+					 * When this filter returns true and cron-mode is enabled, the plugin
+					 * will send tag-based PURGE requests synchronously instead of queuing
+					 * them for WP-Cron.
+					 *
+					 * @since 5.5.0
+					 *
+					 * @param bool  $bypass  Default false.
+					 * @param string $context Context string. Here: 'post_tags'.
+					 * @param array  $payload Array with 'post_id' and 'tags'.
+					 */
+					$bypass = apply_filters( 'vhp_purge_bypass_cron_for_request', false, 'post_tags', $payload );
+
+					if ( $bypass ) {
+						$this->purge_tags( $tags );
+					} else {
+						$this->enqueue_tags( $tags );
+					}
+				} else {
+					$this->purge_tags( $tags );
+				}
+
+				return;
+			}
+
 			// Post URL.
 			array_push( $listofurls, get_permalink( $post_id ) );
 
@@ -935,7 +1823,7 @@ class VarnishPurger {
 				}
 
 				if ( isset( $rest_permalink ) ) {
-					if ( is_string( $rest_permalink ) && $rest_permalink !== '' ) {
+					if ( is_string( $rest_permalink ) && '' !== $rest_permalink ) {
 						array_push( $listofurls, $rest_permalink );
 					}
 				}
@@ -1057,7 +1945,12 @@ class VarnishPurger {
 			return;
 		} else {
 			// Strip off query variables
-			$listofurls = array_map( function( $url ) { return strtok( $url, '?' ); }, $listofurls );
+			$listofurls = array_map(
+				function ( $url ) {
+					return strtok( $url, '?' );
+				},
+				$listofurls
+			);
 
 			// If the DOMAINS setup is defined, we duplicate the URLs
 			if ( false !== VHP_DOMAINS ) {
@@ -1123,7 +2016,6 @@ class VarnishPurger {
 		self::purge_post( $post_id );
 	}
 	// @codingStandardsIgnoreEnd
-
 }
 
 /**
@@ -1146,8 +2038,15 @@ if ( ! class_exists( 'VarnishStatus' ) ) {
 	if ( ! is_network_admin() ) {
 		require_once 'settings.php';
 	}
+
 	require_once 'debug.php';
 	require_once 'health-check.php';
+	require_once 'varnish-tags.php';
+
+	// Initialize Tags if enabled.
+	if ( get_site_option( 'vhp_varnish_use_tags' ) ) {
+		new VarnishTags();
+	}
 
 	$purger = new VarnishPurger();
 }

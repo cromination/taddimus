@@ -117,7 +117,7 @@ class MediaStatusViewer implements HookableInterface {
 	 * @internal
 	 */
 	public function print_table_column_value( string $column_name, int $post_id ) {
-		if ( $column_name !== 'webpc_status' ) {
+		if ( ( $column_name !== 'webpc_status' ) || ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 

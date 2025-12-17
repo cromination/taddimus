@@ -11,7 +11,7 @@ class ComposerStaticInit55d84125555e8ebd3eb5481b5ac90b2e
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
+        'S' =>
         array (
             'SPC_Pro\\' => 8,
             'SPC\\' => 4,
@@ -19,11 +19,11 @@ class ComposerStaticInit55d84125555e8ebd3eb5481b5ac90b2e
     );
 
     public static $prefixDirsPsr4 = array (
-        'SPC_Pro\\' => 
+        'SPC_Pro\\' =>
         array (
             0 => __DIR__ . '/../..' . '/pro',
         ),
-        'SPC\\' => 
+        'SPC\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),

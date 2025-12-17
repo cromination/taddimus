@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.9
 Requires PHP: 7.1
-Stable tag: 6.3.2
+Stable tag: 6.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -308,6 +308,10 @@ Current list of supported CDN servers:
 5. Ability to manually undo optimization of selected image
 
 == Changelog ==
+
+= 6.4.0 (2025-12-08) =
+* `[Security]` Added permission check to ensure the user can edit the post before manually converting an image in the Media Library (CVE-2025-13750)
+* `[Security]` Added stricter permission checks to REST API endpoints for authenticated users
 
 = 6.3.2 (2025-11-24) =
 * `[Added]` Support for WordPress 6.9

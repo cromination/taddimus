@@ -1,3 +1,7 @@
+#####   Version 5.2.1 (2025-12-16)
+
+- Removed duplicate Font Optimization cards from the Assets settings
+
 ####   Version 5.2.0 (2025-11-28)
 
 - Introduced a [CSS Optimization](https://docs.themeisle.com/article/2367-css-optimizations) feature that leverages a browser-based script to observe which CSS is used in the page, extract critical CSS, and defer the rest — greatly improving load speed and Core Web Vitals (PRO).

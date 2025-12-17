@@ -2,7 +2,7 @@
 
 namespace WP_CLI\I18n\Tests;
 
-use WP_CLI\I18n\IterableCodeExtractor;
+use PHPUnit\Framework\Attributes\DataProvider;
 use WP_CLI\Tests\TestCase;
 use WP_CLI\Utils;
 
@@ -22,9 +22,13 @@ class IterableCodeExtractorTest extends TestCase {
 		self::$base = Utils\normalize_path( __DIR__ ) . '/data/';
 
 		$property = new \ReflectionProperty( TestIterableCodeExtractor::class, 'dir' );
-		$property->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$property->setAccessible( true );
+		}
 		$property->setValue( null, self::$base );
-		$property->setAccessible( false );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$property->setAccessible( false );
+		}
 	}
 
 	public function tear_down() {
@@ -211,7 +215,9 @@ class IterableCodeExtractorTest extends TestCase {
 	protected static function get_method_as_public( $class_name, $method_name ) {
 		$class  = new \ReflectionClass( $class_name );
 		$method = $class->getMethod( $method_name );
-		$method->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$method->setAccessible( true );
+		}
 		return $method;
 	}
 
@@ -228,6 +234,7 @@ class IterableCodeExtractorTest extends TestCase {
 	/**
 	 * @dataProvider file_extension_extract_provider
 	 */
+	#[DataProvider( 'file_extension_extract_provider' )] // phpcs:ignore PHPCompatibility.Attributes.NewAttributes.PHPUnitAttributeFound
 	public function test_gets_file_extension_correctly( $rel_input_file, $expected_extension ) {
 		$this->assertEquals( static::file_get_extension_multi_invoke( new \SplFileObject( self::$base . $rel_input_file ) ), $expected_extension );
 	}
@@ -243,6 +250,7 @@ class IterableCodeExtractorTest extends TestCase {
 	/**
 	 * @dataProvider file_extensions_matches_provider
 	 */
+	#[DataProvider( 'file_extensions_matches_provider' )] // phpcs:ignore PHPCompatibility.Attributes.NewAttributes.PHPUnitAttributeFound
 	public function test_matches_file_extensions_correctly( $rel_input_file, $matching_extensions, $expected_result ) {
 		$this->assertEquals( static::file_has_file_extension_invoke( new \SplFileObject( self::$base . $rel_input_file ), $matching_extensions ), $expected_result );
 	}

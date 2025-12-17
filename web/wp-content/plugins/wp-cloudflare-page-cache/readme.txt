@@ -3,8 +3,8 @@ Contributors: themeisle, salvatorefresta, isaumya
 Tags: cloudflare, caching ,performance, page caching, pagespeed
 Requires at least: 5.3
 Requires PHP: 7.4
-Tested up to: 6.8
-Stable tag: trunk
+Tested up to: 6.9
+Stable tag: 5.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -299,13 +299,9 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 == Changelog ==
 
-####   Version 5.2.0 (2025-11-28)
+#####   Version 5.2.1 (2025-12-16)
 
-- Introduced a [CSS Optimization](https://docs.themeisle.com/article/2367-css-optimizations) feature that leverages a browser-based script to observe which CSS is used in the page, extract critical CSS, and defer the rest — greatly improving load speed and Core Web Vitals (PRO).
-- Updated the Activity Log UI to conditionally render content only when logging is enabled
-- Improved log messages for cache purges
-- Fixed dashboard display issues in RTL mode
-- Added a dedicated log message when sitemap preloading is skipped due to the site being private
+- Removed duplicate Font Optimization cards from the Assets settings
 
 
 

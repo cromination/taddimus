@@ -24,11 +24,12 @@ interface EndpointInterface {
 	/**
 	 * Returns whether request can be executed.
 	 *
-	 * @param string $request_nonce .
+	 * @param string  $request_nonce  .
+	 * @param mixed[] $request_params .
 	 *
 	 * @return bool
 	 */
-	public function is_valid_request( string $request_nonce ): bool;
+	public function is_valid_request( string $request_nonce, array $request_params ): bool;
 
 	/**
 	 * Returns list of params for endpoint.

@@ -197,24 +197,6 @@ const Assets = () => {
           </CardContent>
 
       </Card>
-      <Card>
-          <CardHeader className="bg-muted">
-            <h3 className="font-semibold text-base flex items-center">{__('Fonts Optimizations', 'wp-cloudflare-page-cache')}</h3>
-          </CardHeader>
-
-            <CardContent className="p-0">
-              <ControlsGroup controls={controls.fonts} /> 
-            </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="bg-muted">
-          <h3 className="font-semibold text-base flex items-center">{__('Assets Manager', 'wp-cloudflare-page-cache')}</h3>
-        </CardHeader>
-
-        <CardContent className="p-0">
-          <ControlsGroup controls={controls.assets} />
-        </CardContent>
-      </Card> 
     </PageContent>
   )
 }

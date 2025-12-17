@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.6.3] - 2025-12-02
+### Changed
+- Restricted `mark-mabe/php-enum` dependency to `^4.4` due to lower versions emitting a warning on PHP 8 ([#854](https://github.com/jsonrainbow/json-schema/pull/854))
+
 ## [6.6.2] - 2025-11-28
 ### Changed
 - Move PHP 8.5 to default add PHP 8.6 as experimental ([#852](https://github.com/jsonrainbow/json-schema/pull/852))

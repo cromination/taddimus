@@ -41,6 +41,7 @@ class PluginSettingsManager {
 		OptionsAccessManager::delete_option( 'webpc_notice_bf2022' );
 		OptionsAccessManager::delete_option( 'webpc_notice_bf2023' );
 		OptionsAccessManager::delete_option( 'webpc_notice_bf2024' );
+		OptionsAccessManager::delete_option( 'webpc_notice_bf2025' );
 		OptionsAccessManager::delete_option( 'webpc_notice_upgrade' );
 
 		OptionsAccessManager::delete_option( ErrorDetectorAggregator::ERRORS_CACHE_OPTION );

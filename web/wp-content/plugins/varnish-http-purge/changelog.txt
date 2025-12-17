@@ -1,5 +1,36 @@
 ## CHANGELOG
 
+= 5.5.2 =
+* December 2025
+* Fix: Removed development files from WordPress.org distribution (Cursor rules, PHPStan config, Makefile, etc.)
+* Fix: Added concurrency control to CI workflows to prevent SVN deploy race conditions
+
+= 5.5.1 =
+* December 2025
+* New: WP-CLI `--all` flag for explicit full site cache purge
+* New: WP-CLI `--url-only` flag to purge exact URL without wildcard matching
+* New: WP-CLI `--tag=<tag>` option for tag-based cache purging (requires Cache Tags mode)
+* Doc: Fixed WP-CLI documentation - `wp varnish purge` correctly documented as full site purge
+* Doc: Fixed "WP CLI" typo to "WP-CLI" in readme
+* Dev: Added PHPCS/PHPStan linting infrastructure
+* Dev: Added GitHub Actions CI workflow for linting
+* Dev: New pytest coverage for WP-CLI purge command variants
+
+= 5.5.0 =
+* December 2025
+* Fix: Scheduled posts now properly purge cache when auto-published via WP-Cron. Previously, purges were queued but not processed until the next cron run, leaving stale content.
+* New: Added `transition_post_status` hook to handle future → publish transitions synchronously, ensuring immediate cache invalidation for scheduled posts.
+* New: Shortlink URLs (`?p=XXX`) are now purged when scheduled posts publish, clearing any cached 404 responses.
+* Doc: Added guidance on cron frequency for background purging mode.
+* Dev: New pytest coverage for scheduled post publishing via WP-Cron.
+
+= 5.4.0 =
+* December 2025
+* New (BETA): Optional Cache Tags / Surrogate Key purge mode, controlled via the "Use Cache Tags" setting.
+* New (BETA): Tag-mode enablement based on standard Surrogate-Capability headers from surrogates (Edge Architecture spec) or the VHP_VARNISH_TAGS wp-config define.
+* New: Admin UI improvements – properly associated labels for checkboxes and clearer explanatory copy.
+* Dev: Test VCL and pytest stack updated to cover tag-based purging behaviour.
+
 = 5.3.0 =
 * September 2025
 * New: `VHP_EXCLUDED_POST_STATUSES` to exclude statuses (e.g. drafts) from purge triggers
@@ -281,7 +312,7 @@
 * Per request of Jetpack team, added in a <code>wp_cache_flush()</code> call when manually purging. This should only impact server side PHP caches (APC, Memcached etc)
 
 = 3.3.2 =
-* Varnish IP was too persnickity in PHP 5.4 (added in an 'and if not null' check - props <a href="http://wordpress.org/support/topic/patch-a-little-patch-to-purge-on-comment-posting">colinleroy</a>)
+* Varnish IP was too persnickity in PHP 5.4 (added in an 'and if not null' check - props <a href="https://wordpress.org/support/topic/patch-a-little-patch-to-purge-on-comment-posting">colinleroy</a>)
 
 = 3.3.1 =
 * Language Pack fixing.
@@ -318,7 +349,7 @@
 
 = 2.0 =
 * Commit access handed to Ipstenu
-* Changed CURL to wp_remote_request (thank you <a href="http://wordpress.org/support/topic/incompatability-with-editorial-calendar-plugin?replies=1">Kenn Wilson</a>) so we don't have to do <a href="http://wordpress.org/support/topic/plugin-varnish-http-purge-incompatibility-with-woocommerce?replies=6">CURLOPT_RETURNTRANSFER</a> Remember kids, CURL is okay, but wp_remote_request is more better.
+* Changed CURL to wp_remote_request (thank you <a href="https://wordpress.org/support/topic/incompatability-with-editorial-calendar-plugin?replies=1">Kenn Wilson</a>) so we don't have to do <a href="https://wordpress.org/support/topic/plugin-varnish-http-purge-incompatibility-with-woocommerce?replies=6">CURLOPT_RETURNTRANSFER</a> Remember kids, CURL is okay, but wp_remote_request is more better.
 
 = 1.2.0 =
 * Moved actual request execution to "shutdown" event

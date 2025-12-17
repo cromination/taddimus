@@ -126,11 +126,7 @@ class Rewrite_Command extends WP_CLI_Command {
 
 		if ( ! empty( $permalink_structure ) ) {
 			$permalink_structure = preg_replace( '#/+#', '/', '/' . str_replace( '#', '', $permalink_structure ) );
-			if ( $prefix && $blog_prefix ) {
-				$permalink_structure = $prefix . preg_replace( '#^/?index\.php#', '', $permalink_structure );
-			} else {
-				$permalink_structure = $blog_prefix . $permalink_structure;
-			}
+			$permalink_structure = $blog_prefix . $permalink_structure;
 		}
 		$wp_rewrite->set_permalink_structure( $permalink_structure );
 
@@ -160,16 +156,17 @@ class Rewrite_Command extends WP_CLI_Command {
 
 		// Launch a new process to flush rewrites because core expects flush
 		// to happen after rewrites are set
-		$new_assoc_args = [];
-		$cmd            = 'rewrite flush';
+		$cmd = 'rewrite flush';
 		if ( Utils\get_flag_value( $assoc_args, 'hard' ) ) {
-			$cmd                   .= ' --hard';
-			$new_assoc_args['hard'] = true;
+			$cmd .= ' --hard';
 			if ( ! in_array( 'mod_rewrite', (array) WP_CLI::get_config( 'apache_modules' ), true ) ) {
 				WP_CLI::warning( 'Regenerating a .htaccess file requires special configuration. See usage docs.' );
 			}
 		}
 
+		/**
+		 * @var object{stdout: string, stderr: string, return_code: int} $process_run
+		 */
 		$process_run = WP_CLI::runcommand( $cmd );
 		if ( ! empty( $process_run->stderr ) ) {
 			// Strip "Warning: "
@@ -223,6 +220,10 @@ class Rewrite_Command extends WP_CLI_Command {
 			$rules = [];
 			WP_CLI::warning( 'No rewrite rules.' );
 		}
+
+		/**
+		 * @var array<string, string> $rules
+		 */
 
 		self::check_skip_plugins_themes();
 
@@ -335,6 +336,7 @@ class Rewrite_Command extends WP_CLI_Command {
 			// needed for get_home_path() and .htaccess location
 			$_SERVER['SCRIPT_FILENAME'] = ABSPATH;
 
+			// @phpstan-ignore function.inner
 			function apache_get_modules() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 				return WP_CLI::get_config( 'apache_modules' );
 			}

@@ -43,13 +43,14 @@ class EndpointIntegrator implements HookableInterface {
 				'methods'             => $this->endpoint_object->get_http_methods(),
 				'permission_callback' => function ( \WP_REST_Request $request ) {
 					$header_value = $request->get_header( $this->endpoint_object->get_route_nonce_header() );
+					$params       = $request->get_params();
 					if ( $header_value === null ) {
 						return new \WP_Error(
 							'webpc_rest_token_not_found',
 							__( 'Sorry, you do not have permission to do that.', 'webp-converter-for-media' ),
 							[ 'status' => rest_authorization_required_code() ]
 						);
-					} elseif ( ! $this->endpoint_object->is_valid_request( $header_value ) ) {
+					} elseif ( ! $this->endpoint_object->is_valid_request( $header_value, $params ) ) {
 						return new \WP_Error(
 							'webpc_rest_token_invalid',
 							__( 'Sorry, you do not have permission to do that.', 'webp-converter-for-media' ),

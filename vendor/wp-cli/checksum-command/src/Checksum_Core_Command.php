@@ -1,5 +1,6 @@
 <?php
 
+use WP_CLI\Formatter;
 use WP_CLI\Utils;
 use WP_CLI\WpOrgApi;
 
@@ -23,6 +24,13 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 	 * @var array
 	 */
 	private $exclude_files = [];
+
+	/**
+	 * Array of detected errors.
+	 *
+	 * @var array
+	 */
+	private $errors = [];
 
 	/**
 	 * Verifies WordPress files against WordPress.org's checksums.
@@ -54,6 +62,19 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 	 * [--exclude=<files>]
 	 * : Exclude specific files from the checksum verification. Provide a comma-separated list of file paths.
 	 *
+	 * [--format=<format>]
+	 * : Render output in a specific format. When provided, messages are displayed in the chosen format.
+	 * ---
+	 * default: plain
+	 * options:
+	 *   - plain
+	 *   - table
+	 *   - json
+	 *   - csv
+	 *   - yaml
+	 *   - count
+	 * ---
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Verify checksums
@@ -79,6 +100,11 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 	 *     $ wp core verify-checksums --exclude="readme.html"
 	 *     Success: WordPress installation verifies against checksums.
 	 *
+	 *     # Verify checksums with formatted output
+	 *     $ wp core verify-checksums --format=json
+	 *     [{"file":"readme.html","message":"File doesn't verify against checksum"}]
+	 *     Error: WordPress installation doesn't verify against checksums.
+	 *
 	 * @when before_wp_load
 	 */
 	public function __invoke( $args, $assoc_args ) {
@@ -98,7 +124,9 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 		}
 
 		if ( ! empty( $assoc_args['exclude'] ) ) {
-			$this->exclude_files = explode( ',', Utils\get_flag_value( $assoc_args, 'exclude', '' ) );
+			$exclude = Utils\get_flag_value( $assoc_args, 'exclude', '' );
+
+			$this->exclude_files = explode( ',', $exclude );
 		}
 
 		if ( empty( $wp_version ) ) {
@@ -110,7 +138,7 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 			}
 		}
 
-		$insecure   = (bool) Utils\get_flag_value( $assoc_args, 'insecure', false );
+		$insecure   = Utils\get_flag_value( $assoc_args, 'insecure', false );
 		$wp_org_api = new WpOrgApi( [ 'insecure' => $insecure ] );
 
 		try {
@@ -135,14 +163,23 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 			}
 
 			if ( ! file_exists( ABSPATH . $file ) ) {
-				WP_CLI::warning( "File doesn't exist: {$file}" );
+				$this->errors[] = [
+					'file'    => $file,
+					'message' => "File doesn't exist",
+				];
+
 				$has_errors = true;
+
 				continue;
 			}
 
 			$md5_file = md5_file( ABSPATH . $file );
-			if ( $md5_file !== $checksum ) {
-				WP_CLI::warning( "File doesn't verify against checksum: {$file}" );
+			if ( $checksum !== $md5_file ) {
+				$this->errors[] = [
+					'file'    => $file,
+					'message' => "File doesn't verify against checksum",
+				];
+
 				$has_errors = true;
 			}
 		}
@@ -156,7 +193,25 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 				if ( in_array( $additional_file, $this->exclude_files, true ) ) {
 					continue;
 				}
-				WP_CLI::warning( "File should not exist: {$additional_file}" );
+
+				$this->errors[] = [
+					'file'    => $additional_file,
+					'message' => 'File should not exist',
+				];
+			}
+		}
+
+		if ( ! empty( $this->errors ) ) {
+			if ( ! isset( $assoc_args['format'] ) || 'plain' === $assoc_args['format'] ) {
+				foreach ( $this->errors as $error ) {
+					WP_CLI::warning( sprintf( '%s: %s', $error['message'], $error['file'] ) );
+				}
+			} else {
+				$formatter = new Formatter(
+					$assoc_args,
+					array( 'file', 'message' )
+				);
+				$formatter->display_items( $this->errors );
 			}
 		}
 
@@ -205,7 +260,7 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 			);
 		}
 
-		$version_content = file_get_contents( $versions_path, false, null, 6, 2048 );
+		$version_content = (string) file_get_contents( $versions_path, false, null, 6, 2048 );
 
 		$vars   = [ 'wp_version', 'wp_db_version', 'tinymce_version', 'wp_local_package' ];
 		$result = [];
@@ -227,12 +282,12 @@ class Checksum_Core_Command extends Checksum_Base_Command {
 	 * @param string $var_name Variable name to search for.
 	 * @param string $code PHP code to search in.
 	 *
-	 * @return int|string|null
+	 * @return string|null
 	 */
 	private static function find_var( $var_name, $code ) {
 		$start = strpos( $code, '$' . $var_name . ' = ' );
 
-		if ( ! $start ) {
+		if ( false === $start ) {
 			return null;
 		}
 

@@ -12,8 +12,9 @@ abstract class EndpointAbstract implements EndpointInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function is_valid_request( string $request_nonce ): bool {
-		return (bool) wp_verify_nonce( $request_nonce, 'wp_rest' );
+	public function is_valid_request( string $request_nonce, array $request_params ): bool {
+		return ( ( wp_verify_nonce( $request_nonce, 'wp_rest' ) !== false )
+			&& current_user_can( 'manage_options' ) );
 	}
 
 	/**

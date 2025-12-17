@@ -53,7 +53,7 @@ class CronConversionEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function is_valid_request( string $request_nonce ): bool {
+	public function is_valid_request( string $request_nonce, array $request_params ): bool {
 		$nonce_value = $this->cron_status_manager->get_conversion_request_id();
 		if ( $nonce_value === null ) {
 			return false;

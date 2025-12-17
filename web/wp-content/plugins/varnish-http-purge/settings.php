@@ -58,7 +58,12 @@ class VarnishStatus {
 		add_settings_section( 'vhp-settings-devmode-section', __( 'Development Mode Settings', 'varnish-http-purge' ), array( &$this, 'options_settings_devmode' ), 'varnish-devmode-settings' );
 		add_settings_field( 'varnish_devmode', __( 'Development Mode', 'varnish-http-purge' ), array( &$this, 'settings_devmode_callback' ), 'varnish-devmode-settings', 'vhp-settings-devmode-section' );
 
-		// Purge All settings
+		// Purge Method settings (Cache Tags)
+		register_setting( 'vhp-settings-tags', 'vhp_varnish_use_tags', array( &$this, 'settings_tags_sanitize' ) );
+		add_settings_section( 'vhp-settings-tags-section', __( 'Purge Method', 'varnish-http-purge' ), array( &$this, 'options_settings_tags' ), 'varnish-tags-settings' );
+		add_settings_field( 'varnish_use_tags', __( 'Use Cache Tags', 'varnish-http-purge' ), array( &$this, 'settings_tags_callback' ), 'varnish-tags-settings', 'vhp-settings-tags-section' );
+
+		// Purge All settings.
 		register_setting( 'vhp-settings-maxposts', 'vhp_varnish_max_posts_before_all', array( &$this, 'settings_maxposts_sanitize' ) );
 		add_settings_section( 'vhp-settings-maxposts-section', __( 'Maximum Individual URLs before Full Purge', 'varnish-http-purge' ), array( &$this, 'options_settings_maxposts' ), 'varnish-maxposts-settings' );
 		add_settings_field( 'varnish_maxposts', __( 'Set Max URLs', 'varnish-http-purge' ), array( &$this, 'settings_maxposts_callback' ), 'varnish-maxposts-settings', 'vhp-settings-maxposts-section' );
@@ -67,6 +72,13 @@ class VarnishStatus {
 		register_setting( 'vhp-settings-ip', 'vhp_varnish_ip', array( &$this, 'settings_ip_sanitize' ) );
 		add_settings_section( 'vhp-settings-ip-section', __( 'Configure Custom IP', 'varnish-http-purge' ), array( &$this, 'options_settings_ip' ), 'varnish-ip-settings' );
 		add_settings_field( 'varnish_ip', __( 'Set Custom IP', 'varnish-http-purge' ), array( &$this, 'settings_ip_callback' ), 'varnish-ip-settings', 'vhp-settings-ip-section' );
+
+		// Purge Headers settings.
+		register_setting( 'vhp-settings-purgeheader', 'vhp_varnish_extra_purge_header_name', array( &$this, 'settings_purgeheaders_name_sanitize' ) );
+		register_setting( 'vhp-settings-purgeheader', 'vhp_varnish_extra_purge_header_value', array( &$this, 'settings_purgeheaders_value_sanitize' ) );
+		add_settings_section( 'vhp-settings-purgeheader-section', __( 'Purge Headers', 'varnish-http-purge' ), array( &$this, 'options_settings_purgeheaders' ), 'varnish-purgeheader-settings' );
+		add_settings_field( 'varnish_purgeheaders_name', __( 'Set Purge Header Name', 'varnish-http-purge' ), array( &$this, 'settings_purgeheaders_name_callback' ), 'varnish-purgeheader-settings', 'vhp-settings-purgeheader-section' );
+		add_settings_field( 'varnish_purgeheaders_value', __( 'Set Purge Header Value', 'varnish-http-purge' ), array( &$this, 'settings_purgeheaders_value_callback' ), 'varnish-purgeheader-settings', 'vhp-settings-purgeheader-section' );
 	}
 
 	/**
@@ -94,13 +106,13 @@ class VarnishStatus {
 		$expire  = time() + DAY_IN_SECONDS;
 		?>
 		<input type="hidden" name="vhp_varnish_devmode[expire]" value="<?php echo esc_attr( $expire ); ?>" />
-		<input type="checkbox" name="vhp_varnish_devmode[active]" value="true" <?php disabled( VHP_DEVMODE ); ?> <?php checked( $active, true ); ?> />
-		<label for="vhp_varnish_devmode['active']">
+		<input type="checkbox" id="vhp_varnish_devmode_active" name="vhp_varnish_devmode[active]" value="true" <?php disabled( VHP_DEVMODE ); ?> <?php checked( $active, true ); ?> />
+		<label for="vhp_varnish_devmode_active">
 			<?php
 			if ( $active && isset( $devmode['expire'] ) && ! VHP_DEVMODE ) {
 				$timestamp = date_i18n( get_site_option( 'date_format' ), $devmode['expire'] ) . ' @ ' . date_i18n( get_site_option( 'time_format' ), $devmode['expire'] );
 				// translators: %s is the time (in hours) until Development Mode expires.
-				echo sprintf( esc_html__( 'Development Mode is active until %s. It will automatically disable after that time.', 'varnish-http-purge' ), esc_html( $timestamp ) );
+				printf( esc_html__( 'Development Mode is active until %s. It will automatically disable after that time.', 'varnish-http-purge' ), esc_html( $timestamp ) );
 			} elseif ( VHP_DEVMODE ) {
 				esc_attr_e( 'Development Mode has been activated via wp-config and cannot be deactivated here.', 'varnish-http-purge' );
 			} else {
@@ -140,6 +152,143 @@ class VarnishStatus {
 
 		add_settings_error( 'vhp_varnish_devmode', 'varnish-devmode', $set_message, $set_type );
 		return $output;
+	}
+
+	/**
+	 * Options Settings - Tags
+	 *
+	 * @since 5.4.0
+	 */
+	public function options_settings_tags() {
+		$supported = false;
+		$source    = 'auto';
+
+		// If VHP_VARNISH_TAGS is defined, treat it as an explicit override for detection.
+		if ( defined( 'VHP_VARNISH_TAGS' ) ) {
+			$supported = (bool) VHP_VARNISH_TAGS;
+			$source    = $supported ? 'forced_on' : 'forced_off';
+		} elseif ( class_exists( 'VarnishDebug' ) && method_exists( 'VarnishDebug', 'cache_tags_advertised' ) ) {
+			$supported = VarnishDebug::cache_tags_advertised();
+			$source    = $supported ? 'advertised' : 'none';
+		}
+
+		?>
+		<p><a name="#configuretags"></a><?php esc_html_e( 'By default, the plugin purges specific URLs when content is updated. Modern cache setups support "Cache Tags" (also known as Surrogate Keys), which allow for more efficient and reliable purging. Enabling this option will replace URL-based purging with Tag-based purging.', 'varnish-http-purge' ); ?></p>
+		<p><strong><?php esc_html_e( 'BETA:', 'varnish-http-purge' ); ?></strong> <?php esc_html_e( 'Cache Tags / Surrogate Keys support is experimental and should be enabled only after verifying that your cache (for example, Varnish) is correctly configured and tested in your environment.', 'varnish-http-purge' ); ?></p>
+		<p><?php esc_html_e( 'This requires your cache layer to advertise support via standard Surrogate-Capability headers (for example, Surrogate-Capability: vhp="Surrogate/1.0 tags/1"), or you can explicitly force support using the VHP_VARNISH_TAGS define in wp-config.php.', 'varnish-http-purge' ); ?></p>
+		<?php
+		// Status message about detection / override.
+		if ( $supported ) {
+			echo '<p class="description" style="color:#46b450;">';
+			if ( 'advertised' === $source ) {
+				esc_html_e( 'Your cache server told WordPress that it supports Cache Tags / Surrogate Keys (via the Surrogate-Capability header). You can safely enable or disable this option.', 'varnish-http-purge' );
+			} elseif ( 'forced_on' === $source ) {
+				esc_html_e( 'Cache Tags / Surrogate Keys support has been forced on via the VHP_VARNISH_TAGS define in wp-config.php.', 'varnish-http-purge' );
+			}
+			echo '</p>';
+		} else {
+			echo '<p class="description">';
+			if ( 'forced_off' === $source ) {
+				esc_html_e( 'Cache Tags / Surrogate Keys support has been explicitly disabled via the VHP_VARNISH_TAGS define in wp-config.php.', 'varnish-http-purge' );
+			} else {
+				esc_html_e( 'Your cache server did not report support for Cache Tags / Surrogate Keys. To enable this setting, configure your cache to send a Surrogate-Capability header that advertises tag support (for example, Surrogate-Capability: vhp="Surrogate/1.0 tags/1") or define VHP_VARNISH_TAGS in wp-config.php.', 'varnish-http-purge' );
+			}
+			echo '</p>';
+		}
+		?>
+		<div class="vhp-accordion vhp-accordion-vcl">
+			<button type="button" class="vhp-accordion-toggle" aria-expanded="false" aria-controls="vhp-accordion-panel-vcl">
+				<span class="dashicons dashicons-arrow-right" aria-hidden="true"></span>
+				<span class="vhp-accordion-label"><?php esc_html_e( 'View VCL Snippet (tags via BAN)', 'varnish-http-purge' ); ?></span>
+			</button>
+			<div id="vhp-accordion-panel-vcl" class="vhp-accordion-panel" hidden>
+			<pre style="background:#f0f0f0;padding:10px;overflow:auto;">
+sub vcl_recv {
+	if (req.method == "PURGE") {
+		# ... acl check ...
+		# Optional: validate a control header sent by the plugin (for example
+		# via the VHP_VARNISH_EXTRA_PURGE_HEADER constant or the "Purge Headers" settings).
+		# Adjust the header name and value to match your environment.
+		#
+		# if (req.http.X-Control-Key != "YOUR_CONTROL_KEY_HERE") {
+		#     return (synth(403, "Forbidden"));
+		# }
+
+		if (req.http.X-Purge-Method == "tags" && req.http.X-Cache-Tags-Pattern) {
+			ban("obj.http.X-Cache-Tags ~ " + req.http.X-Cache-Tags-Pattern);
+			return (synth(200, "Banned by tags pattern"));
+		}
+	}
+}
+			</pre>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Settings Tags Callback
+	 *
+	 * @since 5.4.0
+	 */
+	public function settings_tags_callback() {
+		$use_tags  = get_site_option( 'vhp_varnish_use_tags' );
+		$supported = false;
+		$source    = 'auto';
+
+		// If VHP_VARNISH_TAGS is defined, treat it as an explicit override for detection.
+		if ( defined( 'VHP_VARNISH_TAGS' ) ) {
+			$supported = (bool) VHP_VARNISH_TAGS;
+			$source    = $supported ? 'forced_on' : 'forced_off';
+		} elseif ( class_exists( 'VarnishDebug' ) && method_exists( 'VarnishDebug', 'cache_tags_advertised' ) ) {
+			$supported = VarnishDebug::cache_tags_advertised();
+			$source    = $supported ? 'advertised' : 'none';
+		}
+
+		$disabled = ! $supported;
+		?>
+		<label for="vhp_varnish_use_tags">
+			<input type="checkbox" id="vhp_varnish_use_tags" name="vhp_varnish_use_tags" value="1" <?php checked( $use_tags, 1 ); ?> <?php disabled( $disabled ); ?> />
+			<?php esc_html_e( 'Enable Cache Tags (Surrogate Keys)', 'varnish-http-purge' ); ?>
+		</label>
+		<?php
+		if ( $supported ) {
+			echo '<p class="description" style="color:#46b450;">';
+			if ( 'advertised' === $source ) {
+				esc_html_e( 'Your cache server told WordPress that it supports Cache Tags / Surrogate Keys (via the Surrogate-Capability header). You can safely enable or disable this option.', 'varnish-http-purge' );
+			} elseif ( 'forced_on' === $source ) {
+				esc_html_e( 'Cache Tags / Surrogate Keys support has been forced on via the VHP_VARNISH_TAGS define in wp-config.php.', 'varnish-http-purge' );
+			}
+			echo '</p>';
+		} else {
+			echo '<p class="description">';
+			if ( 'forced_off' === $source ) {
+				esc_html_e( 'Cache Tags / Surrogate Keys support has been explicitly disabled via the VHP_VARNISH_TAGS define in wp-config.php.', 'varnish-http-purge' );
+			} else {
+				esc_html_e( 'Your cache server did not report support for Cache Tags / Surrogate Keys. To enable this setting, configure your cache to send a Surrogate-Capability header that advertises tag support (for example, Surrogate-Capability: vhp="Surrogate/1.0 tags/1") or define VHP_VARNISH_TAGS in wp-config.php.', 'varnish-http-purge' );
+			}
+			echo '</p>';
+		}
+	}
+
+	/**
+	 * Sanitization for Tags
+	 *
+	 * @since 5.4.0
+	 */
+	public function settings_tags_sanitize( $input ) {
+		$supported = false;
+
+		if ( class_exists( 'VarnishDebug' ) && method_exists( 'VarnishDebug', 'cache_tags_advertised' ) ) {
+			$supported = VarnishDebug::cache_tags_advertised();
+		}
+
+		// If support is not advertised, force the option off.
+		if ( ! $supported ) {
+			return 0;
+		}
+
+		return ( isset( $input ) && 1 === (int) $input ) ? 1 : 0;
 	}
 
 	/**
@@ -251,6 +400,7 @@ class VarnishStatus {
 		if ( $disabled ) {
 			esc_html_e( 'A Proxy Cache IP has been defined in your wp-config file, so it is not editable in settings.', 'varnish-http-purge' );
 		} else {
+			echo '<br />';
 			esc_html_e( 'Examples: ', 'varnish-http-purge' );
 			echo '<br /><code>123.45.67.89</code><br /><code>localhost</code><br /><code>12.34.56.78, 23.45.67.89</code>';
 		}
@@ -293,6 +443,119 @@ class VarnishStatus {
 		}
 
 		add_settings_error( 'vhp_varnish_ip', 'varnish-ip', $set_message, $set_type );
+		return $output;
+	}
+
+	/**
+	 * Options Settings - Purge Headers
+	 */
+	public function options_settings_purgeheaders() {
+		?>
+		<p><a id="configurepurgeheaders"></a>
+			<strong><?php esc_html_e( 'Advanced:', 'varnish-http-purge' ); ?></strong>
+			<?php esc_html_e( 'Only configure this if your hosting provider or cache service explicitly documents a required control or Authorization header for PURGE requests. If you are not sure, leave these fields empty.', 'varnish-http-purge' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Settings - Purge Headers Name
+	 */
+	public function settings_purgeheaders_name_callback() {
+
+		$disabled = false;
+		if ( defined( 'VHP_VARNISH_EXTRA_PURGE_HEADER' ) && false !== VHP_VARNISH_EXTRA_PURGE_HEADER ) {
+			$disabled    = true;
+			$header_name = explode( ':', VHP_VARNISH_EXTRA_PURGE_HEADER )[0];
+		} else {
+			$header_name = get_site_option( 'vhp_varnish_extra_purge_header_name' );
+		}
+
+		?>
+		<input type="text" id="vhp_varnish_extra_purge_header_name" name="vhp_varnish_extra_purge_header_name" value="<?php echo esc_attr( $header_name ); ?>" size="25" <?php disabled( $disabled, true ); ?> />
+		<label for="vhp_varnish_extra_purge_header_name">&nbsp;
+		<?php
+		if ( $disabled ) {
+			esc_html_e( 'The header has been defined in your wp-config file, so it is not editable in settings.', 'varnish-http-purge' );
+		}
+		echo '</label>';
+	}
+
+	/**
+	 * Settings - Purge Headers Value
+	 */
+	public function settings_purgeheaders_value_callback() {
+
+		$disabled = false;
+		if ( defined( 'VHP_VARNISH_EXTRA_PURGE_HEADER' ) && false !== VHP_VARNISH_EXTRA_PURGE_HEADER ) {
+			$disabled     = true;
+			$header_value = '';
+
+			if ( strpos( VHP_VARNISH_EXTRA_PURGE_HEADER, ':' ) !== false ) {
+				$parts = explode( ':', VHP_VARNISH_EXTRA_PURGE_HEADER, 2 );
+				if ( isset( $parts[1] ) ) {
+					$header_value = trim( $parts[1] );
+				}
+			}
+
+			// If the constant is malformed (no value part), fall back to the stored option
+			// so that the field still displays something meaningful.
+			if ( '' === $header_value ) {
+				$header_value = get_site_option( 'vhp_varnish_extra_purge_header_value' );
+			}
+		} else {
+			$header_value = get_site_option( 'vhp_varnish_extra_purge_header_value' );
+		}
+
+		?>
+		<input type="password" id="vhp_varnish_extra_purge_header_value" name="vhp_varnish_extra_purge_header_value" value="<?php echo esc_attr( $header_value ); ?>" size="25" <?php disabled( $disabled, true ); ?> autocomplete="off" />
+		<label for="vhp_varnish_extra_purge_header_value">&nbsp;
+		<?php
+		if ( $disabled ) {
+			esc_html_e( 'The value has been defined in your wp-config file, so it is not editable in settings.', 'varnish-http-purge' );
+		}
+		echo '</label>';
+	}
+
+	public function settings_purgeheaders_name_sanitize( $input ) {
+		$output      = '';
+		$set_message = '';
+		$set_type    = 'updated';
+
+		if ( ! is_string( $input ) || '' === trim( $input ) ) {
+			// Treat empty or non-string input as a request to clear the header.
+			$set_message = __( 'Purge header name cleared.', 'varnish-http-purge' );
+			$output      = '';
+		} else {
+			$set_message = __( 'Purge header name updated.', 'varnish-http-purge' );
+			$output      = sanitize_text_field( $input );
+		}
+
+		if ( $set_message ) {
+			add_settings_error( 'vhp_varnish_extra_purge_header_name', 'varnish-purgeheader', $set_message, $set_type );
+		}
+
+		return $output;
+	}
+
+	public function settings_purgeheaders_value_sanitize( $input ) {
+		$output      = '';
+		$set_message = '';
+		$set_type    = 'updated';
+
+		if ( ! is_string( $input ) || '' === trim( $input ) ) {
+			// Treat empty or non-string input as a request to clear the header value.
+			$set_message = __( 'Purge header value cleared.', 'varnish-http-purge' );
+			$output      = '';
+		} else {
+			$set_message = __( 'Purge header value updated.', 'varnish-http-purge' );
+			$output      = sanitize_text_field( $input );
+		}
+
+		if ( $set_message ) {
+			add_settings_error( 'vhp_varnish_extra_purge_header_value', 'varnish-purgeheader', $set_message, $set_type );
+		}
+
 		return $output;
 	}
 
@@ -490,12 +753,92 @@ class VarnishStatus {
 
 			<?php
 			if ( ! is_multisite() ) {
+				// Background purge queue status (shown only when cron-mode is active).
+				if ( class_exists( 'VarnishPurger' ) && VarnishPurger::is_cron_purging_enabled_static() ) {
+					$queue = get_site_option( VarnishPurger::PURGE_QUEUE_OPTION, array() );
+
+					$full        = ( isset( $queue['full'] ) && $queue['full'] );
+					$urls        = ( isset( $queue['urls'] ) && is_array( $queue['urls'] ) ) ? $queue['urls'] : array();
+					$tags        = ( isset( $queue['tags'] ) && is_array( $queue['tags'] ) ) ? $queue['tags'] : array();
+					$created_at  = isset( $queue['created_at'] ) ? (int) $queue['created_at'] : 0;
+					$last_run_at = (int) get_site_option( 'vhp_varnish_last_queue_run', 0 );
+
+					$urls_count = count( $urls );
+					$tags_count = count( $tags );
+					?>
+					<div class="notice notice-info" style="margin-top:1em;">
+						<p><strong><?php esc_html_e( 'Background purge queue (WP-Cron)', 'varnish-http-purge' ); ?></strong></p>
+						<p>
+							<?php esc_html_e( 'Because DISABLE_WP_CRON is enabled, purge requests are queued and processed by WP-Cron instead of running during admin/page requests.', 'varnish-http-purge' ); ?>
+						</p>
+						<ul>
+							<li>
+								<?php
+								printf(
+									/* translators: %s is Yes/No. */
+									esc_html__( 'Full-site purge queued: %s', 'varnish-http-purge' ),
+									$full ? esc_html__( 'Yes', 'varnish-http-purge' ) : esc_html__( 'No', 'varnish-http-purge' )
+								);
+								?>
+							</li>
+							<li>
+								<?php
+								printf(
+									/* translators: %d is a count of URLs. */
+									esc_html__( 'Queued URLs: %d', 'varnish-http-purge' ),
+									(int) $urls_count
+								);
+								?>
+							</li>
+							<li>
+								<?php
+								printf(
+									/* translators: %d is a count of tags. */
+									esc_html__( 'Queued cache tags: %d', 'varnish-http-purge' ),
+									(int) $tags_count
+								);
+								?>
+							</li>
+							<?php if ( $created_at > 0 ) : ?>
+								<li>
+									<?php
+									printf(
+										/* translators: %s is a human-readable time difference. */
+										esc_html__( 'Queue age: %s', 'varnish-http-purge' ),
+										esc_html( human_time_diff( $created_at, time() ) )
+									);
+									?>
+								</li>
+							<?php endif; ?>
+							<?php if ( $last_run_at > 0 ) : ?>
+								<li>
+									<?php
+									printf(
+										/* translators: %s is a human-readable time difference. */
+										esc_html__( 'Last queue run: %s ago', 'varnish-http-purge' ),
+										esc_html( human_time_diff( $last_run_at, time() ) )
+									);
+									?>
+								</li>
+							<?php endif; ?>
+						</ul>
+					</div>
+					<?php
+				}
 				?>
 				<form action="options.php" method="POST" >
 				<?php
 					settings_fields( 'vhp-settings-devmode' );
 					do_settings_sections( 'varnish-devmode-settings' );
 					submit_button( __( 'Save Devmode Settings', 'varnish-http-purge' ), 'primary' );
+				?>
+				</form>
+
+				<form action="options.php" method="POST" >
+				<?php
+					settings_fields( 'vhp-settings-tags' );
+					do_settings_sections( 'varnish-tags-settings' );
+					submit_button( __( 'Save Purge Method', 'varnish-http-purge' ), 'primary' );
 				?>
 				</form>
 
@@ -514,6 +857,20 @@ class VarnishStatus {
 					submit_button( __( 'Save IP Settings', 'varnish-http-purge' ), 'secondary' );
 				?>
 				</form>
+
+				<form action="options.php" method="POST" >
+					<?php settings_fields( 'vhp-settings-purgeheader' ); ?>
+					<div class="vhp-accordion vhp-accordion-purgeheaders">
+						<button type="button" class="vhp-accordion-toggle" aria-expanded="false" aria-controls="vhp-accordion-panel-purgeheaders">
+							<span class="dashicons dashicons-arrow-right" aria-hidden="true"></span>
+							<span class="vhp-accordion-label"><?php esc_html_e( 'Advanced: Purge Headers', 'varnish-http-purge' ); ?></span>
+						</button>
+						<div id="vhp-accordion-panel-purgeheaders" class="vhp-accordion-panel" hidden>
+							<?php do_settings_sections( 'varnish-purgeheader-settings' ); ?>
+						</div>
+					</div>
+					<?php submit_button( __( 'Save Purge Header Settings', 'varnish-http-purge' ), 'primary' ); ?>
+				</form>
 				<?php
 			} else {
 				?>
@@ -523,6 +880,66 @@ class VarnishStatus {
 			}
 			?>
 		</div>
+		<style>
+		.vhp-accordion {
+			margin-top: 1.5em;
+			margin-bottom: 0.5em;
+		}
+		.vhp-accordion .vhp-accordion-toggle {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			font-size: 14px;
+			font-weight: 600;
+			margin: 0 0 0.5em 0;
+			background: none;
+			border: 0;
+			padding: 0;
+			color: #1d2327;
+			cursor: pointer;
+		}
+		.vhp-accordion .vhp-accordion-toggle:hover {
+			color: #2271b1;
+		}
+		.vhp-accordion .vhp-accordion-toggle .dashicons {
+			font-size: 16px;
+			line-height: 1;
+			transition: transform 0.15s ease-in-out;
+		}
+		.vhp-accordion .vhp-accordion-panel {
+			margin-left: 1.5em;
+		}
+		</style>
+		<script>
+		( function() {
+			document.addEventListener( 'DOMContentLoaded', function() {
+				var accordions = document.querySelectorAll( '.vhp-accordion' );
+				if ( ! accordions.length ) {
+					return;
+				}
+
+				accordions.forEach( function( container ) {
+					var button = container.querySelector( '.vhp-accordion-toggle' );
+					var panel  = container.querySelector( '.vhp-accordion-panel' );
+					if ( ! button || ! panel ) {
+						return;
+					}
+					var icon = button.querySelector( '.dashicons' );
+
+					button.addEventListener( 'click', function() {
+						var expanded = button.getAttribute( 'aria-expanded' ) === 'true';
+						button.setAttribute( 'aria-expanded', expanded ? 'false' : 'true' );
+						panel.hidden = expanded;
+
+						if ( icon ) {
+							icon.classList.toggle( 'dashicons-arrow-right', expanded );
+							icon.classList.toggle( 'dashicons-arrow-down', ! expanded );
+						}
+					} );
+				} );
+			} );
+		} )();
+		</script>
 		<?php
 	}
 
@@ -565,12 +982,12 @@ class VarnishStatus {
 		global $current_screen;
 
 		if ( ! empty( $current_screen->parent_base ) && strpos( $current_screen->parent_base, 'varnish-page' ) !== false ) {
-			$review_url  = 'https://wordpress.org/support/plugin/varnish-http-purge/reviews/?filter=5#new-post';
-			$dream_url   = 'https://dreamhost.com/dreampress/';
-			$footer_text = sprintf(
+			$review_url       = 'https://wordpress.org/support/plugin/varnish-http-purge/reviews/?filter=5#new-post';
+			$getpagespeed_url = 'https://www.getpagespeed.com/';
+			$footer_text      = sprintf(
 				wp_kses(
-					/* translators: $1$s - DreamHost URL; $2$s - plugin name; $3$s - WP.org review link; $4$s - WP.org review link. */
-					__( 'Brought to you <a href="%1$s" target="_blank" rel="noopener noreferrer">DreamHost</a>. Please rate %2$s <a href="%3$s" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%4$s" target="_blank" rel="noopener">WordPress.org</a> to help us spread the word.', 'varnish-http-purge' ),
+					/* translators: $1$s - GetPageSpeed URL; $2$s - plugin name; $3$s - WP.org review link; $4$s - WP.org review link. */
+					__( 'Maintained by <a href="%1$s" target="_blank" rel="noopener noreferrer">GetPageSpeed</a>. Please rate %2$s <a href="%3$s" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a> on <a href="%4$s" target="_blank" rel="noopener">WordPress.org</a> to help us spread the word.', 'varnish-http-purge' ),
 					array(
 						'a' => array(
 							'href'   => array(),
@@ -579,7 +996,7 @@ class VarnishStatus {
 						),
 					)
 				),
-				$dream_url,
+				$getpagespeed_url,
 				'<strong>Proxy Cache Purge</strong>',
 				$review_url,
 				$review_url

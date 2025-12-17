@@ -24,6 +24,14 @@ class RegenerateAttachmentEndpoint extends EndpointAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function is_valid_request( string $request_nonce, array $request_params ): bool {
+		return ( ( wp_verify_nonce( $request_nonce, 'wp_rest' ) !== false )
+			&& current_user_can( 'edit_post', $request_params['post_id'] ?? 0 ) );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_route_args(): array {
 		return array_merge(
 			parent::get_route_args(),
