@@ -8,6 +8,7 @@ namespace WebpConverter\Settings\Option;
 abstract class OptionAbstract implements OptionInterface {
 
 	const OPTION_TYPE_CHECKBOX   = 'checkbox';
+	const OPTION_TYPE_FORMATS    = 'formats';
 	const OPTION_TYPE_RADIO      = 'radio';
 	const OPTION_TYPE_QUALITY    = 'quality';
 	const OPTION_TYPE_INPUT      = 'input';

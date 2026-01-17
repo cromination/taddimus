@@ -4,7 +4,7 @@ Tags: cloudflare, caching ,performance, page caching, pagespeed
 Requires at least: 5.3
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 5.2.1
+Stable tag: 5.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,7 +23,7 @@ https://youtu.be/SYhoaL_fUY0?si=94atnvwHRF5r_U3U
 - [Documentation](https://docs.themeisle.com/collection/2199-super-page-cache) → Complete setup and configuration guide
 - [Support Forum](https://wordpress.org/support/plugin/wp-cloudflare-page-cache/) → Community help and expert support
 - [YouTube Videos](https://youtube.com/playlist?list=PLmRasCVwuvpSJuwaV7kDiuXhxl08zbZr5&si=Gem626AyPpNenDF3) → Step-by-step visual guides for every feature
-- [Go Pro](https://themeisle.com/plugins/super-page-cache-pro/?utm_source=wpadmin&utm_medium=readme&utm_campaign=quicklinks) → Advanced features and priority support
+- [Go Pro](https://themeisle.com/plugins/super-page-cache-pro/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=quicklinks) → Advanced features and priority support
 
 ### **🚀 How Does The Plugin Work?**
 
@@ -133,7 +133,7 @@ Take your website speed to the next level with powerful PRO features designed fo
 - **Advanced Exclusion Controls:** Fine-tune your caching strategy by excluding specific JavaScript files and pages that shouldn't be cached, ensuring critical functionality works flawlessly while maximizing cache efficiency.
 - **Priority Support:** Get priority email support and faster response times for any technical questions or issues.
 
-**Ready to unlock maximum performance? [Upgrade to Pro](https://themeisle.com/plugins/super-page-cache-pro/?utm_source=wpadmin&utm_medium=readme&utm_campaign=spc-pro-featrues)**
+**Ready to unlock maximum performance? [Upgrade to Pro](https://themeisle.com/plugins/super-page-cache-pro/?utm_source=wordpressorg&utm_medium=readme&utm_campaign=spc-pro-featrues)**
 
 ### **🎯 Important Usage Guidelines**
 
@@ -299,9 +299,11 @@ First check the questions mentioned in the FAQ tab inside the plugin settings pa
 
 == Changelog ==
 
-#####   Version 5.2.1 (2025-12-16)
+#####   Version 5.2.2 (2026-01-12)
 
-- Removed duplicate Font Optimization cards from the Assets settings
+- Fixed translation updates no longer reappear after being successfully updated when using Super Page Cache.
+- Fixed Database Optimization now respects the configured schedule and no longer deletes trashed posts immediately when the feature is enabled.
+- Update dependencies
 
 
 

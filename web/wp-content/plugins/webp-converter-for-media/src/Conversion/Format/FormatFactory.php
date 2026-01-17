@@ -22,8 +22,8 @@ class FormatFactory {
 	private $available_formats = [];
 
 	public function __construct( TokenRepository $token_repository ) {
-		$this->set_integration( new AvifFormat( $token_repository ) );
 		$this->set_integration( new WebpFormat() );
+		$this->set_integration( new AvifFormat( $token_repository ) );
 	}
 
 	/**

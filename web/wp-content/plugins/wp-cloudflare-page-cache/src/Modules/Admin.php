@@ -32,6 +32,7 @@ class Admin implements Module_Interface {
 		add_action( 'admin_notices', [ $this, 'failed_rule_update_notice' ] );
 		add_filter( 'all_plugins', [ $this, 'filter_conflicting_plugins' ] );
 
+		add_filter( $this->sdk_service->get_product_key() . '_logger_data', [ $this->sdk_service, 'get_logger_data' ] );
 		add_filter(
 			$this->sdk_service->get_product_key() . '_about_us_metadata',
 			[ $this->sdk_service, 'get_about_us_metadata' ]

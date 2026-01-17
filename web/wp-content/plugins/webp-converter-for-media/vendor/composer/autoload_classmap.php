@@ -172,6 +172,7 @@ return array(
     'WebpConverter\\Settings\\Option\\ExcludedDirectoriesOption' => $baseDir . '/src/Settings/Option/ExcludedDirectoriesOption.php',
     'WebpConverter\\Settings\\Option\\ExtraFeaturesOption' => $baseDir . '/src/Settings/Option/ExtraFeaturesOption.php',
     'WebpConverter\\Settings\\Option\\HtaccessRewriteOutputOption' => $baseDir . '/src/Settings/Option/HtaccessRewriteOutputOption.php',
+    'WebpConverter\\Settings\\Option\\HtaccessRewriteParentOption' => $baseDir . '/src/Settings/Option/HtaccessRewriteParentOption.php',
     'WebpConverter\\Settings\\Option\\HtaccessRewritePathOption' => $baseDir . '/src/Settings/Option/HtaccessRewritePathOption.php',
     'WebpConverter\\Settings\\Option\\HtaccessRewriteRootOption' => $baseDir . '/src/Settings/Option/HtaccessRewriteRootOption.php',
     'WebpConverter\\Settings\\Option\\ImageResizeOption' => $baseDir . '/src/Settings/Option/ImageResizeOption.php',

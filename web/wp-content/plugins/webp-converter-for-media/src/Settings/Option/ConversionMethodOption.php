@@ -71,7 +71,7 @@ class ConversionMethodOption extends OptionAbstract {
 			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
 				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
 				'<a href="https://url.mattplugins.com/converter-field-conversion-method-info" target="_blank">',
-				' <span class="dashicons dashicons-external"></span></a>'
+				'</a>'
 			);
 		}
 		return $notice;

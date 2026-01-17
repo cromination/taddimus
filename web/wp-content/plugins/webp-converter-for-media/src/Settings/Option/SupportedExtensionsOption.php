@@ -41,7 +41,7 @@ class SupportedExtensionsOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_info(): string {
-		return __( 'Files from supported directories that will be converted to output formats.', 'webp-converter-for-media' );
+		return __( 'Files from supported directories that will be converted to next-gen formats.', 'webp-converter-for-media' );
 	}
 
 	/**

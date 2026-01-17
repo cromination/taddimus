@@ -124,4 +124,14 @@ class SDK_Integrations {
 			'upgrade_text'     => __( 'Upgrade to PRO', 'wp-cloudflare-page-cache' ),
 		];
 	}
+	/**
+	 * Get the logger data.
+	 *
+	 * @param array $data The existing logger data.
+	 *
+	 * @return array The logger data.
+	 */
+	public function get_logger_data( $data ) {
+		return Settings_Store::get_instance()->get_config_for_export();
+	}
 }

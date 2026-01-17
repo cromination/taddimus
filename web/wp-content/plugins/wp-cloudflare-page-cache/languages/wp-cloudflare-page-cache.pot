@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Andrei Baicus <andrei@themeisle.com>
+# Copyright (C) 2026 Andrei Baicus <andrei@themeisle.com>
 # This file is distributed under the same license as the SPC Dev Toolkit plugin.
 msgid ""
 msgstr ""
@@ -255,16 +255,16 @@ msgstr ""
 msgid "Cache status: %s - The resource was not cached by default and your current Cloudflare caching configuration doesn't instruct Cloudflare to cache the resource.  Instead, the resource was requested from the origin web server."
 msgstr ""
 
-#: src/Modules/Admin.php:73
+#: src/Modules/Admin.php:74
 #: src/Modules/Dashboard.php:167
 msgid "Settings"
 msgstr ""
 
-#: src/Modules/Admin.php:95
+#: src/Modules/Admin.php:96
 msgid "Rate"
 msgstr ""
 
-#: src/Modules/Admin.php:164
+#: src/Modules/Admin.php:165
 msgid "Settings page"
 msgstr ""
 
@@ -585,102 +585,102 @@ msgstr ""
 msgid "Monthly"
 msgstr ""
 
-#: src/Modules/Database_Optimization.php:215
+#: src/Modules/Database_Optimization.php:218
 msgid "Database optimized successfully"
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:219
+#: src/Modules/Database_Optimization.php:222
 #, php-format
 msgid "There is an error while optimizing database. Error: %s"
 msgstr ""
 
 #. translators: %d is number of removed post's revisions.
-#: src/Modules/Database_Optimization.php:250
+#: src/Modules/Database_Optimization.php:253
 #, php-format
 msgid "%d posts revision removed."
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:256
+#: src/Modules/Database_Optimization.php:259
 #, php-format
 msgid "There is an error while removing the post revision. Error: %s"
 msgstr ""
 
 #. translators: %d is number of removed auto draft posts.
-#: src/Modules/Database_Optimization.php:287
+#: src/Modules/Database_Optimization.php:290
 #, php-format
 msgid "%d auto-draft posts removed."
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:293
+#: src/Modules/Database_Optimization.php:296
 #, php-format
 msgid "There is an error while removing auto draft posts. Error: %s"
 msgstr ""
 
 #. translators: %d is number of removed trashed posts.
-#: src/Modules/Database_Optimization.php:324
+#: src/Modules/Database_Optimization.php:327
 #, php-format
 msgid "%d trashed posts removed."
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:330
+#: src/Modules/Database_Optimization.php:333
 #, php-format
 msgid "There is an error while removing trashed post. Error: %s"
 msgstr ""
 
 #. translators: %d is number of removed spam comments.
-#: src/Modules/Database_Optimization.php:361
+#: src/Modules/Database_Optimization.php:364
 #, php-format
 msgid "%d spam comments removed."
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:367
+#: src/Modules/Database_Optimization.php:370
 #, php-format
 msgid "There is an error while removing spam comments. Error: %s"
 msgstr ""
 
 #. translators: %d is number of removed trashed comments.
-#: src/Modules/Database_Optimization.php:398
+#: src/Modules/Database_Optimization.php:401
 #, php-format
 msgid "%d trashed comments removed."
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:404
+#: src/Modules/Database_Optimization.php:407
 #, php-format
 msgid "There is an error while removing trashed comments. Error: %s"
 msgstr ""
 
 #. translators: %d is number of removed transients.
-#: src/Modules/Database_Optimization.php:442
+#: src/Modules/Database_Optimization.php:445
 #, php-format
 msgid "%d transients removed."
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:448
+#: src/Modules/Database_Optimization.php:451
 #, php-format
 msgid "There is an error while removing transients. Error: %s"
 msgstr ""
 
 #. translators: %d is the number of optimized database tables.
-#: src/Modules/Database_Optimization.php:485
+#: src/Modules/Database_Optimization.php:488
 #, php-format
 msgid "%d database table optimized."
 msgid_plural "%d database tables optimized."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Modules/Database_Optimization.php:489
+#: src/Modules/Database_Optimization.php:492
 msgid "No database tables are eligible for optimization."
 msgstr ""
 
 #. translators: %s is error.
-#: src/Modules/Database_Optimization.php:494
+#: src/Modules/Database_Optimization.php:497
 #, php-format
 msgid "There is an error while optimizing table. Error: %s"
 msgstr ""

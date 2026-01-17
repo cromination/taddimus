@@ -15,11 +15,6 @@ class OutputFormatsOption extends OptionAbstract {
 	const OPTION_NAME = 'output_formats';
 
 	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
-
-	/**
 	 * @var ConversionMethodOption
 	 */
 	private $conversion_method_option;
@@ -29,8 +24,7 @@ class OutputFormatsOption extends OptionAbstract {
 	 */
 	private $format_factory;
 
-	public function __construct( TokenRepository $token_repository, FormatFactory $format_factory, ConversionMethodOption $conversion_method_option ) {
-		$this->token_repository         = $token_repository;
+	public function __construct( FormatFactory $format_factory, ConversionMethodOption $conversion_method_option ) {
 		$this->conversion_method_option = $conversion_method_option;
 		$this->format_factory           = $format_factory;
 	}
@@ -53,33 +47,21 @@ class OutputFormatsOption extends OptionAbstract {
 	 * {@inheritdoc}
 	 */
 	public function get_type(): string {
-		return OptionAbstract::OPTION_TYPE_CHECKBOX;
+		return OptionAbstract::OPTION_TYPE_FORMATS;
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public static function get_label(): string {
-		return __( 'Supported output formats', 'webp-converter-for-media' );
+		return __( 'Next-gen image formats', 'webp-converter-for-media' );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_notice_lines(): ?array {
-		$notice = [
-			__( 'The AVIF format is the successor to the WebP format. Images converted to the AVIF format weigh about 50% less than images converted only to the WebP format, while maintaining better image quality.', 'webp-converter-for-media' ),
-		];
-
-		if ( $this->token_repository->get_token()->get_token_value() === null ) {
-			$notice[] = sprintf(
-			/* translators: %1$s: open anchor tag, %2$s: close anchor tag */
-				__( '%1$sUpgrade to PRO%2$s', 'webp-converter-for-media' ),
-				'<a href="https://url.mattplugins.com/converter-field-output-formats-info" target="_blank">',
-				' <span class="dashicons dashicons-external"></span></a>'
-			);
-		}
-		return $notice;
+	public function get_info(): string {
+		return __( 'Select the format you’d like your images converted to.', 'webp-converter-for-media' );
 	}
 
 	/**

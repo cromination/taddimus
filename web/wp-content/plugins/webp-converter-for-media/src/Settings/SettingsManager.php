@@ -77,6 +77,9 @@ class SettingsManager {
 		} elseif ( ( $plugin_settings[ ConversionMethodOption::OPTION_NAME ] === RemoteMethod::METHOD_NAME )
 			&& ! $plugin_settings[ AccessTokenOption::OPTION_NAME ] ) {
 			$plugin_settings[ ConversionMethodOption::OPTION_NAME ] = null;
+			$plugin_settings[ OutputFormatsOption::OPTION_NAME ]    = [
+				WebpFormat::FORMAT_EXTENSION,
+			];
 		}
 
 		$plugin_settings = $this->plugin_data->get_validated_form_data( $plugin_settings );

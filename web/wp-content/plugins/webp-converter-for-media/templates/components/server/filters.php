@@ -70,6 +70,12 @@ use WebpConverter\Service\PathsGenerator;
 		</td>
 	</tr>
 	<tr>
+		<td class="e">webpc_htaccess_rewrite_parent</td>
+		<td class="v">
+			<?php echo esc_html( apply_filters( 'webpc_htaccess_rewrite_parent', '' ) ?: '-' ); ?>
+		</td>
+	</tr>
+	<tr>
 		<td class="e">webpc_htaccess_rewrite_output</td>
 		<td class="v">
 			<?php echo esc_html( apply_filters( 'webpc_htaccess_rewrite_output', PathsGenerator::get_rewrite_path(), PathsGenerator::get_rewrite_root() ) ); ?>

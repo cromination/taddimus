@@ -27,8 +27,8 @@ class OptionsAggregator {
 	) {
 		$conversion_method = new ConversionMethodOption( $token_repository, $method_factory );
 
+		$this->set_option( new OutputFormatsOption( $format_factory, $conversion_method ) );
 		$this->set_option( new ImagesQualityOption() );
-		$this->set_option( new OutputFormatsOption( $token_repository, $format_factory, $conversion_method ) );
 		$this->set_option( new SupportedDirectoriesOption( $directory_factory ) );
 		$this->set_option( new ImageResizeOption( $token_repository ) );
 		$this->set_option( new AutoConversionOption() );
@@ -36,10 +36,10 @@ class OptionsAggregator {
 		$this->set_option( new AccessTokenOption( $token_repository ) );
 
 		$this->set_option( new SupportedExtensionsOption() );
+		$this->set_option( new ExcludedDirectoriesOption() );
 		$this->set_option( $conversion_method );
 		$this->set_option( new LoaderTypeOption() );
 		$this->set_option( new RewriteInheritanceOption() );
-		$this->set_option( new ExcludedDirectoriesOption() );
 		$this->set_option( new ExtraFeaturesOption() );
 		$this->set_option( new MediaStatsOption() );
 
@@ -49,6 +49,7 @@ class OptionsAggregator {
 		$this->set_option( new ServiceModeOption() );
 		$this->set_option( new HtaccessRewriteRootOption() );
 		$this->set_option( new HtaccessRewritePathOption() );
+		$this->set_option( new HtaccessRewriteParentOption() );
 		$this->set_option( new HtaccessRewriteOutputOption() );
 	}
 

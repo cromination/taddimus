@@ -1,3 +1,9 @@
+#####   Version 5.2.2 (2026-01-12)
+
+- Fixed translation updates no longer reappear after being successfully updated when using Super Page Cache.
+- Fixed Database Optimization now respects the configured schedule and no longer deletes trashed posts immediately when the feature is enabled.
+- Update dependencies
+
 #####   Version 5.2.1 (2025-12-16)
 
 - Removed duplicate Font Optimization cards from the Assets settings

@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 6.5.0 (2026-01-11) =
+* `[Fixed]` Rewrite rules to handle environments where RewriteRule may receive an absolute filesystem path
+* `[Changed]` Field to select the format to which the images should be converted
+* `[Added]` Settings field to modify the prefix used in RewriteRule to fix the absolute filesystem path issue
+
 = 6.4.0 (2025-12-08) =
 * `[Security]` Added permission check to ensure the user can edit the post before manually converting an image in the Media Library (CVE-2025-13750)
 * `[Security]` Added stricter permission checks to REST API endpoints for authenticated users

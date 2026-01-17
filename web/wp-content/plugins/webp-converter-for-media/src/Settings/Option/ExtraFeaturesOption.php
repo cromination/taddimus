@@ -57,7 +57,7 @@ class ExtraFeaturesOption extends OptionAbstract {
 	public function get_available_values( array $settings ): array {
 		return [
 			self::OPTION_VALUE_ONLY_SMALLER   => __(
-				'Automatic removal of files in output formats larger than the original ones',
+				'Automatic removal of images in next-gen formats larger than the original ones',
 				'webp-converter-for-media'
 			),
 			self::OPTION_VALUE_KEEP_METADATA  => sprintf(

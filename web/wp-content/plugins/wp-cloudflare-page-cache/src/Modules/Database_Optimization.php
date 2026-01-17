@@ -75,6 +75,10 @@ class Database_Optimization implements Module_Interface {
 		foreach ( $this->intervals as $interval => $args ) {
 			$hook = $this->event_hook( $interval );
 			add_action( $hook, $args['callback'] );
+
+			// For backward compatibility.
+			$_hook = str_replace( 'swcfpc_', '', $hook );
+			add_action( $_hook, array( $this, 'legacy_action_scheduler' ) );
 		}
 	}
 
@@ -163,8 +167,7 @@ class Database_Optimization implements Module_Interface {
 	 * @return string The transformed hook name.
 	 */
 	private function event_hook( $hook ) {
-		$hook = str_replace( 'cf_', 'swcfpc_', $hook );
-		return str_replace( '_interval', '', $hook );
+		return 'swcfpc_' . str_replace( '_interval', '', $hook );
 	}
 
 	/**
@@ -509,5 +512,30 @@ class Database_Optimization implements Module_Interface {
 			$hook = $this->event_hook( $interval );
 			as_unschedule_action( $hook, [], Constants::ACTION_SCHEDULER_GROUP );
 		}
+	}
+
+	/**
+	 * Legacy Action Scheduler compatibility.
+	 *
+	 * Maps Action Scheduler hooks to legacy hooks for backward compatibility.
+	 *
+	 * @return void
+	 */
+	public function legacy_action_scheduler() {
+		if ( ! $this->is_action_scheduler() ) {
+			return;
+		}
+
+		$current_hook = current_action();
+		do_action( 'swcfpc_' . $current_hook );
+	}
+
+	/**
+	 * Check if current action is from Action Scheduler.
+	 *
+	 * @return bool True if current action is from Action Scheduler, false otherwise.
+	 */
+	private function is_action_scheduler() {
+		return function_exists( 'as_has_scheduled_action' ) && doing_action( 'action_scheduler_run_queue' );
 	}
 }
