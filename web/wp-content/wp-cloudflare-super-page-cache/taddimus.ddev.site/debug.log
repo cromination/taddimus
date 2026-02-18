@@ -1,12 +1,8 @@
-[2025-12-17 03:46:37] [upgrader::run_update_migrations] Running migrations.
-[2025-12-17 03:46:37] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2025-12-17 03:46:37] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2025-12-17 03:46:37] [upgrader::update_cache_rule] Cache rule updated.
-[2026-01-17 03:43:04] [upgrader::run_update_migrations] Running migrations.
-[2026-01-17 03:43:04] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2026-01-17 03:43:04] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2026-01-17 03:43:04] [upgrader::update_cache_rule] Cache rule updated.
-[2026-01-17 03:43:05] [upgrader::run_update_migrations] Running migrations.
-[2026-01-17 03:43:05] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2026-01-17 03:43:05] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2026-01-17 03:43:05] [upgrader::update_cache_rule] Cache rule updated.
+[2026-02-18 02:23:55] [upgrader::run_update_migrations] Running migrations.
+[2026-02-18 02:23:55] [upgrader::update_cache_rule] Start cache rule upgrade.
+[2026-02-18 02:23:55] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
+[2026-02-18 02:23:55] [upgrader::update_cache_rule] Cache rule updated.
+[2026-02-18 02:23:55] [upgrader::run_update_migrations] Running migrations.
+[2026-02-18 02:23:55] [upgrader::update_cache_rule] Start cache rule upgrade.
+[2026-02-18 02:23:55] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
+[2026-02-18 02:23:55] [upgrader::update_cache_rule] Cache rule updated.

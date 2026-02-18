@@ -62,7 +62,7 @@ class SWCFPC_Html_Cache {
 		$current_url = "{$parts['scheme']}://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 
 		if ( isset( $wp_query ) && function_exists( 'is_404' ) && is_404() ) {
-			$this->main_instance->get_logger()->add_log( 'html_cache::add_current_url_to_cache', "The URL {$current_url} cannot be cached because it returns 404.", true );
+			$this->main_instance->get_logger()->add_log( 'html_cache::add_current_url_to_cache', 'The URL ' . esc_url_raw( $current_url ) . ' cannot be cached because it returns 404.', true );
 
 			return;
 		}

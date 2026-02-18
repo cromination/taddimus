@@ -1725,6 +1725,16 @@ class SWCFPC_Cache_Controller {
 			return true;
 		}
 
+		// Bypass 4xx or 5xx HTTP status codes (security blocks, errors, etc.)
+		if ( Settings_Store::get_instance()->get( Constants::SETTING_FALLBACK_CACHE_HTTP_RESPONSE_CODE ) ) {
+			$http_status = http_response_code();
+
+			if ( $http_status !== false && $http_status >= 400 && $http_status < 600 ) {
+				Helpers::bypass_reason_header( sprintf( 'HTTP Status %d', $http_status ) );
+				return true;
+			}
+		}
+
 		return false;
 	}
 

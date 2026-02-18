@@ -4,7 +4,7 @@
  * Plugin Name: Converter for Media
  * Plugin URI: https://mattplugins.com/products/webp-converter-for-media-pro
  * Description: Speed up your website by using our WebP & AVIF Converter. Optimize images and serve WebP and AVIF images instead of standard formats!
- * Version: 6.5.0
+ * Version: 6.5.3
  * Author: matt plugins
  * Author URI: https://url.mattplugins.com/converter-plugin-author-link
  * Text Domain: webp-converter-for-media
@@ -18,5 +18,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 new WebpConverter\WebpConverter(
-	new WebpConverter\PluginInfo( __FILE__, '6.5.0' )
+	new WebpConverter\PluginInfo( __FILE__, '6.5.3' )
 );

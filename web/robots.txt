@@ -1,4 +1,0 @@
-# Block AI Bots and Search from Scraping the site
-
-User-agent: *
-Disallow: /

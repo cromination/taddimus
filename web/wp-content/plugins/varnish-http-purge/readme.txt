@@ -3,7 +3,7 @@ Contributors: Ipstenu, mikeschroder, techpriester, danielbachhuber, dvershinin
 Tags: proxy, purge, cache, varnish, nginx
 Requires at least: 5.0
 Tested up to: 6.9
-Stable tag: 5.6.2
+Stable tag: 5.6.4
 Requires PHP: 5.6
 License: Apache License 2.0
 License URI: https://www.apache.org/licenses/LICENSE-2.0
@@ -100,6 +100,16 @@ If you can tolerate slightly longer delays, every 2-5 minutes is also acceptable
 
 For detailed instructions on setting up a proper Linux-based WordPress cron, see: <a href="https://www.getpagespeed.com/web-apps/wordpress/wordpress-cron-optimization">WordPress Cron Optimization</a>.
 
+<strong>Disabling Background Purging</strong>
+
+If you have `DISABLE_WP_CRON` defined but do not want background purging (for example, on low-traffic sites where immediate purges are preferred), you can force-disable cron-based purging by adding this to your `wp-config.php`:
+
+<code>
+define( 'VHP_DISABLE_CRON_PURGING', true );
+</code>
+
+With this constant set, all cache purges will execute immediately during the request, regardless of the `DISABLE_WP_CRON` setting.
+
 == WP-CLI ==
 
 <strong>Purge</strong>
@@ -150,6 +160,42 @@ You can inspect and manage that queue via WP‑CLI:
 * `wp varnish queue clear` – clear the queue without sending any PURGE requests.
 
 These commands do not replace your normal WordPress cron (you still need a cron entry that calls `wp cron event run --due-now` or hits `wp-cron.php`), but they give you a simple operational handle when using cron‑mode.
+
+= Understanding Purge Behavior =
+
+There are different types of cache purges, and they behave differently:
+
+**Manual Purges (Admin Bar)**
+
+* **"Purge Cache (All Pages)"** – Sends a single regex purge request to invalidate the entire cache. Always executes immediately.
+* **"Purge Cache (this page)"** – Purges only the exact URL you're viewing. Always executes immediately.
+
+Manual purges are always immediate, even when background cron-mode is enabled. This is intentional: when you click a button, you expect immediate results.
+
+**Automatic Purges (Post Save/Update)**
+
+When you save or update a post, the plugin automatically purges:
+
+* The post's URL
+* The homepage
+* Category archive pages
+* Tag archive pages
+* Author archive page
+* Date-based archives
+* RSS feeds
+* Related REST API endpoints
+
+This can be 20-50+ URLs depending on your site structure. When cron-mode is enabled, these automatic purges are queued and processed in the background to avoid slowing down the post editor.
+
+**Key Difference**
+
+| Action | URLs Purged | Uses Cron Queue? |
+|--------|-------------|------------------|
+| "Purge Cache (All Pages)" | 1 (regex) | No – always immediate |
+| "Purge Cache (this page)" | 1 | No – always immediate |
+| Post save/update | 20-50+ | Yes (if cron-mode enabled) |
+
+If you need to immediately purge all URLs related to a specific post (not just the post URL), save the post – the automatic purge will handle all related URLs.
 
 == Installation ==
 
@@ -412,6 +458,12 @@ add_filter( 'varnish_http_purge_x_varnish_header_name', 'change_varnish_header' 
 </code>
 
 == Changelog ==
+
+= 5.6.4 (2026-01) =
+* New: Added `VHP_DISABLE_CRON_PURGING` constant to force-disable background purging even when `DISABLE_WP_CRON` is enabled. Useful for low-traffic sites that use external cron but prefer immediate cache purges.
+
+= 5.6.3 (2026-01) =
+* Fix: Manual cache purge actions now execute immediately regardless of WP-Cron mode. Previously, "Purge Cache All Pages" and "Purge This Page" were queued when DISABLE_WP_CRON was enabled.
 
 = 5.6.2 (2026-01) =
 * Fix: Cacheability Pro recommendation moved to dismissable admin notice

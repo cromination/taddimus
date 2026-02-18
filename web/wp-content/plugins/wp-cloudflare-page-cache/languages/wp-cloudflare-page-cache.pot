@@ -81,33 +81,33 @@ msgid "Yes"
 msgstr ""
 
 #. translators: %s is the path to the .htaccess file
-#: libs/cache_controller.class.php:2162
+#: libs/cache_controller.class.php:2172
 #, php-format
 msgid "The .htaccess file (%s) could not be edited. Check if the file has write permissions."
 msgstr ""
 
-#: libs/cache_controller.class.php:2212
-#: libs/cache_controller.class.php:2232
-#: libs/cache_controller.class.php:2255
+#: libs/cache_controller.class.php:2222
+#: libs/cache_controller.class.php:2242
+#: libs/cache_controller.class.php:2265
 msgid "Permission denied"
 msgstr ""
 
-#: libs/cache_controller.class.php:2219
-#: libs/cache_controller.class.php:2239
-#: libs/cache_controller.class.php:2271
+#: libs/cache_controller.class.php:2229
+#: libs/cache_controller.class.php:2249
+#: libs/cache_controller.class.php:2281
 msgid "Cache purged successfully! It may take up to 30 seconds for the cache to be permanently cleaned."
 msgstr ""
 
-#: libs/cache_controller.class.php:2265
+#: libs/cache_controller.class.php:2275
 msgid "An error occurred while cleaning the cache. Please check log file for further details."
 msgstr ""
 
-#: libs/cache_controller.class.php:2391
+#: libs/cache_controller.class.php:2401
 msgid "Super Page Cache - Purge Cache Cron Interval"
 msgstr ""
 
 #. translators: %1$s is the name of the sitemap, %2$s is the error message
-#: libs/cache_controller.class.php:2584
+#: libs/cache_controller.class.php:2594
 #, php-format
 msgid "Connection error while retriving the sitemap %1$s: %2$s"
 msgstr ""

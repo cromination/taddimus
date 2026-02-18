@@ -1,6 +1,6 @@
 <?php
 /**
- * Loads images in WebP format or original images if browser does not support WebP.
+ * Loads images in AVIF/WebP format or original images if browser does not support AVIF/WebP.
  *
  * @category WordPress Plugin
  * @package  Converter for Media
@@ -13,55 +13,50 @@
  */
 class PassthruLoader {
 
-	const PATH_UPLOADS      = '';
-	const PATH_UPLOADS_WEBP = '';
-	const MIME_TYPES        = '';
+	const ALLOWED_URL_PREFIXES = '';
+	const MIME_TYPES           = '';
 
 	public function __construct() {
-		if ( ( self::PATH_UPLOADS === '' ) || ( self::PATH_UPLOADS_WEBP === '' ) || ( self::MIME_TYPES === '' ) ) {
+		if ( ( self::ALLOWED_URL_PREFIXES === '' ) || ( self::MIME_TYPES === '' ) ) {
 			http_response_code( 404 );
 			exit;
 		}
 
-		$image_url = $_GET['src'] ?? null; // phpcs:ignore WordPress.Security
-		if ( ! $image_url || ! $this->validate_src_param( $image_url ) ) {
+		$image_url = filter_input( INPUT_GET, 'src', FILTER_SANITIZE_URL );
+		if ( $image_url ) {
+			$this->load_validated_image_path( stripslashes( $image_url ) );
+		}
+	}
+
+	private function load_validated_image_path( string $image_url ): void {
+		if ( ( strpos( $image_url, '..' ) !== false ) || ( strpos( $image_url, '\\' ) !== false ) ) {
 			return;
 		}
 
-		$this->load_converted_image( $image_url );
-	}
-
-	private function validate_src_param( string $image_url ): bool {
-		$url_path     = parse_url( $image_url, PHP_URL_PATH ) ?: '';
-		$encoded_path = array_map( 'urlencode', explode( '/', $url_path ) );
-		$encoded_url  = str_replace( $url_path, implode( '/', $encoded_path ), $image_url );
-
-		if ( filter_var( $encoded_url, FILTER_VALIDATE_URL ) === false ) {
-			return false;
-		}
-
-		$image_host = parse_url( $image_url, PHP_URL_HOST );
-		if ( $image_host !== ( $_SERVER['HTTP_HOST'] ?? '' ) ) { // phpcs:ignore WordPress.Security
-			return false;
-		}
-
-		$image_extension = strtolower( pathinfo( $image_url, PATHINFO_EXTENSION ) );
+		$url_path        = parse_url( $image_url, PHP_URL_PATH ) ?: '';
+		$image_extension = strtolower( pathinfo( $url_path, PATHINFO_EXTENSION ) );
 		if ( ! in_array( $image_extension, [ 'jpg', 'jpeg', 'png', 'gif', 'png2' ] ) ) {
-			return false;
+			return;
 		}
 
-		return true;
+		$allowed_bases = json_decode( base64_decode( self::ALLOWED_URL_PREFIXES ) ?: '', true ) ?: []; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		$is_allowed    = false;
+		foreach ( $allowed_bases as $base_url => $server_path ) {
+			if ( strpos( $image_url, $base_url ) === 0 ) {
+				$is_allowed = true;
+				$this->load_converted_image(
+					str_replace( $base_url, $server_path, $image_url )
+				);
+			}
+		}
+
+		if ( $is_allowed ) {
+			header( 'Location: ' . $image_url );
+		}
 	}
 
-	/**
-	 * Initializes loading of image in supported output format.
-	 *
-	 * @param string $image_url URL of source image.
-	 *
-	 * @return void
-	 */
-	private function load_converted_image( string $image_url ) {
-		$mime_types    = json_decode( self::MIME_TYPES, true ) ?: [];
+	private function load_converted_image( string $image_path ) {
+		$mime_types    = json_decode( base64_decode( self::MIME_TYPES ) ?: '', true ) ?: []; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		$headers       = array_change_key_case(
 			array_merge( ( function_exists( 'getallheaders' ) ) ? getallheaders() : [], $_SERVER ),
 			CASE_UPPER
@@ -69,71 +64,18 @@ class PassthruLoader {
 		$accept_header = $headers['ACCEPT'] ?? ( $headers['HTTP_ACCEPT'] ?? '' );
 
 		foreach ( $mime_types as $extension => $mime_type ) {
-			if ( ( strpos( $accept_header, $mime_type ) !== false )
-				&& ( $source = $this->load_image_source( $image_url, $extension ) ) ) {
-				header( 'Content-Type: ' . $mime_type );
-				echo $source; // phpcs:ignore
-				exit;
+			if ( strpos( $accept_header, $mime_type ) !== false ) {
+				$output_image_path      = str_replace( '\\', '/', $image_path . '.' . $extension );
+				$real_output_image_path = str_replace( '\\', '/', realpath( $image_path . '.' . $extension ) ?: '' );
+				if ( is_readable( $output_image_path ) && ( $output_image_path === $real_output_image_path ) ) {
+					header( 'X-Content-Type-Options: nosniff' );
+					header( 'Content-Type: ' . $mime_type );
+					header( 'Content-Length: ' . filesize( $output_image_path ) );
+					readfile( $output_image_path );
+					exit;
+				}
 			}
 		}
-		$this->load_image_default( $image_url );
-	}
-
-	/**
-	 * Loads image output format.
-	 *
-	 * @param string $image_url URL of source image.
-	 * @param string $extension Extension of output format.
-	 *
-	 * @return string|null Content of image in output format.
-	 */
-	private function load_image_source( string $image_url, string $extension ) {
-		$url = $this->generate_source_url( $image_url, $extension );
-		$ch  = curl_init( $url );
-		if ( $ch === false ) {
-			return null;
-		}
-
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-		$response = curl_exec( $ch );
-		$code     = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
-
-		if ( ( $code !== 200 ) || ! $response ) {
-			return null;
-		} else {
-			return ( is_string( $response ) ) ? $response : null;
-		}
-	}
-
-	/**
-	 * Returns URL of output image by replacing URL of source image.
-	 *
-	 * @param string $image_url URL of source image.
-	 * @param string $extension Extension of output format.
-	 *
-	 * @return string URL of image in output format.
-	 */
-	private function generate_source_url( string $image_url, string $extension ): string {
-		return sprintf(
-			'%1$s.%2$s',
-			str_replace( self::PATH_UPLOADS, self::PATH_UPLOADS_WEBP, $image_url ),
-			$extension
-		);
-	}
-
-	/**
-	 * Redirects to source image.
-	 *
-	 * @param string $image_url URL of source image.
-	 *
-	 * @return void
-	 */
-	private function load_image_default( string $image_url ) {
-		header( 'Location: ' . $image_url );
 	}
 }
 

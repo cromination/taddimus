@@ -1,8 +1,10 @@
 <?php
+
 // phpcs:disable Yoast.NamingConventions.NamespaceName.TooLong -- Needed in the folder structure.
 namespace Yoast\WP\SEO\Task_List\Domain\Components;
 
 use InvalidArgumentException;
+
 /**
  * This class describes a Call To Action Entry.
  */
@@ -62,6 +64,33 @@ class Call_To_Action_Entry {
 		$this->label = $label;
 		$this->type  = $type;
 		$this->href  = $href;
+	}
+
+	/**
+	 * Returns the task's label.
+	 *
+	 * @return string|null
+	 */
+	public function get_label(): ?string {
+		return $this->label;
+	}
+
+	/**
+	 * Returns the task's type.
+	 *
+	 * @return string|null
+	 */
+	public function get_type(): ?string {
+		return $this->type;
+	}
+
+	/**
+	 * Returns the task's href.
+	 *
+	 * @return string|null
+	 */
+	public function get_href(): ?string {
+		return $this->href;
 	}
 
 	/**

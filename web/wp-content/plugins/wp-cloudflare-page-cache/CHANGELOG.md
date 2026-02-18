@@ -1,3 +1,7 @@
+#####   Version 5.2.3 (2026-02-05)
+
+- Enhanced security
+
 #####   Version 5.2.2 (2026-01-12)
 
 - Fixed translation updates no longer reappear after being successfully updated when using Super Page Cache.
