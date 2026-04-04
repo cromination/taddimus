@@ -54,12 +54,49 @@ wp media
 
 
 
+### wp media fix-orientation
+
+Fix image orientation for one or more attachments.
+
+~~~
+wp media fix-orientation [<attachment-id>...] [--dry-run]
+~~~
+
+**OPTIONS**
+
+	[<attachment-id>...]
+		One or more IDs of the attachments to regenerate.
+
+	[--dry-run]
+		Check images needing orientation without performing the operation.
+
+**EXAMPLES**
+
+    # Fix orientation for all images.
+    $ wp media fix-orientation
+    1/3 Fixing orientation for "Landscape_4" (ID 62).
+    2/3 Fixing orientation for "Landscape_3" (ID 61).
+    3/3 Fixing orientation for "Landscape_2" (ID 60).
+    Success: Fixed 3 of 3 images.
+
+    # Fix orientation dry run.
+    $ wp media fix-orientation 63 --dry-run
+    1/1 "Portrait_6" (ID 63) will be affected.
+    Success: 1 of 1 image will be affected.
+
+    # Fix orientation for specific images.
+    $ wp media fix-orientation 63
+    1/1 Fixing orientation for "Portrait_6" (ID 63).
+    Success: Fixed 1 of 1 images.
+
+
+
 ### wp media import
 
 Creates attachments from local files or URLs.
 
 ~~~
-wp media import <file>... [--post_id=<post_id>] [--post_name=<post_name>] [--file_name=<name>] [--title=<title>] [--caption=<caption>] [--alt=<alt_text>] [--desc=<description>] [--skip-copy] [--preserve-filetime] [--featured_image] [--porcelain[=<field>]]
+wp media import <file>... [--post_id=<post_id>] [--post_name=<post_name>] [--file_name=<name>] [--title=<title>] [--caption=<caption>] [--alt=<alt_text>] [--desc=<description>] [--skip-copy] [--destination-dir=<destination-dir>] [--preserve-filetime] [--featured_image] [--porcelain[=<field>]]
 ~~~
 
 **OPTIONS**
@@ -92,7 +129,13 @@ wp media import <file>... [--post_id=<post_id>] [--post_name=<post_name>] [--fil
 
 	[--skip-copy]
 		If set, media files (local only) are imported to the library but not moved on disk.
-		File names will not be run through wp_unique_filename() with this set.
+		File names will not be run through wp_unique_filename() with this set. When used, files
+		will remain at their current location and will not be copied into any destination directory.
+
+	[--destination-dir=<destination-dir>]
+		Path to the destination directory for uploaded imported files.
+		Can be absolute or relative to ABSPATH. Ignored when used together with --skip-copy, as
+		files are not moved on disk in that case.
 
 	[--preserve-filetime]
 		Use the file modified time as the post published & modified dates.

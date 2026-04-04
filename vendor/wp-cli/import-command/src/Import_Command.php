@@ -2,9 +2,9 @@
 
 class Import_Command extends WP_CLI_Command {
 
-	private $blog_users = array();
+	private $blog_users = [];
 
-	public $processed_posts = array();
+	public $processed_posts = [];
 
 	/**
 	 * Imports content from a given WXR file.
@@ -29,6 +29,9 @@ class Import_Command extends WP_CLI_Command {
 	 * : Change all imported URLs that currently link to the previous site so that they now link to this site
 	 * Requires WordPress Importer version 0.9.1 or newer.
 	 *
+	 * [--importer=<importer>]
+	 * : Use a custom importer class instead of the default WP_Import. The class must exist and be a subclass of WP_Import.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     # Import content from a WXR file
@@ -43,8 +46,9 @@ class Import_Command extends WP_CLI_Command {
 	public function __invoke( $args, $assoc_args ) {
 		$defaults   = array(
 			'authors'      => null,
-			'skip'         => array(),
+			'skip'         => [],
 			'rewrite_urls' => null,
+			'importer'     => 'WP_Import',
 		);
 		$assoc_args = wp_parse_args( $assoc_args, $defaults );
 
@@ -57,11 +61,21 @@ class Import_Command extends WP_CLI_Command {
 			WP_CLI::error( $importer );
 		}
 
+		$importer_class = $assoc_args['importer'];
+		if ( 'WP_Import' !== $importer_class ) {
+			if ( ! class_exists( $importer_class, false ) ) {
+				WP_CLI::error( "Importer class '$importer_class' does not exist." );
+			}
+			if ( ! is_subclass_of( $importer_class, 'WP_Import' ) ) {
+				WP_CLI::error( "Importer class '$importer_class' must be a subclass of WP_Import." );
+			}
+		}
+
 		$this->add_wxr_filters();
 
 		WP_CLI::log( 'Starting the import process...' );
 
-		$new_args = array();
+		$new_args = [];
 		foreach ( $args as $arg ) {
 			if ( is_dir( $arg ) ) {
 				$dir   = WP_CLI\Utils\trailingslashit( $arg );
@@ -117,7 +131,9 @@ class Import_Command extends WP_CLI_Command {
 	 */
 	private function import_wxr( $file, $args ) {
 
-		$wp_import                  = new WP_Import();
+		$importer_class = $args['importer'];
+		/** @var WP_Import $wp_import */
+		$wp_import                  = new $importer_class();
 		$wp_import->processed_posts = $this->processed_posts;
 		$import_data                = $wp_import->parse( $file );
 
@@ -128,7 +144,10 @@ class Import_Command extends WP_CLI_Command {
 		// memory.
 		unset( $import_data );
 
-		$author_data = array();
+		/**
+		 * @var array<object{user_email: string, user_login: string}> $author_data
+		 */
+		$author_data = [];
 		foreach ( $wp_import->authors as $wxr_author ) {
 			$author = new \stdClass();
 			// Always in the WXR
@@ -152,7 +171,7 @@ class Import_Command extends WP_CLI_Command {
 		}
 
 		/**
-		 * @var array<\WP_User> $author_data
+		 * @var array<object{user_email: string, user_login: string}> $author_data
 		 */
 
 		// Build the author mapping
@@ -166,8 +185,8 @@ class Import_Command extends WP_CLI_Command {
 		unset( $author_mapping, $author_data );
 
 		// $user_select needs to be an array of user IDs
-		$user_select         = array();
-		$invalid_user_select = array();
+		$user_select         = [];
+		$invalid_user_select = [];
 		foreach ( $author_out as $author_login ) {
 			$user = get_user_by( 'login', $author_login );
 			if ( $user ) {
@@ -351,7 +370,7 @@ class Import_Command extends WP_CLI_Command {
 	 * Processes how the authors should be mapped
 	 *
 	 * @param string          $authors_arg The `--author` argument originally passed to command
-	 * @param array<\WP_User> $author_data An array of WP_User-esque author objects
+	 * @param array<\WP_User|object{user_email: string, user_login: string}> $author_data An array of WP_User-esque author objects
 	 * @return array<\WP_User>|WP_Error Author mapping array if successful, WP_Error if something bad happened
 	 */
 	private function process_author_mapping( $authors_arg, $author_data ) {
@@ -373,7 +392,7 @@ class Import_Command extends WP_CLI_Command {
 
 			// Skip any sort of author mapping
 			case 'skip':
-				return array();
+				return [];
 
 			default:
 				return new WP_Error( 'invalid-argument', "'authors' argument is invalid." );
@@ -384,7 +403,7 @@ class Import_Command extends WP_CLI_Command {
 	 * Reads an author mapping file.
 	 */
 	private function read_author_mapping_file( $file ) {
-		$author_mapping = array();
+		$author_mapping = [];
 
 		foreach ( new \WP_CLI\Iterators\CSV( $file ) as $i => $author ) {
 			/**
@@ -408,7 +427,7 @@ class Import_Command extends WP_CLI_Command {
 	private function create_author_mapping_file( $file, $author_data ) {
 
 		if ( touch( $file ) ) {
-			$author_mapping = array();
+			$author_mapping = [];
 			foreach ( $author_data as $author ) {
 				$author_mapping[] = array(
 					'old_user_login' => $author->user_login,
@@ -434,11 +453,11 @@ class Import_Command extends WP_CLI_Command {
 	/**
 	 * Creates users if they don't exist, and build an author mapping file.
 	 *
-	 * @param array<\WP_User> $author_data
+	 * @param array<\WP_User|object{user_email: string, user_login: string}> $author_data
 	 */
 	private function create_authors_for_mapping( $author_data ) {
 
-		$author_mapping = array();
+		$author_mapping = [];
 		foreach ( $author_data as $author ) {
 
 			if ( isset( $author->user_email ) ) {
@@ -497,7 +516,7 @@ class Import_Command extends WP_CLI_Command {
 		}
 
 		$shortest    = -1;
-		$shortestavg = array();
+		$shortestavg = [];
 
 		$threshold = floor( ( strlen( $author_user_login ) / 100 ) * 10 ); // 10 % of the strlen are valid
 		$closest   = '';
@@ -507,7 +526,7 @@ class Import_Command extends WP_CLI_Command {
 				return $user->user_login;
 			}
 
-			$levs        = array();
+			$levs        = [];
 			$levs[]      = levenshtein( $author_user_login, $user->display_name );
 			$levs[]      = levenshtein( $author_user_login, $user->user_login );
 			$levs[]      = levenshtein( $author_user_login, $user->user_email );

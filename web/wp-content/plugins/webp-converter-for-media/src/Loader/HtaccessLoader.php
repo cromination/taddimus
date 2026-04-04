@@ -83,6 +83,10 @@ class HtaccessLoader extends LoaderAbstract {
 			return str_replace( 'ABSPATH', ABSPATH, $settings[ HtaccessRewriteRootOption::OPTION_NAME ] );
 		}
 
+		if ( isset( $_SERVER['SERVER_ADMIN'] ) && strpos( $_SERVER['SERVER_ADMIN'], '.home.pl' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			return '%{DOCUMENT_ROOT}' . str_replace( '//', '/', ABSPATH );
+		}
+
 		return $path;
 	}
 
@@ -95,7 +99,7 @@ class HtaccessLoader extends LoaderAbstract {
 	public function overwrite_htaccess_rewrite_path( string $path ): string {
 		$settings = $this->plugin_data->get_plugin_settings();
 		if ( $settings[ HtaccessRewritePathOption::OPTION_NAME ] !== '' ) {
-			return $settings[ HtaccessRewritePathOption::OPTION_NAME ];
+			return str_replace( 'ABSPATH', ABSPATH, $settings[ HtaccessRewritePathOption::OPTION_NAME ] );
 		}
 
 		return $path;

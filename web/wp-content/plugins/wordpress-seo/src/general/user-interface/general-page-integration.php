@@ -215,7 +215,7 @@ class General_Page_Integration implements Integration_Interface {
 					self::PAGE,
 					[ $this, 'display_page' ],
 				],
-			]
+			],
 		);
 
 		return $pages;
@@ -257,6 +257,7 @@ class General_Page_Integration implements Integration_Interface {
 			'preferences'           => [
 				'isPremium'              => $this->product_helper->is_premium(),
 				'isRtl'                  => \is_rtl(),
+				'userLocale'             => \get_user_locale(),
 				'pluginUrl'              => \plugins_url( '', \WPSEO_FILE ),
 				'upsellSettings'         => [
 					'actionId'     => 'load-nfd-ctb',

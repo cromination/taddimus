@@ -70,7 +70,11 @@ class Installation_Success_Integration implements Integration_Interface {
 	 * @return void
 	 */
 	public function maybe_redirect() {
-		if ( \defined( 'DOING_AJAX' ) && \DOING_AJAX ) {
+		if ( \wp_doing_ajax() || \wp_doing_cron() || \wp_is_serving_rest_request() || \wp_is_json_request() ) {
+			return;
+		}
+
+		if ( ! \current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -97,6 +101,15 @@ class Installation_Success_Integration implements Integration_Interface {
 			return;
 		}
 
+		/**
+		 * Filter: 'wpseo_should_redirect_after_install' - Allows skipping the redirect to the installation success page.
+		 *
+		 * @param bool $should_redirect Whether to redirect. Default true.
+		 */
+		if ( ! \apply_filters( 'wpseo_should_redirect_after_install', true ) ) {
+			return;
+		}
+
 		\wp_safe_redirect( \admin_url( 'admin.php?page=wpseo_installation_successful_free' ), 302, 'Yoast SEO' );
 		$this->terminate_execution();
 	}
@@ -110,12 +123,12 @@ class Installation_Success_Integration implements Integration_Interface {
 	 */
 	public function add_submenu_page( $submenu_pages ) {
 		\add_submenu_page(
-			'',
+			'options.php',
 			\__( 'Installation Successful', 'wordpress-seo' ),
 			'',
 			'manage_options',
 			'wpseo_installation_successful_free',
-			[ $this, 'render_page' ]
+			[ $this, 'render_page' ],
 		);
 
 		return $submenu_pages;
@@ -147,7 +160,7 @@ class Installation_Success_Integration implements Integration_Interface {
 				'firstTimeConfigurationUrl' => $ftc_url,
 				'dashboardUrl'              => \esc_url( \admin_url( 'admin.php?page=wpseo_dashboard' ) ),
 				'explorePremiumUrl'         => $this->shortlinker->build( 'https://yoa.st/ftc-premium-link' ),
-			]
+			],
 		);
 	}
 
@@ -166,6 +179,6 @@ class Installation_Success_Integration implements Integration_Interface {
 	 * @return void
 	 */
 	public function terminate_execution() {
-		exit;
+		exit();
 	}
 }

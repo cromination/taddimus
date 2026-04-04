@@ -12,7 +12,14 @@ define( 'WXR_VERSION', '1.2' ); //phpcs:ignore WordPress.NamingConventions.Prefi
  * Responsible for formatting the data in WP_Export_Query to WXR
  */
 class WP_Export_WXR_Formatter {
+	/**
+	 * @var WP_Export_Query
+	 */
 	private $export;
+
+	/**
+	 * @var string
+	 */
 	private $wxr_version;
 
 	public function __construct( $export ) {
@@ -20,6 +27,9 @@ class WP_Export_WXR_Formatter {
 		$this->wxr_version = WXR_VERSION;
 	}
 
+	/**
+	 * @param array<string> $requested_sections
+	 */
 	public function before_posts( $requested_sections = [] ) {
 		$available_sections = [
 			'header',
@@ -75,6 +85,7 @@ class WP_Export_WXR_Formatter {
 
 COMMENT;
 		return $oxymel
+			// @phpstan-ignore property.private
 			->xml
 			->comment( $comment )
 			->raw( $wp_generator_tag )
@@ -96,6 +107,7 @@ COMMENT;
 		$oxymel   = new Oxymel();
 		$metadata = $this->export->site_metadata();
 		return $oxymel
+			// @phpstan-ignore method.notFound
 			->title( $metadata['name'] )
 			->link( $metadata['url'] )
 			->description( $metadata['description'] )
@@ -171,16 +183,21 @@ COMMENT;
 	}
 
 	public function post( $post ) {
-		$oxymel                           = new WP_Export_Oxymel();
-		$GLOBALS['wp_query']->in_the_loop = true;
+		/**
+		 * @var \WP_Query $wp_query
+		 */
+		global $wp_query;
+		$oxymel                = new WP_Export_Oxymel();
+		$wp_query->in_the_loop = true;
 		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Intentional.
 		$GLOBALS['post'] = $post;
 		setup_postdata( $post );
 
+		// @phpstan-ignore property.notFound
 		$oxymel->item->contains
 			->tag( 'title' )->contains->cdata( apply_filters( 'the_title_export', $post->post_title ) )->end // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress native hook.
 			->link( esc_url( apply_filters( 'the_permalink_rss', get_permalink() ) ) ) // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress native hook.
-			->pubDate( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) )
+			->pubDate( mysql2date( 'D, d M Y H:i:s +0000', (string) get_post_time( 'Y-m-d H:i:s', true ), false ) )
 			->tag( 'dc:creator', get_the_author_meta( 'login' ) )
 			->guid( esc_url( get_the_guid() ), [ 'isPermaLink' => 'false' ] )
 			->description( '' )
@@ -203,6 +220,7 @@ COMMENT;
 			->optional( 'wp:attachment_url', wp_get_attachment_url( $post->ID ) );
 		foreach ( $post->terms as $term ) {
 			$oxymel
+			// @phpstan-ignore method.notFound
 			->category(
 				[
 					'domain'   => $term->taxonomy,
@@ -235,13 +253,15 @@ COMMENT;
 				->oxymel( $this->comment_meta( $comment ) )
 				->end;
 		}
-		$oxymel
-			->end;
+
+		// @phpstan-ignore property.notFound, expr.resultUnused
+		$oxymel->end;
 		return $oxymel->to_string();
 	}
 
 	public function footer() {
 		$oxymel = new Oxymel();
+		// @phpstan-ignore property.notFound
 		return $oxymel->close_channel->close_rss->to_string();
 	}
 

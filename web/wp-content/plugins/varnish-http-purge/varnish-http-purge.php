@@ -3,7 +3,7 @@
  * Plugin Name: Proxy Cache Purge
  * Plugin URI: https://github.com/dvershinin/varnish-http-purge
  * Description: Automatically empty cached pages when content on your site is modified.
- * Version: 5.6.4
+ * Version: 5.9.0
  * Requires at least: 5.0
  * Requires PHP: 5.6
  * Author: Mika Epstein, Danila Vershinin
@@ -40,7 +40,7 @@ class VarnishPurger {
 	 * Version Number
 	 * @var string
 	 */
-	public static $version = '5.5.3';
+	public static $version = '5.9.0';
 
 	/**
 	 * List of URLs to be purged
@@ -117,6 +117,7 @@ class VarnishPurger {
 		defined( 'VHP_VARNISH_EXTRA_PURGE_HEADER' ) || define( 'VHP_VARNISH_EXTRA_PURGE_HEADER', false );
 		defined( 'VHP_EXCLUDED_POST_STATUSES' ) || define( 'VHP_EXCLUDED_POST_STATUSES', false );
 		defined( 'VHP_DISABLE_CRON_PURGING' ) || define( 'VHP_DISABLE_CRON_PURGING', false );
+		defined( 'VHP_PURGE_BACKEND' ) || define( 'VHP_PURGE_BACKEND', false );
 
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( &$this, 'settings_link' ) );
 
@@ -147,6 +148,11 @@ class VarnishPurger {
 		// Default Max posts to purge before purge all happens instead.
 		if ( ! get_site_option( 'vhp_varnish_max_posts_before_all' ) ) {
 			update_site_option( 'vhp_varnish_max_posts_before_all', 50 );
+		}
+
+		// Default purge backend is Varnish.
+		if ( ! get_site_option( 'vhp_purge_backend' ) && ! VHP_PURGE_BACKEND ) {
+			update_site_option( 'vhp_purge_backend', 'varnish' );
 		}
 
 		// Release the hounds!
@@ -198,6 +204,12 @@ class VarnishPurger {
 
 			// AJAX handler for dismissing Cacheability Pro notice.
 			add_action( 'wp_ajax_vhp_dismiss_cacheability_notice', array( $this, 'ajax_dismiss_cacheability_notice' ) );
+
+			// WooCommerce-specific cache notice.
+			add_action( 'admin_notices', array( $this, 'woocommerce_cache_notice' ) );
+
+			// AJAX handler for dismissing WooCommerce cache notice.
+			add_action( 'wp_ajax_vhp_dismiss_woo_cache_notice', array( $this, 'ajax_dismiss_woo_cache_notice' ) );
 		}
 	}
 
@@ -320,7 +332,20 @@ class VarnishPurger {
 	 * @since 4.6
 	 */
 	public function admin_message_purge() {
-		echo '<div id="message" class="notice notice-success fade is-dismissible"><p><strong>' . esc_html__( 'Cache emptied!', 'varnish-http-purge' ) . '</strong></p></div>';
+		$message = '<p><strong>' . esc_html__( 'Cache emptied!', 'varnish-http-purge' ) . '</strong></p>';
+
+		if ( ! class_exists( 'Cacheability_Pro' ) && ! class_exists( 'Cacheability' ) ) {
+			$pro_url  = 'https://www.getpagespeed.com/cacheability-pro?ref=vhp-purge';
+			$message .= '<p><small>'
+				. esc_html__( 'Your visitors may now hit slow, uncached pages.', 'varnish-http-purge' ) . ' '
+				. '<a href="' . esc_url( $pro_url ) . '" target="_blank" rel="noopener">'
+				. esc_html__( 'Cacheability Pro', 'varnish-http-purge' )
+				. '</a> '
+				. esc_html__( 'automatically re-warms the cache after every purge.', 'varnish-http-purge' )
+				. '</small></p>';
+		}
+
+		echo '<div id="message" class="notice notice-success fade is-dismissible">' . wp_kses_post( $message ) . '</div>';
 	}
 
 	/**
@@ -340,6 +365,14 @@ class VarnishPurger {
 	public function settings_link( $links ) {
 		$settings_link = '<a href="admin.php?page=varnish-page">' . __( 'Settings', 'varnish-http-purge' ) . '</a>';
 		array_unshift( $links, $settings_link );
+
+		if ( ! class_exists( 'Cacheability_Pro' ) && ! class_exists( 'Cacheability' ) ) {
+			$pro_url = 'https://www.getpagespeed.com/cacheability-pro?ref=vhp-plugins';
+			$links[] = '<a href="' . esc_url( $pro_url ) . '" target="_blank" rel="noopener" style="color:#10b981;font-weight:700;">'
+				. esc_html__( 'Get Cache Warming', 'varnish-http-purge' )
+				. '</a>';
+		}
+
 		return $links;
 	}
 
@@ -387,6 +420,36 @@ class VarnishPurger {
 	 */
 	protected function is_cron_purging_enabled() {
 		return self::is_cron_purging_enabled_static();
+	}
+
+	/**
+	 * Get the configured purge backend type.
+	 *
+	 * Returns 'varnish' or 'nginx' based on the VHP_PURGE_BACKEND constant
+	 * or the vhp_purge_backend site option. Defaults to 'varnish'.
+	 *
+	 * @since 5.9.0
+	 * @return string 'varnish' or 'nginx'
+	 */
+	public static function get_purge_backend() {
+		if ( VHP_PURGE_BACKEND && in_array( VHP_PURGE_BACKEND, array( 'varnish', 'nginx' ), true ) ) {
+			return VHP_PURGE_BACKEND;
+		}
+		$stored = get_site_option( 'vhp_purge_backend', 'varnish' );
+		if ( in_array( $stored, array( 'varnish', 'nginx' ), true ) ) {
+			return $stored;
+		}
+		return 'varnish';
+	}
+
+	/**
+	 * Check if the purge backend is NGINX.
+	 *
+	 * @since 5.9.0
+	 * @return bool
+	 */
+	public static function is_nginx_backend() {
+		return 'nginx' === self::get_purge_backend();
 	}
 
 	/**
@@ -784,6 +847,102 @@ class VarnishPurger {
 		}
 
 		update_user_meta( get_current_user_id(), 'vhp_dismissed_cacheability_notice', true );
+		wp_send_json_success();
+	}
+
+	/**
+	 * WooCommerce Cache Revenue Impact Notice
+	 *
+	 * Shows a dismissible admin notice on WooCommerce admin pages
+	 * highlighting the revenue impact of slow, uncached pages.
+	 * Only displays when WooCommerce is active and Cacheability Pro is not installed.
+	 *
+	 * @since 5.8.0
+	 */
+	public function woocommerce_cache_notice() {
+		// Only show if WooCommerce is active.
+		if ( ! class_exists( 'WooCommerce' ) ) {
+			return;
+		}
+
+		// Don't show if Cacheability Pro is already installed.
+		if ( class_exists( 'Cacheability_Pro' ) ) {
+			return;
+		}
+
+		// Don't show if free Cacheability is installed.
+		if ( class_exists( 'Cacheability' ) ) {
+			return;
+		}
+
+		// Don't show if user dismissed this notice.
+		if ( get_user_meta( get_current_user_id(), 'vhp_dismissed_woo_cache_notice', true ) ) {
+			return;
+		}
+
+		// Only show on WooCommerce admin pages.
+		$screen = get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
+		$woo_screens = array(
+			'edit-shop_order',
+			'shop_order',
+			'edit-product',
+			'product',
+			'woocommerce_page_wc-orders',
+			'woocommerce_page_wc-admin',
+			'woocommerce_page_wc-reports',
+			'woocommerce_page_wc-settings',
+		);
+
+		// Also match WooCommerce analytics screens (wc-admin based).
+		$is_woo_screen = in_array( $screen->id, $woo_screens, true )
+			|| ( isset( $screen->parent_base ) && 'woocommerce' === $screen->parent_base );
+
+		if ( ! $is_woo_screen ) {
+			return;
+		}
+
+		$pro_url = 'https://www.getpagespeed.com/cacheability-pro?ref=vhp-woo';
+
+		?>
+		<div class="notice notice-warning is-dismissible vhp-woo-cache-notice">
+			<p>
+				<strong><?php esc_html_e( 'Slow pages cost sales.', 'varnish-http-purge' ); ?></strong>
+				<?php esc_html_e( 'Slow pages cost ~7% conversion rate per second of load time. Cache purges leave your WooCommerce store uncached until the next visitor rebuilds it.', 'varnish-http-purge' ); ?>
+				<a href="<?php echo esc_url( $pro_url ); ?>" target="_blank" rel="noopener" class="button button-primary" style="margin-left:10px;">
+					<?php esc_html_e( 'Keep your store fast with Cacheability Pro', 'varnish-http-purge' ); ?>
+				</a>
+			</p>
+		</div>
+		<script>
+		jQuery(document).ready(function($) {
+			$('.vhp-woo-cache-notice').on('click', '.notice-dismiss', function() {
+				$.post(ajaxurl, {
+					action: 'vhp_dismiss_woo_cache_notice',
+					nonce: '<?php echo esc_js( wp_create_nonce( 'vhp_dismiss_woo_cache_notice' ) ); ?>'
+				});
+			});
+		});
+		</script>
+		<?php
+	}
+
+	/**
+	 * AJAX handler for dismissing WooCommerce cache notice.
+	 *
+	 * @since 5.8.0
+	 */
+	public function ajax_dismiss_woo_cache_notice() {
+		check_ajax_referer( 'vhp_dismiss_woo_cache_notice', 'nonce' );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error();
+		}
+
+		update_user_meta( get_current_user_id(), 'vhp_dismissed_woo_cache_notice', true );
 		wp_send_json_success();
 	}
 
@@ -1304,8 +1463,15 @@ class VarnishPurger {
 		$x_purge_method = 'default';
 
 		if ( isset( $p['query'] ) && ( 'vhp-regex' === $p['query'] ) ) {
-			$pregex         = '.*';
-			$x_purge_method = 'regex';
+			if ( self::is_nginx_backend() ) {
+				// NGINX cache-purge module expects a literal * wildcard.
+				$pregex         = '*';
+				$x_purge_method = 'default';
+			} else {
+				// Varnish uses regex-based banning with .* pattern.
+				$pregex         = '.*';
+				$x_purge_method = 'regex';
+			}
 		}
 
 		// Build a varniship to sail. ⛵️
@@ -1482,6 +1648,20 @@ class VarnishPurger {
 		$tags = apply_filters( 'vhp_purge_tags', $tags );
 
 		if ( empty( $tags ) || ! is_array( $tags ) ) {
+			return;
+		}
+
+		// NGINX cache-purge module does not support tag-based BAN purging.
+		// Fall back to a full-site wildcard purge instead.
+		if ( self::is_nginx_backend() ) {
+			/**
+			 * Fires when tag-based purging is skipped because the backend is NGINX.
+			 *
+			 * @since 5.9.0
+			 * @param array $tags The tags that were requested for purge.
+			 */
+			do_action( 'vhp_purge_tags_skipped_nginx', $tags );
+			self::purge_url( self::the_home_url() . '/?vhp-regex' );
 			return;
 		}
 
@@ -1884,12 +2064,14 @@ class VarnishPurger {
 			if ( isset( $rest_api_route ) ) {
 				$post_type_object = get_post_type_object( $this_post_type );
 				$rest_permalink   = false;
-				if ( isset( $post_type_object->rest_base ) ) {
+				if ( isset( $post_type_object->rest_base ) && ! empty( $post_type_object->rest_base ) ) {
 					$rest_permalink = get_rest_url() . $rest_api_route . '/' . $post_type_object->rest_base . '/' . $post_id . '/';
 				} elseif ( 'post' === $this_post_type ) {
 					$rest_permalink = get_rest_url() . $rest_api_route . '/posts/' . $post_id . '/';
 				} elseif ( 'page' === $this_post_type ) {
 					$rest_permalink = get_rest_url() . $rest_api_route . '/pages/' . $post_id . '/';
+				} elseif ( isset( $post_type_object->name ) ) {
+					$rest_permalink = get_rest_url() . $rest_api_route . '/' . $post_type_object->name . '/' . $post_id . '/';
 				}
 
 				if ( isset( $rest_permalink ) ) {
@@ -1902,9 +2084,11 @@ class VarnishPurger {
 				$categories = get_the_category( $post_id );
 				if ( $categories ) {
 					foreach ( $categories as $cat ) {
+						$cat_url = get_category_link( $cat->term_id );
 						array_push(
 							$listofurls,
-							get_category_link( $cat->term_id ),
+							$cat_url,
+							$cat_url . '?vhp-regex',
 							get_rest_url() . $rest_api_route . '/categories/' . $cat->term_id . '/'
 						);
 					}
@@ -1914,9 +2098,11 @@ class VarnishPurger {
 				$tags = get_the_tags( $post_id );
 				if ( $tags ) {
 					foreach ( $tags as $tag ) {
+						$tag_url = get_tag_link( $tag->term_id );
 						array_push(
 							$listofurls,
-							get_tag_link( $tag->term_id ),
+							$tag_url,
+							$tag_url . '?vhp-regex',
 							get_rest_url() . $rest_api_route . '/tags/' . $tag->term_id . '/'
 						);
 					}
@@ -2002,7 +2188,12 @@ class VarnishPurger {
 			if ( 'page' === get_site_option( 'show_on_front' ) ) {
 				// Ensure we have a page_for_posts setting to avoid empty URL.
 				if ( get_site_option( 'page_for_posts' ) ) {
-					array_push( $listofurls, get_permalink( get_site_option( 'page_for_posts' ) ) );
+					$posts_page_url = get_permalink( get_site_option( 'page_for_posts' ) );
+					array_push(
+						$listofurls,
+						$posts_page_url,
+						$posts_page_url . '?vhp-regex'
+					);
 				}
 			}
 		} else {
@@ -2014,9 +2205,12 @@ class VarnishPurger {
 		if ( empty( $listofurls ) ) {
 			return;
 		} else {
-			// Strip off query variables
+			// Strip off query variables, but preserve ?vhp-regex for regex purges.
 			$listofurls = array_map(
 				function ( $url ) {
+					if ( false !== strpos( $url, '?vhp-regex' ) ) {
+						return strtok( $url, '?' ) . '?vhp-regex';
+					}
 					return strtok( $url, '?' );
 				},
 				$listofurls

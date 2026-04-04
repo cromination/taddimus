@@ -211,7 +211,11 @@ class Spyc {
     if (!$no_opening_dashes) $string = "---\n";
 
     // Start at the base of the array and move through it.
-    if ($array) {
+    // Note: We avoid a loose `if ($array)` check because it would treat falsey scalars
+    // (e.g., 0, "0", false) as empty input and skip dumping them, even though they are
+    // valid values. Non-empty arrays are always truthy in PHP regardless of contents,
+    // so this guard is about distinguishing "no data" (null, "", empty array) from real values.
+    if ($array !== null && $array !== '' && (!is_array($array) || count($array) > 0)) {
       $array = (array)$array;
       $previous_key = -1;
       foreach ($array as $key => $value) {
@@ -234,7 +238,9 @@ class Spyc {
   private function _yamlize($key,$value,$indent, $previous_key = -1, $first_key = 0, $source_array = null) {
     if(is_object($value)) $value = (array)$value;
     if (is_array($value)) {
-      if (empty ($value))
+      // Since $value is already an array, empty($value) and count($value) === 0 are equivalent.
+      // We use count($value) === 0 here for explicitness and consistency with the logic in dump().
+      if (count($value) === 0)
         return $this->_dumpNode($key, array(), $indent, $previous_key, $first_key, $source_array);
       // It has children.  What to do?
       // Make it the right kind of item
@@ -297,7 +303,7 @@ class Spyc {
     if (self::isTranslationWord($value)) {
       $value = $this->_doLiteralBlock($value, $indent);
     }
-    if (trim ($value) != $value)
+    if (trim($value ?? '') != $value)
        $value = $this->_doLiteralBlock($value,$indent);
 
     if (is_bool($value)) {
@@ -1063,10 +1069,25 @@ class Spyc {
         $key     = trim(array_shift($explode));
         $value   = trim(implode(': ', $explode));
         $this->checkKeysInValue($value);
+      // Other methods currently don't parse valid json maps or arrays of maps correctly
+        // The default inline parser (_toType) does not correctly handle complex JSON objects.
+        // Attempt to parse as JSON first for values that look like potential JSON.
+        $first_char = isset($value[0]) ? $value[0] : '';
+        if ($first_char === '{' || $first_char === '[') {
+          $decoded = json_decode($value, true);
+          // If the value is valid JSON, use the decoded array.
+          // This correctly handles valid JSON 'null' as well.
+          if (json_last_error() === JSON_ERROR_NONE) {
+            $value = $decoded;
+          }
+          // Otherwise, leave $value as a string for the legacy parser to handle.
+        }
       }
       // Set the type of the value.  Int, string, etc
-      $value = $this->_toType($value);
-      if ($key === '0') $key = '__!YAMLZero';
+      if ( ! is_array( $value ) ) {
+        $value = $this->_toType($value);
+        if ($key === '0') $key = '__!YAMLZero';
+      }
       $array[$key] = $value;
     } else {
       $array = array ($line);

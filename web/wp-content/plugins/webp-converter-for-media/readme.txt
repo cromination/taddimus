@@ -5,7 +5,7 @@ Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
 Tested up to: 6.9
 Requires PHP: 7.1
-Stable tag: 6.5.3
+Stable tag: 6.5.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -308,6 +308,12 @@ Current list of supported CDN servers:
 5. Ability to manually undo optimization of selected image
 
 == Changelog ==
+
+= 6.5.5 (2026-04-02) =
+* `[Fixed]` Fatal error when source image is not a valid image file
+
+= 6.5.4 (2026-02-26) =
+* `[Fixed]` Displaying notification about Cloudflare cache
 
 = 6.5.3 (2026-01-24) =
 * `[Changed]` The Pass Thru loading mode is now restricted to standard WordPress directory structures only

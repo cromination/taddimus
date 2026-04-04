@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Notice;
 
+use WebpConverter\Service\CloudflareConfigurator;
 use WebpConverter\Service\OptionsAccessManager;
 use WebpConverter\Settings\Page\PageIntegrator;
 
@@ -32,6 +33,10 @@ class CloudflareNotice extends NoticeAbstract implements NoticeInterface {
 		if ( ( strpos( $cdn_server, 'cloudflare' ) === false ) && ! is_plugin_active( 'cloudflare/cloudflare.php' ) ) {
 			return false;
 		} elseif ( strpos( $_SERVER['SERVER_NAME'] ?? '', 'tastewp.com' ) !== false ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+			return false;
+		}
+
+		if ( OptionsAccessManager::get_option( CloudflareConfigurator::REQUEST_CACHE_PURGE_OPTION, '-' ) === 'yes' ) {
 			return false;
 		}
 

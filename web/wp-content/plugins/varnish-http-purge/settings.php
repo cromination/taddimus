@@ -25,6 +25,7 @@ class VarnishStatus {
 		add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 		add_filter( 'admin_footer_text', array( &$this, 'admin_footer' ), 1, 2 );
 		add_action( 'wp_ajax_vhp_cache_test', array( &$this, 'ajax_cache_test' ) );
+		add_action( 'wp_ajax_vhp_health_score', array( &$this, 'ajax_health_score' ) );
 
 		// Bypass purging for cache test posts.
 		add_filter( 'varnish_http_purge_valid_post_statuses', array( &$this, 'skip_purge_for_test_posts' ), 10, 2 );
@@ -66,6 +67,28 @@ class VarnishStatus {
 		add_menu_page( __( 'Proxy Cache Purge', 'varnish-http-purge' ), __( 'Proxy Cache', 'varnish-http-purge' ), 'manage_options', 'varnish-page', array( &$this, 'settings_page' ), VarnishPurger::get_icon_svg( true, '#82878c' ), 75 );
 		add_submenu_page( 'varnish-page', __( 'Proxy Cache Purge', 'varnish-http-purge' ), __( 'Settings', 'varnish-http-purge' ), 'manage_options', 'varnish-page', array( &$this, 'settings_page' ) );
 		add_submenu_page( 'varnish-page', __( 'Check Caching', 'varnish-http-purge' ), __( 'Check Caching', 'varnish-http-purge' ), 'manage_options', 'varnish-check-caching', array( &$this, 'check_caching_page' ) );
+
+		// Cacheability Pro upsell submenu item (links externally).
+		if ( ! class_exists( 'Cacheability_Pro' ) && ! class_exists( 'Cacheability' ) ) {
+			add_submenu_page(
+				'varnish-page',
+				__( 'Get Cache Warming', 'varnish-http-purge' ),
+				'<span style="color:#10b981;">' . esc_html__( 'Get Cache Warming', 'varnish-http-purge' ) . '</span>',
+				'manage_options',
+				'vhp-cache-warming',
+				array( &$this, 'redirect_to_cacheability_pro' )
+			);
+		}
+	}
+
+	/**
+	 * Redirect the "Get Cache Warming" submenu page to the external CP URL.
+	 *
+	 * @since 5.7.0
+	 */
+	public function redirect_to_cacheability_pro() {
+		wp_redirect( 'https://www.getpagespeed.com/cacheability-pro?ref=vhp-menu' ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
+		exit;
 	}
 
 	/**
@@ -74,6 +97,11 @@ class VarnishStatus {
 	 * @since 4.0.2
 	 */
 	public function register_settings() {
+		// Cache Backend settings.
+		register_setting( 'vhp-settings-backend', 'vhp_purge_backend', array( &$this, 'settings_backend_sanitize' ) );
+		add_settings_section( 'vhp-settings-backend-section', __( 'Cache Backend', 'varnish-http-purge' ), array( &$this, 'options_settings_backend' ), 'varnish-backend-settings' );
+		add_settings_field( 'varnish_backend', __( 'Cache Backend Type', 'varnish-http-purge' ), array( &$this, 'settings_backend_callback' ), 'varnish-backend-settings', 'vhp-settings-backend-section' );
+
 		// Development Mode Settings.
 		register_setting( 'vhp-settings-devmode', 'vhp_varnish_devmode', array( &$this, 'settings_devmode_sanitize' ) );
 		add_settings_section( 'vhp-settings-devmode-section', __( 'Development Mode Settings', 'varnish-http-purge' ), array( &$this, 'options_settings_devmode' ), 'varnish-devmode-settings' );
@@ -100,6 +128,68 @@ class VarnishStatus {
 		add_settings_section( 'vhp-settings-purgeheader-section', __( 'Purge Headers', 'varnish-http-purge' ), array( &$this, 'options_settings_purgeheaders' ), 'varnish-purgeheader-settings' );
 		add_settings_field( 'varnish_purgeheaders_name', __( 'Set Purge Header Name', 'varnish-http-purge' ), array( &$this, 'settings_purgeheaders_name_callback' ), 'varnish-purgeheader-settings', 'vhp-settings-purgeheader-section' );
 		add_settings_field( 'varnish_purgeheaders_value', __( 'Set Purge Header Value', 'varnish-http-purge' ), array( &$this, 'settings_purgeheaders_value_callback' ), 'varnish-purgeheader-settings', 'vhp-settings-purgeheader-section' );
+	}
+
+	/**
+	 * Options Settings - Cache Backend
+	 *
+	 * @since 5.9.0
+	 */
+	public function options_settings_backend() {
+		?>
+		<p><a name="#configurebackend"></a><?php esc_html_e( 'Select the type of cache server your site uses. This affects how wildcard purge requests are formatted.', 'varnish-http-purge' ); ?></p>
+		<p><?php esc_html_e( 'Varnish uses regex-based purging (appending .* to paths), while NGINX expects a literal * at the end of the path.', 'varnish-http-purge' ); ?></p>
+		<p><?php echo wp_kses_post( __( 'You can also set this via <code>define( \'VHP_PURGE_BACKEND\', \'nginx\' );</code> in your wp-config file.', 'varnish-http-purge' ) ); ?></p>
+		<?php
+	}
+
+	/**
+	 * Settings Backend Callback
+	 *
+	 * @since 5.9.0
+	 */
+	public function settings_backend_callback() {
+
+		$disabled = false;
+		if ( defined( 'VHP_PURGE_BACKEND' ) && false !== VHP_PURGE_BACKEND ) {
+			$disabled = true;
+			$backend  = VHP_PURGE_BACKEND;
+		} else {
+			$backend = get_site_option( 'vhp_purge_backend', 'varnish' );
+		}
+
+		?>
+		<select id="vhp_purge_backend" name="vhp_purge_backend" <?php disabled( $disabled, true ); ?>>
+			<option value="varnish" <?php selected( $backend, 'varnish' ); ?>><?php esc_html_e( 'Varnish', 'varnish-http-purge' ); ?></option>
+			<option value="nginx" <?php selected( $backend, 'nginx' ); ?>><?php esc_html_e( 'NGINX', 'varnish-http-purge' ); ?></option>
+		</select>
+		<label for="vhp_purge_backend">&nbsp;
+		<?php
+
+		if ( $disabled ) {
+			esc_html_e( 'A cache backend has been defined in your wp-config file, so it is not editable in settings.', 'varnish-http-purge' );
+		}
+
+		echo '</label>';
+	}
+
+	/**
+	 * Sanitization and validation for Backend
+	 *
+	 * @param mixed $input - the input to be sanitized.
+	 * @since 5.9.0
+	 */
+	public function settings_backend_sanitize( $input ) {
+
+		$valid  = array( 'varnish', 'nginx' );
+		$output = 'varnish';
+
+		if ( in_array( $input, $valid, true ) ) {
+			$output = $input;
+		}
+
+		add_settings_error( 'vhp_purge_backend', 'varnish-backend', __( 'Cache backend setting updated.', 'varnish-http-purge' ), 'updated' );
+		return $output;
 	}
 
 	/**
@@ -424,7 +514,7 @@ sub vcl_recv {
 		} else {
 			echo '<br />';
 			esc_html_e( 'Examples: ', 'varnish-http-purge' );
-			echo '<br /><code>123.45.67.89</code><br /><code>localhost</code><br /><code>12.34.56.78, 23.45.67.89</code>';
+			echo '<br /><code>123.45.67.89</code><br /><code>localhost</code><br /><code>127.0.0.1:6081</code><br /><code>12.34.56.78, 23.45.67.89</code>';
 		}
 
 		echo '</label>';
@@ -771,6 +861,8 @@ sub vcl_recv {
 
 			<p><?php esc_html_e( 'Proxy Cache Purge can empty the cache for different server based caching systems, including Varnish and nginx. For most users, there should be no configuration necessary as the plugin is intended to work silently, behind the scenes.', 'varnish-http-purge' ); ?></p>
 
+			<?php $this->render_health_score_widget(); ?>
+
 			<?php
 			if ( ! is_multisite() ) {
 				// Background purge queue status (shown only when cron-mode is active).
@@ -859,6 +951,14 @@ sub vcl_recv {
 				?>
 				<form action="options.php" method="POST" >
 				<?php
+					settings_fields( 'vhp-settings-backend' );
+					do_settings_sections( 'varnish-backend-settings' );
+					submit_button( __( 'Save Backend Settings', 'varnish-http-purge' ), 'primary' );
+				?>
+				</form>
+
+				<form action="options.php" method="POST" >
+				<?php
 					settings_fields( 'vhp-settings-devmode' );
 					do_settings_sections( 'varnish-devmode-settings' );
 					submit_button( __( 'Save Devmode Settings', 'varnish-http-purge' ), 'primary' );
@@ -909,6 +1009,7 @@ sub vcl_recv {
 				<p><?php esc_html_e( 'The cache check page remains available to assist you in determining if pages on your site are properly cached by your server.', 'varnish-http-purge' ); ?></p>
 				<?php
 			}
+
 			?>
 		</div>
 		<style>
@@ -972,6 +1073,342 @@ sub vcl_recv {
 		} )();
 		</script>
 		<?php
+	}
+
+	/**
+	 * Render the Cache Health Score widget on the settings page.
+	 *
+	 * Displays a card with a "Check Score" button that triggers an AJAX call
+	 * to test cache HIT ratio across several site URLs.
+	 *
+	 * @since 5.8.0
+	 */
+	public function render_health_score_widget() {
+		$nonce = wp_create_nonce( 'vhp_health_score' );
+		?>
+		<div id="vhp-health-score-widget" style="background:#fff;border:1px solid #c3c4c7;border-left:4px solid #2271b1;padding:16px 20px;margin:20px 0;max-width:680px;">
+			<h2 style="margin:0 0 8px;font-size:16px;font-weight:600;">
+				<?php esc_html_e( 'Cache Health Score', 'varnish-http-purge' ); ?>
+			</h2>
+			<p style="margin:0 0 12px;color:#50575e;">
+				<?php esc_html_e( 'Check how well your proxy cache is performing by testing several pages on your site.', 'varnish-http-purge' ); ?>
+			</p>
+
+			<div id="vhp-health-score-result" style="display:none;margin-bottom:12px;">
+				<div style="display:flex;align-items:center;gap:20px;">
+					<div id="vhp-score-circle" style="position:relative;width:80px;height:80px;flex-shrink:0;">
+						<svg width="80" height="80" viewBox="0 0 80 80">
+							<circle cx="40" cy="40" r="35" fill="none" stroke="#e0e0e0" stroke-width="6"></circle>
+							<circle id="vhp-score-ring" cx="40" cy="40" r="35" fill="none" stroke="#2271b1" stroke-width="6" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220" transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.6s ease,stroke 0.3s;"></circle>
+						</svg>
+						<span id="vhp-score-number" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700;color:#1d2327;">--</span>
+					</div>
+					<div>
+						<p id="vhp-score-message" style="margin:0 0 6px;font-size:14px;color:#1d2327;"></p>
+						<p id="vhp-score-details" style="margin:0;font-size:12px;color:#787c82;"></p>
+					</div>
+				</div>
+			</div>
+
+			<button type="button" id="vhp-check-score-btn" class="button button-secondary">
+				<?php esc_html_e( 'Check Score', 'varnish-http-purge' ); ?>
+			</button>
+			<span id="vhp-score-spinner" class="spinner" style="float:none;margin:0 0 0 8px;"></span>
+		</div>
+		<script>
+		( function() {
+			document.addEventListener( 'DOMContentLoaded', function() {
+				var btn     = document.getElementById( 'vhp-check-score-btn' );
+				var spinner = document.getElementById( 'vhp-score-spinner' );
+				var result  = document.getElementById( 'vhp-health-score-result' );
+				var ring    = document.getElementById( 'vhp-score-ring' );
+				var numEl   = document.getElementById( 'vhp-score-number' );
+				var msgEl   = document.getElementById( 'vhp-score-message' );
+				var detEl   = document.getElementById( 'vhp-score-details' );
+				var widget  = document.getElementById( 'vhp-health-score-widget' );
+				if ( ! btn ) {
+					return;
+				}
+
+				btn.addEventListener( 'click', function() {
+					btn.disabled = true;
+					spinner.classList.add( 'is-active' );
+					result.style.display = 'none';
+
+					var data = new FormData();
+					data.append( 'action', 'vhp_health_score' );
+					data.append( 'nonce', '<?php echo esc_js( $nonce ); ?>' );
+
+					fetch( ajaxurl, { method: 'POST', body: data, credentials: 'same-origin' } )
+						.then( function( r ) { return r.json(); } )
+						.then( function( resp ) {
+							spinner.classList.remove( 'is-active' );
+							btn.disabled = false;
+							result.style.display = 'block';
+
+							if ( ! resp.success ) {
+								numEl.textContent = '--';
+								msgEl.textContent = resp.data && resp.data.message ? resp.data.message : '<?php echo esc_js( __( 'Unable to check cache score.', 'varnish-http-purge' ) ); ?>';
+								detEl.textContent = '';
+								ring.style.strokeDashoffset = 220;
+								widget.style.borderLeftColor = '#dba617';
+								return;
+							}
+
+							var score = parseInt( resp.data.score, 10 );
+							var circumference = 220;
+							var offset = circumference - ( circumference * score / 100 );
+							ring.style.strokeDashoffset = offset;
+							numEl.textContent = score;
+
+							var color;
+							if ( score >= 80 ) {
+								color = '#00a32a';
+							} else if ( score >= 50 ) {
+								color = '#dba617';
+							} else {
+								color = '#d63638';
+							}
+							ring.style.stroke = color;
+							numEl.style.color = color;
+							widget.style.borderLeftColor = color;
+
+							msgEl.innerHTML = resp.data.message;
+							detEl.textContent = resp.data.details ? resp.data.details : '';
+						} )
+						.catch( function() {
+							spinner.classList.remove( 'is-active' );
+							btn.disabled = false;
+							result.style.display = 'block';
+							numEl.textContent = '--';
+							msgEl.textContent = '<?php echo esc_js( __( 'An error occurred while checking the cache score.', 'varnish-http-purge' ) ); ?>';
+							detEl.textContent = '';
+						} );
+				} );
+			} );
+		} )();
+		</script>
+		<?php
+	}
+
+	/**
+	 * AJAX handler for cache health score check.
+	 *
+	 * Tests several site URLs by requesting each twice (prime + check)
+	 * and calculating the cache HIT ratio as a score from 0-100.
+	 *
+	 * @since 5.8.0
+	 */
+	public function ajax_health_score() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'varnish-http-purge' ) ) );
+		}
+
+		check_ajax_referer( 'vhp_health_score', 'nonce' );
+
+		// Gather URLs to test: home + up to 4 recent posts.
+		$urls   = array();
+		$urls[] = home_url( '/' );
+
+		$recent_posts = get_posts(
+			array(
+				'numberposts'            => 4,
+				'post_type'              => 'post',
+				'post_status'            => 'publish',
+				'no_found_rows'          => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+			)
+		);
+
+		foreach ( $recent_posts as $post ) {
+			$urls[] = get_permalink( $post );
+		}
+
+		// If no posts, try a page.
+		if ( count( $urls ) < 2 ) {
+			$pages = get_posts(
+				array(
+					'numberposts'            => 2,
+					'post_type'              => 'page',
+					'post_status'            => 'publish',
+					'no_found_rows'          => true,
+					'update_post_meta_cache' => false,
+					'update_post_term_cache' => false,
+				)
+			);
+			foreach ( $pages as $page ) {
+				$urls[] = get_permalink( $page );
+			}
+		}
+
+		$hits  = 0;
+		$total = 0;
+
+		// Resolve the request target: use configured Varnish IP if available,
+		// otherwise connect directly to the home URL host.
+		$home_parsed = wp_parse_url( home_url( '/' ) );
+		$home_host   = isset( $home_parsed['host'] ) ? $home_parsed['host'] : 'localhost';
+		$home_port   = isset( $home_parsed['port'] ) ? $home_parsed['port'] : '';
+
+		$varniship = ( VHP_VARNISH_IP !== false ) ? VHP_VARNISH_IP : get_site_option( 'vhp_varnish_ip' );
+		if ( ! empty( $varniship ) && ! is_array( $varniship ) && strpos( $varniship, ',' ) !== false ) {
+			$varniship = trim( explode( ',', $varniship )[0] );
+		} elseif ( is_array( $varniship ) ) {
+			$varniship = $varniship[0];
+		}
+
+		// Host header must match what the cache expects.
+		$host_header = $home_host;
+		if ( ! empty( $home_port ) ) {
+			$host_header .= ':' . $home_port;
+		}
+
+		$base_args = array(
+			'timeout'    => 10,
+			'sslverify'  => false,
+			'user-agent' => 'VHP-Health-Check/' . VarnishPurger::$version,
+			'headers'    => array(
+				'Host' => $host_header,
+			),
+		);
+
+		foreach ( $urls as $url ) {
+			if ( empty( $url ) ) {
+				continue;
+			}
+
+			// Rewrite URL to use Varnish IP if configured, keeping the path.
+			// Always use http:// when connecting directly to the Varnish daemon,
+			// even if the site's public URL is HTTPS.
+			if ( ! empty( $varniship ) ) {
+				$parsed = wp_parse_url( $url );
+				$path   = isset( $parsed['path'] ) ? $parsed['path'] : '/';
+				$query  = isset( $parsed['query'] ) ? '?' . $parsed['query'] : '';
+				$url    = 'http://' . $varniship . $path . $query;
+			}
+
+			// First request: prime the cache.
+			$prime_args                             = $base_args;
+			$prime_args['headers']['Cache-Control'] = 'no-cache';
+			$prime                                  = wp_remote_get( $url, $prime_args );
+			if ( is_wp_error( $prime ) ) {
+				continue;
+			}
+
+			// Second request: check for cache HIT.
+			$check = wp_remote_get( $url, $base_args );
+			if ( is_wp_error( $check ) ) {
+				continue;
+			}
+
+			++$total;
+
+			$headers = wp_remote_retrieve_headers( $check );
+			if ( $this->is_cache_hit( $headers ) ) {
+				++$hits;
+			}
+		}
+
+		if ( 0 === $total ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Could not reach any site URLs. Your server may block loopback requests.', 'varnish-http-purge' ),
+				)
+			);
+		}
+
+		$score = (int) round( ( $hits / $total ) * 100 );
+
+		// Build contextual message.
+		$pro_url = 'https://www.getpagespeed.com/cacheability-pro?ref=vhp-score';
+
+		if ( $score >= 95 ) {
+			$message = esc_html__( 'Excellent cache performance!', 'varnish-http-purge' );
+		} elseif ( $score >= 80 ) {
+			$message = sprintf(
+				/* translators: %s is the Cacheability Pro link. */
+				__( 'Good! But purges still cause cold-cache hits. <a href="%s" target="_blank" rel="noopener">Get automatic warming &rarr;</a>', 'varnish-http-purge' ),
+				esc_url( $pro_url )
+			);
+		} else {
+			$message = sprintf(
+				/* translators: %s is the Cacheability Pro link. */
+				__( 'Your visitors may be hitting slow, uncached pages. <a href="%s" target="_blank" rel="noopener">Improve with Cacheability Pro &rarr;</a>', 'varnish-http-purge' ),
+				esc_url( $pro_url )
+			);
+		}
+
+		$details = sprintf(
+			/* translators: 1: number of cache hits, 2: total number of URLs tested. */
+			__( '%1$d of %2$d tested URLs returned a cache HIT.', 'varnish-http-purge' ),
+			$hits,
+			$total
+		);
+
+		wp_send_json_success(
+			array(
+				'score'   => $score,
+				'message' => $message,
+				'details' => $details,
+			)
+		);
+	}
+
+	/**
+	 * Determine whether response headers indicate a cache HIT.
+	 *
+	 * Checks common cache headers: X-Cache, X-Varnish (two IDs = HIT),
+	 * Age > 0, and X-Cache-Status.
+	 *
+	 * @since 5.8.0
+	 *
+	 * @param array|object $headers Response headers (array or WordPress header object).
+	 * @return bool True if cache HIT detected.
+	 */
+	public function is_cache_hit( $headers ) {
+		// Method to safely get a header value.
+		$get_header = function ( $name ) use ( $headers ) {
+			// WordPress header objects support ArrayAccess.
+			if ( is_object( $headers ) && $headers instanceof \ArrayAccess ) {
+				$val = $headers[ $name ];
+				return is_string( $val ) ? strtolower( trim( $val ) ) : '';
+			}
+			if ( is_array( $headers ) ) {
+				foreach ( $headers as $key => $val ) {
+					if ( strtolower( $key ) === strtolower( $name ) ) {
+						return is_string( $val ) ? strtolower( trim( $val ) ) : '';
+					}
+				}
+			}
+			return '';
+		};
+
+		// X-Cache: HIT.
+		$x_cache = $get_header( 'X-Cache' );
+		if ( false !== strpos( $x_cache, 'hit' ) ) {
+			return true;
+		}
+
+		// X-Cache-Status: HIT (nginx proxy_cache).
+		$x_cache_status = $get_header( 'X-Cache-Status' );
+		if ( false !== strpos( $x_cache_status, 'hit' ) ) {
+			return true;
+		}
+
+		// X-Varnish with two IDs means a HIT (e.g., "X-Varnish: 12345 67890").
+		$x_varnish = $get_header( 'X-Varnish' );
+		if ( ! empty( $x_varnish ) && preg_match( '/\d+\s+\d+/', $x_varnish ) ) {
+			return true;
+		}
+
+		// Age > 0 typically means served from cache.
+		$age = $get_header( 'Age' );
+		if ( '' !== $age && (int) $age > 0 ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -1469,7 +1906,19 @@ sub vcl_recv {
 							title = '<?php echo esc_js( __( 'Test Failed', 'varnish-http-purge' ) ); ?>';
 						}
 
-						summary.innerHTML = '<span class="dashicons ' + icon + '"></span><h3>' + title + '</h3><p>' + finalMessage + '</p>';
+						var cpHint = '';
+						<?php if ( ! class_exists( 'Cacheability_Pro' ) && ! class_exists( 'Cacheability' ) ) : ?>
+						if (finalStatus === 'success') {
+							cpHint = '<p style="margin-top:8px;font-size:13px;color:#50575e;">'
+								+ '<?php echo esc_js( __( 'Purging works! But the first visitor after each purge still gets a slow, uncached page.', 'varnish-http-purge' ) ); ?> '
+								+ '<a href="<?php echo esc_url( 'https://www.getpagespeed.com/cacheability-pro?ref=vhp-e2e' ); ?>" target="_blank" rel="noopener">'
+								+ '<?php echo esc_js( __( 'Cacheability Pro', 'varnish-http-purge' ) ); ?>'
+								+ '</a> <?php echo esc_js( __( 'automatically re-warms the cache.', 'varnish-http-purge' ) ); ?>'
+								+ '</p>';
+						}
+						<?php endif; ?>
+
+						summary.innerHTML = '<span class="dashicons ' + icon + '"></span><h3>' + title + '</h3><p>' + finalMessage + '</p>' + cpHint;
 
 						btn.disabled = false;
 					}

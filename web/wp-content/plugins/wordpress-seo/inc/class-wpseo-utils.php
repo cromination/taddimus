@@ -198,10 +198,10 @@ class WPSEO_Utils {
 			$parts['host'] = preg_replace(
 				'`[^a-z0-9-.:\[\]\\x80-\\xff]`',
 				'',
-				strtolower( $parts['host'] )
+				strtolower( $parts['host'] ),
 			);
 
-			$url .= $parts['host'] . ( isset( $parts['port'] ) ? ':' . intval( $parts['port'] ) : '' );
+			$url .= $parts['host'] . ( isset( $parts['port'] ) ? ':' . (int) $parts['port'] : '' );
 		}
 
 		if ( isset( $parts['path'] ) && strpos( $parts['path'], '/' ) === 0 ) {
@@ -219,7 +219,7 @@ class WPSEO_Utils {
 
 			$parsed_query = array_combine(
 				self::sanitize_encoded_text_field( array_keys( $parsed_query ) ),
-				self::sanitize_encoded_text_field( array_values( $parsed_query ) )
+				self::sanitize_encoded_text_field( array_values( $parsed_query ) ),
 			);
 
 			$url = add_query_arg( $parsed_query, $url );
@@ -235,7 +235,7 @@ class WPSEO_Utils {
 				static function ( $octects ) {
 					return strtolower( $octects[0] );
 				},
-				$url
+				$url,
 			);
 		}
 
@@ -551,14 +551,14 @@ class WPSEO_Utils {
 		if ( isset( $result ) ) {
 			if ( $compare === false ) {
 				if ( $round === true ) {
-					$result = round( floatval( $result ), $decimals );
+					$result = round( (float) $result, $decimals );
 					if ( $decimals === 0 ) {
 						$result = (int) $result;
 					}
 				}
 				else {
 					// phpcs:ignore Universal.Operators.StrictComparisons -- Purposeful loose comparison.
-					$result = ( intval( $result ) == $result ) ? intval( $result ) : floatval( $result );
+					$result = ( intval( $result ) == $result ) ? (int) $result : (float) $result;
 				}
 			}
 
@@ -912,7 +912,7 @@ class WPSEO_Utils {
 	 * @return string|false The prepared JSON string.
 	 */
 	public static function format_json_encode( $data ) {
-		$flags = ( JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+		$flags = JSON_UNESCAPED_UNICODE;
 
 		if ( self::is_development_mode() ) {
 			$flags = ( $flags | JSON_PRETTY_PRINT );

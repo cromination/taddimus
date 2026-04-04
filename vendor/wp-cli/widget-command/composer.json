@@ -40,9 +40,12 @@
             "widget delete",
             "widget list",
             "widget move",
+            "widget patch",
             "widget reset",
             "widget update",
             "sidebar",
+            "sidebar exists",
+            "sidebar get",
             "sidebar list"
         ]
     },

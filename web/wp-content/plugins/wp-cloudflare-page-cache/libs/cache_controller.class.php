@@ -964,7 +964,16 @@ class SWCFPC_Cache_Controller {
 
 		if ( ( Settings_Manager::is_on( Constants::SETTING_AUTO_PURGE ) || Settings_Manager::is_on( Constants::SETTING_AUTO_PURGE_WHOLE ) ) && $this->is_cache_enabled() ) {
 
-			if ( in_array( $old_status, [ 'future', 'draft', 'pending' ] ) && in_array( $new_status, [ 'publish', 'private' ] ) ) {
+			if (
+				(
+					in_array( $old_status, [ 'future', 'draft', 'pending' ] ) &&
+					in_array( $new_status, [ 'publish', 'private' ] ) 
+				) || 
+				( 
+					'publish' === $old_status &&
+					in_array( $new_status, [ 'future', 'draft', 'pending' ], true )
+				)
+			) {
 
 				$current_action = function_exists( 'current_action' ) ? current_action() : '';
 

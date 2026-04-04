@@ -4,7 +4,7 @@ Tags: cloudflare, caching, performance, page caching, pagespeed
 Requires at least: 5.3
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 5.2.3
+Stable tag: 5.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -185,9 +185,14 @@ Check the FAQ tab in plugin settings first. If needed, enable log mode and send 
 
 == Changelog ==
 
-#####   Version 5.2.3 (2026-02-05)
+#####   Version 5.2.4 (2026-03-19)
 
-- Enhanced security
+* Improved error handling in  by logging and safely aborting if the  file cannot be parsed.
+* Enhanced cache URL logic to handle missing  or , logging issues and preventing invalid cache entries.
+* Hardening Security 
+* Fixed usage of  in  for more reliable directory path generation.
+* Adjusted module loading order for  in  to ensure proper initialization.  
+* Updated cache purge logic to handle post status transitions both to and from publish/private, improving cache consistency.
 
 
 

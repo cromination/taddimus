@@ -206,12 +206,65 @@ new sidebar.
 
 
 
+### wp widget patch
+
+Updates a nested value in a widget's options.
+
+~~~
+wp widget patch <action> <widget-id> <key-path>... [<value>] [--format=<format>]
+~~~
+
+**OPTIONS**
+
+	<action>
+		Patch action to perform.
+		---
+		options:
+		  - insert
+		  - update
+		  - delete
+		---
+
+	<widget-id>
+		Unique ID for the widget.
+
+	<key-path>...
+		The name(s) of the keys within the value to locate the value to patch.
+
+	[<value>]
+		The new value. If omitted, the value is read from STDIN.
+
+	[--format=<format>]
+		The serialization format for the value.
+		---
+		default: plaintext
+		options:
+		  - plaintext
+		  - json
+		---
+
+**EXAMPLES**
+
+    # Update a nested value in the options of the archives-1 widget
+    $ wp widget patch update archives-1 title "My Archives"
+    Success: Widget updated.
+
+    # Insert a new nested value into the options of the archives-1 widget
+    $ wp widget patch insert archives-1 new_key "New Value"
+    Success: Widget updated.
+
+    # Delete a nested value from the options of the archives-1 widget
+    $ wp widget patch delete archives-1 title
+    Success: Widget updated.
+
+
+
 ### wp widget reset
 
 Resets sidebar.
 
 ~~~
-wp widget reset [<sidebar-id>...] [--all]
+wp widget reset [<sidebar-id>...] [--all] [--inactive]
 ~~~
 
 Removes all widgets from the sidebar and places them in Inactive Widgets.
@@ -224,22 +277,29 @@ Removes all widgets from the sidebar and places them in Inactive Widgets.
 	[--all]
 		If set, all sidebars will be reset.
 
+	[--inactive]
+		If set, all inactive sidebars will also be reset, in addition to any sidebars specified via <sidebar-id>... or selected with --all.
+
 **EXAMPLES**
 
     # Reset a sidebar
     $ wp widget reset sidebar-1
-    Success: Sidebar 'sidebar-1' reset.
+    Sidebar 'sidebar-1' reset.
 
     # Reset multiple sidebars
     $ wp widget reset sidebar-1 sidebar-2
-    Success: Sidebar 'sidebar-1' reset.
-    Success: Sidebar 'sidebar-2' reset.
+    Sidebar 'sidebar-1' reset.
+    Sidebar 'sidebar-2' reset.
 
     # Reset all sidebars
     $ wp widget reset --all
-    Success: Sidebar 'sidebar-1' reset.
-    Success: Sidebar 'sidebar-2' reset.
-    Success: Sidebar 'sidebar-3' reset.
+    Sidebar 'sidebar-1' reset.
+    Sidebar 'sidebar-2' reset.
+    Sidebar 'sidebar-3' reset.
+
+    # Reset all inactive sidebars
+    $ wp widget reset --inactive
+    Sidebar 'old-sidebar-1' reset.
 
 
 
@@ -287,15 +347,74 @@ A [sidebar](https://developer.wordpress.org/themes/functionality/sidebars/) is a
 
 
 
+### wp sidebar exists
+
+Check if a sidebar exists.
+
+~~~
+wp sidebar exists <id>
+~~~
+
+**OPTIONS**
+
+	<id>
+		The sidebar ID.
+
+**EXAMPLES**
+
+    $ wp sidebar exists sidebar-1
+    $ wp sidebar exists wp_inactive_widgets && echo "exists"
+
+
+
+### wp sidebar get
+
+Get details about a specific sidebar.
+
+~~~
+wp sidebar get <id> [--fields=<fields>] [--format=<format>]
+~~~
+
+**OPTIONS**
+
+	<id>
+		The sidebar ID.
+
+	[--fields=<fields>]
+		Limit the output to specific object fields.
+
+	[--format=<format>]
+		Render output in a particular format.
+		---
+		default: table
+		options:
+		  - table
+		  - csv
+		  - json
+		  - ids
+		  - count
+		  - yaml
+		---
+
+**EXAMPLES**
+
+    $ wp sidebar get sidebar-1
+    $ wp sidebar get wp_inactive_widgets --format=json
+
+
+
 ### wp sidebar list
 
 Lists registered sidebars.
 
 ~~~
-wp sidebar list [--fields=<fields>] [--format=<format>]
+wp sidebar list [--inactive] [--fields=<fields>] [--format=<format>]
 ~~~
 
 **OPTIONS**
+
+	[--inactive]
+		If set, only inactive sidebars will be listed.
 
 	[--fields=<fields>]
 		Limit the output to specific object fields.
@@ -335,6 +454,10 @@ These fields are optionally available:
     name,id
     "Widget Area",sidebar-1
     "Inactive Widgets",wp_inactive_widgets
+
+    $ wp sidebar list --inactive --fields=id --format=csv
+    id
+    old-sidebar-1
 
 ## Installing
 

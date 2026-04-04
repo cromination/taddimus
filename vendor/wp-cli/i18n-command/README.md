@@ -26,6 +26,81 @@ wp i18n
 
 
 
+### wp i18n audit
+
+Audit strings in a project.
+
+~~~
+wp i18n audit <source> [--slug=<slug>] [--domain=<domain>] [--ignore-domain] [--include=<paths>] [--exclude=<paths>] [--skip-js] [--skip-php] [--skip-blade] [--skip-block-json] [--skip-theme-json] [--format=<format>]
+~~~
+
+Scans PHP, Blade-PHP and JavaScript files for translatable strings to find possible mistakes.
+
+**OPTIONS**
+
+	<source>
+		Directory to scan for string extraction.
+
+	[--slug=<slug>]
+		Plugin or theme slug. Defaults to the source directory's basename.
+
+	[--domain=<domain>]
+		Text domain to look for in the source code, unless the `--ignore-domain` option is used.
+		By default, the "Text Domain" header of the plugin or theme is used.
+		If none is provided, it falls back to the project slug.
+
+	[--ignore-domain]
+		Ignore the text domain completely and extract strings with any text domain.
+
+	[--include=<paths>]
+		Comma-separated list of files and paths that should be used for string extraction.
+		If provided, only these files and folders will be taken into account.
+
+	[--exclude=<paths>]
+		Comma-separated list of files and paths that should be ignored for string extraction.
+		For example, `--exclude=.github,myfile.php` would ignore any strings found within `myfile.php` or the `.github`
+		folder. Simple glob patterns can be used, i.e. `--exclude=foo-*.php` excludes any PHP file with the `foo-`
+		prefix. Leading and trailing slashes are ignored, i.e. `/my/directory/` is the same as `my/directory`. The
+		following files and folders are always excluded: node_modules, .git, .svn, .CVS, .hg, vendor, *.min.js, test, tests.
+
+	[--skip-js]
+		Skips JavaScript string extraction.
+
+	[--skip-php]
+		Skips PHP string extraction.
+
+	[--skip-blade]
+		Skips Blade-PHP string extraction.
+
+	[--skip-block-json]
+		Skips string extraction from block.json files.
+
+	[--skip-theme-json]
+		Skips string extraction from theme.json files.
+
+	[--format=<format>]
+		Output format for the audit results.
+		---
+		default: plaintext
+		options:
+		  - plaintext
+		  - json
+		  - github-actions
+		---
+
+**EXAMPLES**
+
+    # Audit a plugin for possible translation issues.
+    $ wp i18n audit wp-content/plugins/hello-world
+
+    # Audit a plugin and output results as JSON.
+    $ wp i18n audit wp-content/plugins/hello-world --format=json
+
+    # Audit a plugin with GitHub Actions annotations format.
+    $ wp i18n audit wp-content/plugins/hello-world --format=github-actions
+
+
+
 ### wp i18n make-pot
 
 Create a POT file for a WordPress project.
@@ -150,7 +225,7 @@ if the source directory is detected as either a plugin or theme.
 Extract JavaScript strings from PO files and add them to individual JSON files.
 
 ~~~
-wp i18n make-json <source> [<destination>] [--domain=<domain>] [--extensions=<extensions>] [--purge] [--update-mo-files] [--pretty-print] [--use-map=<paths_or_maps>]
+wp i18n make-json <source> [<destination>] [--domain=<domain>] [--extensions=<extensions>] [--pretty-print] [--use-map=<paths_or_maps>]
 ~~~
 
 For JavaScript internationalization purposes, WordPress requires translations to be split up into
@@ -173,13 +248,6 @@ about WordPress JavaScript internationalization.
 	[--extensions=<extensions>]
 		Additional custom JS extensions, comma separated list. By default searches for .min.js and .js extensions.
 
-	[--purge]
-		Whether to purge the strings that were extracted from the original source file. Defaults to true, use `--no-purge` to skip the removal.
-
-	[--update-mo-files]
-		Whether MO files should be updated as well after updating PO files.
-		Only has an effect when used in combination with `--purge`.
-
 	[--pretty-print]
 		Pretty-print resulting JSON files.
 
@@ -192,8 +260,8 @@ about WordPress JavaScript internationalization.
     # Create JSON files for all PO files in the languages directory
     $ wp i18n make-json languages
 
-    # Create JSON files for my-plugin-de_DE.po and leave the PO file untouched.
-    $ wp i18n make-json my-plugin-de_DE.po /tmp --no-purge
+    # Create JSON files for my-plugin-de_DE.po
+    $ wp i18n make-json my-plugin-de_DE.po /tmp
 
     # Create JSON files with mapping
     $ wp i18n make-json languages --use-map=build/map.json
@@ -240,7 +308,7 @@ wp i18n make-mo <source> [<destination>]
 Create PHP files from PO files.
 
 ~~~
-wp i18n make-php <source> [<destination>]
+wp i18n make-php <source> [<destination>] [--pretty-print]
 ~~~
 
 **OPTIONS**
@@ -250,6 +318,9 @@ wp i18n make-php <source> [<destination>]
 
 	[<destination>]
 		Path to the destination directory for the resulting PHP files. Defaults to the source directory.
+
+	[--pretty-print]
+		Pretty-print resulting PHP files.
 
 **EXAMPLES**
 
@@ -261,6 +332,10 @@ wp i18n make-php <source> [<destination>]
     $ wp i18n make-php example-plugin-de_DE.po languages
     Success: Created 1 file.
 
+    # Create a pretty-printed PHP file.
+    $ wp i18n make-php example-plugin-de_DE.po languages --pretty-print
+    Success: Created 1 file.
+
 
 
 ### wp i18n update-po
@@ -268,7 +343,7 @@ wp i18n make-php <source> [<destination>]
 Update PO files from a POT file.
 
 ~~~
-wp i18n update-po <source> [<destination>]
+wp i18n update-po <source> [<destination>] [--purge]
 ~~~
 
 This behaves similarly to the [msgmerge](https://www.gnu.org/software/gettext/manual/html_node/msgmerge-Invocation.html) command.
@@ -281,6 +356,11 @@ This behaves similarly to the [msgmerge](https://www.gnu.org/software/gettext/ma
 	[<destination>]
 		PO file to update or a directory containing multiple PO files.
 		  Defaults to all PO files in the source directory.
+
+	[--purge]
+		Remove obsolete strings and replace translator comments. Defaults to true.
+		  By default, strings not found in the POT file are removed, and translator comments are replaced with those from the POT file.
+		  Use `--no-purge` to preserve obsolete translations (marked with #~) and existing translator comments like copyright notices.
 
 **EXAMPLES**
 
@@ -295,6 +375,14 @@ This behaves similarly to the [msgmerge](https://www.gnu.org/software/gettext/ma
     # Update all PO files in a given directory from a POT file.
     $ wp i18n update-po example-plugin.pot languages
     Success: Updated 2 files.
+
+    # Update PO files while keeping obsolete strings and translator comments.
+    $ wp i18n update-po example-plugin.pot --no-purge
+    Success: Updated 3 files.
+
+    # Shows message when some files don't need updating.
+    $ wp i18n update-po example-plugin.pot languages
+    Success: Updated 2 files. 1 file unchanged.
 
 ## Installing
 

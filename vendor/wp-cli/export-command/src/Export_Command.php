@@ -21,6 +21,11 @@ define( 'WP_CLI_EXPORT_COMMAND_NO_SPLIT', '-1' );
 class Export_Command extends WP_CLI_Command {
 
 	/**
+	 * Maximum length of the site name component in the export filename.
+	 */
+	const MAX_FILENAME_SITENAME_LENGTH = 50;
+
+	/**
 	* Initialize the array of arguments that will be eventually be passed to export_wp.
 	*
 	* @var array
@@ -31,6 +36,7 @@ class Export_Command extends WP_CLI_Command {
 	private $max_file_size;
 	private $include_once;
 	private $wxr_path;
+	private $exclude = [];
 
 	/**
 	 * Exports WordPress content to a WXR file.
@@ -50,6 +56,12 @@ class Export_Command extends WP_CLI_Command {
 	 *
 	 * [--skip_comments]
 	 * : Don't include comments in the WXR export file.
+	 *
+	 * [--skip_authors]
+	 * : Don't include authors in the WXR export file.
+	 *
+	 * [--skip_terms]
+	 * : Don't include terms (categories, tags, custom taxonomy terms and nav menu terms) in the WXR export file.
 	 *
 	 * [--max_file_size=<MB>]
 	 * : A single export file should have this many megabytes. -1 for unlimited.
@@ -145,6 +157,8 @@ class Export_Command extends WP_CLI_Command {
 			'with_attachments'   => true, // or FALSE if user requested some post__in
 			'start_id'           => null,
 			'skip_comments'      => null,
+			'skip_authors'       => null,
+			'skip_terms'         => null,
 			'max_file_size'      => 15,
 			'filename_format'    => '{site}.wordpress.{date}.{n}.xml',
 			'include_once'       => null,
@@ -169,6 +183,27 @@ class Export_Command extends WP_CLI_Command {
 			$defaults['with_attachments']
 		);
 
+		$this->export_args['skip_authors'] = Utils\get_flag_value(
+			$assoc_args,
+			'skip_authors',
+			$defaults['skip_authors']
+		);
+
+		$this->export_args['skip_terms'] = Utils\get_flag_value(
+			$assoc_args,
+			'skip_terms',
+			$defaults['skip_terms']
+		);
+
+		// Re-calculate exclusions after validation to ensure consistency.
+		$this->exclude = [];
+		if ( $this->export_args['skip_authors'] ) {
+			$this->exclude[] = 'authors';
+		}
+		if ( $this->export_args['skip_terms'] ) {
+			$this->exclude = array_merge( $this->exclude, array( 'categories', 'tags', 'nav_menu_terms', 'custom_taxonomies_terms' ) );
+		}
+
 		if ( ! function_exists( 'wp_export' ) ) {
 			self::load_export_api();
 		}
@@ -181,7 +216,7 @@ class Export_Command extends WP_CLI_Command {
 			'wp_export_new_file',
 			static function ( $file_path ) {
 				WP_CLI::log( sprintf( 'Writing to file %s', $file_path ) );
-				Utils\wp_clear_object_cache();
+				Utils\wp_clear_object_cache(); // phpcs:ignore PHPCompatibility.FunctionUse.RemovedFunctions.wp_clear_object_cacheDeprecatedRemoved @phpstan-ignore-line
 			}
 		);
 
@@ -190,7 +225,7 @@ class Export_Command extends WP_CLI_Command {
 				wp_export(
 					[
 						'filters'     => $this->export_args,
-						'writer'      => 'WP_Export_File_Writer',
+						'writer'      => WP_Export_File_Writer::class,
 						'writer_args' => 'php://output',
 					]
 				);
@@ -198,12 +233,13 @@ class Export_Command extends WP_CLI_Command {
 				wp_export(
 					[
 						'filters'     => $this->export_args,
-						'writer'      => 'WP_Export_Split_Files_Writer',
+						'writer'      => WP_Export_Split_Files_Writer::class,
 						'writer_args' => [
 							'max_file_size'         => $this->max_file_size,
 							'destination_directory' => $this->wxr_path,
 							'filename_template'     => self::get_filename_template( $assoc_args['filename_format'] ),
 							'include_once'          => $this->include_once,
+							'exclude'               => $this->exclude,
 						],
 					]
 				);
@@ -222,6 +258,7 @@ class Export_Command extends WP_CLI_Command {
 		if ( empty( $sitename ) ) {
 			$sitename = 'site';
 		}
+		$sitename = function_exists( 'mb_substr' ) ? mb_substr( $sitename, 0, self::MAX_FILENAME_SITENAME_LENGTH ) : substr( $sitename, 0, self::MAX_FILENAME_SITENAME_LENGTH );
 		return str_replace( [ '{site}', '{date}', '{n}' ], [ $sitename, date( 'Y-m-d' ), '%03d' ], $filename_format ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 
@@ -234,6 +271,7 @@ class Export_Command extends WP_CLI_Command {
 
 		foreach ( $args as $key => $value ) {
 			if ( is_callable( [ $this, 'check_' . $key ] ) ) {
+				/** @phpstan-ignore argument.type */
 				$result = call_user_func( [ $this, 'check_' . $key ], $value );
 				if ( false === $result ) {
 					$has_errors = true;
@@ -251,9 +289,14 @@ class Export_Command extends WP_CLI_Command {
 		}
 	}
 
+	/**
+	 * @param string $path
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_dir( $path ) {
 		if ( empty( $path ) ) {
-			$path = getcwd();
+			$path = (string) getcwd();
 		} elseif ( ! is_dir( $path ) ) {
 			WP_CLI::error( sprintf( "The directory '%s' does not exist.", $path ) );
 		} elseif ( ! is_writable( $path ) ) {
@@ -265,34 +308,49 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $date
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_start_date( $date ) {
 		if ( null === $date ) {
 			return true;
 		}
 
 		$time = strtotime( $date );
-		if ( ! empty( $date ) && ! $time ) {
+		if ( ! empty( $date ) && false === $time ) {
 			WP_CLI::warning( sprintf( 'The start_date %s is invalid.', $date ) );
 			return false;
 		}
-		$this->export_args['start_date'] = date( 'Y-m-d', $time ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
+		$this->export_args['start_date'] = date( 'Y-m-d', (int) $time ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 		return true;
 	}
 
+	/**
+	 * @param string $date
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_end_date( $date ) {
 		if ( null === $date ) {
 			return true;
 		}
 
 		$time = strtotime( $date );
-		if ( ! empty( $date ) && ! $time ) {
+		if ( ! empty( $date ) && false === $time ) {
 			WP_CLI::warning( sprintf( 'The end_date %s is invalid.', $date ) );
 			return false;
 		}
-		$this->export_args['end_date'] = date( 'Y-m-d', $time ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
+		$this->export_args['end_date'] = date( 'Y-m-d', (int) $time ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 		return true;
 	}
 
+	/**
+	 * @param string $post_type
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_post_type( $post_type ) {
 		if ( null === $post_type || 'any' === $post_type ) {
 			return true;
@@ -317,6 +375,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $post_type
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_post_type__not_in( $post_type ) {
 		if ( null === $post_type ) {
 			return true;
@@ -341,6 +404,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $post__in
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_post__in( $post__in ) {
 		if ( null === $post__in ) {
 			return true;
@@ -357,6 +425,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $start_id
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_start_id( $start_id ) {
 		if ( null === $start_id ) {
 			return true;
@@ -374,14 +447,19 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $author
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_author( $author ) {
 		if ( null === $author ) {
 			return true;
 		}
 
 		// phpcs:ignore WordPress.WP.DeprecatedFunctions.get_users_of_blogFound -- Fallback.
-		$authors = function_exists( 'get_users' ) ? get_users() : get_users_of_blog();
-		if ( empty( $authors ) || is_wp_error( $authors ) ) {
+		$authors = function_exists( 'get_users' ) ? get_users() : get_users_of_blog(); // @phpstan-ignore-line
+		if ( empty( $authors ) ) {
 			WP_CLI::warning( 'Could not find any authors in this blog.' );
 			return false;
 		}
@@ -407,6 +485,9 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_max_num_posts( $num ) {
 		if ( null !== $num && ( ! is_numeric( $num ) || $num <= 0 ) ) {
 			WP_CLI::warning( 'max_num_posts should be a positive integer.' );
@@ -418,6 +499,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $category
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_category( $category ) {
 		if ( null === $category ) {
 			return true;
@@ -428,7 +514,7 @@ class Export_Command extends WP_CLI_Command {
 		}
 
 		$term = category_exists( $category );
-		if ( empty( $term ) || is_wp_error( $term ) ) {
+		if ( empty( $term ) ) {
 			WP_CLI::warning( sprintf( 'Could not find a category matching %s.', $category ) );
 			return false;
 		}
@@ -436,6 +522,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $status
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_post_status( $status ) {
 		if ( null === $status ) {
 			return true;
@@ -456,6 +547,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string|null $skip
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_skip_comments( $skip ) {
 		if ( null === $skip ) {
 			return true;
@@ -469,6 +565,47 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string|null $skip
+	 *
+	 * @phpstan-ignore method.unused
+	 */
+	private function check_skip_authors( $skip ) {
+		if ( null === $skip ) {
+			return true;
+		}
+
+		if ( 0 !== (int) $skip && 1 !== (int) $skip ) {
+			WP_CLI::warning( 'skip_authors needs to be 0 (no) or 1 (yes).' );
+			return false;
+		}
+		$this->export_args['skip_authors'] = $skip;
+		return true;
+	}
+
+	/**
+	 * @param string|null $skip
+	 *
+	 * @phpstan-ignore method.unused
+	 */
+	private function check_skip_terms( $skip ) {
+		if ( null === $skip ) {
+			return true;
+		}
+
+		if ( 0 !== (int) $skip && 1 !== (int) $skip ) {
+			WP_CLI::warning( 'skip_terms needs to be 0 (no) or 1 (yes).' );
+			return false;
+		}
+		$this->export_args['skip_terms'] = $skip;
+		return true;
+	}
+
+	/**
+	 * @param string $size
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_max_file_size( $size ) {
 		if ( ! is_numeric( $size ) ) {
 			WP_CLI::warning( 'max_file_size should be numeric.' );
@@ -480,6 +617,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $once
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_include_once( $once ) {
 		if ( null === $once ) {
 			return true;
@@ -498,6 +640,11 @@ class Export_Command extends WP_CLI_Command {
 		return true;
 	}
 
+	/**
+	 * @param string $allow_orphan_terms
+	 *
+	 * @phpstan-ignore method.unused
+	 */
 	private function check_allow_orphan_terms( $allow_orphan_terms ) {
 		if ( null === $allow_orphan_terms ) {
 			return true;
