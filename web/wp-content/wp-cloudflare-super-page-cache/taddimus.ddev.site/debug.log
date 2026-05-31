@@ -17,3 +17,22 @@
 
 [2026-05-31 02:34:20] [preloader::enqueue_urls] Unable to start the preloader. Another preloading process is currently running.
 [2026-05-31 02:34:20] [purge_queue::process_queue] Cache purging complete
+[2026-05-31 02:36:01] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/blog/ergonomics-and-the-home-office/
+[2026-05-31 02:36:01] [preloader::preloader_jobs] URL https://taddimus.ddev.site/blog/ergonomics-and-the-home-office/ preloaded successfully.
+[2026-05-31 02:36:03] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/blog/auto-backup-solution-during-the-covid-19-pandemic/
+[2026-05-31 02:36:03] [preloader::preloader_jobs] URL https://taddimus.ddev.site/blog/auto-backup-solution-during-the-covid-19-pandemic/ preloaded successfully.
+[2026-05-31 02:36:05] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/blog/goal-met-on-aws-budget/
+[2026-05-31 02:36:05] [preloader::preloader_jobs] URL https://taddimus.ddev.site/blog/goal-met-on-aws-budget/ preloaded successfully.
+[2026-05-31 02:36:07] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/about-me/
+[2026-05-31 02:36:07] [preloader::preloader_jobs] URL https://taddimus.ddev.site/about-me/ preloaded successfully.
+[2026-05-31 02:36:09] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/blog/content-security-policy-in-wordpress/
+[2026-05-31 02:36:09] [preloader::preloader_jobs] URL https://taddimus.ddev.site/blog/content-security-policy-in-wordpress/ preloaded successfully.
+[2026-05-31 02:36:11] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/blog/hardening-wordpress/
+[2026-05-31 02:36:11] [preloader::preloader_jobs] URL https://taddimus.ddev.site/blog/hardening-wordpress/ preloaded successfully.
+[2026-05-31 02:36:13] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/blog/standing-up-wordpress-part-2/
+[2026-05-31 02:36:13] [preloader::preloader_jobs] URL https://taddimus.ddev.site/blog/standing-up-wordpress-part-2/ preloaded successfully.
+[2026-05-31 02:36:15] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/blog/standing-up-wordpress-part-1/
+[2026-05-31 02:36:15] [preloader::preloader_jobs] URL https://taddimus.ddev.site/blog/standing-up-wordpress-part-1/ preloaded successfully.
+[2026-05-31 02:36:18] [preloader::preloader_jobs] Preloading URL https://taddimus.ddev.site/
+[2026-05-31 02:36:18] [preloader::preloader_jobs] URL https://taddimus.ddev.site/ preloaded successfully.
+[2026-05-31 02:36:20] [preloader::preloader_completed] Preloading complete
