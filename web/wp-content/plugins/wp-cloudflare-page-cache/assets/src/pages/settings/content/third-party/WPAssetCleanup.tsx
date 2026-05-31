@@ -7,7 +7,7 @@ const WPAssetCleanup = () => {
     {
       id: 'cf_wpacu_purge_on_cache_flush',
       type: 'toggle',
-      label: __('Automatically purge the cache when WP Asset Clean Up flushs its own cache', 'wp-cloudflare-page-cache'),
+      label: __('Automatically purge the cache when WP Asset Clean Up flushes its own cache', 'wp-cloudflare-page-cache'),
     }
   ];
 

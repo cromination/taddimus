@@ -7,7 +7,8 @@ import { CheckCircle, Crown } from "lucide-react";
 const SidebarUpsellCard = () => {
 
   const features = [
-    __('Defer & Delay Javascript', 'wp-cloudflare-page-cache'),
+    __('Defer & Delay JavaScript', 'wp-cloudflare-page-cache'),
+    __('CSS Optimization', 'wp-cloudflare-page-cache'),
     __('Improve cache hit rates', 'wp-cloudflare-page-cache'),
     __('Priority Support', 'wp-cloudflare-page-cache'),
     __('Support a plugin you love', 'wp-cloudflare-page-cache'),

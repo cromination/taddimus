@@ -18,10 +18,7 @@ class TokenRepository {
 	const TOKEN_VALUE_IMAGES_USAGE = 'images_usage';
 	const TOKEN_VALUE_IMAGES_LIMIT = 'images_limit';
 
-	/**
-	 * @var Token|null
-	 */
-	private $token = null;
+	private ?Token $token = null;
 
 	public function get_token( ?string $token_value = null ): Token {
 		if ( $this->token ) {
@@ -46,10 +43,8 @@ class TokenRepository {
 
 	/**
 	 * @param Token $token .
-	 *
-	 * @return void
 	 */
-	public function save_token( Token $token ) {
+	public function save_token( Token $token ): void {
 		OptionsAccessManager::update_option(
 			self::TOKEN_OPTION,
 			[
@@ -61,10 +56,7 @@ class TokenRepository {
 		);
 	}
 
-	/**
-	 * @return void
-	 */
-	public function remove_token() {
+	public function remove_token(): void {
 		$this->save_token( new Token() );
 		$this->token = null;
 	}

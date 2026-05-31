@@ -9,10 +9,8 @@ class OutputDirectoryGenerator {
 
 	/**
 	 * Creates directory for output images.
-	 *
-	 * @return void
 	 */
-	public function create_directory_for_uploads_webp() {
+	public function create_directory_for_uploads_webp(): void {
 		$path = apply_filters( 'webpc_dir_path', '', 'webp' );
 		if ( ! file_exists( $path ) && is_writable( dirname( $path ) ) ) {
 			mkdir( $path );

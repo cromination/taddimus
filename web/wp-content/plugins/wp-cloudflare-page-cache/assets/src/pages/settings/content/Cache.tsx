@@ -1,3 +1,4 @@
+import ExternalLink from "@/common/ExternalLink";
 import TransitionWrapper from "@/common/TransitionWrapper";
 import Card, { CardContent, CardHeader } from "@/components/Card";
 import Notice from "@/components/Notice";
@@ -20,9 +21,15 @@ const Cache = () => {
       id: 'cf_fallback_cache',
       type: 'toggle',
       label: __('Enable Disk Page cache', 'wp-cloudflare-page-cache'),
-      description: __('Dramatically improves page loading speed by storing cached pages on your server.', 'wp-cloudflare-page-cache'),
+      description: <>
+        {__('Dramatically improves page loading speed by storing cached pages on your server.', 'wp-cloudflare-page-cache')}
+        {' '}
+        <ExternalLink url="https://docs.themeisle.com/super-page-cache/how-to-enable-page-caching-for-the-first-time">
+          {__('More Info', 'wp-cloudflare-page-cache')}
+        </ExternalLink>
+      </>,
       children: cloudflareConnected ? (
-        <Notice type="info" className="mt-4" description={__('If you enable the Disk Page cache is strongly recommended disable all page caching functions of other plugins.', 'wp-cloudflare-page-cache')} />
+        <Notice type="info" className="mt-4" description={__('If you enable the Disk Page cache, it is strongly recommended to disable all page caching functions of other plugins.', 'wp-cloudflare-page-cache')} />
       ) : null
     },
     {
@@ -34,7 +41,7 @@ const Cache = () => {
     {
       id: 'cf_fallback_cache_excluded_urls',
       type: 'textarea',
-      label: __('Prevent the following URIs to be cached', 'wp-cloudflare-page-cache'),
+      label: __('Prevent the following URIs from being cached', 'wp-cloudflare-page-cache'),
       description: (
         <div>
           {__('One URI per line. You can use the * for wildcard URLs.', 'wp-cloudflare-page-cache')}
@@ -58,6 +65,17 @@ const Cache = () => {
       description: __('Significantly increases cache hit rate by ignoring common marketing and tracking parameters in URLs, treating them as the same page for caching purposes.', 'wp-cloudflare-page-cache'),
       utmCampaign: 'ignore-marketing-params',
       locked: !validPro,
+    },
+    {
+      id: 'cf_prefetch_urls_mode',
+      type: 'select',
+      label: __('Auto prefetch URLs', 'wp-cloudflare-page-cache'),
+      description: __('Prefetch internal URLs in the background to make navigation feel instant. Choose whether to prefetch on mouse hover or as links enter the viewport.', 'wp-cloudflare-page-cache'),
+      options: [
+        { value: 'off',      label: __('Off', 'wp-cloudflare-page-cache') },
+        { value: 'hover',    label: __('On hover', 'wp-cloudflare-page-cache') },
+        { value: 'viewport', label: __('When in viewport', 'wp-cloudflare-page-cache') },
+      ],
     },
     {
       id: 'show_advanced',

@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Error\Detector;
 
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\Error\Notice\UnsupportedPlaygroundServerNotice;
 
 /**
@@ -9,10 +10,7 @@ use WebpConverter\Error\Notice\UnsupportedPlaygroundServerNotice;
  */
 class UnsupportedServerDetector implements DetectorInterface {
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		if ( strpos( $_SERVER['SERVER_NAME'] ?? '', 'playground.wordpress.net' ) !== false ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			return new UnsupportedPlaygroundServerNotice();
 		}

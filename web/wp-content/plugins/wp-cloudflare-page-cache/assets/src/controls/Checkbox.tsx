@@ -12,8 +12,9 @@ type CheckboxProps = {
 }
 
 const Checkbox = ({ id, disabled = false, ...props }: CheckboxProps) => {
-  const { updateSetting, settings } = useSettingsStore();
+  const { updateSetting, settings, isSettingOverridden, getManagedDescription } = useSettingsStore();
   const { asyncLocked } = useAppStore();
+  const overridden = isSettingOverridden(id);
 
   const handleChange = (nextValue: boolean) => {
     updateSetting(id, nextValue ? 1 : 0);
@@ -25,11 +26,12 @@ const Checkbox = ({ id, disabled = false, ...props }: CheckboxProps) => {
 
   return (
     <CheckboxControl
+      {...props}
       id={id}
       onChange={handleChange}
       value={settings[id] as number}
-      disabled={asyncLocked || disabled}
-      {...props}
+      disabled={asyncLocked || disabled || overridden}
+      description={getManagedDescription(id, props.description)}
     />
   );
 }

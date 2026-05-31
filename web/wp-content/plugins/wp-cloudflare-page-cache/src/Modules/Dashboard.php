@@ -4,6 +4,7 @@ namespace SPC\Modules;
 
 use SPC\Constants;
 use SPC\Modules\Module_Interface;
+use SPC\Modules\Preloader_Process;
 use SPC\Services\Metrics;
 use SPC\Services\SDK_Integrations;
 use SPC\Services\Settings_Store;
@@ -45,6 +46,7 @@ class Dashboard implements Module_Interface {
 		add_action( 'admin_print_styles', [ $this, 'truncate_menu_items' ], 100 );
 		add_action( 'admin_print_styles', [ $this, 'hide_menu_items' ], 100 );
 		add_action( 'admin_print_styles', [ $this, 'hide_all_notices' ], 100 );
+		add_filter( 'themeisle_sdk_blackfriday_data', [ $this->sdk_service, 'add_black_friday_data' ] );
 	}
 
 	/**
@@ -99,16 +101,11 @@ class Dashboard implements Module_Interface {
 	}
 
 	public function hide_menu_items() {
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
-		$is_cache_enabled = $sw_cloudflare_pagecache->get_cache_controller()->is_cache_enabled();
+		$is_cache_enabled = Settings_Store::get_instance()->is_cache_enabled();
 		$style            = '<style>';
 
 		if ( ! $is_cache_enabled ) {
-			$style .= '#toplevel_page_super-page-cache li:has(a[href*="' . self::PAGE_SLUG . '-settings"])';
+			$style .= '#toplevel_page_super-page-cache li:has(a[href*="' . self::PAGE_SLUG . '-settings"]),';
 			$style .= '#toplevel_page_super-page-cache li:has(a[href*="' . self::PAGE_SLUG . '-import-export"]),';
 			$style .= '#toplevel_page_super-page-cache li:has(a[href*="' . self::PAGE_SLUG . '-license"]) {';
 			$style .= 'display: none; }';
@@ -253,11 +250,6 @@ class Dashboard implements Module_Interface {
 	 * @return array
 	 */
 	private function get_localization() {
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
 		return apply_filters(
 			'spc_dashboard_localization',
 			[
@@ -273,7 +265,7 @@ class Dashboard implements Module_Interface {
 				// Assets & UI
 				'logoURL'                             => Assets_Handler::get_image_url( 'logo.svg' ),
 				'i18n'                                => I18n::get_dashboard_translations(),
-				'displayWizard'                       => ! $sw_cloudflare_pagecache->get_cache_controller()->is_cache_enabled(),
+				'displayWizard'                       => ! Settings_Store::get_instance()->is_cache_enabled(),
 
 				// Settings & Configuration
 				'settings'                            => $this->get_settings(),
@@ -287,13 +279,16 @@ class Dashboard implements Module_Interface {
 				'thirdPartyIntegrations'              => Admin::get_third_party_view_map(),
 				'thirdPartyVisible'                   => Admin::should_load_third_party_tab(),
 				'conflicts'                           => Notices_Handler::is_dismissed( Notices_Handler::CONFLICTS_NOTICE ) ? [] : Admin::get_conflicts( true ),
-				'optimoleData'                        => $this->get_optimole_data(),
+				'robinData'                           => $this->get_robin_data(),
 
 				// Cache & Performance
-				'preloaderLocked'                     => ! $sw_cloudflare_pagecache->get_cache_controller()->can_i_start_preloader(),
+				'preloaderLocked'                     => ! Preloader_Process::can_start(),
 				'metrics'                             => Metrics::all(),
 				'ruleNeedsRepair'                     => get_option( Constants::KEY_RULE_UPDATE_FAILED ),
 				'hasOverdueJobs'                      => $this->has_overdue_jobs(),
+				'invalidEncryptionState'              => Settings_Store::get_instance()->should_show_invalid_encryption_notice(),
+				'cloudflareConnected'                 => Settings_Store::get_instance()->is_cloudflare_connected(),
+				'testCacheUrl'                        => SWCFPC_PLUGIN_URL . 'assets/testcache.html',
 
 				// Cron Jobs
 				'cronjobURL'                          => $this->get_cronjob_url( 'preloader' ),
@@ -316,9 +311,10 @@ class Dashboard implements Module_Interface {
 				'databaseOptimizationScheduleOptions' => Database_Optimization::get_schedule_options(),
 
 				// External Links & Support
-				'upsellURL'                           => esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/super-page-cache-pro', 'replace:campaign', 'spc' ) ) ),
+				'upsellURL'                           => esc_url( tsdk_translate_link( tsdk_utmify( 'https://themeisle.com/plugins/super-page-cache-pro/upgrade/', 'replace:campaign', 'spc' ) ) ),
 				'directSupportURL'                    => tsdk_support_link( SWCFPC_BASEFILE ),
 				'help'                                => $this->get_help_data(),
+				'cloudflareSettingsURL'               => admin_url( 'admin.php?page=' . self::PAGE_SLUG . '-settings#cloudflare' ),
 			]
 		);
 	}
@@ -329,13 +325,13 @@ class Dashboard implements Module_Interface {
 	public function load_sdk_integrations( $hook ) {
 		add_filter( $this->sdk_service->get_product_key() . '_hide_license_notices', '__return_true' );
 		add_filter( 'themeisle-sdk/survey/' . SWCFPC_PRODUCT_SLUG, [ $this->sdk_service, 'get_survey_metadata' ], 10, 2 );
-		add_filter( 'themeisle_sdk_blackfriday_data', [ $this->sdk_service, 'add_black_friday_data' ] );
 		do_action( 'themeisle_internal_page', SWCFPC_PRODUCT_SLUG, $hook );
 	}
 
 	private function get_settings() {
-		$data   = ( new Settings_Manager() )->get_fields();
-		$values = Settings_Store::get_instance()->get_all();
+		$settings_manager = new Settings_Manager();
+		$data             = $settings_manager->get_fields();
+		$settings_store   = Settings_Store::get_instance();
 
 		$result = [];
 		foreach ( $data as $key => $config ) {
@@ -343,51 +339,72 @@ class Dashboard implements Module_Interface {
 				$config['default'] = Settings_Manager::SETTINGS_FALLBACK_DEFAULT_TYPE_VALUE_MAP[ $config['type'] ];
 			}
 
-			$result[ $key ] = array_merge( $config, [ 'value' => isset( $values[ $key ] ) ? $values[ $key ] : $config['default'] ] );
+			$setting   = $settings_store->get_with_source( $key, $config['default'] );
+			$has_value = ! empty( $setting['value'] );
+
+			if ( $settings_manager->is_encrypted_field( $key ) ) {
+				$has_value        = $settings_store->has_stored_encrypted_value( $key );
+				$setting['value'] = '';
+			}
+
+			$result[ $key ] = array_merge(
+				$config,
+				[
+					'value'      => $setting['value'],
+					'hasValue'   => $has_value,
+					'source'     => $setting['source'],
+					'overridden' => Settings_Store::CONFIG_SOURCE_CONST === $setting['source'],
+				]
+			);
 		}
 
 		return $result;
 	}
 
-	private function get_optimole_data() {
-		$data = get_transient( 'swpcf_optimole_data' );
+	/**
+	 * Get the Robin Image Optimizer data.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_robin_data() {
+		$cache_key = 'spc_robin_data';
+		$data      = get_transient( $cache_key );
 
 		if ( empty( $data ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
-			$data = plugins_api( 'plugin_information', [ 'slug' => 'optimole-wp' ] );
+			$data = plugins_api( 'plugin_information', [ 'slug' => 'robin-image-optimizer' ] );
 
 			if ( ! is_wp_error( $data ) ) {
-				set_transient( 'swpcf_optimole_data', $data, 12 * HOUR_IN_SECONDS );
+				set_transient( $cache_key, $data, 12 * HOUR_IN_SECONDS );
 			}
 		}
 
 		if ( ! is_object( $data ) ) {
-			$data->num_ratings     = 612;
 			$data                  = (object) [];
-			$data->rating          = 94;
-			$data->active_installs = 200000;
+			$data->num_ratings     = 124;
+			$data->rating          = 88;
+			$data->active_installs = 100000;
 		}
 
 		$rating          = (int) $data->rating * 5 / 100;
 		$rating          = number_format( $rating, 1 );
 		$active_installs = number_format( $data->active_installs );
 
-		$installed = file_exists( WP_PLUGIN_DIR . '/optimole-wp/optimole-wp.php' );
+		$installed = file_exists( WP_PLUGIN_DIR . '/robin-image-optimizer/robin-image-optimizer.php' );
 
 		return [
-			'installed'      => $installed,
-			'active'         => is_plugin_active( 'optimole-wp/optimole-wp.php' ),
-			'logoURL'        => Assets_Handler::get_image_url( 'optimole-logo.svg' ),
+			'show'           => ( ! defined( 'WRIO_PLUGIN_VERSION' ) && ! defined( 'OPTML_VERSION' ) ),
+			'logo'           => Assets_Handler::get_image_url( 'robin-logo.jpg' ),
 			// translators: %1$s: rating, %2$d: number of reviews.
 			'ratingByline'   => sprintf( __( '%1$s out of 5 stars (%2$d reviews)', 'wp-cloudflare-page-cache' ), $rating, $data->num_ratings ),
 			// translators: %s: number of active installations.
 			'activeInstalls' => sprintf( __( '%s+ Active installations', 'wp-cloudflare-page-cache' ), $active_installs ),
-			'cta'            => $installed ? __( 'Activate Optimole', 'wp-cloudflare-page-cache' ) : __( 'Install Optimole', 'wp-cloudflare-page-cache' ),
+			'cta'            => $installed ? __( 'Activate Robin Image Optimizer', 'wp-cloudflare-page-cache' ) : __( 'Install Robin Image Optimizer', 'wp-cloudflare-page-cache' ),
 			'thickboxURL'    => add_query_arg(
 				[
 					'tab'       => 'plugin-information',
-					'plugin'    => 'optimole-wp',
+					'plugin'    => 'robin-image-optimizer',
 					'TB_iframe' => 'true',
 					'width'     => '600',
 					'height'    => '500',
@@ -409,11 +426,6 @@ class Dashboard implements Module_Interface {
 			return '';
 		}
 
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
 		$args = $type === 'preloader' ? [
 			'swcfpc-preloader' => '1',
 			'swcfpc-sec-key'   => 'replace:cf_preloader_url_secret_key',
@@ -423,7 +435,7 @@ class Dashboard implements Module_Interface {
 		];
 
 		if ( ! Settings_Store::get_instance()->get( Constants::SETTING_REMOVE_CACHE_BUSTER ) ) {
-			$args[ $sw_cloudflare_pagecache->get_cache_controller()->get_cache_buster() ] = '1';
+			$args[ SWCFPC_CACHE_BUSTER ] = '1';
 		}
 
 		return add_query_arg( $args, site_url() );
@@ -528,77 +540,9 @@ class Dashboard implements Module_Interface {
 	 * @return array
 	 */
 	private function get_help_data() {
-		$default_data = [
-			'popular'    => [
-				[
-					'title'     => __( 'How to enable caching for the first time', 'wp-cloudflare-page-cache' ),
-					'content'   => __( 'Step-by-step guide to activate caching on your website', 'wp-cloudflare-page-cache' ),
-					'read_time' => 2,
-					'url'       => 'https://docs.themeisle.com/article/2263-how-to-enable-page-caching-for-the-first-time',
-				],
-				[
-					'title'     => __( 'Why is my cache not working?', 'wp-cloudflare-page-cache' ),
-					'content'   => __( 'Common troubleshooting steps for cache issues', 'wp-cloudflare-page-cache' ),
-					'read_time' => 3,
-					'url'       => 'https://docs.themeisle.com/article/1500-error-when-testing-cache-cache-not-working-for-dynamic-static-pages',
-				],
-				[
-					'title'     => __( 'Setting up Cloudflare with Super Page Cache', 'wp-cloudflare-page-cache' ),
-					'content'   => __( 'Complete integration guide for Cloudflare CDN', 'wp-cloudflare-page-cache' ),
-					'read_time' => 5,
-					'url'       => 'https://docs.themeisle.com/article/2265-setting-up-cloudflare-with-super-cache',
-				],
-				[
-					'title'     => __( 'Optimizing cache for WooCommerce stores', 'wp-cloudflare-page-cache' ),
-					'content'   => __( 'Best practices for e-commerce caching', 'wp-cloudflare-page-cache' ),
-					'read_time' => 4,
-					'url'       => 'https://docs.themeisle.com/article/2266-how-to-optimise-cache-for-woocommerce-stores',
-				],
-			],
-			'categories' => [
-				[
-					'title'         => __( 'Getting Started', 'wp-cloudflare-page-cache' ),
-					'description'   => __( 'Basic setup and configuration guides', 'wp-cloudflare-page-cache' ),
-					'url'           => 'https://docs.themeisle.com/category/2203-installation-setup',
-					'article_count' => 4,
-					'icon'          => 'rocket',
-				],
-				[
-					'title'         => __( 'Troubleshooting', 'wp-cloudflare-page-cache' ),
-					'description'   => __( 'Common issues and solutions', 'wp-cloudflare-page-cache' ),
-					'url'           => 'https://docs.themeisle.com/category/2267-troubleshooting',
-					'article_count' => 3,
-					'icon'          => 'wrench',
-				],
-				[
-					'title'         => __( 'Advanced Settings', 'wp-cloudflare-page-cache' ),
-					'description'   => __( 'Advanced features and configuration', 'wp-cloudflare-page-cache' ),
-					'url'           => 'https://docs.themeisle.com/category/2269-advanced-settings',
-					'article_count' => 5,
-					'icon'          => 'settings',
-				],
-				[
-					'title'         => __( 'Plugin Integrations', 'wp-cloudflare-page-cache' ),
-					'description'   => __( 'Working with other WordPress plugins', 'wp-cloudflare-page-cache' ),
-					'url'           => 'https://docs.themeisle.com/category/2270-plugin-integration',
-					'article_count' => 1,
-					'icon'          => 'globe',
-				],
-				[
-					'title'         => __( 'Performance Optimization', 'wp-cloudflare-page-cache' ),
-					'description'   => __( 'Tips to maximize your site speed', 'wp-cloudflare-page-cache' ),
-					'url'           => 'https://docs.themeisle.com/category/2268-performance-optimization',
-					'article_count' => 2,
-					'icon'          => 'database',
-				],
-				[
-					'title'         => __( 'Security & Best Practices', 'wp-cloudflare-page-cache' ),
-					'description'   => __( 'Keep your cache secure and optimized', 'wp-cloudflare-page-cache' ),
-					'url'           => 'https://docs.themeisle.com/category/2273-security-best-practices',
-					'article_count' => 1,
-					'icon'          => 'shield',
-				],
-			],
+		$empty = [
+			'popular'    => [],
+			'categories' => [],
 		];
 
 		$cached_data = get_transient( self::SPC_DOCS_API_CACHE_KEY );
@@ -611,26 +555,20 @@ class Dashboard implements Module_Interface {
 			$response = wp_remote_get( defined( 'SPC_DOCS_ENDPOINT' ) ? SPC_DOCS_ENDPOINT : self::SPC_DOCS_ENDPOINT );
 
 			if ( is_wp_error( $response ) ) {
-				return $default_data;
+				return $empty;
 			}
 
 			$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
-			if ( ! is_array( $data ) ) {
-				return $default_data;
-			}
-
-			$integrity = array_diff_key( $data, $default_data );
-
-			if ( ! empty( $integrity ) ) {
-				return $default_data;
+			if ( ! is_array( $data ) || ! isset( $data['popular'], $data['categories'] ) ) {
+				return $empty;
 			}
 
 			set_transient( self::SPC_DOCS_API_CACHE_KEY, $data, 12 * HOUR_IN_SECONDS );
 
 			return $data;
 		} catch ( \Exception $e ) {
-			return $default_data;
+			return $empty;
 		}
 	}
 }

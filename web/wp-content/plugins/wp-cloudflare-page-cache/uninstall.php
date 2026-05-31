@@ -10,6 +10,7 @@ global $wpdb;
 
 delete_option( 'swcfpc_config' );
 delete_option( 'swcfpc_version' );
+delete_option( 'swcfpc_previous_version' );
 delete_option( 'swcfpc_preloader_lock' );
 delete_option( 'swcfpc_purge_cache_lock' );
 delete_option( 'swcfpc_fc_ttl_registry' );

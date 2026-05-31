@@ -7,7 +7,7 @@ const NginxHelper = () => {
     {
       id: 'cf_nginx_helper_purge_on_cache_flush',
       type: 'toggle',
-      label: __('Automatically purge the cache when Nginx Helper flushs the cache', 'wp-cloudflare-page-cache'),
+      label: __('Automatically purge the cache when Nginx Helper flushes the cache', 'wp-cloudflare-page-cache'),
     }
   ];
 

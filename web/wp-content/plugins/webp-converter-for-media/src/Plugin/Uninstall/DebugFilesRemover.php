@@ -11,10 +11,8 @@ class DebugFilesRemover {
 
 	/**
 	 * Removes files used for debugging from /uploads directory.
-	 *
-	 * @return void
 	 */
-	public static function remove_debug_files() {
+	public static function remove_debug_files(): void {
 		$uploads_dir = apply_filters( 'webpc_dir_path', '', 'uploads' );
 
 		if ( is_writable( $uploads_dir . RewritesErrorsDetector::PATH_OUTPUT_FILE_PNG ) ) {

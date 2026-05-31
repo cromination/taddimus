@@ -3,7 +3,8 @@
 namespace SPC\Services;
 
 use SPC\Constants;
-use SW_CLOUDFLARE_PAGECACHE;
+use SPC\Utils\Helpers;
+use SPC\Utils\Logger;
 
 /**
  * Cloudflare rule manager abstract class.
@@ -41,13 +42,6 @@ abstract class Cloudflare_Rule {
 	protected $cached_ruleset = [];
 
 	/**
-	 * Plugin instance.
-	 *
-	 * @var SW_CLOUDFLARE_PAGECACHE
-	 */
-	protected $plugin;
-
-	/**
 	 * The ruleset ID.
 	 *
 	 * @var string
@@ -62,14 +56,14 @@ abstract class Cloudflare_Rule {
 	protected $rule_id;
 
 	/**
-	 * Cloudflare_Rule_Manager constructor.
-	 *
-	 * @param SW_CLOUDFLARE_PAGECACHE $plugin Plugin instance.
+	 * @var Settings_Store $settings_store Settings store.
 	 */
-	public function __construct( SW_CLOUDFLARE_PAGECACHE $plugin ) {
-		$this->plugin     = $plugin;
-		$this->ruleset_id = $this->plugin->get_single_config( $this->get_ruleset_id_setting_slug(), '' );
-		$this->rule_id    = $this->plugin->get_single_config( $this->get_rule_id_setting_slug(), '' );
+	protected $settings_store;
+
+	public function __construct() {
+		$this->settings_store = Settings_Store::get_instance();
+		$this->ruleset_id     = $this->settings_store->get( $this->get_ruleset_id_setting_slug(), '' );
+		$this->rule_id        = $this->settings_store->get( $this->get_rule_id_setting_slug(), '' );
 	}
 
 	/**
@@ -101,11 +95,11 @@ abstract class Cloudflare_Rule {
 	 * @see https://developers.cloudflare.com/api/operations/createZoneRuleset
 	 */
 	public function create_ruleset( &$error = '' ) {
-		if ( ! $this->plugin->has_cloudflare_api_zone_id() ) {
+		if ( ! Settings_Store::get_instance()->is_cloudflare_connected() ) {
 			return '';
 		}
 
-		$zone_id = $this->plugin->get_cloudflare_api_zone_id();
+		$zone_id = Settings_Store::get_instance()->get_cloudflare_zone_id();
 
 		if ( empty( $zone_id ) ) {
 			return '';
@@ -164,8 +158,8 @@ abstract class Cloudflare_Rule {
 	 * @see https://developers.cloudflare.com/api/operations/getZoneEntrypointRuleset
 	 */
 	public function get_ruleset( &$error = '' ) {
-		if ( ! $this->plugin->has_cloudflare_api_zone_id() ) {
-			$error = __( 'There is not zone id to use', 'wp-cloudflare-page-cache' );
+		if ( ! Settings_Store::get_instance()->is_cloudflare_connected() ) {
+			$error = __( 'No zone ID is available to use.', 'wp-cloudflare-page-cache' );
 
 			return [];
 		}
@@ -174,7 +168,7 @@ abstract class Cloudflare_Rule {
 			return $this->cached_ruleset;
 		}
 
-		$url      = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/phases/%s/entrypoint', $this->plugin->get_cloudflare_api_zone_id(), $this->rule_type === self::RULE_TYPE_CACHE ? 'http_request_cache_settings' : 'http_request_transform' );
+		$url      = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/phases/%s/entrypoint', Settings_Store::get_instance()->get_cloudflare_zone_id(), $this->rule_type === self::RULE_TYPE_CACHE ? 'http_request_cache_settings' : 'http_request_transform' );
 		$args     = $this->get_api_auth_args();
 		$response = wp_safe_remote_get( $url, $args );
 
@@ -199,8 +193,8 @@ abstract class Cloudflare_Rule {
 	 * @return string
 	 */
 	public function get_ruleset_id( &$error = '' ) {
-		if ( ! $this->plugin->has_cloudflare_api_zone_id() ) {
-			$error = __( 'There is not zone id to use', 'wp-cloudflare-page-cache' );
+		if ( ! Settings_Store::get_instance()->is_cloudflare_connected() ) {
+			$error = __( 'No zone ID is available to use.', 'wp-cloudflare-page-cache' );
 
 			return '';
 		}
@@ -226,7 +220,7 @@ abstract class Cloudflare_Rule {
 	 * @return array
 	 */
 	public function get_rule() {
-		if ( ! $this->plugin->has_cloudflare_api_zone_id() ) {
+		if ( ! Settings_Store::get_instance()->is_cloudflare_connected() ) {
 			return [];
 		}
 
@@ -251,7 +245,7 @@ abstract class Cloudflare_Rule {
 	 * @return string
 	 */
 	public function get_rule_id() {
-		if ( ! $this->plugin->has_cloudflare_api_zone_id() ) {
+		if ( ! Settings_Store::get_instance()->is_cloudflare_connected() ) {
 			return '';
 		}
 
@@ -278,11 +272,11 @@ abstract class Cloudflare_Rule {
 	 * @return string The updated rule ID. Empty string if the rule was not updated.
 	 */
 	public function update_rule( &$error = '' ) {
-		if ( ! $this->plugin->has_cloudflare_api_zone_id() ) {
+		if ( ! Settings_Store::get_instance()->is_cloudflare_connected() ) {
 			return '';
 		}
 
-		$url                    = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/%s/rules/%s', $this->plugin->get_cloudflare_api_zone_id(), $this->get_ruleset_id(), $this->get_rule_id() );
+		$url                    = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/%s/rules/%s', Settings_Store::get_instance()->get_cloudflare_zone_id(), $this->get_ruleset_id(), $this->get_rule_id() );
 		$request_args           = $this->get_api_auth_args();
 		$request_args['method'] = 'PATCH';
 		$request_args['body']   = wp_json_encode( $this->get_rule_args() );
@@ -321,7 +315,7 @@ abstract class Cloudflare_Rule {
 			}
 		}
 
-		$zone_id = $this->plugin->get_cloudflare_api_zone_id();
+		$zone_id = Settings_Store::get_instance()->get_cloudflare_zone_id();
 
 		$url                  = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/%s/rules', $zone_id, $this->get_ruleset_id() );
 		$request_args         = $this->get_api_auth_args();
@@ -381,7 +375,7 @@ abstract class Cloudflare_Rule {
 			return false;
 		}
 
-		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/%s/rules/%s', $this->plugin->get_cloudflare_api_zone_id(), $ruleset, $rule );
+		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/%s/rules/%s', Settings_Store::get_instance()->get_cloudflare_zone_id(), $ruleset, $rule );
 		$args           = $this->get_api_auth_args();
 		$args['method'] = 'DELETE';
 
@@ -423,14 +417,16 @@ abstract class Cloudflare_Rule {
 	}
 
 	/**
-	 * Get the authentication arguments for the Cloudflare API
+	 * Get the authentication arguments for the Cloudflare API.
 	 *
-	 * @param bool $use_curl Whether to return headers as a string or an array
+	 * @param bool                     $use_curl Whether to return headers as a string or an array.
+	 * @param array<string, int|string> $auth_overrides Temporary auth values to use instead of persisted settings.
 	 *
-	 * @return array
+	 * @return array{timeout: int, headers: array<int|string, string>}
 	 */
-	protected function get_api_auth_args( $use_curl = false ) {
-		$settings = Settings_Store::get_instance();
+	protected function get_api_auth_args( $use_curl = false, array $auth_overrides = [] ) {
+		$settings  = Settings_Store::get_instance();
+		$auth_mode = $auth_overrides[ Constants::SETTING_AUTH_MODE ] ?? $settings->get( Constants::SETTING_AUTH_MODE );
 
 		$req_args = [
 			'timeout' => defined( 'SWCFPC_CURL_TIMEOUT' ) ? SWCFPC_CURL_TIMEOUT : 10,
@@ -441,11 +437,12 @@ abstract class Cloudflare_Rule {
 			'Content-Type' => 'application/json',
 		];
 
-		if ( $this->is_token_auth() ) {
-			$headers['Authorization'] = "Bearer {$settings->get(Constants::SETTING_CF_API_TOKEN)}";
+		if ( (int) $auth_mode === SWCFPC_AUTH_MODE_API_TOKEN ) {
+			$token                    = $auth_overrides[ Constants::SETTING_CF_API_TOKEN ] ?? $settings->get( Constants::SETTING_CF_API_TOKEN );
+			$headers['Authorization'] = "Bearer {$token}";
 		} else {
-			$headers['X-Auth-Email'] = $settings->get( Constants::SETTING_CF_EMAIL );
-			$headers['X-Auth-Key']   = $settings->get( Constants::SETTING_CF_API_KEY );
+			$headers['X-Auth-Email'] = $auth_overrides[ Constants::SETTING_CF_EMAIL ] ?? $settings->get( Constants::SETTING_CF_EMAIL );
+			$headers['X-Auth-Key']   = $auth_overrides[ Constants::SETTING_CF_API_KEY ] ?? $settings->get( Constants::SETTING_CF_API_KEY );
 		}
 
 		if ( $use_curl ) {
@@ -523,7 +520,7 @@ abstract class Cloudflare_Rule {
 	 * @return void
 	 */
 	protected function log( $identifier, $message, $only_log_if_verbose = false ) {
-		$this->plugin->get_logger()->add_log( sprintf( 'cloudflare::%s_%s', $identifier, $this->rule_type ), $message, $only_log_if_verbose );
+		Logger::log( sprintf( 'cloudflare::%s_%s', $identifier, $this->rule_type ), $message, $only_log_if_verbose );
 	}
 
 	/**
@@ -550,8 +547,7 @@ abstract class Cloudflare_Rule {
 		}
 
 		foreach ( self::LEGACY_RULE_DESCRIPTIONS as $description ) {
-			if ( strpos( $rule['description'], $description ) !== false ) {
-
+			if ( strpos( $rule['description'], $description ) !== false && strpos( $rule['description'], Helpers::get_home_url() ) !== false ) {
 				return true;
 			}
 		}
@@ -565,6 +561,6 @@ abstract class Cloudflare_Rule {
 	 * @return string
 	 */
 	protected function build_rule_description() {
-		return self::RULE_DESCRIPTION . ' ' . $this->plugin->get_home_url();
+		return self::RULE_DESCRIPTION . ' ' . Helpers::get_home_url();
 	}
 }

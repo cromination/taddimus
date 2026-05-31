@@ -88,8 +88,6 @@ interface MethodInterface {
 	 * @param string[] $paths            Server paths of source images.
 	 * @param mixed[]  $plugin_settings  .
 	 * @param bool     $regenerate_force .
-	 *
-	 * @return void
 	 */
-	public function convert_paths( array $paths, array $plugin_settings, bool $regenerate_force );
+	public function convert_paths( array $paths, array $plugin_settings, bool $regenerate_force ): void;
 }

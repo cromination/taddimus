@@ -12,15 +12,8 @@ use WebpConverter\PluginData;
  */
 class ConvertPathsAction implements HookableInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
-
-	/**
-	 * @var MethodFactory
-	 */
-	private $method_factory;
+	private PluginData $plugin_data;
+	private MethodFactory $method_factory;
 
 	public function __construct( PluginData $plugin_data, MethodFactory $method_factory ) {
 		$this->plugin_data    = $plugin_data;
@@ -30,7 +23,7 @@ class ConvertPathsAction implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'webpc_convert_paths', [ $this, 'convert_files_by_paths' ], 10, 3 );
 	}
 
@@ -41,10 +34,9 @@ class ConvertPathsAction implements HookableInterface {
 	 * @param bool     $regenerate_force .
 	 * @param int|null $quality_level    .
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function convert_files_by_paths( array $paths, bool $regenerate_force = false, ?int $quality_level = null ) {
+	public function convert_files_by_paths( array $paths, bool $regenerate_force = false, ?int $quality_level = null ): void {
 		( new MethodIntegrator( $this->plugin_data, $this->method_factory ) )
 			->init_conversion( $this->remove_paths_from_excluded_paths( $paths ), $regenerate_force, false, $quality_level );
 	}

@@ -12,9 +12,10 @@ type InputProps = {
 }
 
 const Input = (props: InputProps) => {
-  const { updateSetting, settings } = useSettingsStore();
+  const { updateSetting, settings, isSettingOverridden, getManagedDescription } = useSettingsStore();
   const { asyncLocked } = useAppStore();
   const { id } = props;
+  const overridden = isSettingOverridden(id);
 
   const handleChange = (nextValue: string) => {
     updateSetting(id, nextValue);
@@ -22,10 +23,11 @@ const Input = (props: InputProps) => {
 
   return (
     <InputControl
+      {...props}
       onChange={handleChange}
       value={settings[id] as string}
-      disabled={asyncLocked}
-      {...props}
+      disabled={asyncLocked || overridden}
+      description={getManagedDescription(id, props.description)}
     />
   );
 }

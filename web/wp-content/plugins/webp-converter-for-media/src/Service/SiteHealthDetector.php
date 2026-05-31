@@ -14,10 +14,7 @@ class SiteHealthDetector implements HookableInterface {
 
 	const SITE_HEALTH_TEST_AVIF_FORMAT = 'webpc_avif_format';
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;
@@ -26,7 +23,7 @@ class SiteHealthDetector implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'site_status_tests', [ $this, 'add_test_to_check_avif_format' ] );
 	}
 

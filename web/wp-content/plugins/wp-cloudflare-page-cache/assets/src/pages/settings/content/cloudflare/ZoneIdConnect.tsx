@@ -11,10 +11,11 @@ import { useAppStore } from "@/store/store";
 import { toast } from "sonner";
 import { useConnectionStore } from "./connectionStore";
 import { CF_AUTH_MODES } from "@/lib/constants";
+import ManagedSettingNotice from "./ManagedSettingNotice";
 
 
 const ZoneIdConnect = () => {
-  const { settings, updateSettings, cloudflareConnected } = useSettingsStore();
+  const { settings, updateSettings, cloudflareConnected, isSettingOverridden } = useSettingsStore();
   const { asyncLocked, lockAsync } = useAppStore();
   const { setErrorMessage } = useConnectionStore();
 
@@ -22,6 +23,18 @@ const ZoneIdConnect = () => {
   const [disconnecting, setDisconnecting] = useState(false);
   const [isEditingZoneId, setIsEditingZoneId] = useState(false);
   const [selectedZoneId, setSelectedZoneId] = useState(Object.values(settings.cf_zoneid_list)[0] || '');
+  const zoneIdManaged = isSettingOverridden('cf_zoneid');
+  const disconnectManaged = [
+    'cf_email',
+    'cf_apikey',
+    'cf_apitoken',
+    'cf_apitoken_domain',
+    'cf_zoneid_list',
+    'cf_zoneid',
+    'cf_cache_settings_ruleset_id',
+    'cf_cache_settings_ruleset_rule_id',
+    'enable_cache_rule',
+  ].some(isSettingOverridden);
 
   const options = [
     {
@@ -63,7 +76,7 @@ const ZoneIdConnect = () => {
       return;
     }
 
-    updateSettings(response.data.settings);
+    updateSettings(response.data.settings, response.data.meta);
     toast.success(response.message);
     setIsEditingZoneId(false);
   }
@@ -84,7 +97,7 @@ const ZoneIdConnect = () => {
     setDisconnecting(false);
 
     if (response.success) {
-      updateSettings(response.data.settings);
+      updateSettings(response.data.settings, response.data.meta);
 
       toast.success(response.message);
 
@@ -116,11 +129,16 @@ const ZoneIdConnect = () => {
                   __('Account:', 'wp-cloudflare-page-cache') + ' ' + settings.cf_email
                 }
               </p>
+              <ManagedSettingNotice
+                show={disconnectManaged}
+                message={__('This connection is partially managed by your wp-config.php environment.', 'wp-cloudflare-page-cache')}
+                className="mt-1"
+              />
             </div>
           </div>
           <Button
             onClick={disconnect}
-            disabled={asyncLocked}
+            disabled={asyncLocked || disconnectManaged}
             loader={disconnecting}
             variant="link"
             size="sm"
@@ -142,7 +160,7 @@ const ZoneIdConnect = () => {
           <Select
             id="zone-id"
             className="w-full max-w-full h-10"
-            disabled={asyncLocked}
+            disabled={asyncLocked || zoneIdManaged}
             value={selectedZoneId}
             onChange={(v) => {
               setSelectedZoneId(v);
@@ -152,13 +170,14 @@ const ZoneIdConnect = () => {
           <p className="text-xs text-muted-foreground mt-1.5">
             {__('Choose the domain you want to optimize with Cloudflare', 'wp-cloudflare-page-cache')}
           </p>
+          <ManagedSettingNotice show={zoneIdManaged} />
 
           <div className="flex items-center gap-2 mt-3">
             <Button
               className="rounded"
               type="submit"
               size="sm"
-              disabled={loading || asyncLocked || !selectedZoneId}
+              disabled={loading || asyncLocked || !selectedZoneId || zoneIdManaged}
               loader={loading}
               variant="green"
               icon={CheckIcon}
@@ -198,6 +217,7 @@ const ZoneIdConnect = () => {
             <Button
               onClick={() => setIsEditingZoneId(true)}
               variant="link"
+              disabled={zoneIdManaged}
               className="p-0 h-auto text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500 font-medium"
             >
               <PenLine className="size-3 mr-1" />

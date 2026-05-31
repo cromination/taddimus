@@ -13,10 +13,7 @@ use WebpConverter\PluginInfo;
  */
 class UninstallHandler implements HookableInterface {
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
 	public function __construct( PluginInfo $plugin_info ) {
 		$this->plugin_info = $plugin_info;
@@ -25,17 +22,16 @@ class UninstallHandler implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		register_uninstall_hook( $this->plugin_info->get_plugin_file(), [ self::class, 'load_uninstall_actions' ] );
 	}
 
 	/**
 	 * Initializes actions when plugin is uninstalled.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public static function load_uninstall_actions() {
+	public static function load_uninstall_actions(): void {
 		PluginSettingsManager::remove_plugin_settings();
 		OutputFilesRemover::remove_webp_files();
 		DebugFilesRemover::remove_debug_files();

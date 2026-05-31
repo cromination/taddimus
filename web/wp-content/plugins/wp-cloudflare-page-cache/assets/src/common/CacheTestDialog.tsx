@@ -27,28 +27,42 @@ const CacheTestDialog = ({ onClose, data }: CacheTestDialogProps) => {
     const statuses = [
       {
         status: testData.cloudflare?.status === 'success',
-        message: testData.cloudflare?.message
+        message: testData.cloudflare?.message,
+        actionText: testData.cloudflare?.action_text,
+        actionLink: testData.cloudflare?.action_link,
       },
       {
         status: testData.disk_cache?.status === 'success',
-        message: testData.disk_cache?.message
+        message: testData.disk_cache?.message,
+        actionText: testData.disk_cache?.action_text,
+        actionLink: testData.disk_cache?.action_link,
       }
     ];
 
     return (
       <ul className="text-foreground space-y-2">
-        {Object.entries(statuses).map(([key, { status, message }]) => {
+        {Object.entries(statuses).map(([key, { status, message, actionText, actionLink }]) => {
           const Icon = status ? CircleCheck : Info;
 
           return (
             <li key={key} className="flex items-center gap-2 text-sm">
-              <Icon className={cn("flex items-center justify-center p-1 w-7 h-7 rounded-full", {
+              <Icon className={cn("flex items-center justify-center p-1 w-7 h-7 rounded-full flex-shrink-0", {
                 'bg-green-500/20 text-green-600': status,
                 'bg-orange-500/20 text-orange-600': !status
               })} />
 
               <span className="font-medium">
                 {message}
+                {!status && actionLink && actionText && (
+                  <>{' '}<a
+                    href={actionLink}
+                    className="text-[#c0712f] hover:underline"
+                    {...(actionLink.startsWith('http') && !actionLink.startsWith(window.location.origin)
+                      ? { target: '_blank', rel: 'noopener noreferrer' }
+                      : {}
+                    )}
+                  >{actionText}</a></>
+                )}
               </span>
             </li>
           );

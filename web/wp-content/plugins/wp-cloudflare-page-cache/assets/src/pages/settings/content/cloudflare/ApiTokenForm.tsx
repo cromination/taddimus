@@ -7,11 +7,13 @@ import { useAppStore } from "@/store/store";
 import { createInterpolateElement, useState } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
 import { Globe } from "lucide-react";
+import ManagedSettingNotice from "./ManagedSettingNotice";
 import { useConnectionStore } from "./connectionStore";
 
 const ApiTokenForm = () => {
   const { asyncLocked, lockAsync } = useAppStore();
-  const { settings, updateSettings } = useSettingsStore();
+  const { settings, updateSettings, isSettingOverridden } = useSettingsStore();
+  const storedTokenExists = Boolean(window.SPCDash.settings?.cf_apitoken?.hasValue);
 
   const { setErrorMessage } = useConnectionStore();
 
@@ -19,8 +21,9 @@ const ApiTokenForm = () => {
   const [formData, setFormData] = useState({
     apiToken: settings.cf_apitoken as string
   })
+  const tokenManaged = isSettingOverridden('cf_apitoken');
 
-  const isFormInvalid = (!formData.apiToken);
+  const isFormInvalid = (!formData.apiToken) || tokenManaged;
 
   const getZoneDomainList = async (e: React.FormEvent<HTMLFormElement>) => {
     setErrorMessage('');
@@ -41,7 +44,7 @@ const ApiTokenForm = () => {
     setIsConnecting(false);
 
     if (response.success) {
-      updateSettings(response.data.settings);
+      updateSettings(response.data.settings, response.data.meta);
 
       return;
     }
@@ -57,8 +60,9 @@ const ApiTokenForm = () => {
           <PasswordInput
             type="password"
             id="cf_api_token"
-            disabled={asyncLocked}
+            disabled={asyncLocked || tokenManaged}
             value={formData.apiToken as string}
+            placeholder={!formData.apiToken && storedTokenExists ? '••••••••••••••••' : ''}
             className="w-full max-w-full h-10 m-0"
             autoComplete="off"
             onChange={(e) => {
@@ -84,6 +88,7 @@ const ApiTokenForm = () => {
               <li>{__('Copy the generated token', 'wp-cloudflare-page-cache')}</li>
             </ol>
           </div>
+          <ManagedSettingNotice show={tokenManaged} className="mt-2" />
 
         </div>
       </TransitionWrapper>

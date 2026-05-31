@@ -9,10 +9,8 @@ class OptionIntegrator {
 
 	/**
 	 * Objects of supported settings options.
-	 *
-	 * @var OptionInterface
 	 */
-	private $option;
+	private OptionInterface $option;
 
 	/**
 	 * @param OptionInterface $option .

@@ -24,10 +24,8 @@ class OptionsAccessManager {
 	/**
 	 * @param string $option_name  .
 	 * @param mixed  $option_value .
-	 *
-	 * @return void
 	 */
-	public static function update_option( string $option_name, $option_value ) {
+	public static function update_option( string $option_name, $option_value ): void {
 		if ( is_multisite() ) {
 			update_site_option( $option_name, $option_value );
 		} else {
@@ -37,10 +35,8 @@ class OptionsAccessManager {
 
 	/**
 	 * @param string $option_name .
-	 *
-	 * @return void
 	 */
-	public static function delete_option( string $option_name ) {
+	public static function delete_option( string $option_name ): void {
 		if ( is_multisite() ) {
 			delete_site_option( $option_name );
 		} else {

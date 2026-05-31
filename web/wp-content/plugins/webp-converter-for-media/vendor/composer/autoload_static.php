@@ -186,6 +186,7 @@ class ComposerStaticInit977a71a7bb63d9fc0c8d6b8913a12a29
         'WebpConverter\\Settings\\Option\\ConversionMethodOption' => __DIR__ . '/../..' . '/src/Settings/Option/ConversionMethodOption.php',
         'WebpConverter\\Settings\\Option\\ExcludedDirectoriesOption' => __DIR__ . '/../..' . '/src/Settings/Option/ExcludedDirectoriesOption.php',
         'WebpConverter\\Settings\\Option\\ExtraFeaturesOption' => __DIR__ . '/../..' . '/src/Settings/Option/ExtraFeaturesOption.php',
+        'WebpConverter\\Settings\\Option\\HtaccessRewriteFlagRedirectOption' => __DIR__ . '/../..' . '/src/Settings/Option/HtaccessRewriteFlagRedirectOption.php',
         'WebpConverter\\Settings\\Option\\HtaccessRewriteOutputOption' => __DIR__ . '/../..' . '/src/Settings/Option/HtaccessRewriteOutputOption.php',
         'WebpConverter\\Settings\\Option\\HtaccessRewriteParentOption' => __DIR__ . '/../..' . '/src/Settings/Option/HtaccessRewriteParentOption.php',
         'WebpConverter\\Settings\\Option\\HtaccessRewritePathOption' => __DIR__ . '/../..' . '/src/Settings/Option/HtaccessRewritePathOption.php',

@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Error\Detector;
 
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\Error\Notice\SettingsIncorrectNotice;
 use WebpConverter\PluginData;
 use WebpConverter\Settings\Option\ConversionMethodOption;
@@ -18,19 +19,13 @@ use WebpConverter\Settings\Page\GeneralSettingsPage;
  */
 class SettingsIncorrectDetector implements DetectorInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 
 		if ( ! $plugin_settings[ ImagesQualityOption::OPTION_NAME ] ) {

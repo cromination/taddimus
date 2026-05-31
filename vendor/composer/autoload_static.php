@@ -9,11 +9,12 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
     public static $files = array (
         '3937806105cc8e221b8fa8db5b70d2f2' => __DIR__ . '/..' . '/wp-cli/mustangostang-spyc/includes/functions.php',
         'be01b9b16925dcb22165c40b46681ac6' => __DIR__ . '/..' . '/wp-cli/php-cli-tools/lib/cli/cli.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
+        '606a39d89246991a373564698c2d8383' => __DIR__ . '/..' . '/symfony/polyfill-php85/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
@@ -66,6 +67,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         ),
         'S' =>
         array (
+            'Symfony\\Polyfill\\Php85\\' => 23,
             'Symfony\\Polyfill\\Php84\\' => 23,
             'Symfony\\Polyfill\\Php81\\' => 23,
             'Symfony\\Polyfill\\Php80\\' => 23,
@@ -146,6 +148,10 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'WP_CLI\\Embeds\\' =>
         array (
             0 => __DIR__ . '/..' . '/wp-cli/embed-command/src',
+        ),
+        'Symfony\\Polyfill\\Php85\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php85',
         ),
         'Symfony\\Polyfill\\Php84\\' =>
         array (
@@ -346,10 +352,13 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'Cron_Event_Command' => __DIR__ . '/..' . '/wp-cli/cron-command/src/Cron_Event_Command.php',
         'Cron_Schedule_Command' => __DIR__ . '/..' . '/wp-cli/cron-command/src/Cron_Schedule_Command.php',
         'DB_Command' => __DIR__ . '/..' . '/wp-cli/db-command/src/DB_Command.php',
+        'DelayedTargetValidation' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/DelayedTargetValidation.php',
         'Deprecated' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Deprecated.php',
         'EvalFile_Command' => __DIR__ . '/..' . '/wp-cli/eval-command/src/EvalFile_Command.php',
         'Eval_Command' => __DIR__ . '/..' . '/wp-cli/eval-command/src/Eval_Command.php',
         'Export_Command' => __DIR__ . '/..' . '/wp-cli/export-command/src/Export_Command.php',
+        'Filter\\FilterException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterException.php',
+        'Filter\\FilterFailedException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterFailedException.php',
         'Import_Command' => __DIR__ . '/..' . '/wp-cli/import-command/src/Import_Command.php',
         'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Language_Namespace' => __DIR__ . '/..' . '/wp-cli/language-command/src/Language_Namespace.php',
@@ -359,6 +368,7 @@ class ComposerStaticInit11ab908e3ff185ea02ce40ed9c9ce526
         'Menu_Location_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Menu_Location_Command.php',
         'Network_Meta_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Network_Meta_Command.php',
         'Network_Namespace' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Network_Namespace.php',
+        'NoDiscard' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/NoDiscard.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'Option_Command' => __DIR__ . '/..' . '/wp-cli/entity-command/src/Option_Command.php',
         'Package_Command' => __DIR__ . '/..' . '/wp-cli/package-command/src/Package_Command.php',

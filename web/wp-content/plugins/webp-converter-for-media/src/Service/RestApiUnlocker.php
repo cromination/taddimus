@@ -13,7 +13,7 @@ class RestApiUnlocker implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'rest_authentication_errors', [ $this, 'clear_authentication_error' ], 9999 );
 		add_filter(
 			'option_mo_api_authentication_protectedrestapi_route_whitelist',
@@ -67,7 +67,7 @@ class RestApiUnlocker implements HookableInterface {
 			return $white_routes;
 		}
 
-		$all_routes[] = '/wp-json/' . EndpointIntegrator::ROUTE_NAMESPACE . '/*';
-		return $all_routes;
+		$white_routes[] = '/wp-json/' . EndpointIntegrator::ROUTE_NAMESPACE . '/*';
+		return $white_routes;
 	}
 }

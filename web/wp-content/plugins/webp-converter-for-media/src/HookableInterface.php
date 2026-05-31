@@ -9,8 +9,6 @@ interface HookableInterface {
 
 	/**
 	 * Integrates with WordPress hooks.
-	 *
-	 * @return void
 	 */
-	public function init_hooks();
+	public function init_hooks(): void;
 }

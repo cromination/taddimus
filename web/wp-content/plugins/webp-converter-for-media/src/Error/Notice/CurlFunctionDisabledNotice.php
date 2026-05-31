@@ -9,10 +9,7 @@ class CurlFunctionDisabledNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'curl_function_disabled';
 
-	/**
-	 * @var string
-	 */
-	private $disabled_function;
+	private string $disabled_function;
 
 	public function __construct( string $disabled_function ) {
 		$this->disabled_function = $disabled_function;

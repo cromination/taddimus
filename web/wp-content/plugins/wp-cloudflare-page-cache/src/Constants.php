@@ -19,7 +19,7 @@ class Constants {
 	public const SETTING_AUTO_PURGE_WHOLE            = 'cf_auto_purge_all';
 	public const SETTING_PURGE_ON_COMMENT            = 'cf_auto_purge_on_comments';
 	public const SETTING_PRELOAD_SITEMAPS_URLS       = 'cf_preload_sitemap_urls';
-	public const SETTING_PREFETCH_ON_HOVER           = 'cf_prefetch_urls_on_hover';
+	public const SETTING_PREFETCH_URLS_MODE          = 'cf_prefetch_urls_mode';
 	public const SETTING_REMOVE_CACHE_BUSTER         = 'cf_remove_cache_buster';
 	public const SETTING_SHOW_ADVANCED               = 'show_advanced';
 	public const SETTING_KEEP_ON_DEACTIVATION        = 'keep_settings_on_deactivation';
@@ -42,7 +42,10 @@ class Constants {
 
 	public const SETTING_FALLBACK_CACHE_CURL                       = 'cf_fallback_cache_curl';
 	public const SETTING_FALLBACK_CACHE_LIFESPAN                   = 'cf_fallback_cache_ttl';
+	public const SETTING_STALE_WHILE_REVALIDATE                    = 'stale_while_revalidate';
+	public const SETTING_STALE_WHILE_REVALIDATE_TTL                = 'stale_while_revalidate_ttl';
 	public const SETTING_FALLBACK_CACHE_SAVE_HEADERS               = 'cf_fallback_cache_save_headers';
+	public const SETTING_MINIFY_HTML                               = 'minify_html';
 	public const SETTING_FALLBACK_CACHE_PREVENT_TRAILING_SLASH     = 'cf_fallback_cache_prevent_cache_urls_without_trailing_slash';
 	public const SETTING_FALLBACK_CACHE_PURGE_ON_UPGRADER_COMPLETE = 'cf_auto_purge_on_upgrader_process_complete';
 	public const SETTING_STRIP_RESPONSE_COOKIES                    = 'cf_strip_cookies';
@@ -89,11 +92,17 @@ class Constants {
 	public const SETTING_OPCACHE_PURGE_ON_FLUSH      = 'cf_opcache_purge_on_flush';
 	public const SETTING_PURGE_URL_SECRET_KEY        = 'cf_purge_url_secret_key';
 	public const SETTING_REMOVE_PURGE_OPTION_TOOLBAR = 'cf_remove_purge_option_toolbar';
-	public const SETTING_DISABLE_SINGLE_METABOX      = 'cf_disable_single_metabox';
 	public const SETTING_SEO_REDIRECT                = 'cf_seo_redirect';
 	public const SETTING_PURGE_ROLES                 = 'cf_purge_roles';
-	public const SETTING_PREFETCH_URLS_VIEWPORT      = 'cf_prefetch_urls_viewport';
-	public const SETTING_PREFETCH_URLS_TIMESTAMP     = 'cf_prefetch_urls_viewport_timestamp';
+	/**
+	 * @deprecated - we use WP Core's speculative loading instead if we're above version 6.8.
+	 */
+	public const SETTING_PREFETCH_URLS_TIMESTAMP = 'cf_prefetch_urls_viewport_timestamp';
+	public const SETTING_HEARTBEAT_ADMIN         = 'cf_heartbeat_admin';
+	public const SETTING_HEARTBEAT_EDITOR        = 'cf_heartbeat_editor';
+	public const SETTING_HEARTBEAT_FRONTEND      = 'cf_heartbeat_frontend';
+	public const SETTING_DNS_PREFETCH_DOMAINS    = 'dns_prefetch_domains';
+	public const SETTING_PRECONNECT_DOMAINS      = 'preconnect_domains';
 
 	public const SETTING_AUTH_MODE      = 'cf_auth_mode';
 	public const SETTING_CF_EMAIL       = 'cf_email';

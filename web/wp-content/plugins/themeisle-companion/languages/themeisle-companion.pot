@@ -1,15 +1,15 @@
-# Copyright (C) 2025 Themeisle
+# Copyright (C) 2026 Themeisle
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Orbit Fox Companion 3.0.5\n"
+"Project-Id-Version: Orbit Fox Companion 3.0.6\n"
 "Report-Msgid-Bugs-To: "
 "https://github.com/Codeinwp/themeisle-companion/issues\n"
-"POT-Creation-Date: 2025-12-05 07:52:04+00:00\n"
+"POT-Creation-Date: 2026-05-25 16:49:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2026-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Themeisle Translate Team <friends@themeisle.com>\n"
 "Language-Team: Themeisle Translate <friends@themeisle.com>\n"
 "Language: en\n"
@@ -113,13 +113,21 @@ msgstr ""
 msgid "Conversion-focused features for your online store."
 msgstr ""
 
-#: core/app/class-orbit-fox-admin.php:523
-#. translators: %1$s - plugin name, %2$s - HTML tag, %3$s - discount, %4$s -
-#. HTML tag, %5$s - company name.
+#: core/app/class-orbit-fox-admin.php:527
+#. translators: 1. Number of free licenses, 2. The price of the product.
 msgid ""
-"Brought to you by the team behind %1$s— our biggest sale of the year is "
-"here: %2$sup to %3$s OFF%4$s on premium products from %5$s! Limited-time "
-"only."
+"You’re using Orbit Fox, and the team behind it is celebrating Black Friday "
+"by giving away %1$s licences of Otter Pro. A powerful block collection "
+"worth %2$s, with advanced blocks, custom CSS, animations, and WooCommerce "
+"integration. Claim yours before they run out."
+msgstr ""
+
+#: core/app/class-orbit-fox-admin.php:528
+msgid "Get Otter Pro free"
+msgstr ""
+
+#: core/app/class-orbit-fox-admin.php:529
+msgid "Black Friday Sale - Get Otter Pro free"
 msgstr ""
 
 #: core/app/helpers/class-orbit-fox-render-helper.php:123

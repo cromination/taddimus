@@ -12,37 +12,37 @@ const WPRocket = () => {
       controls: [{
         id: 'cf_wp_rocket_purge_on_domain_flush',
         type: 'checkbox',
-        label: __('WP Rocket flushs all caches', 'wp-cloudflare-page-cache'),
+        label: __('WP Rocket flushes all caches', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_wp_rocket_purge_on_post_flush',
         type: 'checkbox',
-        label: __('WP Rocket flushs single post cache', 'wp-cloudflare-page-cache'),
+        label: __('WP Rocket flushes single post cache', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_wp_rocket_purge_on_cache_dir_flush',
         type: 'checkbox',
-        label: __('WP Rocket flushs cache directories', 'wp-cloudflare-page-cache'),
+        label: __('WP Rocket flushes cache directories', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_wp_rocket_purge_on_clean_files',
         type: 'checkbox',
-        label: __('WP Rocket flushs files', 'wp-cloudflare-page-cache'),
+        label: __('WP Rocket flushes files', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_wp_rocket_purge_on_clean_cache_busting',
         type: 'checkbox',
-        label: __('WP Rocket flushs cache busting', 'wp-cloudflare-page-cache'),
+        label: __('WP Rocket flushes cache busting', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_wp_rocket_purge_on_clean_minify',
         type: 'checkbox',
-        label: __('WP Rocket flushs minified files', 'wp-cloudflare-page-cache'),
+        label: __('WP Rocket flushes minified files', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {

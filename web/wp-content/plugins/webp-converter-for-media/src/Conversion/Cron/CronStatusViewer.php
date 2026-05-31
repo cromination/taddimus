@@ -10,15 +10,9 @@ use WebpConverter\Settings\Page\PageIntegrator;
  */
 class CronStatusViewer implements HookableInterface {
 
-	/**
-	 * @var CronStatusManager
-	 */
-	private $cron_status_manager;
+	private CronStatusManager $cron_status_manager;
 
-	/**
-	 * @var int
-	 */
-	private $paths_preview_count = 0;
+	private int $paths_preview_count = 0;
 
 	public function __construct( ?CronStatusManager $cron_status_manager = null ) {
 		$this->cron_status_manager = $cron_status_manager ?: new CronStatusManager();
@@ -27,15 +21,14 @@ class CronStatusViewer implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'admin_init', [ $this, 'init_status_preview' ] );
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function init_status_preview() {
+	public function init_status_preview(): void {
 		if ( $this->cron_status_manager->get_conversion_request_id() === null ) {
 			return;
 		}
@@ -51,10 +44,9 @@ class CronStatusViewer implements HookableInterface {
 	/**
 	 * @param \WP_Admin_Bar $wp_admin_bar .
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function add_menu_to_top_bar( \WP_Admin_Bar $wp_admin_bar ) {
+	public function add_menu_to_top_bar( \WP_Admin_Bar $wp_admin_bar ): void {
 		$count       = number_format( $this->paths_preview_count, 0, '', ' ' );
 		$menu_parent = [
 			'id'    => 'webpc-menu',

@@ -68,10 +68,7 @@ class RewritesNotExecutedNotice implements NoticeInterface {
 		return $message;
 	}
 
-	/**
-	 * @return string|null
-	 */
-	private function get_nginx_server_name() {
+	private function get_nginx_server_name(): ?string {
 		if ( getenv( 'IS_WPE' ) ) {
 			return 'WP Engine';
 		} elseif ( strpos( strtolower( $_SERVER['SERVER_SOFTWARE'] ?? '' ), 'nginx' ) !== false ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput

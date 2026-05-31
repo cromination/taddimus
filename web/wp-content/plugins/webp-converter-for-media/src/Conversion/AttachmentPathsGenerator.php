@@ -10,17 +10,14 @@ use WebpConverter\Settings\Option\SupportedExtensionsOption;
  */
 class AttachmentPathsGenerator {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	/**
 	 * Current upload directory path and URL.
 	 *
 	 * @var mixed[]
 	 */
-	private $upload_dir;
+	private array $upload_dir;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;

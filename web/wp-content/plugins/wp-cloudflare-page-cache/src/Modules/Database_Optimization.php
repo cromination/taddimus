@@ -13,10 +13,12 @@ class Database_Optimization implements Module_Interface {
 	 */
 	private $intervals = array();
 
-	const NEVER   = 'never';
-	const DAILY   = 'daily';
-	const WEEKLY  = 'weekly';
-	const MONTHLY = 'monthly';
+	const NEVER            = 'never';
+	const DAILY            = 'daily';
+	const WEEKLY           = 'weekly';
+	const MONTHLY          = 'monthly';
+	const COUNTS_CACHE_KEY = 'spc_database_optimization_counts';
+	const COUNTS_CACHE_TTL = MINUTE_IN_SECONDS;
 
 	/**
 	 * Database_Optimization constructor.
@@ -202,6 +204,122 @@ class Database_Optimization implements Module_Interface {
 	}
 
 	/**
+	 * Get cleanup counts for each optimization action.
+	 *
+	 * @return array<string, int>
+	 */
+	public function get_cleanup_counts() {
+		$cached_counts = get_transient( self::COUNTS_CACHE_KEY );
+
+		if ( is_array( $cached_counts ) ) {
+			return $cached_counts;
+		}
+
+		$counts = array(
+			Constants::SETTING_POST_REVISION_INTERVAL   => $this->count_revision_posts(),
+			Constants::SETTING_AUTO_DRAFT_POST_INTERVAL => $this->count_draft_posts(),
+			Constants::SETTING_TRASHED_POST_INTERVAL    => $this->count_trashed_posts(),
+			Constants::SETTING_SPAM_COMMENT_INTERVAL    => $this->count_spam_comments(),
+			Constants::SETTING_TRASHED_COMMENT_INTERVAL => $this->count_trashed_comments(),
+			Constants::SETTING_ALL_TRANSIENT_INTERVAL   => $this->count_transients(),
+		);
+
+		set_transient( self::COUNTS_CACHE_KEY, $counts, self::COUNTS_CACHE_TTL );
+
+		return $counts;
+	}
+
+	/**
+	 * Clear cached cleanup counts.
+	 *
+	 * @return void
+	 */
+	public function clear_cleanup_counts_cache() {
+		delete_transient( self::COUNTS_CACHE_KEY );
+	}
+
+	/**
+	 * Count post revisions available for cleanup.
+	 *
+	 * @return int
+	 */
+	private function count_revision_posts() {
+		global $wpdb;
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_type = 'revision'" );
+	}
+
+	/**
+	 * Count auto-draft posts available for cleanup.
+	 *
+	 * @return int
+	 */
+	private function count_draft_posts() {
+		global $wpdb;
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_status = 'auto-draft'" );
+	}
+
+	/**
+	 * Count trashed posts available for cleanup.
+	 *
+	 * @return int
+	 */
+	private function count_trashed_posts() {
+		global $wpdb;
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->posts WHERE post_status = 'trash'" );
+	}
+
+	/**
+	 * Count spam comments available for cleanup.
+	 *
+	 * @return int
+	 */
+	private function count_spam_comments() {
+		global $wpdb;
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved = 'spam'" );
+	}
+
+	/**
+	 * Count trashed comments available for cleanup.
+	 *
+	 * @return int
+	 */
+	private function count_trashed_comments() {
+		global $wpdb;
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM $wpdb->comments WHERE comment_approved IN ('trash', 'post-trashed')" );
+	}
+
+	/**
+	 * Count transients available for cleanup.
+	 *
+	 * @return int
+	 */
+	private function count_transients() {
+		global $wpdb;
+
+		$transient_like         = $wpdb->esc_like( '_transient_' ) . '%';
+		$transient_timeout_like = $wpdb->esc_like( '_transient_timeout_' ) . '%';
+		$site_transient_like    = $wpdb->esc_like( '_site_transient_' ) . '%';
+		$site_timeout_like      = $wpdb->esc_like( '_site_transient_timeout_' ) . '%';
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM $wpdb->options
+				WHERE (option_name LIKE %s AND option_name NOT LIKE %s)
+					OR (option_name LIKE %s AND option_name NOT LIKE %s)",
+				$transient_like,
+				$transient_timeout_like,
+				$site_transient_like,
+				$site_timeout_like
+			)
+		);
+	}
+
+	/**
 	 * Optimize entire database.
 	 *
 	 * Executes all database optimization methods.
@@ -219,7 +337,7 @@ class Database_Optimization implements Module_Interface {
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while optimizing database. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while optimizing the database. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage(),
 			);
 		}
@@ -249,14 +367,14 @@ class Database_Optimization implements Module_Interface {
 			);
 
 			return sprintf(
-				// translators: %d is number of removed post's revisions.
-				__( '%d posts revision removed.', 'wp-cloudflare-page-cache' ),
+				// translators: %d is number of removed post revisions.
+				_n( '%d post revision removed.', '%d post revisions removed.', $posts, 'wp-cloudflare-page-cache' ),
 				$posts
 			);
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while removing the post revision. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while removing post revisions. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage()
 			);
 		}
@@ -293,7 +411,7 @@ class Database_Optimization implements Module_Interface {
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while removing auto draft posts. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while removing auto-draft posts. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage(),
 			);
 		}
@@ -330,7 +448,7 @@ class Database_Optimization implements Module_Interface {
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while removing trashed post. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while removing trashed posts. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage(),
 			);
 		}
@@ -367,7 +485,7 @@ class Database_Optimization implements Module_Interface {
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while removing spam comments. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while removing spam comments. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage()
 			);
 		}
@@ -404,7 +522,7 @@ class Database_Optimization implements Module_Interface {
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while removing trashed comments. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while removing trashed comments. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage()
 			);
 		}
@@ -422,11 +540,16 @@ class Database_Optimization implements Module_Interface {
 		try {
 			global $wpdb;
 
-			$transient_like      = $wpdb->esc_like( '_transient_' ) . '%';
-			$site_transient_like = $wpdb->esc_like( '_site_transient_' ) . '%';
+			$transient_like         = $wpdb->esc_like( '_transient_' ) . '%';
+			$transient_timeout_like = $wpdb->esc_like( '_transient_timeout_' ) . '%';
+			$site_transient_like    = $wpdb->esc_like( '_site_transient_' ) . '%';
+			$site_timeout_like      = $wpdb->esc_like( '_site_transient_timeout_' ) . '%';
 
 			$transients = $this->paginated_query(
-				"SELECT option_name FROM $wpdb->options WHERE option_name LIKE '$transient_like' OR option_name LIKE '$site_transient_like' LIMIT %d OFFSET %d",
+				"SELECT option_name FROM $wpdb->options
+				WHERE (option_name LIKE '$transient_like' AND option_name NOT LIKE '$transient_timeout_like')
+					OR (option_name LIKE '$site_transient_like' AND option_name NOT LIKE '$site_timeout_like')
+				LIMIT %d OFFSET %d",
 				function ( $batch ) {
 					$count = 0;
 					foreach ( $batch as $transient ) {
@@ -448,7 +571,7 @@ class Database_Optimization implements Module_Interface {
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while removing transients. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while removing transients. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage(),
 			);
 		}
@@ -494,7 +617,7 @@ class Database_Optimization implements Module_Interface {
 		} catch ( \Exception $e ) {
 			return sprintf(
 				// translators: %s is error.
-				__( 'There is an error while optimizing table. Error: %s', 'wp-cloudflare-page-cache' ),
+				__( 'An error occurred while optimizing the table. Error: %s', 'wp-cloudflare-page-cache' ),
 				$e->getMessage()
 			);
 		}

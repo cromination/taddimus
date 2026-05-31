@@ -9,17 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Health Check Test
-add_filter( 'site_status_tests', 'vhp_add_site_status_tests' );
+add_filter( 'site_status_tests', 'varnish_http_purge_add_site_status_tests' );
 
-function vhp_add_site_status_tests( $tests ) {
+function varnish_http_purge_add_site_status_tests( $tests ) {
 	$tests['direct']['proxy_cache_purge_caching'] = array(
 		'label' => __( 'Proxy Cache Purge Status', 'varnish-http-purge' ),
-		'test'  => 'vhp_site_status_caching_test',
+		'test'  => 'varnish_http_purge_site_status_caching_test',
 	);
 	return $tests;
 }
 
-function vhp_site_status_caching_test() {
+function varnish_http_purge_site_status_caching_test() {
 
 	// Check the debug log.
 	$debug_log     = get_site_option( 'vhp_varnish_debug' );
@@ -90,7 +90,7 @@ function vhp_site_status_caching_test() {
 		$result['actions']     = sprintf(
 			'<p><a href="%s">%s</a></p>',
 			esc_url( admin_url( 'admin.php?page=varnish-page' ) ),
-			__( 'Enable Caching' )
+			__( 'Enable Caching', 'varnish-http-purge' )
 		);
 	} elseif ( ! empty( $debug_results ) && '' !== $debug_results ) {
 		$count = count( $debug_results );

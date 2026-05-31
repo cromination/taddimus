@@ -17,10 +17,8 @@ class CronStatusManager {
 	/**
 	 * @param string[] $paths           .
 	 * @param bool     $use_paths_limit .
-	 *
-	 * @return void
 	 */
-	public function set_paths_to_conversion( array $paths, bool $use_paths_limit = true ) {
+	public function set_paths_to_conversion( array $paths, bool $use_paths_limit = true ): void {
 		set_site_transient(
 			self::CRON_PATHS_TRANSIENT,
 			( $use_paths_limit ) ? array_slice( $paths, 0, self::CRON_PATHS_LIMIT ) : $paths,
@@ -30,10 +28,8 @@ class CronStatusManager {
 
 	/**
 	 * @param string[] $paths .
-	 *
-	 * @return void
 	 */
-	public function set_paths_skipped( array $paths ) {
+	public function set_paths_skipped( array $paths ): void {
 		$counter = max( ( count( $paths ) - self::CRON_PATHS_LIMIT ), 0 );
 		set_site_transient( self::CRON_PATHS_SKIPPED_TRANSIENT, $counter, 3600 );
 	}
@@ -55,10 +51,8 @@ class CronStatusManager {
 	/**
 	 * @param bool $new_status         .
 	 * @param bool $is_long_expiration .
-	 *
-	 * @return void
 	 */
-	public function set_conversion_status_locked( bool $new_status = true, bool $is_long_expiration = false ) {
+	public function set_conversion_status_locked( bool $new_status = true, bool $is_long_expiration = false ): void {
 		set_site_transient(
 			self::CRON_STATUS_LOCKED_TRANSIENT,
 			( $new_status ) ? 'yes' : null,
@@ -79,27 +73,19 @@ class CronStatusManager {
 		return $request_id;
 	}
 
-	/**
-	 * @return void
-	 */
-	public function reset_conversion_request_id() {
+	public function reset_conversion_request_id(): void {
 		set_site_transient( self::CRON_REQUEST_ID_TRANSIENT, null );
 	}
 
-	/**
-	 * @return string|null
-	 */
-	public function get_conversion_request_id() {
+	public function get_conversion_request_id(): ?string {
 		$request_id = get_site_transient( self::CRON_REQUEST_ID_TRANSIENT );
 		return $request_id ?: null;
 	}
 
 	/**
 	 * @param mixed[]|\WP_Error $response .
-	 *
-	 * @return void
 	 */
-	public function set_conversion_request_response( $response ) {
+	public function set_conversion_request_response( $response ): void {
 		set_site_transient( self::CRON_REQUEST_RESPONSE_TRANSIENT, $response );
 	}
 }

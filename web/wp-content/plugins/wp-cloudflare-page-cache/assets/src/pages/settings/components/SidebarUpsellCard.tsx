@@ -13,6 +13,10 @@ const SidebarUpsellCard = () => {
       description: __('Delay and defer JS files for better performance', 'wp-cloudflare-page-cache'),
     },
     {
+      title: __('CSS Optimization', 'wp-cloudflare-page-cache'),
+      description: __('Remove unused CSS to improve load times', 'wp-cloudflare-page-cache'),
+    },
+    {
       title: __('Marketing Parameter Ignoring', 'wp-cloudflare-page-cache'),
       description: __('Improve cache hit rates significantly', 'wp-cloudflare-page-cache'),
     },

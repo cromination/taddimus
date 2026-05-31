@@ -12,20 +12,11 @@ use WebpConverter\PluginData;
  */
 class RegenerateEndpoint extends EndpointAbstract {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var MethodFactory
-	 */
-	private $method_factory;
+	private MethodFactory $method_factory;
 
-	/**
-	 * @var CronStatusManager
-	 */
-	private $cron_status_manager;
+	private CronStatusManager $cron_status_manager;
 
 	public function __construct(
 		PluginData $plugin_data,

@@ -12,6 +12,7 @@ import { ExternalLinkIcon, Globe, Wifi, WifiOff, Wrench } from "lucide-react";
 
 import ApiKeyForm from "./cloudflare/ApiKeyForm";
 import ApiTokenForm from "./cloudflare/ApiTokenForm";
+import ManagedSettingNotice from "./cloudflare/ManagedSettingNotice";
 import ZoneIdConnect from "./cloudflare/ZoneIdConnect";
 import { useConnectionStore } from "./cloudflare/connectionStore";
 
@@ -86,10 +87,12 @@ const Cloudflare = () => {
 
   const {
     cloudflareConnected,
-    settings
+    settings,
+    isSettingOverridden,
   } = useSettingsStore();
 
   const [authMode, setAuthMode] = useState(parseInt(settings.cf_auth_mode as string));
+  const authModeManaged = isSettingOverridden('cf_auth_mode');
 
   const checkCloudflare = async () => {
     const response = await fetch(`${homeURL}/cdn-cgi/trace`);
@@ -213,7 +216,7 @@ const Cloudflare = () => {
                 <Select
                   id="auth-mode"
                   className="w-full max-w-full h-10"
-                  disabled={asyncLocked}
+                  disabled={asyncLocked || authModeManaged}
                   value={authMode.toString()}
                   onChange={(v) => {
                     setAuthMode(parseInt(v));
@@ -223,6 +226,7 @@ const Cloudflare = () => {
                 <p className="text-xs text-muted-foreground mt-1.5">
                   {__('API Tokens are more secure and provide better control over permissions', 'wp-cloudflare-page-cache')}
                 </p>
+                <ManagedSettingNotice show={authModeManaged} />
               </div>
 
               <div className="mt-6">
@@ -251,7 +255,13 @@ const Cloudflare = () => {
               id: 'enable_cache_rule',
               type: 'toggle',
               label: __('Enable Cloudflare CDN & Caching', 'wp-cloudflare-page-cache'),
-              description: __('Serve cached files from Cloudflare using Cache Rule.', 'wp-cloudflare-page-cache'),
+              description: <>
+                {__('Serve cached files from Cloudflare using Cache Rule.', 'wp-cloudflare-page-cache')}
+                {' '}
+                <ExternalLink url="https://docs.themeisle.com/super-page-cache/setting-up-cloudflare-with-super-cache">
+                  {__('More Info', 'wp-cloudflare-page-cache')}
+                </ExternalLink>
+              </>,
               hide: !cloudflareConnected,
             },
           ]} />)}

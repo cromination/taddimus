@@ -2,6 +2,7 @@
 
 namespace WebpConverter\Error\Detector;
 
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\Error\Notice\PathHtaccessNotWritableNotice;
 use WebpConverter\Error\Notice\PathUploadsUnavailableNotice;
 use WebpConverter\Error\Notice\PathWebpDuplicatedNotice;
@@ -13,10 +14,7 @@ use WebpConverter\Service\PathsGenerator;
  */
 class PathsErrorsDetector implements DetectorInterface {
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		if ( $this->if_uploads_path_exists() !== true ) {
 			return new PathUploadsUnavailableNotice();
 		} elseif ( $this->if_htaccess_is_writeable() !== true ) {

@@ -12,15 +12,9 @@ use WebpConverter\Settings\Page\PageIntegrator;
  */
 class PluginLinksGenerator implements HookableInterface {
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
 	public function __construct( PluginInfo $plugin_info, TokenRepository $token_repository ) {
 		$this->plugin_info      = $plugin_info;
@@ -30,7 +24,7 @@ class PluginLinksGenerator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter(
 			'plugin_action_links_' . $this->plugin_info->get_plugin_basename(),
 			[ $this, 'add_plugin_links_for_admin' ]

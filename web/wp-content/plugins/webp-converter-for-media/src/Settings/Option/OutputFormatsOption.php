@@ -14,15 +14,9 @@ class OutputFormatsOption extends OptionAbstract {
 
 	const OPTION_NAME = 'output_formats';
 
-	/**
-	 * @var ConversionMethodOption
-	 */
-	private $conversion_method_option;
+	private ConversionMethodOption $conversion_method_option;
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
 	public function __construct( FormatFactory $format_factory, ConversionMethodOption $conversion_method_option ) {
 		$this->conversion_method_option = $conversion_method_option;

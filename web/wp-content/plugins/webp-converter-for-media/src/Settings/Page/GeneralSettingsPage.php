@@ -25,25 +25,13 @@ class GeneralSettingsPage extends PageAbstract {
 	const PAGE_SLUG      = null;
 	const PAGE_VIEW_PATH = 'views/settings.php';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	protected $plugin_data;
+	protected PluginData $plugin_data;
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
 	public function __construct(
 		PluginInfo $plugin_info,
@@ -127,10 +115,7 @@ class GeneralSettingsPage extends PageAbstract {
 		];
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function do_action_before_load() {
+	public function do_action_before_load(): void {
 		( new SettingsManager( $this->plugin_data, $this->token_repository, $this->format_factory ) )->save_settings();
 		( new NoticeIntegrator( $this->plugin_info, new WelcomeNotice() ) )->set_disable_value();
 
@@ -138,10 +123,7 @@ class GeneralSettingsPage extends PageAbstract {
 		wp_clear_scheduled_hook( CronEventGenerator::CRON_PATHS_ACTION );
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function do_action_after_load() {
+	public function do_action_after_load(): void {
 		do_action( LoaderAbstract::ACTION_NAME, true );
 	}
 }

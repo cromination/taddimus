@@ -148,7 +148,7 @@ class Product {
 
 			update_option( $this->get_key() . '_install', time() );
 		}
-		$this->install                               = $install;
+		$this->install                               = (int) $install;
 		self::$cached_products[ crc32( $basefile ) ] = $this;
 		$current_version                             = get_option( $this->slug . '_version', '' );
 

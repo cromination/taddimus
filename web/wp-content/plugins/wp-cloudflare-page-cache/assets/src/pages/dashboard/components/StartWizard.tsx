@@ -7,6 +7,7 @@ import Container from "@/layout/Container";
 import Header from "@/layout/Header";
 import PageWrap from "@/layout/PageWrap";
 import { spcApi } from "@/lib/api";
+import { ROOT_PAGES } from "@/lib/constants";
 import { useSettingsStore } from "@/store/optionsStore";
 import { useAppStore } from "@/store/store";
 import { useState } from "@wordpress/element";
@@ -16,7 +17,7 @@ import { toast } from "sonner";
 
 const OnboardingCard = () => {
   const { i18n, isPro } = window.SPCDash;
-  const { lockAsync, asyncLocked, setShowWizard, validLicense } = useAppStore();
+  const { lockAsync, asyncLocked, setRootPage, setShowWizard, validLicense } = useAppStore();
   const { updateSettings } = useSettingsStore();
 
   const performanceImprovements = [
@@ -94,11 +95,12 @@ const OnboardingCard = () => {
 
     toast.success(response.message);
 
-    updateSettings(response.data.settings);
+    updateSettings(response.data.settings, response.data.meta);
 
     setLoading(false);
     lockAsync(false);
     setShowWizard(false);
+    setRootPage(ROOT_PAGES.SETTINGS);
   }
 
   return (

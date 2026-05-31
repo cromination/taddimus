@@ -11,10 +11,7 @@ use WebpConverter\PluginData;
  */
 class ConvertAttachmentAction implements HookableInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;
@@ -23,7 +20,7 @@ class ConvertAttachmentAction implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'webpc_convert_attachment', [ $this, 'convert_files_by_attachment' ], 10, 3 );
 	}
 
@@ -34,10 +31,9 @@ class ConvertAttachmentAction implements HookableInterface {
 	 * @param bool     $regenerate_force .
 	 * @param int|null $quality_level    .
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function convert_files_by_attachment( int $post_id, bool $regenerate_force = false, ?int $quality_level = null ) {
+	public function convert_files_by_attachment( int $post_id, bool $regenerate_force = false, ?int $quality_level = null ): void {
 		$attachment = new AttachmentPathsGenerator( $this->plugin_data );
 
 		if ( $quality_level === 0 ) {

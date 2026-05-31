@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'codeinwp/wp-cloudflare-super-page-cache',
-        'pretty_version' => 'v5.2.4',
-        'version' => '5.2.4.0',
-        'reference' => 'fb19c66f16842def26f19aebceeb5734ae540ff2',
+        'pretty_version' => 'v5.3.1',
+        'version' => '5.3.1.0',
+        'reference' => '9dc1a5c6a72bc7a033da0508a0fd7b53ecb1600f',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,18 +11,18 @@
     ),
     'versions' => array(
         'codeinwp/themeisle-sdk' => array(
-            'pretty_version' => '3.3.50',
-            'version' => '3.3.50.0',
-            'reference' => '3c1f8dfc2390e667bbc086c5d660900a7985efa6',
+            'pretty_version' => '3.3.51',
+            'version' => '3.3.51.0',
+            'reference' => 'bb2a8414b0418b18c68c9ff1df3d7fb10467928d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../codeinwp/themeisle-sdk',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'codeinwp/wp-cloudflare-super-page-cache' => array(
-            'pretty_version' => 'v5.2.4',
-            'version' => '5.2.4.0',
-            'reference' => 'fb19c66f16842def26f19aebceeb5734ae540ff2',
+            'pretty_version' => 'v5.3.1',
+            'version' => '5.3.1.0',
+            'reference' => '9dc1a5c6a72bc7a033da0508a0fd7b53ecb1600f',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -5,10 +5,11 @@ type CheckboxControlProps = {
   value: boolean | number;
   onChange: (nextValue: boolean, id?: string) => void;
   label: string | React.ReactNode;
+  description?: string | React.ReactNode;
   disabled?: boolean;
 }
 
-const CheckboxControl = ({ id, label, value, onChange, disabled = false }: CheckboxControlProps) => {
+const CheckboxControl = ({ id, label, description, value, onChange, disabled = false }: CheckboxControlProps) => {
 
   const handleChange = (nextValue) => {
     onChange(nextValue, id);
@@ -16,7 +17,7 @@ const CheckboxControl = ({ id, label, value, onChange, disabled = false }: Check
 
   return (
     <div className="grid gap-3">
-      <div className="flex items-center gap-2 items-center text-left">
+      <div className="flex items-start gap-2 text-left">
         <Checkbox
           className="cursor-pointer"
           id={id}
@@ -24,9 +25,16 @@ const CheckboxControl = ({ id, label, value, onChange, disabled = false }: Check
           onCheckedChange={handleChange}
           disabled={disabled}
         />
-        <label htmlFor={id} className="cursor-pointer flex items-center text-sm">
-          {label}
-        </label>
+        <div className="grid gap-1">
+          <label htmlFor={id} className="cursor-pointer flex items-center text-sm">
+            {label}
+          </label>
+          {description && (
+            <div className="text-xs text-muted-foreground">
+              {description}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

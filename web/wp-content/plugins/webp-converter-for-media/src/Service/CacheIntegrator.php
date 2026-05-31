@@ -11,10 +11,7 @@ use WebpConverter\Settings\Option\LoaderTypeOption;
  */
 class CacheIntegrator implements HookableInterface {
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
 	public function __construct( PluginInfo $plugin_info ) {
 		$this->plugin_info = $plugin_info;
@@ -23,7 +20,7 @@ class CacheIntegrator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'webpc_settings_updated', [ $this, 'clear_after_settings_save' ], 10, 2 );
 		register_activation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'clear_cache' ] );
 		register_deactivation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'clear_cache' ] );
@@ -33,10 +30,9 @@ class CacheIntegrator implements HookableInterface {
 	 * @param mixed[] $current_settings  .
 	 * @param mixed[] $previous_settings .
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function clear_after_settings_save( array $current_settings, array $previous_settings ) {
+	public function clear_after_settings_save( array $current_settings, array $previous_settings ): void {
 		if ( $previous_settings[ LoaderTypeOption::OPTION_NAME ] === $current_settings[ LoaderTypeOption::OPTION_NAME ] ) {
 			return;
 		}
@@ -45,10 +41,9 @@ class CacheIntegrator implements HookableInterface {
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function clear_cache() {
+	public function clear_cache(): void {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . '/wp-admin/includes/plugin.php';
 		}

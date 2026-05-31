@@ -14,12 +14,12 @@ class FormatFactory {
 	 *
 	 * @var FormatInterface[]
 	 */
-	private $formats = [];
+	private array $formats = [];
 
 	/**
 	 * @var string[][]
 	 */
-	private $available_formats = [];
+	private array $available_formats = [];
 
 	public function __construct( TokenRepository $token_repository ) {
 		$this->set_integration( new AvifFormat( $token_repository ) );
@@ -30,10 +30,8 @@ class FormatFactory {
 	 * Sets integration for format.
 	 *
 	 * @param FormatInterface $format .
-	 *
-	 * @return void
 	 */
-	private function set_integration( FormatInterface $format ) {
+	private function set_integration( FormatInterface $format ): void {
 		$this->formats[] = $format;
 	}
 
@@ -74,10 +72,7 @@ class FormatFactory {
 		return $this->available_formats[ $conversion_method ];
 	}
 
-	/**
-	 * @return void
-	 */
-	public function reset_available_formats() {
+	public function reset_available_formats(): void {
 		$this->available_formats = [];
 	}
 

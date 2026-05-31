@@ -7,15 +7,9 @@ namespace WebpConverter\Conversion\Directory;
  */
 class SourceDirectory extends DirectoryAbstract {
 
-	/**
-	 * @var string
-	 */
-	private $directory_type;
+	private string $directory_type;
 
-	/**
-	 * @var string
-	 */
-	private $directory_path;
+	private string $directory_path;
 
 	public function __construct( string $directory_name ) {
 		$this->directory_type = trim( $directory_name, '/\\' );

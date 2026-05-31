@@ -42,6 +42,7 @@ abstract class Abstract_Module {
 		'wpcf7-redirect'                      => 'wpcf7-redirect/wpcf7-redirect.php',
 		'wp-full-stripe-free'                 => 'wp-full-stripe-free/wp-full-stripe.php',
 		'learning-management-system'          => 'learning-management-system/lms.php',
+		'wp-cloudflare-page-cache'            => 'wp-cloudflare-page-cache/wp-cloudflare-super-page-cache.php',
 	];
 
 	/**
@@ -140,7 +141,8 @@ abstract class Abstract_Module {
 					'slug'   => $slug,
 					'fields' => array(
 						'downloaded'        => false,
-						'rating'            => false,
+						'rating'            => true,
+						'ratings'           => true,
 						'description'       => false,
 						'short_description' => true,
 						'donate_link'       => false,

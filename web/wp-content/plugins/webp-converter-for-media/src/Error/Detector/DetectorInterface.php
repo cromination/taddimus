@@ -9,8 +9,5 @@ use WebpConverter\Error\Notice\NoticeInterface;
  */
 interface DetectorInterface {
 
-	/**
-	 * @return NoticeInterface|null
-	 */
-	public function get_error();
+	public function get_error(): ?NoticeInterface;
 }

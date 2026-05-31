@@ -17,12 +17,9 @@ class DirectoryIntegrator implements HookableInterface {
 	 *
 	 * @var DirectoryInterface[]
 	 */
-	private $directories = [];
+	private array $directories = [];
 
-	/**
-	 * @var OutputPathGenerator
-	 */
-	private $output_path;
+	private OutputPathGenerator $output_path;
 
 	public function __construct( FormatFactory $format_factory, ?OutputPathGenerator $output_path = null ) {
 		$this->output_path = $output_path ?: new OutputPathGenerator( $format_factory );
@@ -31,7 +28,7 @@ class DirectoryIntegrator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'webpc_dir_name', [ $this, 'get_dir_as_name' ], 0, 2 );
 		add_filter( 'webpc_dir_path', [ $this, 'get_dir_as_path' ], 0, 2 );
 		add_filter( 'webpc_dir_url', [ $this, 'get_dir_as_url' ], 0, 2 );

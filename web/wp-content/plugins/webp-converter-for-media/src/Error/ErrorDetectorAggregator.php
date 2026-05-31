@@ -29,32 +29,23 @@ class ErrorDetectorAggregator implements HookableInterface {
 	const ERRORS_CACHE_OPTION           = 'webpc_errors_cache';
 	const ERROR_DETECTOR_DATE_TRANSIENT = 'webpc_error_detector';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
 	/**
 	 * @var string[]
 	 */
-	private $not_fatal_errors = [
+	private array $not_fatal_errors = [
 		RewritesCachedNotice::ERROR_KEY,
 	];
 
 	/**
 	 * @var NoticeInterface[]|null
 	 */
-	private $cached_errors = null;
+	private ?array $cached_errors = null;
 
 	public function __construct(
 		PluginInfo $plugin_info,
@@ -69,7 +60,7 @@ class ErrorDetectorAggregator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'webpc_server_errors', [ $this, 'get_server_errors' ], 10, 2 );
 		add_filter( 'webpc_server_errors_messages', [ $this, 'get_server_errors_messages' ], 10, 1 );
 	}
@@ -130,10 +121,8 @@ class ErrorDetectorAggregator implements HookableInterface {
 
 	/**
 	 * @param NoticeInterface[] $detected_errors .
-	 *
-	 * @return void
 	 */
-	private function cache_errors( array $detected_errors ) {
+	private function cache_errors( array $detected_errors ): void {
 		$error_codes = [];
 		foreach ( $detected_errors as $error ) {
 			$error_codes[] = $error->get_key();
@@ -195,10 +184,7 @@ class ErrorDetectorAggregator implements HookableInterface {
 		return $this->cached_errors;
 	}
 
-	/**
-	 * @return void
-	 */
-	private function pause_duplicated_detection() {
+	private function pause_duplicated_detection(): void {
 		$current_date = ( new \DateTime() )->format( 'Uv' );
 		$cached_date  = get_site_transient( self::ERROR_DETECTOR_DATE_TRANSIENT );
 		if ( $cached_date && ( $cached_date >= ( $current_date - 1000 ) ) ) {

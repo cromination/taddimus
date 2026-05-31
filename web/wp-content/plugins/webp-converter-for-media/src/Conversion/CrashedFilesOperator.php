@@ -9,12 +9,7 @@ class CrashedFilesOperator {
 
 	const CRASHED_FILE_EXTENSION = 'crashed';
 
-	/**
-	 * @param string $output_path .
-	 *
-	 * @return void
-	 */
-	public function create_crashed_file( string $output_path ) {
+	public function create_crashed_file( string $output_path ): void {
 		$file = fopen( $output_path . '.' . self::CRASHED_FILE_EXTENSION, 'w' );
 		if ( $file === false ) {
 			return;
@@ -23,12 +18,7 @@ class CrashedFilesOperator {
 		fclose( $file );
 	}
 
-	/**
-	 * @param string $output_path .
-	 *
-	 * @return void
-	 */
-	public function delete_crashed_file( string $output_path ) {
+	public function delete_crashed_file( string $output_path ): void {
 		if ( ! file_exists( $output_path ) || ! file_exists( $output_path . '.' . self::CRASHED_FILE_EXTENSION ) ) {
 			return;
 		}

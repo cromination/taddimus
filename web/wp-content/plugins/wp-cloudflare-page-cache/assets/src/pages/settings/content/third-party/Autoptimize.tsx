@@ -7,7 +7,7 @@ const Autoptimize = () => {
     {
       id: 'cf_autoptimize_purge_on_cache_flush',
       type: 'toggle',
-      label: __('Automatically purge the cache when Autoptimize flushs its cache', 'wp-cloudflare-page-cache'),
+      label: __('Automatically purge the cache when Autoptimize flushes its cache', 'wp-cloudflare-page-cache'),
     }
   ];
 

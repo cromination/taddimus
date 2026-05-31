@@ -38,6 +38,19 @@ more_clear_headers 'Expires';
 more_clear_headers 'Cache-Control';
 add_header Cache-Control $wp_cf_super_cache_active;`;
 
+  const gzipCompressionCode =
+    `gzip on;
+gzip_vary on;
+gzip_proxied any;
+gzip_comp_level 6;
+gzip_min_length 1024;
+gzip_types text/plain text/css text/xml text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml;`;
+
+  const brotliCompressionCode =
+    `brotli on;
+brotli_comp_level 5;
+brotli_types text/plain text/css text/xml text/javascript application/javascript application/json application/xml application/rss+xml image/svg+xml;`;
+
   let browserCachingCode = '';
 
   if (isToggleOn('cf_bypass_sitemap')) {
@@ -143,6 +156,66 @@ add_header Cache-Control $wp_cf_super_cache_active;`;
                   <Separator className="my-5" />
                 </>
               )}
+
+              <div className="flex items-center mb-3">
+                <FileText className="size-5 mr-2 text-blue-500" />
+                <h3 className="text-base">{__('Compression rules', 'wp-cloudflare-page-cache')}</h3>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm mb-2 text-muted-foreground">
+                    {__('Add these gzip rules inside the http block or the server block of your Nginx configuration:', 'wp-cloudflare-page-cache')}
+                  </p>
+
+                  <div className="relative">
+                    <Button
+                      variant="default"
+                      size="icon"
+                      onClick={() => copyToClipboard(gzipCompressionCode)}
+                      className="absolute top-2 right-2 z-10"
+                      icon={Copy}
+                    >
+                      <span className="sr-only">
+                        {__('Copy to clipboard', 'wp-cloudflare-page-cache')}
+                      </span>
+                    </Button>
+                    <pre className="text-muted-foreground bg-muted border border-border p-4 rounded-2xl overflow-y-auto text-sm whitespace-pre-wrap">
+                      {gzipCompressionCode}
+                    </pre>
+                  </div>
+                </div>
+
+                <Notice
+                  type="warning"
+                  title={__('Optional Brotli rules', 'wp-cloudflare-page-cache')}
+                  description={createInterpolateElement(
+                    __('Add the Brotli rules only if your Nginx installation includes the <code>ngx_brotli</code> module. Otherwise, Nginx will fail its configuration test because the Brotli directives are unknown.', 'wp-cloudflare-page-cache'),
+                    {
+                      code: <code />
+                    }
+                  )}
+                />
+
+                <div className="relative">
+                  <Button
+                    variant="default"
+                    size="icon"
+                    onClick={() => copyToClipboard(brotliCompressionCode)}
+                    className="absolute top-2 right-2 z-10"
+                    icon={Copy}
+                  >
+                    <span className="sr-only">
+                      {__('Copy to clipboard', 'wp-cloudflare-page-cache')}
+                    </span>
+                  </Button>
+                  <pre className="text-muted-foreground bg-muted border border-border p-4 rounded-2xl overflow-y-auto text-sm whitespace-pre-wrap">
+                    {brotliCompressionCode}
+                  </pre>
+                </div>
+              </div>
+
+              <Separator className="my-5" />
 
               {/* Browser Caching Rules Section */}
               <div className="flex items-center mb-3">

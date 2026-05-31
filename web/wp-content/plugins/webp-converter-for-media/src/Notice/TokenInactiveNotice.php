@@ -16,15 +16,9 @@ class TokenInactiveNotice extends NoticeAbstract implements NoticeInterface {
 	const NOTICE_OPTION    = 'webpc_notice_token_invalid';
 	const NOTICE_VIEW_PATH = 'components/notices/token-invalid.php';
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
 	public function __construct( PluginData $plugin_data, TokenRepository $token_repository ) {
 		$this->plugin_data      = $plugin_data;

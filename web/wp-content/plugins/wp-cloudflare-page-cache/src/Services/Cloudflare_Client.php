@@ -81,7 +81,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 	 * @return string
 	 */
 	public function get_rule_expression() {
-		$builder = new Cache_Rule( $this->plugin );
+		$builder = new Cache_Rule();
 
 		return $builder->exclude_cookies()
 						->exclude_paths()
@@ -98,7 +98,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 	 */
 	public function get_current_browser_cache_ttl( &$error = '' ) {
 		$args     = $this->get_api_auth_args();
-		$url      = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/settings/browser_cache_ttl', $this->plugin->get_cloudflare_api_zone_id() );
+		$url      = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/settings/browser_cache_ttl', $this->settings_store->get_cloudflare_zone_id() );
 		$response = wp_remote_get( $url, $args );
 
 		if ( ! $this->is_success_api_response( $response, 'get_current_browser_cache_ttl', $error ) ) {
@@ -111,7 +111,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 			return $response_body['result']['value'];
 		}
 
-		$error = __( 'Unable to find Browser Cache TTL settings ', 'wp-cloudflare-page-cache' );
+		$error = __( 'Unable to find Browser Cache TTL settings.', 'wp-cloudflare-page-cache' );
 
 		return false;
 	}
@@ -125,7 +125,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 	 * @return bool
 	 */
 	public function change_browser_cache_ttl( $ttl, &$error = '' ) {
-		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/settings/browser_cache_ttl', $this->plugin->get_cloudflare_api_zone_id() );
+		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/settings/browser_cache_ttl', $this->settings_store->get_cloudflare_zone_id() );
 		$args           = $this->get_api_auth_args();
 		$args['method'] = 'PATCH';
 		$args['body']   = wp_json_encode( [ 'value' => $ttl ] );
@@ -155,7 +155,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 			return false;
 		}
 
-		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/%s/rules/%s', $this->plugin->get_cloudflare_api_zone_id(), $ruleset, $rule );
+		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/rulesets/%s/rules/%s', $this->settings_store->get_cloudflare_zone_id(), $ruleset, $rule );
 		$args           = $this->get_api_auth_args();
 		$args['method'] = 'DELETE';
 
@@ -187,13 +187,13 @@ class Cloudflare_Client extends Cloudflare_Rule {
 	 * @deprecated - The page rule is not used anymore.
 	 */
 	public function delete_page_rule( $id, &$error = '' ) {
-		if ( ! $this->plugin->has_cloudflare_api_zone_id() ) {
-			$error = __( 'There is not zone id to use', 'wp-cloudflare-page-cache' );
+		if ( ! $this->settings_store->is_cloudflare_connected() ) {
+			$error = __( 'No zone ID is available to use.', 'wp-cloudflare-page-cache' );
 
 			return false;
 		}
 
-		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/pagerules/%s', $this->plugin->get_cloudflare_api_zone_id(), $id );
+		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/pagerules/%s', $this->settings_store->get_cloudflare_zone_id(), $id );
 		$args           = $this->get_api_auth_args();
 		$args['method'] = 'DELETE';
 
@@ -259,16 +259,16 @@ class Cloudflare_Client extends Cloudflare_Rule {
 		}
 
 		if ( empty( $this->account_ids ) ) {
-			$error = __( 'Unable to retrive account ID', 'wp-cloudflare-page-cache' );
+			$error = __( 'Unable to retrieve account ID', 'wp-cloudflare-page-cache' );
 
-			$this->log( 'get_current_account_id', sprintf( 'Unable to retrive an account ID: %s', $error ) );
+			$this->log( 'get_current_account_id', sprintf( 'Unable to retrieve an account ID: %s', $error ) );
 
 			return '';
 		}
 
 		if ( count( $this->account_ids ) > 1 ) {
 			foreach ( $this->account_ids as $account_data ) {
-				if ( strstr( strtolower( $account_data['name'] ), strtolower( $this->plugin->get_cloudflare_api_email() ) ) !== false ) {
+				if ( strstr( strtolower( $account_data['name'] ), strtolower( $this->settings_store->get_cloudflare_api_email() ) ) !== false ) {
 					$account_id = $account_data['id'];
 
 					break;
@@ -290,16 +290,17 @@ class Cloudflare_Client extends Cloudflare_Rule {
 	/**
 	 * Get the zone ID list.
 	 *
-	 * @param string $error
+	 * @param string                  $error The error message.
+	 * @param array<string, int|string> $auth_overrides Temporary auth values to use for validation requests.
 	 *
 	 * @return array | false
 	 */
-	public function get_zone_id_list( &$error = '' ) {
+	public function get_zone_id_list( &$error = '', array $auth_overrides = [] ) {
 		$list         = [];
 		$per_page     = 50;
 		$current_page = 1;
 		$pagination   = false;
-		$args         = $this->get_api_auth_args();
+		$args         = $this->get_api_auth_args( false, $auth_overrides );
 
 		do {
 			$url = sprintf( 'https://api.cloudflare.com/client/v4/zones?page=%s&per_page=%s', $current_page, $per_page );
@@ -377,7 +378,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 		$args           = $this->get_api_auth_args();
 		$args['method'] = 'POST';
 		$args['body']   = json_encode( [ 'purge_everything' => true ] );
-		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $this->plugin->get_cloudflare_api_zone_id() );
+		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $this->settings_store->get_cloudflare_zone_id() );
 		$response       = wp_remote_post( $url, $args );
 
 		if ( ! $this->is_success_api_response( $response, 'purge_cache', $error ) ) {
@@ -410,12 +411,12 @@ class Cloudflare_Client extends Cloudflare_Rule {
 			curl_setopt_array(
 				$curl_array[ $curl_index ],
 				[
-					CURLOPT_URL            => "https://api.cloudflare.com/client/v4/zones/{$this->plugin->get_cloudflare_api_zone_id()}/purge_cache",
-					CURLOPT_RETURNTRANSFER => 1,
+					CURLOPT_URL            => sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $this->settings_store->get_cloudflare_zone_id() ),
+					CURLOPT_RETURNTRANSFER => true,
 					CURLOPT_MAXREDIRS      => 10,
 					CURLOPT_TIMEOUT        => $args['timeout'],
 					CURLOPT_CUSTOMREQUEST  => 'POST',
-					CURLOPT_POST           => 1,
+					CURLOPT_POST           => true,
 					CURLOPT_HTTPHEADER     => $args['headers'],
 					CURLOPT_POSTFIELDS     => json_encode( [ 'files' => array_values( $single_chunk ) ] ),
 				]
@@ -470,7 +471,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 		if ( count( $urls ) > 30 ) {
 			$this->purge_cache_urls_async( $urls );
 		} else {
-			$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $this->plugin->get_cloudflare_api_zone_id() );
+			$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $this->settings_store->get_cloudflare_zone_id() );
 			$args           = $this->get_api_auth_args();
 			$args['method'] = 'POST';
 			$args['body']   = json_encode( [ 'files' => array_values( $urls ) ] );
@@ -486,6 +487,36 @@ class Cloudflare_Client extends Cloudflare_Rule {
 		}
 
 		do_action( 'swcfpc_cf_purge_cache_by_urls_after', $urls );
+
+		return true;
+	}
+
+	/**
+	 * Purge Cloudflare edge cache by tag list.
+	 *
+	 * @param array<int, string> $tags  Tag list to purge.
+	 * @param string             $error Reference; populated with the API error message on failure.
+	 *
+	 * @return bool
+	 */
+	public function purge_cache_by_tags( $tags, &$error = '' ) {
+		do_action( 'swcfpc_cf_purge_cache_by_tags_before', $tags );
+
+		$args           = $this->get_api_auth_args();
+		$args['method'] = 'POST';
+		$args['body']   = json_encode( [ 'tags' => array_values( $tags ) ] );
+		$url            = sprintf( 'https://api.cloudflare.com/client/v4/zones/%s/purge_cache', $this->settings_store->get_cloudflare_zone_id() );
+
+		$this->log( 'purge_cache_by_tags', sprintf( 'Request URL: %s', $url ) );
+		$this->log( 'purge_cache_by_tags', sprintf( 'Request Body: %s', $args['body'] ) );
+
+		$response = wp_remote_post( $url, $args );
+
+		if ( ! $this->is_success_api_response( $response, 'purge_cache_by_tags', $error ) ) {
+			return false;
+		}
+
+		do_action( 'swcfpc_cf_purge_cache_by_tags_after', $tags );
 
 		return true;
 	}
@@ -510,7 +541,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
 		$response_body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( ! is_array( $response_body ) || ! isset( $response_body['result'], $response_body['result']['permissions'] ) || ! is_array( $response_body['result']['permissions'] ) ) {
-			return new \WP_Error( 'cloudflare_error', __( 'Could not check token permissions.Invalid response from Cloudflare', 'wp-cloudflare-page-cache' ) );
+			return new \WP_Error( 'cloudflare_error', __( 'Could not check token permissions. Invalid response from Cloudflare.', 'wp-cloudflare-page-cache' ) );
 		}
 		$permissions         = $response_body['result']['permissions'];
 		$missing_permissions = array_diff( self::TOKEN_PERMISSIONS, $permissions );
@@ -566,7 +597,7 @@ class Cloudflare_Client extends Cloudflare_Rule {
     ';
 
 		$variables = array(
-			'zoneTag'   => $this->plugin->get_cloudflare_api_zone_id(),
+			'zoneTag'   => $this->settings_store->get_cloudflare_zone_id(),
 			'dateStart' => $start_date,
 			'dateEnd'   => $end_date,
 		);

@@ -17,7 +17,7 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 	/**
 	 * {@inheritdoc}
 	 */
-	public function convert_paths( array $paths, array $plugin_settings, bool $regenerate_force ) {
+	public function convert_paths( array $paths, array $plugin_settings, bool $regenerate_force ): void {
 		$output_formats = $plugin_settings[ OutputFormatsOption::OPTION_NAME ];
 		foreach ( $output_formats as $output_format ) {
 			foreach ( $paths as $path ) {
@@ -33,10 +33,8 @@ abstract class LibraryMethodAbstract extends MethodAbstract implements LibraryMe
 	 * @param string  $source_path     Server path of source image.
 	 * @param string  $output_format   Extension of output format.
 	 * @param mixed[] $plugin_settings .
-	 *
-	 * @return void
 	 */
-	private function convert_path( string $source_path, string $output_format, array $plugin_settings ) {
+	private function convert_path( string $source_path, string $output_format, array $plugin_settings ): void {
 		$this->server_configurator->set_memory_limit();
 		$this->server_configurator->set_execution_time();
 

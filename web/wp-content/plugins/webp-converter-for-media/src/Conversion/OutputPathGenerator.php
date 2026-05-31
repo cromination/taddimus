@@ -9,20 +9,11 @@ use WebpConverter\Conversion\Format\FormatFactory;
  */
 class OutputPathGenerator {
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
-	/**
-	 * @var string|null
-	 */
-	private $path_wp_content_dir = null;
+	private ?string $path_wp_content_dir = null;
 
-	/**
-	 * @var string|null
-	 */
-	private $path_output_dir = null;
+	private ?string $path_output_dir = null;
 
 	public function __construct( FormatFactory $format_factory ) {
 		$this->format_factory = $format_factory;

@@ -1,5 +1,19 @@
 ## CHANGELOG
 
+= 5.10.0 =
+* May 2026
+* New: Recommendation for GetPageSpeed Amplify cache monitoring (readme + Check Caching results).
+
+= 5.9.2 =
+* May 2026
+* Fix: Corrected @param/@return docblock types on purge_post(), purge_url(), generate_urls(), check_upgrades(), and nocache_cssjs() so they match the values actually passed and returned. Removes false IDE and static-analysis warnings reported by Sjoerd Boerrigter. No runtime behavior changes.
+* New: CI now lints PHPDoc parameter/return types against real WordPress function signatures (PHPStan + WP stubs), so this class of docblock drift is caught automatically.
+
+= 5.9.1 =
+* May 2026
+* Update: Tested up to WordPress 7.0
+* Update: `Requires PHP` bumped from 5.6 to 7.4 to match WordPress 7.0's PHP floor. Sites on PHP < 7.4 will not see this update.
+
 = 5.9.0 =
 * April 2026
 * New: NGINX cache-purge backend support -- uses literal * instead of .* regex for wildcard purges

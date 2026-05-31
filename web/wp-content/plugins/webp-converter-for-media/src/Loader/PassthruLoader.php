@@ -18,7 +18,7 @@ class PassthruLoader extends LoaderAbstract {
 	/**
 	 * @var string[]
 	 */
-	private $allowed_urls = [];
+	private array $allowed_urls = [];
 
 	/**
 	 * {@inheritdoc}
@@ -42,21 +42,21 @@ class PassthruLoader extends LoaderAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_admin_hooks() {
+	public function init_admin_hooks(): void {
 		add_filter( 'webpc_debug_image_url', [ $this, 'update_image_urls' ] );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_front_end_hooks() {
+	public function init_front_end_hooks(): void {
 		add_action( 'init', [ $this, 'start_buffering' ] );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function activate_loader( bool $is_debug = false ) {
+	public function activate_loader( bool $is_debug = false ): void {
 		$settings    = ( ! $is_debug ) ? $this->plugin_data->get_plugin_settings() : $this->plugin_data->get_plugin_settings_debug();
 		$path_source = $this->plugin_info->get_plugin_directory_path() . self::LOADER_SOURCE;
 		$source_code = ( is_readable( $path_source ) ) ? file_get_contents( $path_source ) ?: '' : '';
@@ -125,7 +125,7 @@ class PassthruLoader extends LoaderAbstract {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function deactivate_loader() {
+	public function deactivate_loader(): void {
 		$dir_output = dirname( apply_filters( 'webpc_dir_path', '', 'uploads' ) ) . self::PATH_LOADER;
 		if ( is_writable( $dir_output ) ) {
 			unlink( $dir_output );
@@ -133,10 +133,9 @@ class PassthruLoader extends LoaderAbstract {
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function start_buffering() {
+	public function start_buffering(): void {
 		if ( ! ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( ! is_admin() && ! is_network_admin() ) ) ) {
 			return;
 		}
@@ -185,7 +184,7 @@ class PassthruLoader extends LoaderAbstract {
 	 *
 	 * @return string|null URL of source PHP file.
 	 */
-	public static function get_loader_url() {
+	public static function get_loader_url(): ?string {
 		if ( ! $source_dir = dirname( apply_filters( 'webpc_dir_url', '', 'uploads' ) ) ) {
 			return null;
 		}

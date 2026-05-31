@@ -55,7 +55,7 @@ class PassthruLoader {
 		}
 	}
 
-	private function load_converted_image( string $image_path ) {
+	private function load_converted_image( string $image_path ): void {
 		$mime_types    = json_decode( base64_decode( self::MIME_TYPES ) ?: '', true ) ?: []; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 		$headers       = array_change_key_case(
 			array_merge( ( function_exists( 'getallheaders' ) ) ? getallheaders() : [], $_SERVER ),

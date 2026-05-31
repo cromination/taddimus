@@ -18,15 +18,9 @@ class CloudflareConfigurator implements HookableInterface {
 	const REQUEST_CACHE_CONFIG_OPTION = 'webpc_cloudflare_cache_config';
 	const REQUEST_CACHE_PURGE_OPTION  = 'webpc_cloudflare_cache_purge';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginInfo $plugin_info, PluginData $plugin_data ) {
 		$this->plugin_info = $plugin_info;
@@ -36,7 +30,7 @@ class CloudflareConfigurator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'webpc_settings_updated', [ $this, 'clear_after_settings_save' ], 10, 2 );
 		register_activation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'purge_cache' ] );
 		register_deactivation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'purge_cache' ] );
@@ -46,10 +40,9 @@ class CloudflareConfigurator implements HookableInterface {
 	 * @param mixed[] $current_settings  .
 	 * @param mixed[] $previous_settings .
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function clear_after_settings_save( array $current_settings, array $previous_settings ) {
+	public function clear_after_settings_save( array $current_settings, array $previous_settings ): void {
 		if ( ( $previous_settings[ CloudflareZoneIdOption::OPTION_NAME ] === $current_settings[ CloudflareZoneIdOption::OPTION_NAME ] )
 			&& ( $previous_settings[ CloudflareApiTokenOption::OPTION_NAME ] === $current_settings[ CloudflareApiTokenOption::OPTION_NAME ] ) ) {
 			return;
@@ -152,7 +145,6 @@ class CloudflareConfigurator implements HookableInterface {
 
 		curl_exec( $connect );
 		$request_info = curl_getinfo( $connect );
-		curl_close( $connect );
 
 		return $request_info['http_code'];
 	}

@@ -38,6 +38,10 @@ class DownloadManager
     private $filesystem;
     /** @var array<string, DownloaderInterface> */
     private $downloaders = [];
+    /** @var bool */
+    private $sourceFallback = false;
+    /** @var bool */
+    private $sourceFallbackDeprecationWarned = false;
 
     /**
      * Initializes download manager.
@@ -85,6 +89,22 @@ class DownloadManager
     public function setPreferences(array $preferences): self
     {
         $this->packagePreferences = $preferences;
+
+        return $this;
+    }
+
+    /**
+     * Allow fallback to alternative sources when download fails.
+     */
+    public function setSourceFallback(bool $sourceFallback): self
+    {
+        if ($sourceFallback && !$this->sourceFallbackDeprecationWarned) {
+            $this->io->writeError('<warning>The source-fallback option is deprecated and will be removed in Composer 2.11 as automatic fallback between dist and source has security implications.</warning>');
+            $this->io->writeError('<warning>If you have a legitimate use case and do not want us to remove it in 2.11, please open an issue at https://github.com/composer/composer/issues to let us know.</warning>');
+            $this->sourceFallbackDeprecationWarned = true;
+        }
+
+        $this->sourceFallback = $sourceFallback;
 
         return $this;
     }
@@ -195,9 +215,18 @@ class DownloadManager
                 return \React\Promise\resolve(null);
             }
 
-            $handleError = static function ($e) use ($sources, $source, $package, $io, $download) {
+            $handleError = function ($e) use ($sources, $source, $package, $io, $download) {
                 if ($e instanceof \RuntimeException && !$e instanceof IrrecoverableDownloadException) {
-                    if (!$sources) {
+                    if (count($sources) === 0 || !$this->sourceFallback) {
+                        if (!$this->sourceFallback && count($sources) > 0) {
+                            $io->writeError(
+                                '    <warning>Failed to download '.
+                                $package->getPrettyName().
+                                ' from ' . $source . ': '.
+                                $e->getMessage().'</warning>'
+                            );
+                            $io->writeError('    <warning>Source fallback is disabled. Not trying alternative sources.</warning>');
+                        }
                         throw $e;
                     }
 

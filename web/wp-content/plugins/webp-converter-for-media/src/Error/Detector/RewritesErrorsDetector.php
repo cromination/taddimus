@@ -35,30 +35,15 @@ class RewritesErrorsDetector implements DetectorInterface {
 	const PATH_OUTPUT_FILE_PLUGINS = '/webp-converter-for-media/assets/img/icon-test.png';
 	const URL_DEBUG_HTACCESS_FILE  = 'assets/img/debug-htaccess/icon-test.png2';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var FileLoader
-	 */
-	private $file_loader;
+	private FileLoader $file_loader;
 
-	/**
-	 * @var OutputPathGenerator
-	 */
-	private $output_path;
+	private OutputPathGenerator $output_path;
 
-	/**
-	 * @var string
-	 */
-	private $test_version;
+	private string $test_version;
 
 	public function __construct(
 		PluginInfo $plugin_info,
@@ -74,10 +59,7 @@ class RewritesErrorsDetector implements DetectorInterface {
 		$this->test_version = uniqid();
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		$this->convert_images_for_debug();
 
 		do_action( LoaderAbstract::ACTION_NAME, true, true );
@@ -87,10 +69,7 @@ class RewritesErrorsDetector implements DetectorInterface {
 		return $error;
 	}
 
-	/**
-	 * @return NoticeInterface|null
-	 */
-	private function detect_rewrites_error() {
+	private function detect_rewrites_error(): ?NoticeInterface {
 		$settings    = $this->plugin_data->get_plugin_settings();
 		$loader_type = $settings[ LoaderTypeOption::OPTION_NAME ] ?? '';
 
@@ -128,10 +107,8 @@ class RewritesErrorsDetector implements DetectorInterface {
 
 	/**
 	 * Converts and saves files needed for testing.
-	 *
-	 * @return void
 	 */
-	private function convert_images_for_debug() {
+	private function convert_images_for_debug(): void {
 		$uploads_dir = apply_filters( 'webpc_dir_path', '', 'uploads' );
 		if ( ! is_writable( $uploads_dir ) ) {
 			return;

@@ -54,12 +54,12 @@ interface NoticeInterface {
 	 *
 	 * @return mixed[]|null Args extract in view template.
 	 */
-	public function get_vars_for_view();
+	public function get_vars_for_view(): ?array;
 
 	/**
 	 * Returns name of action using in WP Ajax.
 	 *
 	 * @return string|null Name of ajax action.
 	 */
-	public function get_ajax_action_to_disable();
+	public function get_ajax_action_to_disable(): ?string;
 }

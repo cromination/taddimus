@@ -12,6 +12,7 @@ use WebpConverter\Conversion\PathsFinder;
 use WebpConverter\HookableInterface;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
+use WP_CLI\ExitException;
 
 /**
  * Registers the commands handled by WP_CLI.
@@ -20,25 +21,13 @@ use WebpConverter\Repository\TokenRepository;
  */
 class WpCliManager implements HookableInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
-	/**
-	 * @var MethodFactory
-	 */
-	private $method_factory;
+	private MethodFactory $method_factory;
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
 	public function __construct(
 		PluginData $plugin_data,
@@ -55,15 +44,14 @@ class WpCliManager implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'cli_init', [ $this, 'init_hooks_after_setup' ] );
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function init_hooks_after_setup() {
+	public function init_hooks_after_setup(): void {
 		if ( ! class_exists( '\WP_CLI' ) ) {
 			return;
 		}
@@ -89,10 +77,7 @@ class WpCliManager implements HookableInterface {
 		\WP_CLI::add_command( 'webp-converter regenerate', [ $this, 'regenerate_images' ] );
 	}
 
-	/**
-	 * @return void
-	 */
-	public function calculate_images() {
+	public function calculate_images(): void {
 		\WP_Cli::log(
 			__( 'How many images to convert are remaining on my website?', 'webp-converter-for-media' )
 		);
@@ -113,10 +98,8 @@ class WpCliManager implements HookableInterface {
 	/**
 	 * @param string[] $args       .
 	 * @param string[] $assoc_args .
-	 *
-	 * @return void
 	 */
-	public function regenerate_images( array $args, array $assoc_args = [] ) {
+	public function regenerate_images( array $args, array $assoc_args = [] ): void {
 		$force_flag        = ( isset( $assoc_args['force'] ) || in_array( '-force', $args ) );
 		$conversion_method = ( new MethodIntegrator( $this->plugin_data, $this->method_factory ) );
 		$method_used       = $conversion_method->get_method_used();

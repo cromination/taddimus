@@ -23,30 +23,15 @@ class PathsFinder {
 	const PATHS_PER_REQUEST_REMOTE_MEDIUM = 5;
 	const PATHS_PER_REQUEST_REMOTE_LARGE  = 10;
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
-	/**
-	 * @var StatsManager
-	 */
-	private $stats_manager;
+	private StatsManager $stats_manager;
 
-	/**
-	 * @var OutputPathGenerator
-	 */
-	private $output_path;
+	private OutputPathGenerator $output_path;
 
-	/**
-	 * @var DirectoryFilesFinder
-	 */
-	private $files_finder;
+	private DirectoryFilesFinder $files_finder;
 
 	public function __construct(
 		PluginData $plugin_data,

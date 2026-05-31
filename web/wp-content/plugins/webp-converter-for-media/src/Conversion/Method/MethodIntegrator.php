@@ -15,20 +15,11 @@ use WebpConverter\Settings\Option\OutputFormatsOption;
  */
 class MethodIntegrator {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var MethodFactory
-	 */
-	private $method_factory;
+	private MethodFactory $method_factory;
 
-	/**
-	 * @var StatsManager
-	 */
-	private $stats_manager;
+	private StatsManager $stats_manager;
 
 	public function __construct( PluginData $plugin_data, MethodFactory $method_factory, ?StatsManager $stats_manager = null ) {
 		$this->plugin_data    = $plugin_data;

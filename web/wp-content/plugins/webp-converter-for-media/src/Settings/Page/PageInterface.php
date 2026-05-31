@@ -42,13 +42,7 @@ interface PageInterface {
 	 */
 	public function get_template_vars(): array;
 
-	/**
-	 * @return void
-	 */
-	public function do_action_before_load();
+	public function do_action_before_load(): void;
 
-	/**
-	 * @return void
-	 */
-	public function do_action_after_load();
+	public function do_action_after_load(): void;
 }

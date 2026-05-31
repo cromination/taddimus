@@ -14,10 +14,7 @@ class UpgradeNotice extends NoticeAbstract implements NoticeInterface {
 	const NOTICE_OPTION    = 'webpc_notice_pro_version';
 	const NOTICE_VIEW_PATH = 'components/notices/upgrade.php';
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;

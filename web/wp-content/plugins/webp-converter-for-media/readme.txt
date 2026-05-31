@@ -3,9 +3,9 @@ Contributors: mateuszgbiorczyk
 Donate link: https://url.mattplugins.com/converter-readme-donate-link
 Tags: convert webp, webp, optimize images, image optimization, compress images
 Requires at least: 4.9
-Tested up to: 6.9
-Requires PHP: 7.1
-Stable tag: 6.5.5
+Tested up to: 7.0
+Requires PHP: 7.4
+Stable tag: 6.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -308,6 +308,14 @@ Current list of supported CDN servers:
 5. Ability to manually undo optimization of selected image
 
 == Changelog ==
+
+= 6.6.0 (2026-05-19) =
+* `[Changed]` Minimum required PHP version from 7.1 to 7.4
+* `[Added]` Compatibility with PHP 8.5
+* `[Added]` Support for WordPress 7.0
+
+= 6.5.6 (2026-05-07) =
+* `[Fixed]` Handling of trailing slashes in REST API endpoint URLs
 
 = 6.5.5 (2026-04-02) =
 * `[Fixed]` Fatal error when source image is not a valid image file

@@ -7,25 +7,13 @@ namespace WebpConverter\Model;
  */
 class Token {
 
-	/**
-	 * @var string|null
-	 */
-	private $token_value;
+	private ?string $token_value;
 
-	/**
-	 * @var bool
-	 */
-	private $valid_status;
+	private bool $valid_status;
 
-	/**
-	 * @var int
-	 */
-	private $images_usage;
+	private int $images_usage;
 
-	/**
-	 * @var int
-	 */
-	private $images_limit;
+	private int $images_limit;
 
 	public function __construct(
 		?string $token_value = null,

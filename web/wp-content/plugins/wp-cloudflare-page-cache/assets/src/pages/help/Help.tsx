@@ -6,7 +6,7 @@ import PageWrap from "@/layout/PageWrap";
 import { LINKS } from "@/lib/constants";
 import { __ } from "@wordpress/i18n";
 import { ExternalLink } from "lucide-react";
-import { DocumentationCategories, GetHelp, Hero, PopularArticles, SupportChannels } from "./components";
+import { BrowseDocsCTA, DocumentationCategories, GetHelp, Hero, PopularArticles, SupportChannels } from "./components";
 import BlackFridayBanner from "@/common/BlackFridayBanner";
 
 const Help = () => {
@@ -33,6 +33,7 @@ const Help = () => {
         </TransitionWrapper>
         <TransitionWrapper from="bottom" className="delay-200">
           <DocumentationCategories />
+          <BrowseDocsCTA />
           <SupportChannels />
           <GetHelp />
         </TransitionWrapper>

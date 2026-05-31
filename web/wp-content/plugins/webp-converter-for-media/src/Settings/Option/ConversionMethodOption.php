@@ -15,15 +15,9 @@ class ConversionMethodOption extends OptionAbstract {
 
 	const OPTION_NAME = 'method';
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
-	/**
-	 * @var MethodFactory
-	 */
-	private $method_factory;
+	private MethodFactory $method_factory;
 
 	public function __construct( TokenRepository $token_repository, MethodFactory $method_factory ) {
 		$this->token_repository = $token_repository;

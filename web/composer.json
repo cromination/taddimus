@@ -23,10 +23,10 @@
     "source": "https://core.trac.wordpress.org/browser"
   },
   "require": {
-    "php": ">=7.2.24",
+    "php": ">=7.4",
     "ext-json": "*"
   },
   "provide": {
-    "wordpress/core-implementation": "6.9.4"
+    "wordpress/core-implementation": "7.0.0"
   }
 }

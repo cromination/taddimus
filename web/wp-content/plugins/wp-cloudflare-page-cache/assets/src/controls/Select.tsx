@@ -13,9 +13,10 @@ type SelectProps = {
 }
 
 const Select = ({ disabled = false, ...props }: SelectProps) => {
-  const { updateSetting, settings } = useSettingsStore();
+  const { updateSetting, settings, isSettingOverridden, getManagedDescription } = useSettingsStore();
   const { asyncLocked } = useAppStore();
   const { id } = props;
+  const overridden = isSettingOverridden(id);
 
   const handleChange = (nextValue: string) => {
     updateSetting(id, nextValue);
@@ -23,10 +24,11 @@ const Select = ({ disabled = false, ...props }: SelectProps) => {
 
   return (
     <SelectControl
+      {...props}
       onChange={handleChange}
       value={settings[id] as string}
-      disabled={asyncLocked || disabled}
-      {...props}
+      disabled={asyncLocked || disabled || overridden}
+      description={getManagedDescription(id, props.description)}
     />
   );
 }

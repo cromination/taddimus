@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'f3e742daca6ecc1d4ff0a2b5cf792c05' => $vendorDir . '/codeinwp/themeisle-sdk/load.php',
+    'a52ee22b4a4f6d8b51125d3cc3021761' => $vendorDir . '/woocommerce/action-scheduler/action-scheduler.php',
 );

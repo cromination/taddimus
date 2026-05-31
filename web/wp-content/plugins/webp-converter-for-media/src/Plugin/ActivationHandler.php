@@ -16,10 +16,7 @@ class ActivationHandler implements HookableInterface {
 
 	const LATEST_VERSION_OPTION = 'webpc_latest_version';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
 	public function __construct( PluginInfo $plugin_info ) {
 		$this->plugin_info = $plugin_info;
@@ -28,7 +25,7 @@ class ActivationHandler implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		register_activation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'load_activation_actions' ] );
 		add_action( 'admin_init', [ $this, 'load_activation_actions_after_upgrade' ] );
 	}
@@ -36,10 +33,9 @@ class ActivationHandler implements HookableInterface {
 	/**
 	 * Initializes actions when plugin is activated.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function load_activation_actions() {
+	public function load_activation_actions(): void {
 		( new OutputDirectoryGenerator() )->create_directory_for_uploads_webp();
 
 		$default_settings = new PluginSettingsManager( $this->plugin_info );
@@ -50,10 +46,9 @@ class ActivationHandler implements HookableInterface {
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function load_activation_actions_after_upgrade() {
+	public function load_activation_actions_after_upgrade(): void {
 		$saved_plugin_version = OptionsAccessManager::get_option( self::LATEST_VERSION_OPTION ) ?: '0.0.0';
 		if ( $this->plugin_info->get_plugin_version() === $saved_plugin_version ) {
 			return;

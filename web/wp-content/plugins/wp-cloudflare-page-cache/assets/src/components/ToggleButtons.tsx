@@ -36,7 +36,7 @@ const ToggleButtons = ({ value, onChange, id, disabled, labels }: ToggleButtonsP
           disabled={disabled}
           className="group flex rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={() => onChange(!value)}
-          aria-label={value ? __('Turn off', 'spc') : __('Turn on', 'spc')}
+          aria-label={value ? __('Turn off', 'wp-cloudflare-page-cache') : __('Turn on', 'wp-cloudflare-page-cache')}
         >
           <div
             className={cn(
@@ -45,7 +45,7 @@ const ToggleButtons = ({ value, onChange, id, disabled, labels }: ToggleButtonsP
               activeClasses(value)
             )}
           >
-            {labels?.yes || __('Yes', 'spc')}
+            {labels?.yes || __('Yes', 'wp-cloudflare-page-cache')}
           </div>
           <div
             className={cn(
@@ -54,7 +54,7 @@ const ToggleButtons = ({ value, onChange, id, disabled, labels }: ToggleButtonsP
               activeClasses(!value)
             )}
           >
-            {labels?.no || __('No', 'spc')}
+            {labels?.no || __('No', 'wp-cloudflare-page-cache')}
           </div>
         </button>
       </div>

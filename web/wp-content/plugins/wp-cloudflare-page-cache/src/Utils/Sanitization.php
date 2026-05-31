@@ -4,9 +4,46 @@ namespace SPC\Utils;
 
 use SPC\Modules\Database_Optimization;
 use SPC\Modules\Frontend;
+use SPC\Modules\Speculative_Loading;
 use SPC\Modules\Third_Party;
 
 class Sanitization {
+	/**
+	 * Sanitize a Heartbeat mode setting.
+	 *
+	 * @param mixed $value The mode to sanitize.
+	 *
+	 * @return string
+	 */
+	public static function sanitize_heartbeat_mode( $value ) {
+		$allowed_modes = [ 'default', 'reduced', 'disabled' ];
+
+		if ( ! is_string( $value ) ) {
+			return 'default';
+		}
+
+		$value = sanitize_text_field( $value );
+
+		return in_array( $value, $allowed_modes, true ) ? $value : 'default';
+	}
+
+	/**
+	 * Whitelist the auto-prefetch mode value to one of off|hover|viewport.
+	 *
+	 * @param mixed $value Incoming value from settings save.
+	 *
+	 * @return string
+	 */
+	public static function sanitize_prefetch_urls_mode( $value ) {
+		$allowed = [
+			Speculative_Loading::PREFETCH_MODE_OFF,
+			Speculative_Loading::PREFETCH_MODE_HOVER,
+			Speculative_Loading::PREFETCH_MODE_VIEWPORT,
+		];
+
+		return in_array( $value, $allowed, true ) ? (string) $value : Speculative_Loading::PREFETCH_MODE_OFF;
+	}
+
 	/**
 	 * Sanitize excluded URLs.
 	 *
@@ -37,34 +74,275 @@ class Sanitization {
 		$filtered_urls = array_unique(
 			array_filter(
 				array_map(
-					function ( $url ) {
-						$url = trim( $url );
-
-						$parsed = parse_url( str_replace( [ "\r", "\n" ], '', $url ) );
-
-						if ( $parsed && isset( $parsed['path'] ) ) {
-							$uri = $parsed['path'];
-
-							// Force trailing slash
-							if ( strlen( $uri ) > 1 && $uri[ strlen( $uri ) - 1 ] !== '/' && $uri[ strlen( $uri ) - 1 ] !== '*' ) {
-								$uri .= '/';
-							}
-
-							if ( isset( $parsed['query'] ) ) {
-								$uri .= "?{$parsed['query']}";
-							}
-
-							return $uri;
-						}
-
-						return '';
-					},
+					[ self::class, 'normalize_excluded_url_line' ],
 					$value
 				)
 			)
 		);
 
 		return join( "\n", $filtered_urls );
+	}
+
+	/**
+	 * Sanitize background lazy-load selectors for settings save flow.
+	 *
+	 * @param mixed $value Selector lines as a textarea string or array.
+	 * @param array<string, mixed> $other_settings Unused. Kept for settings sanitize callback compatibility.
+	 *
+	 * @return string
+	 */
+	public static function sanitize_background_selectors( $value, $other_settings = [] ) {
+		return join( "\n", self::sanitize_background_selectors_array( $value ) );
+	}
+
+	/**
+	 * Sanitize background lazy-load selectors for runtime usage.
+	 *
+	 * @param mixed $value Selector lines as string (newline-separated) or array.
+	 *
+	 * @return array<string>
+	 */
+	public static function sanitize_background_selectors_array( $value ): array {
+		if ( is_string( $value ) ) {
+			$value = explode( "\n", $value );
+		}
+
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		return array_values(
+			array_unique(
+				array_filter(
+					array_map(
+						[ self::class, 'sanitize_background_selector_line' ],
+						$value
+					)
+				)
+			)
+		);
+	}
+
+	/**
+	 * Normalize and validate a single background lazy-load selector.
+	 *
+	 * @param mixed $selector CSS selector line.
+	 *
+	 * @return string
+	 */
+	private static function sanitize_background_selector_line( $selector ): string {
+		if ( ! is_string( $selector ) ) {
+			return '';
+		}
+
+		$selector = trim( $selector );
+		if ( $selector === '' ) {
+			return '';
+		}
+
+		if ( preg_match( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', $selector ) === 1 ) {
+			return '';
+		}
+
+		if ( self::contains_unsafe_background_selector_tokens( $selector ) ) {
+			return '';
+		}
+
+		return $selector;
+	}
+
+	/**
+	 * Detect unsafe structural tokens for background selector lines.
+	 *
+	 * @param string $selector Selector value.
+	 *
+	 * @return bool
+	 */
+	private static function contains_unsafe_background_selector_tokens( string $selector ): bool {
+		return strpos( $selector, '<' ) !== false
+			|| strpos( $selector, '`' ) !== false
+			|| strpos( $selector, ';' ) !== false
+			|| strpos( $selector, '{' ) !== false
+			|| strpos( $selector, '}' ) !== false;
+	}
+
+	/**
+	 * Sanitize excluded URL patterns for prefetch runtime usage.
+	 *
+	 * @param mixed $value URL patterns as string (newline-separated) or array.
+	 *
+	 * @return array<string>
+	 */
+	public static function sanitize_prefetch_excluded_urls_array( $value ): array {
+		if ( is_string( $value ) ) {
+			$value = explode( "\n", $value );
+		}
+
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		return array_values(
+			array_unique(
+				array_filter(
+					array_map(
+						[ self::class, 'sanitize_prefetch_excluded_url_line' ],
+						$value
+					)
+				)
+			)
+		);
+	}
+
+	/**
+	 * Normalize and validate a single excluded URL pattern for prefetch runtime usage.
+	 *
+	 * @param mixed $url URL pattern.
+	 *
+	 * @return string
+	 */
+	private static function sanitize_prefetch_excluded_url_line( $url ): string {
+		$uri = self::normalize_excluded_url_line( $url );
+		if ( $uri === '' ) {
+			return '';
+		}
+
+		if ( self::contains_unsafe_prefetch_excluded_url_characters( $uri ) ) {
+			return '';
+		}
+
+		return $uri;
+	}
+
+	/**
+	 * Normalize a single excluded URL pattern.
+	 *
+	 * @param mixed $url URL pattern.
+	 *
+	 * @return string
+	 */
+	private static function normalize_excluded_url_line( $url ): string {
+		if ( ! is_string( $url ) ) {
+			return '';
+		}
+
+		$url = trim( $url );
+		if ( $url === '' ) {
+			return '';
+		}
+
+		$parsed = parse_url( str_replace( [ "\r", "\n" ], '', $url ) );
+		if ( ! $parsed || ! isset( $parsed['path'] ) ) {
+			return '';
+		}
+
+		$uri = $parsed['path'];
+		if ( strlen( $uri ) > 1 && $uri[ strlen( $uri ) - 1 ] !== '/' && $uri[ strlen( $uri ) - 1 ] !== '*' ) {
+			$uri .= '/';
+		}
+
+		if ( isset( $parsed['query'] ) ) {
+			$uri .= "?{$parsed['query']}";
+		}
+
+		return $uri;
+	}
+
+	/**
+	 * Detect unsafe characters in prefetch excluded URL patterns.
+	 *
+	 * @param string $value Excluded URL value.
+	 *
+	 * @return bool
+	 */
+	private static function contains_unsafe_prefetch_excluded_url_characters( string $value ): bool {
+		if ( preg_match( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', $value ) === 1 ) {
+			return true;
+		}
+
+		return strpos( $value, '<' ) !== false
+			|| strpos( $value, '>' ) !== false
+			|| strpos( $value, '\'' ) !== false
+			|| strpos( $value, '"' ) !== false
+			|| strpos( $value, '`' ) !== false;
+	}
+
+	/**
+	 * Sanitize a list of external domains for the dns-prefetch / preconnect resource hint settings.
+	 *
+	 * Accepts a newline-separated string or an array. Returns a deduped, newline-separated string
+	 * of normalized hostnames. Strips schemes and paths; rejects IPs, single-label hosts, own-host entries.
+	 *
+	 * @param mixed $value Domain list as newline-separated string or array.
+	 * @param array<string, mixed> $other_settings Unused. Kept for settings sanitize callback compatibility.
+	 *
+	 * @return string Newline-separated, deduplicated list of valid hostnames.
+	 */
+	public static function sanitize_prefetch_domains( $value, $other_settings = [] ): string {
+		if ( is_string( $value ) ) {
+			$value = explode( "\n", $value );
+		}
+
+		if ( ! is_array( $value ) ) {
+			return '';
+		}
+
+		$home_host = self::get_prefetch_home_host();
+		$hosts     = [];
+
+		foreach ( $value as $line ) {
+			$host = self::normalize_prefetch_domain_line( $line );
+			if ( $host === '' || $host === $home_host ) {
+				continue;
+			}
+			$hosts[] = $host;
+		}
+
+		return join( "\n", array_unique( $hosts ) );
+	}
+
+	/**
+	 * Normalize and validate a single prefetch / preconnect domain entry.
+	 *
+	 * @param mixed $line Raw input line.
+	 *
+	 * @return string Normalized hostname, or empty string if rejected.
+	 */
+	private static function normalize_prefetch_domain_line( $line ) {
+		if ( ! is_string( $line ) ) {
+			return '';
+		}
+
+		$line = sanitize_text_field( $line );
+		if ( strpos( $line, '//' ) === false ) {
+			$line = '//' . $line;
+		}
+
+		$host = strtolower( (string) wp_parse_url( $line, PHP_URL_HOST ) );
+
+		if (
+			strpos( $host, '.' ) === false
+			|| filter_var( $host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME ) === false
+			|| filter_var( $host, FILTER_VALIDATE_IP ) !== false
+		) {
+			return '';
+		}
+
+		return $host;
+	}
+
+	/**
+	 * Resolve the current site's host for own-host stripping.
+	 *
+	 * @return string Lowercase host, or empty string when unavailable.
+	 */
+	private static function get_prefetch_home_host() {
+		$parts = wp_parse_url( home_url() );
+		if ( ! is_array( $parts ) || empty( $parts['host'] ) ) {
+			return '';
+		}
+
+		return strtolower( $parts['host'] );
 	}
 
 	/**
@@ -114,8 +392,8 @@ class Sanitization {
 	public static function sanitize_log_verbosity( $value, $other_settings ) {
 		$value = (int) $value;
 
-		if ( ! in_array( $value, [ SWCFPC_LOGS_STANDARD_VERBOSITY, SWCFPC_LOGS_HIGH_VERBOSITY ], true ) ) {
-			return SWCFPC_LOGS_STANDARD_VERBOSITY;
+		if ( ! in_array( $value, [ Logger::VERBOSITY_STANDARD, Logger::VERBOSITY_HIGH ], true ) ) {
+			return Logger::VERBOSITY_STANDARD;
 		}
 
 		return $value;

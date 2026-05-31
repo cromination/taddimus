@@ -13,13 +13,13 @@ const SwiftPerformance = () => {
       controls: [{
         id: 'cf_spl_purge_on_flush_all',
         type: 'checkbox',
-        label: __('Swift Performance (Lite/Pro) flushs all caches', 'wp-cloudflare-page-cache'),
+        label: __('Swift Performance (Lite/Pro) flushes all caches', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_spl_purge_on_flush_single_post',
         type: 'checkbox',
-        label: __('Swift Performance (Lite/Pro) flushs single post cache', 'wp-cloudflare-page-cache'),
+        label: __('Swift Performance (Lite/Pro) flushes single post cache', 'wp-cloudflare-page-cache'),
         recommended: true,
       }]
     }

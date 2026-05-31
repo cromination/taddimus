@@ -14,7 +14,7 @@ const LicenseNotice = () => {
       type="warning"
       className="mb-6"
       title={__('Pro Features Available - License Required', 'wp-cloudflare-page-cache')}
-      description={__('You have Super Page Cache Pro installed but need to activate your license to unlock advanced features like JavaScript optimization, database caching, and marketing parameter ignoring.', 'wp - cloudflare - page - cache')}
+      description={__('You have Super Page Cache Pro installed but need to activate your license to unlock advanced features like JavaScript optimization, database caching, and marketing parameter ignoring.', 'wp-cloudflare-page-cache')}
     >
       <div className="flex items-center gap-3">
         <Button onClick={() => setRootPage(ROOT_PAGES.LICENSE)} variant="orange" size="xs">

@@ -6,6 +6,10 @@ const { help } = window.SPCDash;
 const PopularArticles = () => {
   const articles = help.popular;
 
+  if (!articles?.length) {
+    return null;
+  }
+
   return (
     <div className="mb-12">
       <div className="flex items-center mb-6">

@@ -12,33 +12,33 @@ const W3TC = () => {
       controls: [{
         id: 'cf_w3tc_purge_on_flush_all',
         type: 'checkbox',
-        label: __('W3TC flushs all caches', 'wp-cloudflare-page-cache'),
+        label: __('W3TC flushes all caches', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_w3tc_purge_on_flush_dbcache',
         type: 'checkbox',
-        label: __('W3TC flushs database cache', 'wp-cloudflare-page-cache'),
+        label: __('W3TC flushes database cache', 'wp-cloudflare-page-cache'),
       },
       {
         id: 'cf_w3tc_purge_on_flush_fragmentcache',
         type: 'checkbox',
-        label: __('W3TC flushs fragment cache', 'wp-cloudflare-page-cache'),
+        label: __('W3TC flushes fragment cache', 'wp-cloudflare-page-cache'),
       },
       {
         id: 'cf_w3tc_purge_on_flush_objectcache',
         type: 'checkbox',
-        label: __('W3TC flushs object cache', 'wp-cloudflare-page-cache'),
+        label: __('W3TC flushes object cache', 'wp-cloudflare-page-cache'),
       },
       {
         id: 'cf_w3tc_purge_on_flush_posts',
         type: 'checkbox',
-        label: __('W3TC flushs posts cache', 'wp-cloudflare-page-cache'),
+        label: __('W3TC flushes posts cache', 'wp-cloudflare-page-cache'),
       },
       {
         id: 'cf_w3tc_purge_on_flush_minfy',
         type: 'checkbox',
-        label: __('W3TC flushs minify cache', 'wp-cloudflare-page-cache'),
+        label: __('W3TC flushes minify cache', 'wp-cloudflare-page-cache'),
       }]
     }
   ];

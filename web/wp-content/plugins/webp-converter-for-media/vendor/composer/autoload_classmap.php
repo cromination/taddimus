@@ -171,6 +171,7 @@ return array(
     'WebpConverter\\Settings\\Option\\ConversionMethodOption' => $baseDir . '/src/Settings/Option/ConversionMethodOption.php',
     'WebpConverter\\Settings\\Option\\ExcludedDirectoriesOption' => $baseDir . '/src/Settings/Option/ExcludedDirectoriesOption.php',
     'WebpConverter\\Settings\\Option\\ExtraFeaturesOption' => $baseDir . '/src/Settings/Option/ExtraFeaturesOption.php',
+    'WebpConverter\\Settings\\Option\\HtaccessRewriteFlagRedirectOption' => $baseDir . '/src/Settings/Option/HtaccessRewriteFlagRedirectOption.php',
     'WebpConverter\\Settings\\Option\\HtaccessRewriteOutputOption' => $baseDir . '/src/Settings/Option/HtaccessRewriteOutputOption.php',
     'WebpConverter\\Settings\\Option\\HtaccessRewriteParentOption' => $baseDir . '/src/Settings/Option/HtaccessRewriteParentOption.php',
     'WebpConverter\\Settings\\Option\\HtaccessRewritePathOption' => $baseDir . '/src/Settings/Option/HtaccessRewritePathOption.php',

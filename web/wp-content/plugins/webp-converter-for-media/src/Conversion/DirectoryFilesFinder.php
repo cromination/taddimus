@@ -12,15 +12,9 @@ use WebpConverter\Settings\Option\SupportedExtensionsOption;
  */
 class DirectoryFilesFinder {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var ServerConfigurator
-	 */
-	private $server_configurator;
+	private ServerConfigurator $server_configurator;
 
 	public function __construct(
 		PluginData $plugin_data,

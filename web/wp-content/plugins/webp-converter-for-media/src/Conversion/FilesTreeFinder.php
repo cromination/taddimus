@@ -19,35 +19,23 @@ use WebpConverter\Settings\Option\SupportedExtensionsOption;
  */
 class FilesTreeFinder {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var ServerConfigurator
-	 */
-	private $server_configurator;
+	private ServerConfigurator $server_configurator;
 
-	/**
-	 * @var StatsManager
-	 */
-	private $stats_manager;
+	private StatsManager $stats_manager;
 
-	/**
-	 * @var OutputPathGenerator
-	 */
-	private $output_path;
+	private OutputPathGenerator $output_path;
 
 	/**
 	 * @var int[]
 	 */
-	private $files_converted;
+	private array $files_converted = [];
 
 	/**
 	 * @var int[]
 	 */
-	private $files_unconverted;
+	private array $files_unconverted = [];
 
 	public function __construct(
 		PluginData $plugin_data,

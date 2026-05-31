@@ -30,10 +30,12 @@ abstract class EndpointAbstract implements EndpointInterface {
 	public static function get_route_url(): string {
 		return get_rest_url(
 			null,
-			sprintf(
-				'%1$s/%2$s',
-				EndpointIntegrator::ROUTE_NAMESPACE,
-				static::get_route_name()
+			user_trailingslashit(
+				sprintf(
+					'%1$s/%2$s',
+					EndpointIntegrator::ROUTE_NAMESPACE,
+					static::get_route_name()
+				)
 			)
 		);
 	}

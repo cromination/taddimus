@@ -13,10 +13,7 @@ class AdminAssetsLoader implements HookableInterface {
 	const CSS_FILE_PATH = 'assets/build/css/styles.css';
 	const JS_FILE_PATH  = 'assets/build/js/scripts.js';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
 	public function __construct( PluginInfo $plugin_info ) {
 		$this->plugin_info = $plugin_info;
@@ -25,7 +22,7 @@ class AdminAssetsLoader implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'admin_enqueue_scripts', [ $this, 'load_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'load_scripts' ] );
 	}
@@ -33,10 +30,9 @@ class AdminAssetsLoader implements HookableInterface {
 	/**
 	 * Loads CSS assets.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function load_styles() {
+	public function load_styles(): void {
 		wp_register_style(
 			'converter-for-media',
 			$this->plugin_info->get_plugin_directory_url() . self::CSS_FILE_PATH,
@@ -49,10 +45,9 @@ class AdminAssetsLoader implements HookableInterface {
 	/**
 	 * Loads JavaScript assets.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function load_scripts() {
+	public function load_scripts(): void {
 		wp_register_script(
 			'converter-for-media',
 			$this->plugin_info->get_plugin_directory_url() . self::JS_FILE_PATH,

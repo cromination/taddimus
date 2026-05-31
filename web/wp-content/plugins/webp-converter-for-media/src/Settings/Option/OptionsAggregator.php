@@ -17,7 +17,7 @@ class OptionsAggregator {
 	 *
 	 * @var OptionInterface[]
 	 */
-	private $options = [];
+	private array $options = [];
 
 	public function __construct(
 		TokenRepository $token_repository,
@@ -51,6 +51,7 @@ class OptionsAggregator {
 		$this->set_option( new HtaccessRewritePathOption() );
 		$this->set_option( new HtaccessRewriteParentOption() );
 		$this->set_option( new HtaccessRewriteOutputOption() );
+		$this->set_option( new HtaccessRewriteFlagRedirectOption() );
 	}
 
 	/**
@@ -88,10 +89,8 @@ class OptionsAggregator {
 
 	/**
 	 * @param OptionInterface $new_option .
-	 *
-	 * @return void
 	 */
-	private function set_option( OptionInterface $new_option ) {
+	private function set_option( OptionInterface $new_option ): void {
 		foreach ( $this->options as $option_index => $option ) {
 			if ( $option->get_name() === $new_option->get_name() ) {
 				$this->options[ $option_index ] = $new_option;

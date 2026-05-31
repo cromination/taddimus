@@ -4,10 +4,11 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit55d84125555e8ebd3eb5481b5ac90b2e
+class ComposerStaticInite5ea7eb36f917536ba00abee328728dc
 {
     public static $files = array (
         'f3e742daca6ecc1d4ff0a2b5cf792c05' => __DIR__ . '/..' . '/codeinwp/themeisle-sdk/load.php',
+        'a52ee22b4a4f6d8b51125d3cc3021761' => __DIR__ . '/..' . '/woocommerce/action-scheduler/action-scheduler.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -35,55 +36,90 @@ class ComposerStaticInit55d84125555e8ebd3eb5481b5ac90b2e
         'SPC\\Constants' => __DIR__ . '/../..' . '/src/Constants.php',
         'SPC\\Entities\\Google_Font' => __DIR__ . '/../..' . '/src/Entities/Google_Font.php',
         'SPC\\Loader' => __DIR__ . '/../..' . '/src/Loader.php',
-        'SPC\\Migrator' => __DIR__ . '/../..' . '/src/Migrator.php',
         'SPC\\Models\\Asset_Rules' => __DIR__ . '/../..' . '/src/Models/Asset_Rules.php',
         'SPC\\Modules\\Admin' => __DIR__ . '/../..' . '/src/Modules/Admin.php',
         'SPC\\Modules\\Assets_Manager' => __DIR__ . '/../..' . '/src/Modules/Assets_Manager.php',
+        'SPC\\Modules\\Cache_Buster' => __DIR__ . '/../..' . '/src/Modules/Cache_Buster.php',
+        'SPC\\Modules\\Cache_Controller' => __DIR__ . '/../..' . '/src/Modules/Cache_Controller.php',
+        'SPC\\Modules\\Cache_Invalidation_Hooks' => __DIR__ . '/../..' . '/src/Modules/Cache_Invalidation_Hooks.php',
         'SPC\\Modules\\Dashboard' => __DIR__ . '/../..' . '/src/Modules/Dashboard.php',
         'SPC\\Modules\\Database_Optimization' => __DIR__ . '/../..' . '/src/Modules/Database_Optimization.php',
+        'SPC\\Modules\\Fallback_Cache' => __DIR__ . '/../..' . '/src/Modules/Fallback_Cache.php',
         'SPC\\Modules\\Font_Optimizer' => __DIR__ . '/../..' . '/src/Modules/Font_Optimizer.php',
         'SPC\\Modules\\Frontend' => __DIR__ . '/../..' . '/src/Modules/Frontend.php',
         'SPC\\Modules\\HTML_Modifier' => __DIR__ . '/../..' . '/src/Modules/HTML_Modifier.php',
+        'SPC\\Modules\\Heartbeat_Control' => __DIR__ . '/../..' . '/src/Modules/Heartbeat_Control.php',
+        'SPC\\Modules\\Html_Cache' => __DIR__ . '/../..' . '/src/Modules/Html_Cache.php',
         'SPC\\Modules\\Metrics_Cleanup' => __DIR__ . '/../..' . '/src/Modules/Metrics_Cleanup.php',
         'SPC\\Modules\\Module_Interface' => __DIR__ . '/../..' . '/src/Modules/Module_Interface.php',
+        'SPC\\Modules\\Page_Settings_Metabox' => __DIR__ . '/../..' . '/src/Modules/Page_Settings_Metabox.php',
+        'SPC\\Modules\\Preloader_Process' => __DIR__ . '/../..' . '/src/Modules/Preloader_Process.php',
         'SPC\\Modules\\Rest_Server' => __DIR__ . '/../..' . '/src/Modules/Rest_Server.php',
         'SPC\\Modules\\Settings_Manager' => __DIR__ . '/../..' . '/src/Modules/Settings_Manager.php',
+        'SPC\\Modules\\Speculative_Loading' => __DIR__ . '/../..' . '/src/Modules/Speculative_Loading.php',
         'SPC\\Modules\\Third_Party' => __DIR__ . '/../..' . '/src/Modules/Third_Party.php',
+        'SPC\\Modules\\Third_Party_Integrations' => __DIR__ . '/../..' . '/src/Modules/Third_Party_Integrations.php',
+        'SPC\\Modules\\WP_CLI' => __DIR__ . '/../..' . '/src/Modules/WP_CLI.php',
         'SPC\\Services\\Asset_Exclusion_Handler' => __DIR__ . '/../..' . '/src/Services/Asset_Exclusion_Handler.php',
+        'SPC\\Services\\Bypass_Resolver' => __DIR__ . '/../..' . '/src/Services/Bypass_Resolver.php',
         'SPC\\Services\\Cloudflare_Client' => __DIR__ . '/../..' . '/src/Services/Cloudflare_Client.php',
+        'SPC\\Services\\Cloudflare_Integration' => __DIR__ . '/../..' . '/src/Services/Cloudflare_Integration.php',
         'SPC\\Services\\Cloudflare_Rule' => __DIR__ . '/../..' . '/src/Services/Cloudflare_Rule.php',
+        'SPC\\Services\\HTML_Minifier' => __DIR__ . '/../..' . '/src/Services/HTML_Minifier.php',
         'SPC\\Services\\Log_Parser' => __DIR__ . '/../..' . '/src/Services/Log_Parser.php',
         'SPC\\Services\\Metrics' => __DIR__ . '/../..' . '/src/Services/Metrics.php',
         'SPC\\Services\\Notices_Handler' => __DIR__ . '/../..' . '/src/Services/Notices_Handler.php',
+        'SPC\\Services\\Purge_Queue' => __DIR__ . '/../..' . '/src/Services/Purge_Queue.php',
         'SPC\\Services\\SDK_Integrations' => __DIR__ . '/../..' . '/src/Services/SDK_Integrations.php',
         'SPC\\Services\\Settings_Store' => __DIR__ . '/../..' . '/src/Services/Settings_Store.php',
+        'SPC\\Services\\Varnish' => __DIR__ . '/../..' . '/src/Services/Varnish.php',
         'SPC\\Utils\\Assets_Handler' => __DIR__ . '/../..' . '/src/Utils/Assets_Handler.php',
         'SPC\\Utils\\Cache_Tester' => __DIR__ . '/../..' . '/src/Utils/Cache_Tester.php',
         'SPC\\Utils\\Helpers' => __DIR__ . '/../..' . '/src/Utils/Helpers.php',
+        'SPC\\Utils\\Htaccess_Writer' => __DIR__ . '/../..' . '/src/Utils/Htaccess_Writer.php',
         'SPC\\Utils\\I18n' => __DIR__ . '/../..' . '/src/Utils/I18n.php',
+        'SPC\\Utils\\Logger' => __DIR__ . '/../..' . '/src/Utils/Logger.php',
         'SPC\\Utils\\Sanitization' => __DIR__ . '/../..' . '/src/Utils/Sanitization.php',
         'SPC_Pro\\Builders\\Transform_Rule' => __DIR__ . '/../..' . '/pro/Builders/Transform_Rule.php',
+        'SPC_Pro\\CLI\\Cloudflare_Command' => __DIR__ . '/../..' . '/pro/CLI/Cloudflare_Command.php',
+        'SPC_Pro\\CLI\\Logs_Command' => __DIR__ . '/../..' . '/pro/CLI/Logs_Command.php',
+        'SPC_Pro\\CLI\\Preload_Command' => __DIR__ . '/../..' . '/pro/CLI/Preload_Command.php',
+        'SPC_Pro\\CLI\\Purge_Tags_Command' => __DIR__ . '/../..' . '/pro/CLI/Purge_Tags_Command.php',
+        'SPC_Pro\\CLI\\Settings_Command' => __DIR__ . '/../..' . '/pro/CLI/Settings_Command.php',
         'SPC_Pro\\Constants' => __DIR__ . '/../..' . '/pro/Constants.php',
         'SPC_Pro\\Loader' => __DIR__ . '/../..' . '/pro/Loader.php',
+        'SPC_Pro\\Modules\\Admin' => __DIR__ . '/../..' . '/pro/Modules/Admin.php',
         'SPC_Pro\\Modules\\BgOptimizer\\Lazyload' => __DIR__ . '/../..' . '/pro/Modules/BgOptimizer/Lazyload.php',
+        'SPC_Pro\\Modules\\Cache_Tags' => __DIR__ . '/../..' . '/pro/Modules/Cache_Tags.php',
         'SPC_Pro\\Modules\\Fallback_Cache' => __DIR__ . '/../..' . '/pro/Modules/Fallback_Cache.php',
         'SPC_Pro\\Modules\\Frontend' => __DIR__ . '/../..' . '/pro/Modules/Frontend.php',
         'SPC_Pro\\Modules\\HTML_Modifier' => __DIR__ . '/../..' . '/pro/Modules/HTML_Modifier.php',
+        'SPC_Pro\\Modules\\Nonce_Handler' => __DIR__ . '/../..' . '/pro/Modules/Nonce_Handler.php',
         'SPC_Pro\\Modules\\PageProfiler\\Profile' => __DIR__ . '/../..' . '/pro/Modules/PageProfiler/Profile.php',
         'SPC_Pro\\Modules\\PageProfiler\\Storage\\Base' => __DIR__ . '/../..' . '/pro/Modules/PageProfiler/Storage/Base.php',
         'SPC_Pro\\Modules\\PageProfiler\\Storage\\ObjectCache' => __DIR__ . '/../..' . '/pro/Modules/PageProfiler/Storage/ObjectCache.php',
         'SPC_Pro\\Modules\\PageProfiler\\Storage\\Transients' => __DIR__ . '/../..' . '/pro/Modules/PageProfiler/Storage/Transients.php',
+        'SPC_Pro\\Modules\\Page_Settings_Metabox' => __DIR__ . '/../..' . '/pro/Modules/Page_Settings_Metabox.php',
         'SPC_Pro\\Modules\\Preload\\Links' => __DIR__ . '/../..' . '/pro/Modules/Preload/Links.php',
+        'SPC_Pro\\Modules\\Rest_Server' => __DIR__ . '/../..' . '/pro/Modules/Rest_Server.php',
         'SPC_Pro\\Modules\\Settings_Manager' => __DIR__ . '/../..' . '/pro/Modules/Settings_Manager.php',
+        'SPC_Pro\\Modules\\WP_CLI' => __DIR__ . '/../..' . '/pro/Modules/WP_CLI.php',
+        'SPC_Pro\\Modules\\WP_Config_Overrides' => __DIR__ . '/../..' . '/pro/Modules/WP_Config_Overrides.php',
         'SPC_Pro\\Services\\Cloudflare_Transform_Rule' => __DIR__ . '/../..' . '/pro/Services/Cloudflare_Transform_Rule.php',
+        'SPC_Pro\\Services\\Tag_Generator' => __DIR__ . '/../..' . '/pro/Services/Tag_Generator.php',
+        'SPC_Pro\\Services\\Tag_Index' => __DIR__ . '/../..' . '/pro/Services/Tag_Index.php',
+        'SPC_Pro\\Services\\Tag_Index_Reconciler' => __DIR__ . '/../..' . '/pro/Services/Tag_Index_Reconciler.php',
+        'SPC_Pro\\Services\\Tag_Normalizer' => __DIR__ . '/../..' . '/pro/Services/Tag_Normalizer.php',
+        'SPC_Pro\\Services\\Tag_Purge_Orchestrator' => __DIR__ . '/../..' . '/pro/Services/Tag_Purge_Orchestrator.php',
+        'SPC_Pro\\Services\\Tag_Purge_Result' => __DIR__ . '/../..' . '/pro/Services/Tag_Purge_Result.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit55d84125555e8ebd3eb5481b5ac90b2e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit55d84125555e8ebd3eb5481b5ac90b2e::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit55d84125555e8ebd3eb5481b5ac90b2e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite5ea7eb36f917536ba00abee328728dc::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite5ea7eb36f917536ba00abee328728dc::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInite5ea7eb36f917536ba00abee328728dc::$classMap;
 
         }, null, ClassLoader::class);
     }

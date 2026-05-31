@@ -3,6 +3,8 @@
 namespace SPC\Builders;
 
 use SPC\Constants;
+use SPC\Services\Settings_Store;
+use SPC\Utils\Helpers;
 use SW_CLOUDFLARE_PAGECACHE;
 
 /**
@@ -17,21 +19,16 @@ class Cache_Rule {
 	private $rule_parts = [];
 
 	/**
-	 * @var SW_CLOUDFLARE_PAGECACHE $plugin Plugin instance.
+	 * @var Settings_Store $settings_store Settings store instance.
 	 */
-	private $plugin;
+	private $settings_store;
 
-	/**
-	 * Cache_Rule constructor.
-	 *
-	 * @param SW_CLOUDFLARE_PAGECACHE $plugin Plugin instance.
-	 */
-	public function __construct( $plugin ) {
-		$this->plugin = $plugin;
+	public function __construct() {
+		$this->settings_store = Settings_Store::get_instance();
 	}
 
 	public function exclude_cookies() {
-		$excluded = $this->plugin->get_single_config( Constants::SETTING_EXCLUDED_COOKIES, [] );
+		$excluded = $this->settings_store->get( Constants::SETTING_EXCLUDED_COOKIES, [] );
 
 		if ( ! is_array( $excluded ) ) {
 			return $this;
@@ -50,7 +47,7 @@ class Cache_Rule {
 	 * @return $this
 	 */
 	public function exclude_paths() {
-		$excluded_paths = $this->plugin->get_single_config( Constants::SETTING_EXCLUDED_URLS, [] );
+		$excluded_paths = $this->settings_store->get( Constants::SETTING_EXCLUDED_URLS, [] );
 
 		if ( ! is_array( $excluded_paths ) ) {
 			return $this;
@@ -79,12 +76,12 @@ class Cache_Rule {
 	}
 
 	public function exclude_static_content() {
-		if ( (bool) $this->plugin->get_single_config( 'cf_bypass_sitemap', 1 ) ) {
+		if ( (bool) $this->settings_store->get( Constants::SETTING_BYPASS_SITEMAP, 1 ) ) {
 			$this->rule_parts[] = 'not http.request.uri.path contains ".xml"';
 			$this->rule_parts[] = 'not http.request.uri.path contains ".xsl"';
 		}
 
-		if ( (bool) $this->plugin->get_single_config( 'cf_bypass_file_robots', 1 ) ) {
+		if ( (bool) $this->settings_store->get( Constants::SETTING_BYPASS_ROBOTS_TXT, 1 ) ) {
 			$this->rule_parts[] = 'not http.request.uri.path contains "robots.txt"';
 		}
 
@@ -114,6 +111,6 @@ class Cache_Rule {
 	 *
 	 */
 	private function get_host_wildcard() {
-		return sprintf( 'http.host wildcard "%s*"', preg_replace( '#^(https?://)?#', '', $this->plugin->home_url() ) );
+		return sprintf( 'http.host wildcard "%s*"', preg_replace( '#^(https?://)?#', '', Helpers::home_url() ) );
 	}
 }

@@ -11,10 +11,8 @@ class CronManager {
 
 	/**
 	 * Resets cron event to regenerate all images.
-	 *
-	 * @return void
 	 */
-	public function reset_cron_event() {
+	public function reset_cron_event(): void {
 		wp_clear_scheduled_hook( CronEventGenerator::CRON_PATHS_ACTION );
 	}
 }

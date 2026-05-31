@@ -9,15 +9,9 @@ class SettingsIncorrectNotice implements NoticeInterface {
 
 	const ERROR_KEY = 'settings_incorrect';
 
-	/**
-	 * @var string
-	 */
-	private $field_label;
+	private string $field_label;
 
-	/**
-	 * @var string
-	 */
-	private $settings_tab_label;
+	private string $settings_tab_label;
 
 	public function __construct( string $field_label, string $settings_tab_label ) {
 		$this->field_label        = $field_label;

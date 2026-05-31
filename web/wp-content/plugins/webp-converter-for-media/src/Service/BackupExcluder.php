@@ -12,10 +12,7 @@ use WebpConverter\Settings\Option\ExtraFeaturesOption;
  */
 class BackupExcluder implements HookableInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;
@@ -24,15 +21,14 @@ class BackupExcluder implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'init', [ $this, 'init_hooks_after_setup' ] );
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function init_hooks_after_setup() {
+	public function init_hooks_after_setup(): void {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		if ( in_array( ExtraFeaturesOption::OPTION_VALUE_BACKUP_ENABLED, $plugin_settings[ ExtraFeaturesOption::OPTION_NAME ] ) ) {
 			return;

@@ -12,15 +12,9 @@ use WebpConverter\Service\ViewLoader;
  */
 class NoticeIntegrator implements HookableInterface {
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var NoticeInterface
-	 */
-	private $notice;
+	private NoticeInterface $notice;
 
 	public function __construct( PluginInfo $plugin_info, NoticeInterface $notice ) {
 		$this->plugin_info = $plugin_info;
@@ -30,7 +24,7 @@ class NoticeIntegrator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'admin_init', [ $this, 'init_notice_hooks' ] );
 
 		if ( $ajax_action = $this->notice->get_ajax_action_to_disable() ) {
@@ -41,10 +35,9 @@ class NoticeIntegrator implements HookableInterface {
 	/**
 	 * Initializes displaying notice in administration panel.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function init_notice_hooks() {
+	public function init_notice_hooks(): void {
 		if ( ! $this->notice->is_available() || ! $this->notice->is_active() ) {
 			return;
 		}
@@ -59,10 +52,9 @@ class NoticeIntegrator implements HookableInterface {
 	/**
 	 * Loads view template for notice.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function load_notice() {
+	public function load_notice(): void {
 		$view_vars = $this->notice->get_vars_for_view();
 		if ( $view_vars === null ) {
 			return;
@@ -79,10 +71,8 @@ class NoticeIntegrator implements HookableInterface {
 	 *
 	 * @param string $notice_name   .
 	 * @param string $default_value .
-	 *
-	 * @return void
 	 */
-	public static function set_default_value( string $notice_name, string $default_value ) {
+	public static function set_default_value( string $notice_name, string $default_value ): void {
 		if ( OptionsAccessManager::get_option( $notice_name ) !== null ) {
 			return;
 		}
@@ -92,10 +82,8 @@ class NoticeIntegrator implements HookableInterface {
 
 	/**
 	 * Sets options to disable notice.
-	 *
-	 * @return void
 	 */
-	public function set_disable_value() {
+	public function set_disable_value(): void {
 		OptionsAccessManager::update_option( $this->notice->get_option_name(), $this->notice->get_disable_value() );
 	}
 }

@@ -15,31 +15,29 @@ class PluginData {
 
 	/**
 	 * Handler of class with plugin settings.
-	 *
-	 * @var OptionsManager
 	 */
-	private $settings_object;
+	private OptionsManager $settings_object;
 
 	/**
 	 * Cached settings of plugin.
 	 *
 	 * @var mixed[]|null
 	 */
-	private $plugin_settings = null;
+	private ?array $plugin_settings = null;
 
 	/**
 	 * Cached settings of plugin without sensitive data.
 	 *
 	 * @var mixed[]|null
 	 */
-	private $plugin_public_settings = null;
+	private ?array $plugin_public_settings = null;
 
 	/**
 	 * Cached settings of plugin for debug.
 	 *
 	 * @var mixed[]|null
 	 */
-	private $debug_settings = null;
+	private ?array $debug_settings = null;
 
 	public function __construct(
 		TokenRepository $token_repository,
@@ -54,10 +52,7 @@ class PluginData {
 	 * @return mixed[]
 	 */
 	public function get_plugin_settings(): array {
-		if ( $this->plugin_settings === null ) {
-			$this->plugin_settings = $this->settings_object->get_values();
-		}
-		return $this->plugin_settings;
+		return $this->plugin_settings ??= $this->settings_object->get_values();
 	}
 
 	/**
@@ -95,10 +90,8 @@ class PluginData {
 
 	/**
 	 * Clears cache for settings of plugin.
-	 *
-	 * @return void
 	 */
-	public function invalidate_plugin_settings() {
+	public function invalidate_plugin_settings(): void {
 		$this->plugin_settings        = null;
 		$this->plugin_public_settings = null;
 		$this->debug_settings         = null;

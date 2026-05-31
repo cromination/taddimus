@@ -19,10 +19,9 @@ class LargerFilesOperator {
 	 * @param string  $source_path     .
 	 * @param mixed[] $plugin_settings .
 	 *
-	 * @return void
 	 * @throws Exception\LargerThanOriginalException
 	 */
-	public function remove_image_if_is_larger( string $output_path, string $source_path, array $plugin_settings ) {
+	public function remove_image_if_is_larger( string $output_path, string $source_path, array $plugin_settings ): void {
 		if ( file_exists( $output_path . '.' . self::DELETED_FILE_EXTENSION ) ) {
 			unlink( $output_path . '.' . self::DELETED_FILE_EXTENSION );
 		}

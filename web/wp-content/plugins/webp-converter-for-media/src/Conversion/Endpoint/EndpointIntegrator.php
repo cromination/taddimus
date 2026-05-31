@@ -13,10 +13,8 @@ class EndpointIntegrator implements HookableInterface {
 
 	/**
 	 * Objects of supported REST API endpoints.
-	 *
-	 * @var EndpointInterface
 	 */
-	private $endpoint_object;
+	private EndpointInterface $endpoint_object;
 
 	public function __construct( EndpointInterface $endpoint_object ) {
 		$this->endpoint_object = $endpoint_object;
@@ -25,17 +23,16 @@ class EndpointIntegrator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'rest_api_init', [ $this, 'register_rest_route' ] );
 	}
 
 	/**
 	 * Registers new endpoint in REST API.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function register_rest_route() {
+	public function register_rest_route(): void {
 		register_rest_route(
 			self::ROUTE_NAMESPACE,
 			$this->endpoint_object->get_route_name(),

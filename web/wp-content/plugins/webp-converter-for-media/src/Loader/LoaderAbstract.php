@@ -14,20 +14,11 @@ abstract class LoaderAbstract implements LoaderInterface {
 
 	const ACTION_NAME = 'webpc_refresh_loader';
 
-	/**
-	 * @var PluginInfo
-	 */
-	protected $plugin_info;
+	protected PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	protected $plugin_data;
+	protected PluginData $plugin_data;
 
-	/**
-	 * @var FormatFactory
-	 */
-	protected $format_factory;
+	protected FormatFactory $format_factory;
 
 	public function __construct( PluginInfo $plugin_info, PluginData $plugin_data, FormatFactory $format_factory ) {
 		$this->plugin_info    = $plugin_info;
@@ -46,12 +37,12 @@ abstract class LoaderAbstract implements LoaderInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_admin_hooks() {
+	public function init_admin_hooks(): void {
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_front_end_hooks() {
+	public function init_front_end_hooks(): void {
 	}
 }

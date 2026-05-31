@@ -6,18 +6,20 @@ import Notice from "@/components/Notice";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ControlsGroup from "@/pages/settings/controls/ControlsGroup";
 import { useSettingsStore } from "@/store/optionsStore";
+import { useAppStore } from "@/store/store";
 import { createInterpolateElement } from "@wordpress/element";
 import { __ } from "@wordpress/i18n";
 
 const AdvancedCache = () => {
   const { isToggleOn } = useSettingsStore();
+  const { validPro } = useAppStore();
 
   const controls = [
     {
       id: 'cf_fallback_cache_curl',
       type: 'toggle',
       label: __('Use cURL', 'wp-cloudflare-page-cache'),
-      description: __('Use cURL instead of WordPress advanced-cache.php to generate the Page page. It can increase the time it takes to generate the Page cache but improves compatibility with other performance plugins.', 'wp-cloudflare-page-cache'),
+      description: __('Use cURL instead of WordPress advanced-cache.php to generate the page cache. It can increase the time it takes to generate the Page cache but improves compatibility with other performance plugins.', 'wp-cloudflare-page-cache'),
     },
     {
       id: 'cf_fallback_cache_ttl',
@@ -26,6 +28,20 @@ const AdvancedCache = () => {
       label: `${__('Cache Lifespan', 'wp-cloudflare-page-cache')} (${__('seconds', 'wp-cloudflare-page-cache')})`,
       description: __('Enter 0 for no expiration.', 'wp-cloudflare-page-cache'),
       hide: !isToggleOn('cf_fallback_cache'),
+    },
+    {
+      id: 'stale_while_revalidate',
+      type: 'toggle',
+      label: __('Enable stale-while-revalidate for HTML cache', 'wp-cloudflare-page-cache'),
+      description: __('Serve stale HTML briefly while the cache is refreshed in the background.', 'wp-cloudflare-page-cache'),
+    },
+    {
+      id: 'stale_while_revalidate_ttl',
+      type: 'number',
+      min: 0,
+      label: `${__('Stale window', 'wp-cloudflare-page-cache')} (${__('seconds', 'wp-cloudflare-page-cache')})`,
+      description: __('How long an expired HTML page may still be served while a background refresh is triggered.', 'wp-cloudflare-page-cache'),
+      hide: !isToggleOn('stale_while_revalidate'),
     },
     {
       id: 'cf_fallback_cache_save_headers',
@@ -45,7 +61,7 @@ const AdvancedCache = () => {
     {
       id: 'cf_fallback_cache_prevent_cache_urls_without_trailing_slash',
       type: 'toggle',
-      label: __('Prevent to cache URLs without trailing slash', 'wp-cloudflare-page-cache'),
+      label: __('Prevent caching URLs without a trailing slash (/)', 'wp-cloudflare-page-cache'),
       hide: !isToggleOn('cf_fallback_cache'),
     },
     {
@@ -59,12 +75,28 @@ const AdvancedCache = () => {
       type: 'toggle',
       label: __('Auto-purge on Updates', 'wp-cloudflare-page-cache'),
       description: __('Automatically purge the cache when the plugin update process is complete', 'wp-cloudflare-page-cache'),
-    }, 
+    },
+    {
+      id: 'enable_nonce_refresh',
+      type: 'toggle',
+      label: __('Enable nonce refresh', 'wp-cloudflare-page-cache'),
+      description: __('Keeps forms, login, and cart actions working on long-cached pages by refreshing expired security tokens.', 'wp-cloudflare-page-cache'),
+      utmCampaign: 'enable-nonce-refresh',
+      locked: !validPro,
+    },
+    {
+      id: 'cache_tags',
+      type: 'toggle',
+      label: __('Enable Cache Tags', 'wp-cloudflare-page-cache'),
+      description: __('Tag cached responses so granular invalidations (a single post, an author, a taxonomy term) clear only what changed instead of the whole cache.', 'wp-cloudflare-page-cache'),
+      utmCampaign: 'cache-tags',
+      locked: !validPro,
+    },
     {
       id: 'cf_strip_cookies',
       type: 'toggle', 
       label: __('Strip response cookies', 'wp-cloudflare-page-cache'),
-      description: __('Cloudflare will not cache when there are cookies in responses unless you strip out them to overwrite the behavior. If the cache does not work due to response cookies and you are sure that these cookies are not essential for the website to works, enable this option.', 'wp-cloudflare-page-cache'),
+      description: __('Cloudflare will not cache responses that contain cookies. Enable this option to strip cookies from cached responses. Disable it if you notice issues with login or dynamic content.', 'wp-cloudflare-page-cache'),
     },
     {
       id: 'cf_cache_control_htaccess',
@@ -84,13 +116,13 @@ const AdvancedCache = () => {
       id: 'cf_purge_only_html',
       type: 'toggle',
       label: __('Purge HTML pages only', 'wp-cloudflare-page-cache'),
-      description: __('Purge only the cached HTML pages instead of the whole cache (assets & pages).', 'wp-cloudflare-page-cache'),
+      description: __('Purge only cached HTML pages, keeping static assets (CSS, JS, images) in cache.', 'wp-cloudflare-page-cache'),
     },
     {
       id: 'cf_disable_cache_purging_queue',
       type: 'toggle',
       label: __('Disable cache purging using queue', 'wp-cloudflare-page-cache'),
-      description: __('By default this plugin purge the cache after 10 seconds from the purging action, to avoid a high number of purge requests in case of multiple events triggered by third party plugins. This is done using a classic WordPress scheduled event. If you notice any errors regarding the scheduled intervals, you can deactivate this mode by enabling this option.', 'wp-cloudflare-page-cache')
+      description: __('By default, this plugin purges the cache after 10 seconds from the purging action, to avoid a high number of purge requests in case of multiple events triggered by third party plugins. This is done using a classic WordPress scheduled event. If you notice any errors regarding the scheduled intervals, you can deactivate this mode by enabling this option.', 'wp-cloudflare-page-cache')
     },
     {
       id: 'advanced_exclude_dynamic_content',
@@ -216,7 +248,7 @@ const AdvancedCache = () => {
       min: 1,
       max: 100,
       label: __('Posts per page', 'wp-cloudflare-page-cache'),
-      description: __('Enter how many posts per page (or category) the theme shows to your users. It will be use to clean up the pagination on cache purge.', 'wp-cloudflare-page-cache'),
+      description: __('Enter how many posts per page (or category) the theme shows to your users. It will be used to clean up the pagination on cache purge.', 'wp-cloudflare-page-cache'),
     },
   ];
 
@@ -291,7 +323,7 @@ const OverwriteHeaderDescription = () => (
             type="warning"
             title={__('Important Notes', 'wp-cloudflare-page-cache')}
             description={
-              createInterpolateElement(__('This option is not essential as in most cases this plugin works out of the box. If the page cache does not work after a considerable number of attempts or you see that max-age and s-maxage values of <code>X-WP-CF-Super-Cache-Cache-Control</code> response header are not the same of the ones in <code>Cache-Control</code> response header, activate this option.', 'wp-cloudflare-page-cache'),
+              createInterpolateElement(__('This option is not essential as in most cases this plugin works out of the box. If the page cache does not work after several cache tests or you see that max-age and s-maxage values of <code>X-WP-CF-Super-Cache-Cache-Control</code> response header are not the same of the ones in <code>Cache-Control</code> response header, activate this option.', 'wp-cloudflare-page-cache'),
                 {
                   code: <code />
                 }
@@ -302,7 +334,7 @@ const OverwriteHeaderDescription = () => (
           <div className="grid lg:grid-cols-2 gap-4 mt-4">
             <Notice
               type="success"
-              title={`${__('Read here if you use Apache', 'wp-cloudflare-page-cache')} (.htaccess):`}
+              title={`${__('Apache configuration instructions', 'wp-cloudflare-page-cache')} (.htaccess):`}
               description={
                 createInterpolateElement(__('For overwriting to work, make sure that the rules added by Super Page Cache are placed at the bottom of the <code>.htaccess</code> file. If they are present <strong>BEFORE</strong> other caching rules of other plugins, move them to the bottom manually.', 'wp-cloudflare-page-cache'),
                   {
@@ -315,7 +347,7 @@ const OverwriteHeaderDescription = () => (
 
             <Notice
               type="info"
-              title={`${__('Read here if you use Nginx', 'wp-cloudflare-page-cache')}:`}
+              title={`${__('Nginx configuration instructions', 'wp-cloudflare-page-cache')}:`}
               description={createInterpolateElement(
                 __('It is not possible for Super Page Cache to automatically change the settings to allow this option to work immediately. For it to work, update these settings and then follow the instructions <button>here</button>.', 'wp-cloudflare-page-cache'),
                 {

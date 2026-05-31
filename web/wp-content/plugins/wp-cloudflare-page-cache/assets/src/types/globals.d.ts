@@ -4,6 +4,9 @@ type LocalizedSetting = {
   type: 'bool' | 'int' | 'text' | 'number' | 'textarea' | 'array';
   default: string | number;
   value: SettingValueType;
+  hasValue?: boolean;
+  source?: 'const' | 'db' | 'default';
+  overridden?: boolean;
 }
 
 type SettingType = Record<string, SettingValueType>;
@@ -18,7 +21,7 @@ declare global {
       logoURL: string;
       api: string;
       nonce: string;
-      optimoleData: Record<string, any>;
+      robinData: Record<string, any>;
       licenseData: Record<string, any> | null;
       i18n: Record<string, any>;
       settings: Record<string, LocalizedSetting>;
@@ -40,10 +43,14 @@ declare global {
       help: Record<string, Record<string, any>[]>;
       directSupportURL: string;
       mainPageURL: string;
+      cloudflareSettingsURL: string;
+      cloudflareConnected: boolean;
       ruleNeedsRepair: boolean;
       hasOverdueJobs: boolean;
       homeURL: string;
+      testCacheUrl: string;
       pluginsPageURL: string;
+      invalidEncryptionState: boolean;
       metrics: {
         'cache.files': {
           html_files: number | 'n/a';

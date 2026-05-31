@@ -90,7 +90,7 @@ const ControlsGroup = ({ controls }) => {
                       id={ctrl.id}
                       label={ctrl.label}
                       description={ctrl.description}
-                      disabled={ctrl.disabled || false}
+                      disabled={ctrl.disabled || Boolean(window.SPCDash.settings?.[ctrl.id]?.overridden)}
                     />
                     {ctrl.recommended && (
                       <span className="ml-1 text-xs">

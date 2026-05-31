@@ -359,7 +359,7 @@ class Assets_Manager implements Module_Interface {
 				if ( $taxonomy_object && isset( $taxonomy_object->labels->singular_name ) ) {
 					$context['taxonomyLabel'] = $taxonomy_object->labels->singular_name;
 				} else {
-					$context['taxonomyLabel'] = ucfirst( $$context['taxonomyType'] );
+					$context['taxonomyLabel'] = ucfirst( $context['taxonomyType'] );
 				}
 
 				$context['taxonomyId']   = $term->term_id;

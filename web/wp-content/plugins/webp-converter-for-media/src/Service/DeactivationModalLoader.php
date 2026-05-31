@@ -18,20 +18,11 @@ class DeactivationModalLoader implements HookableInterface {
 
 	const API_URL = 'https://data.mattplugins.com/deactivations/%s';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var StatsManager
-	 */
-	private $stats_manager;
+	private StatsManager $stats_manager;
 
 	public function __construct(
 		PluginInfo $plugin_info,
@@ -46,17 +37,16 @@ class DeactivationModalLoader implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'load-plugins.php', [ $this, 'load_modal' ] );
 	}
 
 	/**
-	 * @return void
 	 * @throws DeactivationModal\Exception\DuplicatedFormOptionKeyException
 	 * @throws DeactivationModal\Exception\DuplicatedFormValueKeyException
 	 * @internal
 	 */
-	public function load_modal() {
+	public function load_modal(): void {
 		new DeactivationModal\Modal(
 			$this->plugin_info->get_plugin_slug(),
 			new DeactivationModal\Model\FormTemplate(

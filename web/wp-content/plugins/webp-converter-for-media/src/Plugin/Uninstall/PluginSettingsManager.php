@@ -25,10 +25,8 @@ class PluginSettingsManager {
 
 	/**
 	 * Removes options from wp_options table.
-	 *
-	 * @return void
 	 */
-	public static function remove_plugin_settings() {
+	public static function remove_plugin_settings(): void {
 		OptionsAccessManager::delete_option( WelcomeNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( ThanksNotice::NOTICE_OLD_OPTION );
 		OptionsAccessManager::delete_option( ThanksNotice::NOTICE_OPTION );

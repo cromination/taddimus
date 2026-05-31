@@ -17,20 +17,11 @@ class DebugPage extends PageAbstract {
 	const PAGE_SLUG      = 'debug';
 	const PAGE_VIEW_PATH = 'views/settings-debug.php';
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var FileLoader
-	 */
-	private $file_loader;
+	private FileLoader $file_loader;
 
 	public function __construct(
 		PluginInfo $plugin_info,
@@ -110,16 +101,10 @@ class DebugPage extends PageAbstract {
 		];
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function do_action_before_load() {
+	public function do_action_before_load(): void {
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function do_action_after_load() {
+	public function do_action_after_load(): void {
 		do_action( LoaderAbstract::ACTION_NAME, true );
 	}
 }

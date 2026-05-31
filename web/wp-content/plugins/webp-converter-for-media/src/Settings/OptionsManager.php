@@ -15,10 +15,7 @@ use WebpConverter\Settings\Option\OptionsAggregator;
  */
 class OptionsManager {
 
-	/**
-	 * @var OptionsAggregator
-	 */
-	private $options_aggregator;
+	private OptionsAggregator $options_aggregator;
 
 	public function __construct(
 		TokenRepository $token_repository,

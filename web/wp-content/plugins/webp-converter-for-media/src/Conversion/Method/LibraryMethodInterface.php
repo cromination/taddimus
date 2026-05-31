@@ -25,8 +25,6 @@ interface LibraryMethodInterface {
 	 * @param string  $output_path     Server path for output image.
 	 * @param string  $format          Extension of output format.
 	 * @param mixed[] $plugin_settings .
-	 *
-	 * @return void
 	 */
-	public function convert_image_to_output( $image, string $source_path, string $output_path, string $format, array $plugin_settings );
+	public function convert_image_to_output( $image, string $source_path, string $output_path, string $format, array $plugin_settings ): void;
 }

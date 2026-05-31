@@ -14,10 +14,8 @@ class PluginSettingsManager {
 
 	/**
 	 * Removes options from wp_options table.
-	 *
-	 * @return void
 	 */
-	public function remove_plugin_settings() {
+	public function remove_plugin_settings(): void {
 		OptionsAccessManager::delete_option( 'webpc_notice_cloudways' );
 		OptionsAccessManager::delete_option( CloudflareNotice::NOTICE_OPTION );
 		OptionsAccessManager::delete_option( 'webpc_notice_litespeed' );

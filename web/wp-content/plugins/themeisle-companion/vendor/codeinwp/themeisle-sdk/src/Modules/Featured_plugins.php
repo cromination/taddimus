@@ -175,10 +175,7 @@ class Featured_Plugins extends Abstract_Module {
 	 */
 	private function maybe_prepend_lms_plugin( $plugins, $args ) {
 		$search = isset( $args->search ) ? strtolower( $args->search ) : '';
-		if (
-			strpos( $search, 'lms' ) !== false ||
-			strpos( $search, 'learn' ) !== false
-		) {
+		if ( $this->matches_lms_search_keywords( $search ) ) {
 			$filter_slugs = apply_filters( 'themeisle_sdk_masteriyo_filter_slugs', [ 'learning-management-system' ] );
 			$masteriyo    = $this->get_plugins_filtered_from_author( $args, $filter_slugs, 'masteriyo' );
 
@@ -196,6 +193,36 @@ class Featured_Plugins extends Abstract_Module {
 			}
 		}
 		return $plugins;
+	}
+
+	/**
+	 * Check if a plugin search query matches LMS-related terms.
+	 *
+	 * @param string $search Search query.
+	 *
+	 * @return bool True if the search query matches LMS-related terms.
+	 */
+	private function matches_lms_search_keywords( $search ) {
+		$lms_keywords = array(
+			'lms',
+			'learn',
+			'course',
+			'courses',
+			'learning',
+			'academy',
+			'training',
+			'student',
+			'students',
+			'quiz',
+		);
+
+		foreach ( $lms_keywords as $keyword ) {
+			if ( preg_match( '/(^|[^a-z0-9])' . preg_quote( $keyword, '/' ) . '([^a-z0-9]|$)/', $search ) === 1 ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

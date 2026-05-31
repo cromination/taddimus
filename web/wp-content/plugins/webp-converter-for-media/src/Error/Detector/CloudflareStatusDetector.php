@@ -3,6 +3,7 @@
 namespace WebpConverter\Error\Detector;
 
 use WebpConverter\Error\Notice\CloudflareSettingsIncorrectNotice;
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\PluginData;
 use WebpConverter\Service\CloudflareConfigurator;
 use WebpConverter\Service\OptionsAccessManager;
@@ -13,19 +14,13 @@ use WebpConverter\Settings\Option\CloudflareZoneIdOption;
  */
 class CloudflareStatusDetector implements DetectorInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		if ( ! $plugin_settings[ CloudflareZoneIdOption::OPTION_NAME ] ) {
 			return null;

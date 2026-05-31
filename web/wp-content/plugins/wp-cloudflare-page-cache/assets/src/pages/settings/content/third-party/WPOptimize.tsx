@@ -8,7 +8,7 @@ const WPOptimize = () => {
     {
       id: 'cf_wp_optimize_purge_on_cache_flush',
       type: 'toggle',
-      label: __('Automatically purge the cache when WP-Optimize flushs page cache', 'wp-cloudflare-page-cache'),
+      label: __('Automatically purge the cache when WP-Optimize flushes page cache', 'wp-cloudflare-page-cache'),
     }
   ];
 

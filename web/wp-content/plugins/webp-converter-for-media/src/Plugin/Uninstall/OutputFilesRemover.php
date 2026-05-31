@@ -14,10 +14,8 @@ class OutputFilesRemover {
 
 	/**
 	 * Removes output images from output directory.
-	 *
-	 * @return void
 	 */
-	public static function remove_webp_files() {
+	public static function remove_webp_files(): void {
 		$path  = apply_filters( 'webpc_dir_path', '', 'webp' );
 		$paths = self::get_paths_from_location( $path );
 
@@ -55,10 +53,8 @@ class OutputFilesRemover {
 	 *
 	 * @param string[]      $paths        Server paths.
 	 * @param string[]|null $file_formats .
-	 *
-	 * @return void
 	 */
-	public static function remove_files( array $paths, ?array $file_formats = null ) {
+	public static function remove_files( array $paths, ?array $file_formats = null ): void {
 		if ( ! $paths ) {
 			return;
 		}

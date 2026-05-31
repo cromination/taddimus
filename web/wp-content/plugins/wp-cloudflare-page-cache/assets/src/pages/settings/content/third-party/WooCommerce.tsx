@@ -60,7 +60,7 @@ const WooCommerce = () => {
       {
         id: 'cf_bypass_woo_account_page',
         type: 'checkbox',
-        label: <div className="inline-flex items-center">{__('My Account page', 'wp-cloudflare-page-cache')} <Tooltip><code>is_account</code></Tooltip> </div>,
+        label: <div className="inline-flex items-center">{__('My Account page', 'wp-cloudflare-page-cache')} <Tooltip><code>is_account_page</code></Tooltip> </div>,
         recommended: true,
       }]
     },

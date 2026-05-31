@@ -12,28 +12,28 @@ const LitespeedCache = () => {
       controls: [{
         id: 'cf_litespeed_purge_on_cache_flush',
         type: 'checkbox',
-        label: __('LiteSpeed Cache flushs all caches', 'wp-cloudflare-page-cache'),
+        label: __('LiteSpeed Cache flushes all caches', 'wp-cloudflare-page-cache'),
         recommended: true,
       },
       {
         id: 'cf_litespeed_purge_on_ccss_flush',
         type: 'checkbox',
-        label: __('LiteSpeed Cache flushs Critical CSS', 'wp-cloudflare-page-cache'),
+        label: __('LiteSpeed Cache flushes Critical CSS', 'wp-cloudflare-page-cache'),
       },
       {
         id: 'cf_litespeed_purge_on_cssjs_flush',
         type: 'checkbox',
-        label: __('LiteSpeed Cache flushs CSS and JS cache', 'wp-cloudflare-page-cache'),
+        label: __('LiteSpeed Cache flushes CSS and JS cache', 'wp-cloudflare-page-cache'),
       },
       {
         id: 'cf_litespeed_purge_on_object_cache_flush',
         type: 'checkbox',
-        label: __('LiteSpeed Cache flushs object cache', 'wp-cloudflare-page-cache'),
+        label: __('LiteSpeed Cache flushes object cache', 'wp-cloudflare-page-cache'),
       },
       {
         id: 'cf_litespeed_purge_on_single_post_flush',
         type: 'checkbox',
-        label: __('LiteSpeed Cache flushs single post cache via API', 'wp-cloudflare-page-cache'),
+        label: __('LiteSpeed Cache flushes single post cache via API', 'wp-cloudflare-page-cache'),
       }]
     }
   ];

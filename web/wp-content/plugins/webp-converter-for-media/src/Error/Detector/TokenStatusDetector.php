@@ -4,6 +4,7 @@ namespace WebpConverter\Error\Detector;
 
 use WebpConverter\Error\Notice\AccessTokenInvalidNotice;
 use WebpConverter\Error\Notice\ApiLimitExceededNotice;
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\PluginData;
 use WebpConverter\Repository\TokenRepository;
 use WebpConverter\Service\TokenValidator;
@@ -14,20 +15,11 @@ use WebpConverter\Settings\Option\AccessTokenOption;
  */
 class TokenStatusDetector implements DetectorInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
-	/**
-	 * @var TokenValidator
-	 */
-	private $token_validator;
+	private TokenValidator $token_validator;
 
 	public function __construct(
 		PluginData $plugin_data,
@@ -39,10 +31,7 @@ class TokenStatusDetector implements DetectorInterface {
 		$this->token_validator  = $token_validator ?: new TokenValidator( $token_repository );
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		$settings = $this->plugin_data->get_plugin_settings();
 		if ( ! isset( $settings[ AccessTokenOption::OPTION_NAME ] ) || ! $settings[ AccessTokenOption::OPTION_NAME ] ) {
 			return null;

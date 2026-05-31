@@ -17,10 +17,7 @@ class BlackFridayNotice extends NoticeAbstract implements NoticeInterface {
 	const NOTICE_DATE_START = '2026-11-23';
 	const NOTICE_DATE_END   = '2026-11-30';
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;

@@ -1,4 +1,3 @@
-import TransitionWrapper from "@/common/TransitionWrapper";
 import Button from "@/components/Button";
 import Card, { CardContent, CardFooter, CardHeader } from "@/components/Card";
 import Container from "@/layout/Container";
@@ -49,7 +48,7 @@ const SidebarQuickActions = () => {
 
 
   const resetSettings = async () => {
-    const confirm = window.confirm(__('Are you sure you want reset all?', 'wp-cloudflare-super-page-cache'));
+    const confirm = window.confirm(__('Are you sure you want to reset all settings?', 'wp-cloudflare-page-cache'));
 
     if (!confirm) {
       return;
@@ -82,7 +81,7 @@ const SidebarQuickActions = () => {
     if (response.success) {
       toast.success(response.message);
 
-      updateSettings(response.data.settings);
+      updateSettings(response.data.settings, response.data.meta);
 
       return;
     }

@@ -22,22 +22,21 @@ class HtaccessBypassingLoader extends HtaccessLoader {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_admin_hooks() {
+	public function init_admin_hooks(): void {
 		add_filter( 'webpc_debug_image_url', [ $this, 'update_image_urls' ] );
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_front_end_hooks() {
+	public function init_front_end_hooks(): void {
 		add_action( 'init', [ $this, 'start_buffering' ] );
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function start_buffering() {
+	public function start_buffering(): void {
 		if ( ! ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( ! is_admin() && ! is_network_admin() ) ) ) {
 			return;
 		}

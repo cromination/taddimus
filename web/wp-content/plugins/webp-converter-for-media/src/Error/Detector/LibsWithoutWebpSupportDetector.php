@@ -7,6 +7,7 @@ use WebpConverter\Conversion\Method\GdMethod;
 use WebpConverter\Conversion\Method\ImagickMethod;
 use WebpConverter\Conversion\Method\RemoteMethod;
 use WebpConverter\Error\Notice\LibsWithoutWebpSupportNotice;
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\PluginData;
 use WebpConverter\Settings\Option\ConversionMethodOption;
 
@@ -15,19 +16,13 @@ use WebpConverter\Settings\Option\ConversionMethodOption;
  */
 class LibsWithoutWebpSupportDetector implements DetectorInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
 	public function __construct( PluginData $plugin_data ) {
 		$this->plugin_data = $plugin_data;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		if ( $plugin_settings[ ConversionMethodOption::OPTION_NAME ] === RemoteMethod::METHOD_NAME ) {
 			return null;

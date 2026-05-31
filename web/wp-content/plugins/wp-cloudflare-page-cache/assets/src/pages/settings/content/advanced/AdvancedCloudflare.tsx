@@ -54,11 +54,7 @@ const AdvancedCloudflare = () => {
       id: 'cf_bypass_backend_page_rule',
       type: 'toggle',
       label: __('Force cache bypassing for backend with an additional Cloudflare page rule', 'wp-cloudflare-page-cache'),
-      description: createInterpolateElement(__('<strong>Read here:</strong> by default, all back-end URLs are not cached thanks to some response headers, but if for some circumstances your backend pages are still cached, you can enable this option which will add an <strong>additional page rule on Cloudflare</strong> to force cache bypassing for the whole WordPress backend directly from Cloudflare.', 'wp-cloudflare-page-cache'),
-        {
-          strong: <strong />,
-        }
-      ),
+      description: __('Backend URLs are not cached by default. If your backend pages are still being cached, enable this option to add a Cloudflare page rule that forces cache bypass for the WordPress backend.', 'wp-cloudflare-page-cache'),
       hide: isToggleOn('cf_woker_enabled'),
     },
   ];

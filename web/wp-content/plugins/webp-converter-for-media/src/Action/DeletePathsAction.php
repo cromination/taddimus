@@ -15,10 +15,7 @@ use WebpConverter\HookableInterface;
  */
 class DeletePathsAction implements HookableInterface {
 
-	/**
-	 * @var OutputPathGenerator
-	 */
-	private $output_path;
+	private OutputPathGenerator $output_path;
 
 	public function __construct(
 		FormatFactory $format_factory,
@@ -30,7 +27,7 @@ class DeletePathsAction implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'webpc_delete_paths', [ $this, 'delete_files_by_paths' ], 10, 2 );
 	}
 
@@ -40,10 +37,9 @@ class DeletePathsAction implements HookableInterface {
 	 * @param string[] $paths            Server paths of output images.
 	 * @param bool     $set_skipped_flag .
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function delete_files_by_paths( array $paths, bool $set_skipped_flag = false ) {
+	public function delete_files_by_paths( array $paths, bool $set_skipped_flag = false ): void {
 		foreach ( $paths as $path ) {
 			$this->delete_file_by_path( $path, $set_skipped_flag );
 		}
@@ -54,10 +50,8 @@ class DeletePathsAction implements HookableInterface {
 	 *
 	 * @param string $path             Server path of output image.
 	 * @param bool   $set_skipped_flag .
-	 *
-	 * @return void
 	 */
-	private function delete_file_by_path( string $path, bool $set_skipped_flag ) {
+	private function delete_file_by_path( string $path, bool $set_skipped_flag ): void {
 		$output_formats = ( $set_skipped_flag ) ? [ AvifFormat::FORMAT_EXTENSION, WebpFormat::FORMAT_EXTENSION ] : null;
 
 		if ( ! ( $output_paths = $this->output_path->get_paths( $path, $set_skipped_flag, $output_formats ) ) ) {

@@ -14,15 +14,9 @@ class TokenValidator {
 	const API_TOKEN_SUCCESS_CODE = 200;
 	const REQUEST_INFO_OPTION    = 'webpc_token_request_info';
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
-	/**
-	 * @var Token
-	 */
-	private $token;
+	private Token $token;
 
 	public function __construct( ?TokenRepository $token_repository = null ) {
 		$this->token_repository = $token_repository ?: new TokenRepository();
@@ -66,7 +60,6 @@ class TokenValidator {
 
 		$response     = curl_exec( $connect );
 		$request_info = curl_getinfo( $connect );
-		curl_close( $connect );
 
 		if ( $request_info['http_code'] !== self::API_TOKEN_SUCCESS_CODE ) {
 			OptionsAccessManager::update_option( self::REQUEST_INFO_OPTION, $request_info );

@@ -3,6 +3,9 @@
 namespace SPC\Modules;
 
 use SPC\Constants;
+use SPC\Services\Bypass_Resolver;
+use SPC\Services\HTML_Minifier;
+use SPC\Services\Settings_Store;
 use SPC\Utils\Helpers;
 
 class HTML_Modifier implements Module_Interface {
@@ -21,12 +24,11 @@ class HTML_Modifier implements Module_Interface {
 	 * @return void
 	 */
 	public function init() {
-		if ( ! \SPC\Loader::can_process_html() ) {
-			return;
-		}
-
 		add_filter( 'swcfpc_normal_fallback_cache_html', [ $this, 'alter_cached_html' ], 10 );
 		add_filter( 'swcfpc_curl_fallback_cache_html', [ $this, 'alter_cached_html' ], 10 );
+		add_filter( 'swcfpc_normal_fallback_cache_html', [ $this, 'minify_cached_html' ], 20 );
+		add_filter( 'swcfpc_curl_fallback_cache_html', [ $this, 'minify_cached_html' ], 20 );
+		add_action( 'template_redirect', [ $this, 'start_live_html_buffer' ], PHP_INT_MAX );
 	}
 
 	/**
@@ -37,12 +39,14 @@ class HTML_Modifier implements Module_Interface {
 	 * @return string
 	 */
 	public function alter_cached_html( $html ) {
-		global $sw_cloudflare_pagecache;
+		$lazy_load       = (int) Settings_Store::get_instance()->get( Constants::SETTING_LAZY_LOADING ) === 1;
+		$native_lazyload = (int) Settings_Store::get_instance()->get( Constants::SETTING_NATIVE_LAZY_LOADING ) === 1;
 
-		$lazy_load       = (int) $sw_cloudflare_pagecache->get_single_config( Constants::SETTING_LAZY_LOADING ) === 1;
-		$native_lazyload = (int) $sw_cloudflare_pagecache->get_single_config( Constants::SETTING_NATIVE_LAZY_LOADING ) === 1;
+		if ( ! \SPC\Loader::can_process_html() || ( ! $lazy_load && $native_lazyload ) ) {
+			return $html;
+		}
 
-		return ! $lazy_load && $native_lazyload ? $html : $this->parse_html(
+		return $this->parse_html(
 			$html,
 			wp_parse_args(
 				[
@@ -52,6 +56,74 @@ class HTML_Modifier implements Module_Interface {
 				self::DEFAULT_CONFIG
 			)
 		);
+	}
+
+	/**
+	 * Minify cached HTML. Runs after other HTML modifiers (e.g. Pro's preload-link
+	 * injection) so the persisted body matches the live minified output.
+	 *
+	 * @param string $html HTML content.
+	 *
+	 * @return string
+	 */
+	public function minify_cached_html( $html ) {
+		if ( (int) Settings_Store::get_instance()->get( Constants::SETTING_MINIFY_HTML ) !== 1 ) {
+			return $html;
+		}
+
+		return ( new HTML_Minifier() )->minify( $html );
+	}
+
+	/**
+	 * Start output buffering for live cacheable HTML responses so Cloudflare receives
+	 * the minified body on first render, not only the fallback-cache copy.
+	 *
+	 * @return void
+	 */
+	public function start_live_html_buffer() {
+		$settings = Settings_Store::get_instance();
+
+		if ( is_admin() || (int) $settings->get( Constants::SETTING_MINIFY_HTML ) !== 1 ) {
+			return;
+		}
+
+		if ( ! $settings->is_cache_enabled() ) {
+			return;
+		}
+
+		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || strcasecmp( $_SERVER['REQUEST_METHOD'], 'GET' ) !== 0 ) {
+			return;
+		}
+
+		if ( Bypass_Resolver::is_url_to_bypass() || Bypass_Resolver::can_i_bypass_cache() ) {
+			return;
+		}
+
+		if (
+			is_feed() ||
+			is_robots() ||
+			is_trackback() ||
+			( function_exists( 'is_sitemap' ) && is_sitemap() )
+		) {
+			return;
+		}
+
+		ob_start( [ $this, 'minify_live_html' ] );
+	}
+
+	/**
+	 * Minify the live frontend response body.
+	 *
+	 * @param string $html HTML content.
+	 *
+	 * @return string
+	 */
+	public function minify_live_html( $html ) {
+		if ( ! is_string( $html ) || trim( $html ) === '' ) {
+			return $html;
+		}
+
+		return ( new HTML_Minifier() )->minify( $html );
 	}
 
 	/**
@@ -99,11 +171,9 @@ class HTML_Modifier implements Module_Interface {
 	 * @return void
 	 */
 	public function handle_lazy_load( $parser ) {
-		global $sw_cloudflare_pagecache;
-
 		$tag       = $parser->get_tag();
-		$to_skip   = max( (int) $sw_cloudflare_pagecache->get_single_config( Constants::SETTING_LAZY_LOAD_SKIP_IMAGES, 2 ), 0 );
-		$behaviour = $sw_cloudflare_pagecache->get_single_config( Constants::SETTING_LAZY_LOAD_BEHAVIOUR, Frontend::LAZY_LOAD_BEHAVIOUR_ALL );
+		$to_skip   = max( (int) Settings_Store::get_instance()->get( Constants::SETTING_LAZY_LOAD_SKIP_IMAGES, 2 ), 0 );
+		$behaviour = Settings_Store::get_instance()->get( Constants::SETTING_LAZY_LOAD_BEHAVIOUR, Frontend::LAZY_LOAD_BEHAVIOUR_ALL );
 		if ( $tag === 'IMG' && $behaviour === Frontend::LAZY_LOAD_BEHAVIOUR_FIXED && $to_skip > self::$skipped_images_lazyload ) {
 			self::$skipped_images_lazyload++;
 
@@ -111,7 +181,7 @@ class HTML_Modifier implements Module_Interface {
 		}
 
 		$exclusions = array_merge(
-			$sw_cloudflare_pagecache->get_single_config( Constants::SETTING_LAZY_EXCLUDED, [] ),
+			Settings_Store::get_instance()->get( Constants::SETTING_LAZY_EXCLUDED, [] ),
 			Constants::DEFAULT_LAZY_LOAD_EXCLUSIONS
 		);
 		if ( $tag === 'IMG' && ! $parser->get_attribute( 'data-spc-id' ) ) {
@@ -178,9 +248,7 @@ class HTML_Modifier implements Module_Interface {
 	 * @return string[]
 	 */
 	private function get_lazyloadable_tags() {
-		global $sw_cloudflare_pagecache;
-
-		return (int) $sw_cloudflare_pagecache->get_single_config( Constants::SETTING_LAZY_LOAD_VIDEO_IFRAME ) === 1 ? [
+		return (int) Settings_Store::get_instance()->get( Constants::SETTING_LAZY_LOAD_VIDEO_IFRAME ) === 1 ? [
 			'IMG',
 			'VIDEO',
 			'IFRAME',

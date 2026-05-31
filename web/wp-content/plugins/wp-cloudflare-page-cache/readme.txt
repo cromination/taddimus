@@ -1,10 +1,10 @@
-=== Super Page Cache ===
+=== Super Page Cache – Cloudflare Cache, Page Speed & Core Web Vitals ===
 Contributors: themeisle, salvatorefresta, isaumya
-Tags: cloudflare, caching, performance, page caching, pagespeed
+Tags: cache, cloudflare, pagespeed, performance, cdn
 Requires at least: 5.3
 Requires PHP: 7.4
-Tested up to: 6.9
-Stable tag: 5.2.4
+Tested up to: 7.0
+Stable tag: 5.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,8 @@ Boost PageSpeed, SEO, and Core Web Vitals with full page caching, JS/CSS optimiz
 == Description ==
 
 Super Page Cache is a powerful full page cache plugin for WordPress that caches static files (CSS, JS, images) and HTML webpages at both server disk-level and the global Cloudflare CDN. Get enterprise-level performance with zero configuration required.
+
+Super Page Cache improves site speed by enabling server-side caching, cache preloading, local Google Fonts, and removing unused CSS and JavaScript, boosting Core Web Vitals and load times.
 
 Works right out of the box with or without Cloudflare. Powerful disk caching saves files locally on your server. To use Cloudflare CDN, just enter your API Key or Token. The intuitive dashboard includes detailed settings and built-in documentation, though most users won't need to change the defaults.
 
@@ -185,14 +187,9 @@ Check the FAQ tab in plugin settings first. If needed, enable log mode and send 
 
 == Changelog ==
 
-#####   Version 5.2.4 (2026-03-19)
+#####   Version 5.3.1 (2026-05-18)
 
-* Improved error handling in  by logging and safely aborting if the  file cannot be parsed.
-* Enhanced cache URL logic to handle missing  or , logging issues and preventing invalid cache entries.
-* Hardening Security 
-* Fixed usage of  in  for more reliable directory path generation.
-* Adjusted module loading order for  in  to ensure proper initialization.  
-* Updated cache purge logic to handle post status transitions both to and from publish/private, improving cache consistency.
+- Fix PHP 8 hook type errors causing fatal errors in certain situations.
 
 
 

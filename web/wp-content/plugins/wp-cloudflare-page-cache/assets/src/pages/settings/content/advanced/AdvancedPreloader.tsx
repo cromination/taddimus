@@ -1,3 +1,4 @@
+import ExternalLink from "@/common/ExternalLink";
 import CheckboxControl from "@/pages/settings/controls/CheckboxControl";
 import ControlsGroup from "@/pages/settings/controls/ControlsGroup";
 import LockedInputCopy from "@/common/LockedInputCopy";
@@ -21,6 +22,13 @@ const AdvancedPreloader = () => {
       id: 'cf_preloader',
       type: 'toggle',
       label: __('Enable preloader', 'wp-cloudflare-page-cache'),
+      description: <>
+        {__('Automatically visit your pages to build the cache in the background.', 'wp-cloudflare-page-cache')}
+        {' '}
+        <ExternalLink url="https://docs.themeisle.com/super-page-cache/how-to-automate-cache-purging-and-preloading-with-super-page-cache">
+          {__('More Info', 'wp-cloudflare-page-cache')}
+        </ExternalLink>
+      </>,
     },
     {
       id: 'cf_preloader_start_on_purge',
@@ -60,7 +68,7 @@ const AdvancedPreloader = () => {
       id: 'preloader_cronjob_info',
       type: 'custom',
       label: __('Start the preloader via Cronjob', 'wp-cloudflare-page-cache'),
-      description: __('If you want start the preloader at specific intervals decided by you, you can create a cronjob that hits the following URL:', 'wp-cloudflare-page-cache'),
+      description: __('If you want to start the preloader at specific intervals decided by you, you can create a cronjob that hits the following URL:', 'wp-cloudflare-page-cache'),
       component: <LockedInputCopy content={fullCronjobURL} />,
       hide: !isToggleOn('cf_preloader'),
     },

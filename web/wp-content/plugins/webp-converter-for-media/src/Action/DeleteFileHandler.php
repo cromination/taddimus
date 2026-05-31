@@ -12,7 +12,7 @@ class DeleteFileHandler implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'wp_delete_file', [ $this, 'delete_attachment_file' ] );
 	}
 

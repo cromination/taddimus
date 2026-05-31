@@ -17,10 +17,10 @@ class SDK_Integrations {
 	public function get_survey_metadata( $data, $page_slug ) {
 		$free_slug_key = 'wp_cloudflare_page_cache';
 		$current_time  = time();
-		$install_date  = get_option( $this->get_product_key() . '_install', $current_time );
+		$install_date  = (int) get_option( $this->get_product_key() . '_install', $current_time );
 
 		if ( defined( 'SPC_PRO_PATH' ) ) {
-			$install_date = min( $install_date, get_option( $free_slug_key . '_install', $current_time ) );
+			$install_date = min( $install_date, (int) get_option( $free_slug_key . '_install', $current_time ) );
 		}
 
 		$install_days_number = intval( ( $current_time - $install_date ) / DAY_IN_SECONDS );
@@ -59,30 +59,46 @@ class SDK_Integrations {
 	public function add_black_friday_data( $configs ) {
 		$config = $configs['default'];
 
-		// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
-		$message_template = __( 'Our biggest sale of the year: %1$sup to %2$s OFF%3$s on %4$s. Don\'t miss this limited-time offer.', 'wp-cloudflare-page-cache' );
-		$product_label    = 'Super Page Cache';
-		$discount         = '70%';
+		$message   = __( 'Advanced caching rules, unused CSS removal, Cloudflare edge caching. The performance your site needs without the complexity. Exclusively for existing SPC users.', 'wp-cloudflare-page-cache' );
+		$cta_label = __( 'Get SPC Pro', 'wp-cloudflare-page-cache' );
 
 		$plan    = apply_filters( 'product_spc_license_plan', 0 );
 		$license = apply_filters( 'product_spc_license_key', false );
-		$is_pro  = 0 < $plan;
+		$status  = apply_filters( 'product_spc_license_status', false );
+
+		$is_pro     = 'valid' === $status;
+		$is_expired = 'expired' === $status || 'active-expired' === $status;
 
 		if ( $is_pro ) {
-			// translators: %1$s - HTML tag, %2$s - discount, %3$s - HTML tag, %4$s - product name.
-			$message_template = __( 'Get %1$sup to %2$s off%3$s when you upgrade your %4$s plan or renew early.', 'wp-cloudflare-page-cache' );
-			$product_label    = 'Super Page Cache Pro';
-			$discount         = '30%';
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - up to %s off', 'wp-cloudflare-page-cache' ), '30%' );
+			// translators: %1$s - discount, %2$s - discount.
+			$message   = sprintf( __( 'Upgrade your SPC Pro plan: %1$s off this week. Already on the plan you need? Renew early and save up to %2$s.', 'wp-cloudflare-page-cache' ), '30%', '20%' );
+			$cta_label = __( 'See your options', 'wp-cloudflare-page-cache' );
+		} elseif ( $is_expired ) {
+			// translators: %s is the discount percentage.
+			$config['upgrade_menu_text'] = sprintf( __( 'BF Sale - %s off', 'wp-cloudflare-page-cache' ), '50%' );
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - %s off', 'wp-cloudflare-page-cache' ), '50%' );
+			$message                       = __( 'Your SPC Pro features are still here, just locked. Renew at a reduced rate this week.', 'wp-cloudflare-page-cache' );
+			$cta_label                     = __( 'Reactivate now', 'wp-cloudflare-page-cache' );
+		} else {
+			// translators: %s is the discount percentage.
+			$config['plugin_meta_message'] = sprintf( __( 'Black Friday Sale - %s off', 'wp-cloudflare-page-cache' ), '60%' );
+			$config['title']               = __( 'Visualizer Pro: 60% off this week', 'wp-cloudflare-page-cache' );
+			// translators: %s is the discount percentage.
+			$config['upgrade_menu_text'] = sprintf( __( 'BF Sale - %s off', 'wp-cloudflare-page-cache' ), '60%' );
 		}
 
-		$product_label = sprintf( '<strong>%s</strong>', $product_label );
-		$url_params    = array(
+		$url_params = array(
 			'utm_term' => $is_pro ? 'plan-' . $plan : 'free',
 			'lkey'     => ! empty( $license ) ? $license : false,
+			'expired'  => $is_expired ? '1' : false,
 		);
 
-		$config['message']  = sprintf( $message_template, '<strong>', $discount, '</strong>', $product_label );
-		$config['sale_url'] = add_query_arg(
+		$config['cta_label'] = $cta_label;
+		$config['message']   = $message;
+		$config['sale_url']  = add_query_arg(
 			$url_params,
 			tsdk_translate_link( tsdk_utmify( 'https://themeisle.link/spc-bf', 'bfcm', 'spc' ) )
 		);
@@ -120,7 +136,7 @@ class SDK_Integrations {
 			'location'         => Dashboard::PAGE_SLUG,
 			'logo'             => Assets_Handler::get_image_url( 'logo.svg' ),
 			'has_upgrade_menu' => ! defined( 'SPC_PRO_PATH' ),
-			'upgrade_link'     => tsdk_translate_link( tsdk_utmify( esc_url( 'https://themeisle.com/plugins/super-page-cache-pro' ), 'aboutfilter', 'spc' ), 'query' ),
+			'upgrade_link'     => tsdk_translate_link( tsdk_utmify( esc_url( 'https://themeisle.com/plugins/super-page-cache-pro/upgrade/' ), 'aboutfilter', 'spc' ), 'query' ),
 			'upgrade_text'     => __( 'Upgrade to PRO', 'wp-cloudflare-page-cache' ),
 		];
 	}

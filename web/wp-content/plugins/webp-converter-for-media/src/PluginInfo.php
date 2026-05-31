@@ -7,30 +7,15 @@ namespace WebpConverter;
  */
 class PluginInfo {
 
-	/**
-	 * @var string
-	 */
-	private $plugin_file;
+	private string $plugin_file;
 
-	/**
-	 * @var string
-	 */
-	private $plugin_version;
+	private string $plugin_version;
 
-	/**
-	 * @var string
-	 */
-	private $plugin_basename;
+	private string $plugin_basename;
 
-	/**
-	 * @var string
-	 */
-	private $plugin_directory_path;
+	private string $plugin_directory_path;
 
-	/**
-	 * @var string
-	 */
-	private $plugin_directory_url;
+	private string $plugin_directory_url;
 
 	/**
 	 * @param string $plugin_file    Path to the main plugin file.

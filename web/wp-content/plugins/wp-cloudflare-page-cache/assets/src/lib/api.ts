@@ -60,9 +60,39 @@ class SPCApi {
   }
 
   async testCache(): Promise<ApiResponse> {
-    return this.makeRequest('/cache/test', {
-      method: 'GET',
-    });
+    const testUrl = window.SPCDash.testCacheUrl;
+
+    try {
+      // Warmup pass — primes the edge.
+      const warmupResponse = await fetch(testUrl, { credentials: 'omit', cache: 'no-store' });
+      if (!warmupResponse.ok) {
+        throw new Error(`HTTP ${warmupResponse.status}`);
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Verify pass — read-after-warmup; its headers carry the verdict.
+      const verifyResponse = await fetch(testUrl, { credentials: 'omit', cache: 'no-store' });
+      if (!verifyResponse.ok) {
+        throw new Error(`HTTP ${verifyResponse.status}`);
+      }
+
+      const headers: Record<string, string> = {};
+      verifyResponse.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+
+      return this.makeRequest('/cache/test', {
+        method: 'POST',
+        body: JSON.stringify({ headers }),
+      });
+    } catch (error) {
+      return {
+        success: false,
+        message: window.SPCDash.i18n.cacheTestFetchFailed
+          + (error instanceof Error ? ' (' + error.message + ')' : ''),
+      };
+    }
   }
 
   async toggleLicenseKey(data = {}): Promise<ApiResponse> {
@@ -146,6 +176,12 @@ class SPCApi {
     return this.makeRequest('/database/optimize', {
       method: 'DELETE',
       body: JSON.stringify(data),
+    });
+  }
+
+  async getDatabaseOptimizationCounts(): Promise<ApiResponse> {
+    return this.makeRequest('/database/optimize-counts', {
+      method: 'GET',
     });
   }
 

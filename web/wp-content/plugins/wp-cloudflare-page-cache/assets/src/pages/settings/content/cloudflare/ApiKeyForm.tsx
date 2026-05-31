@@ -6,6 +6,7 @@ import { spcApi } from "@/lib/api";
 import { useSettingsStore } from "@/store/optionsStore";
 import { useAppStore } from "@/store/store";
 
+import ManagedSettingNotice from "./ManagedSettingNotice";
 import { useConnectionStore } from "./connectionStore";
 
 import { useState } from "@wordpress/element";
@@ -15,13 +16,16 @@ import { Globe } from "lucide-react";
 const ApiKeyForm = () => {
   const { setErrorMessage } = useConnectionStore();
   const { asyncLocked, lockAsync } = useAppStore();
-  const { settings, updateSettings } = useSettingsStore();
+  const { settings, updateSettings, isSettingOverridden } = useSettingsStore();
+  const storedApiKeyExists = Boolean(window.SPCDash.settings?.cf_apikey?.hasValue);
   const [isConnecting, setIsConnecting] = useState(false);
 
   const [formData, setFormData] = useState({
     email: settings.cf_email as string,
     apiKey: settings.cf_apikey as string,
   });
+  const emailManaged = isSettingOverridden('cf_email');
+  const apiKeyManaged = isSettingOverridden('cf_apikey');
 
   const getZoneDomainList = async (e: React.FormEvent<HTMLFormElement>) => {
     setErrorMessage('');
@@ -43,7 +47,7 @@ const ApiKeyForm = () => {
     setIsConnecting(false);
 
     if (response.success) {
-      updateSettings(response.data.settings);
+      updateSettings(response.data.settings, response.data.meta);
 
       return;
     }
@@ -51,7 +55,7 @@ const ApiKeyForm = () => {
     setErrorMessage(response.message);
   }
   
-  const isFormInvalid = (!formData.email || !formData.apiKey);
+  const isFormInvalid = (!formData.email || !formData.apiKey) || emailManaged || apiKeyManaged;
 
   return (
     <form onSubmit={getZoneDomainList}>
@@ -62,7 +66,7 @@ const ApiKeyForm = () => {
           <Input
             type="email"
             id="cf_email"
-            disabled={asyncLocked}
+            disabled={asyncLocked || emailManaged}
             value={formData.email as string}
             onChange={(e) => {
               setFormData({ ...formData, email: e.target.value });
@@ -80,8 +84,9 @@ const ApiKeyForm = () => {
           <PasswordInput
             type="password"
             id="cf_api_key"
-            disabled={asyncLocked}
+            disabled={asyncLocked || apiKeyManaged}
             value={formData.apiKey as string}
+            placeholder={!formData.apiKey && storedApiKeyExists ? '••••••••••••••••' : ''}
             className="w-full max-w-full h-10 m-0"
             autoComplete="off"
             onChange={(e) => {
@@ -100,6 +105,7 @@ const ApiKeyForm = () => {
               <li>{__('Copy the API key and paste it in the form below', 'wp-cloudflare-page-cache')}</li>
             </ol>
           </div>
+          <ManagedSettingNotice show={emailManaged || apiKeyManaged} className="mt-2" />
 
         </div>
       </TransitionWrapper>

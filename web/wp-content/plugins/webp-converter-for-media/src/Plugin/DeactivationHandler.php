@@ -13,10 +13,7 @@ use WebpConverter\PluginInfo;
  */
 class DeactivationHandler implements HookableInterface {
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
 	public function __construct( PluginInfo $plugin_info ) {
 		$this->plugin_info = $plugin_info;
@@ -25,17 +22,16 @@ class DeactivationHandler implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		register_deactivation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'load_deactivation_actions' ] );
 	}
 
 	/**
 	 * Initializes actions when plugin is deactivated.
 	 *
-	 * @return void
 	 * @internal
 	 */
-	public function load_deactivation_actions() {
+	public function load_deactivation_actions(): void {
 		( new CronManager() )->reset_cron_event();
 		( new PluginSettingsManager() )->remove_plugin_settings();
 

@@ -202,12 +202,211 @@ class Promotions extends Abstract_Module {
 		add_filter( 'attachment_fields_to_edit', array( $this, 'add_attachment_field' ), 10, 2 );
 		add_action( 'current_screen', [ $this, 'load_available' ] );
 		add_action( 'elementor/editor/after_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_visualizer_block_editor_shim' ), 100 );
 		add_action( 'wp_ajax_tisdk_update_option', array( $this, 'dismiss_promotion' ) );
+		add_filter( 'plugins_api_result', array( $this, 'inject_visualizer_block_directory_suggestion' ), 10, 3 );
+		add_filter( 'option_visualizer-activated', array( $this, 'suppress_visualizer_onboarding_in_editor' ) );
 		add_filter( 'themeisle_sdk_ran_promos', '__return_true' );
 
 		if ( get_option( $this->option_neve, false ) !== true ) {
 			add_action( 'wp_ajax_themeisle_sdk_dismiss_notice', 'ThemeisleSDK\Modules\Notification::regular_dismiss' );
 		}
+	}
+
+
+	/**
+	 * Inject Visualizer as the first block-directory suggestion for chart queries.
+	 *
+	 * @param object|WP_Error $res    Response object or WP_Error.
+	 * @param string          $action The API action.
+	 * @param object          $args   The API arguments.
+	 * @return object|WP_Error
+	 */
+	public function inject_visualizer_block_directory_suggestion( $res, $action, $args ) {
+		if ( 'query_plugins' !== $action || ! is_object( $args ) || empty( $args->block ) ) {
+			return $res;
+		}
+
+		if ( ! $this->should_suggest_visualizer( $args->block ) ) {
+			return $res;
+		}
+
+		if ( $this->is_plugin_installed( 'visualizer' ) ) {
+			return $res;
+		}
+
+		$plugin = $this->get_visualizer_block_directory_data();
+		if ( empty( $plugin ) ) {
+			return $res;
+		}
+
+		if ( is_wp_error( $res ) ) {
+			$res = (object) array( 'plugins' => array() );
+		}
+
+		if ( ! isset( $res->plugins ) || ! is_array( $res->plugins ) ) {
+			$res->plugins = array();
+		}
+
+		$res->plugins = array_values(
+			array_filter(
+				$res->plugins,
+				function ( $existing ) use ( $plugin ) {
+					return ! isset( $existing['slug'] ) || $existing['slug'] !== $plugin['slug'];
+				}
+			)
+		);
+
+		array_unshift( $res->plugins, $plugin );
+
+		return $res;
+	}
+
+	/**
+	 * Check if the query should trigger the Visualizer suggestion.
+	 *
+	 * @param string $term Search term.
+	 * @return bool
+	 */
+	private function should_suggest_visualizer( $term ) {
+		$term = strtolower( (string) $term );
+		return false !== strpos( $term, 'chart' ) || false !== strpos( $term, 'visualizer' ) || false !== strpos( $term, 'visualization' ) || false !== strpos( $term, 'graph' );
+	}
+
+	/**
+	 * Build the plugin data for Visualizer block directory results.
+	 *
+	 * @return array
+	 */
+	private function get_visualizer_block_directory_data() {
+		$slug        = 'visualizer';
+		$plugin_info = $this->call_plugin_api( $slug );
+
+		if ( is_wp_error( $plugin_info ) || empty( $plugin_info ) ) {
+			return array();
+		}
+
+		$icons = array();
+		if ( ! empty( $plugin_info->icons ) ) {
+			if ( ! empty( $plugin_info->icons['1x'] ) ) {
+				$icons['1x'] = $plugin_info->icons['1x'];
+			}
+			if ( ! empty( $plugin_info->icons['2x'] ) ) {
+				$icons['2x'] = $plugin_info->icons['2x'];
+			}
+		}
+
+		$name = isset( $plugin_info->name ) ? $plugin_info->name : 'Visualizer';
+
+		return array(
+			'slug'                => $slug,
+			'name'                => $name,
+			'short_description'   => isset( $plugin_info->short_description ) ? $plugin_info->short_description : '',
+			'author'              => isset( $plugin_info->author ) ? wp_strip_all_tags( $plugin_info->author ) : '',
+			'rating'              => isset( $plugin_info->rating ) ? (int) $plugin_info->rating : 0,
+			'num_ratings'         => isset( $plugin_info->num_ratings ) ? (int) $plugin_info->num_ratings : 0,
+			'active_installs'     => isset( $plugin_info->active_installs ) ? (int) $plugin_info->active_installs : 0,
+			'author_block_rating' => isset( $plugin_info->author_block_rating ) ? (int) $plugin_info->author_block_rating : 0,
+			'author_block_count'  => isset( $plugin_info->author_block_count ) ? (int) $plugin_info->author_block_count : 0,
+			'icons'               => $icons,
+			'last_updated'        => isset( $plugin_info->last_updated ) ? $plugin_info->last_updated : gmdate( 'Y-m-d H:i:s' ),
+			'blocks'              => array(
+				array(
+					'name'  => 'visualizer/chart',
+					'title' => $name,
+				),
+			),
+		);
+	}
+
+
+	/**
+	 * Prevent Visualizer onboarding redirects while in the block editor.
+	 *
+	 * @param mixed $value Option value.
+	 * @return mixed
+	 */
+	public function suppress_visualizer_onboarding_in_editor( $value ) {
+		if ( ! $this->is_block_editor_screen() ) {
+			return $value;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Add a small compatibility shim for Visualizer's block editor bundle.
+	 *
+	 * Visualizer's "Display an existing chart" flow reads
+	 * `google.visualization.Version` before the Google Charts loader has fully
+	 * populated `google.visualization`, which can throw after dynamic install.
+	 *
+	 * @return void
+	 */
+	public function enqueue_visualizer_block_editor_shim() {
+		global $themeisle_sdk_max_version;
+
+		if ( ! $this->is_block_editor_screen() ) {
+			return;
+		}
+
+		if ( ! wp_script_is( 'visualizer-gutenberg-block', 'enqueued' ) ) {
+			return;
+		}
+
+		wp_register_script(
+			'ti-sdk-visualizer-editor-shim',
+			'',
+			array(),
+			$themeisle_sdk_max_version,
+			true
+		);
+		wp_enqueue_script( 'ti-sdk-visualizer-editor-shim' );
+		wp_add_inline_script(
+			'ti-sdk-visualizer-editor-shim',
+			'window.google = window.google || {}; window.google.visualization = window.google.visualization || {}; window.google.visualization.Version = window.google.visualization.Version || "current";'
+		);
+	}
+
+	/**
+	 * Check if the current admin screen is the block editor.
+	 *
+	 * @return bool
+	 */
+	private function is_block_editor_screen() {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return $this->is_block_editor_request();
+		}
+
+		$screen = get_current_screen();
+		if ( is_object( $screen ) && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
+			return true;
+		}
+
+		return $this->is_block_editor_request();
+	}
+
+	/**
+	 * Detect block editor requests before the current screen is available.
+	 *
+	 * @return bool
+	 */
+	private function is_block_editor_request() {
+		global $pagenow;
+
+		if ( 'post-new.php' === $pagenow ) {
+			$post_type = isset( $_GET['post_type'] ) ? sanitize_key( $_GET['post_type'] ) : 'post';
+
+			return function_exists( 'use_block_editor_for_post_type' ) ? use_block_editor_for_post_type( $post_type ) : true;
+		}
+
+		if ( 'post.php' === $pagenow && isset( $_GET['post'] ) ) {
+			$post_id = absint( $_GET['post'] );
+
+			return function_exists( 'use_block_editor_for_post' ) ? use_block_editor_for_post( $post_id ) : true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -422,25 +621,25 @@ class Promotions extends Abstract_Module {
 		$has_ppom                  = defined( 'PPOM_VERSION' ) || $this->is_plugin_installed( 'woocommerce-product-addon' );
 		$has_redirection_cf7       = defined( 'WPCF7_PRO_REDIRECT_PLUGIN_VERSION' ) || $this->is_plugin_installed( 'wpcf7-redirect' );
 		$had_redirection_cf7_promo = get_option( $this->option_redirection_cf7, false );
+		$is_min_php_7_4            = version_compare( PHP_VERSION, '7.4', '>=' );
+		$is_min_php_7_2            = version_compare( PHP_VERSION, '7.2', '>=' );
+		$can_check_plugin_install  = $this->can_check_plugin_install_promo();
 		$has_hyve                  = defined( 'HYVE_LITE_VERSION' ) || $this->is_plugin_installed( 'hyve' ) || $this->is_plugin_installed( 'hyve-lite' );
 		$had_hyve_from_promo       = get_option( $this->option_hyve, false );
-		$has_hyve_conditions       = version_compare( get_bloginfo( 'version' ), '6.2', '>=' ) && $this->has_support_page();
+		$has_hyve_conditions       = $is_min_php_7_4 && ! $has_hyve && ! $had_hyve_from_promo && version_compare( get_bloginfo( 'version' ), '6.2', '>=' ) && $can_check_plugin_install && $this->has_support_page();
 		$has_wfp_full_pay          = defined( 'WP_FULL_STRIPE_BASENAME' ) || $this->is_plugin_installed( 'wp-full-stripe-free' );
 		$had_wfp_from_promo        = get_option( $this->option_wp_full_pay, false );
-		$has_wfp_conditions        = $this->has_donate_page();
+		$has_wfp_conditions        = ! $has_wfp_full_pay && ! $had_wfp_from_promo && $can_check_plugin_install && $this->has_donate_page();
 		$is_min_req_v              = version_compare( get_bloginfo( 'version' ), '5.8', '>=' );
 		$current_theme             = wp_get_theme();
 		$has_neve                  = $current_theme->template === 'neve' || $current_theme->parent() === 'neve';
 		$has_neve_from_promo       = get_option( $this->option_neve, false );
 		$has_enough_attachments    = $this->has_min_media_attachments();
 		$has_enough_old_posts      = $this->has_old_posts();
-		$is_min_php_7_4            = version_compare( PHP_VERSION, '7.4', '>=' );
 		$has_feedzy                = defined( 'FEEDZY_BASEFILE' ) || $this->is_plugin_installed( 'feedzy-rss-feedss' );
 		$had_feedzy_from_promo     = get_option( $this->option_feedzy, false );
-		$has_masteriyo             = defined( 'MASTERIYO_VERSION' ) || $this->is_plugin_installed( 'learning-management-system' );
 		$had_masteriyo_from_promo  = get_option( $this->option_masteriyo, false );
-		$has_masteriyo_conditions  = $this->has_lms_tagline();
-		$is_min_php_7_2            = version_compare( PHP_VERSION, '7.2', '>=' );
+		$has_masteriyo_conditions  = $is_min_php_7_2 && ! $had_masteriyo_from_promo && ! $this->has_active_lms_plugin() && $can_check_plugin_install && $this->has_lms_tagline();
 
 		$all = [
 			'optimole'                   => [
@@ -538,19 +737,19 @@ class Promotions extends Abstract_Module {
 			],
 			'hyve'                       => [
 				'hyve-plugins-install' => [
-					'env'    => $is_min_php_7_4 && ! $has_hyve && ! $had_hyve_from_promo && $has_hyve_conditions,
+					'env'    => $has_hyve_conditions,
 					'screen' => 'plugin-install',
 				],
 			],
 			'wp_full_pay'                => [
 				'wp-full-pay-plugins-install' => [
-					'env'    => ! $has_wfp_full_pay && ! $had_wfp_from_promo && $has_wfp_conditions,
+					'env'    => $has_wfp_conditions,
 					'screen' => 'plugin-install',
 				],
 			],
 			'learning-management-system' => [
 				'masteriyo-plugins-install' => [
-					'env'    => $is_min_php_7_2 && ! $has_masteriyo && ! $had_masteriyo_from_promo && $has_masteriyo_conditions,
+					'env'    => $has_masteriyo_conditions,
 					'screen' => 'plugin-install',
 				],
 			],
@@ -1399,74 +1598,264 @@ class Promotions extends Abstract_Module {
 	 * Check if the user has a support page.
 	 */
 	public function has_support_page() {
-		$transient_name = 'tisdk_has_support_page';
-		$has_support    = get_transient( $transient_name );
+		$page_title_matches = $this->get_page_title_keyword_matches();
 
-		if ( false === $has_support ) {
-			global $wpdb;
-
-			// We use %i escape identifier that was added in WP 6.2.0, hence need to ignore PHPCS warning.
-			// We only show this notice to users on higher version as that is the minimum for Hyve as well.
-			$query = $wpdb->get_var( //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-					'SELECT ID FROM %i WHERE post_type = %s AND post_status = %s AND post_title LIKE %s LIMIT 1', // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedPlaceholder
-					$wpdb->posts,
-					'page',
-					'publish',
-					'%support%'
-				)
-			);
-
-			$has_support = $query ? 'yes' : 'no';
-
-			set_transient( $transient_name, $has_support, 7 * DAY_IN_SECONDS );
-		}
-
-		return 'yes' === $has_support;
+		return 'yes' === $page_title_matches['support'];
 	}
 
 	/**
 	 * Check if the user has a donate page.
 	 */
 	public function has_donate_page() {
-		$transient_name = 'tisdk_has_donate_page';
-		$has_donate     = get_transient( $transient_name );
+		$page_title_matches = $this->get_page_title_keyword_matches();
 
-		if ( false === $has_donate ) {
-			global $wpdb;
-
-			$query = $wpdb->get_var( //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-				$wpdb->prepare(
-					'SELECT ID FROM ' . $wpdb->posts . ' WHERE post_type = %s AND post_status = %s AND post_title LIKE %s LIMIT 1',
-					'page',
-					'publish',
-					'%donate%'
-				)
-			);
-
-			$has_donate = $query ? 'yes' : 'no';
-
-			set_transient( $transient_name, $has_donate, 7 * DAY_IN_SECONDS );
-		}
-
-		return 'yes' === $has_donate;
+		return 'yes' === $page_title_matches['donate'];
 	}
 
 	/**
-	 * Check if the tagline contains LMS related keywords.
+	 * Check if the tagline or a published page title contains LMS related keywords.
 	 *
-	 * @return bool True if the tagline contains LMS-related keywords, false otherwise.
+	 * @return bool True if LMS-related keywords are found, false otherwise.
 	 */
 	public function has_lms_tagline() {
-		$tagline      = strtolower( get_bloginfo( 'description' ) );
-		$lms_keywords = array( 'learning', 'courses' );
+		$tagline = strtolower( get_bloginfo( 'description' ) );
 
-		foreach ( $lms_keywords as $keyword ) {
-			if ( strpos( $tagline, $keyword ) !== false ) {
+		foreach ( $this->get_lms_keywords() as $keyword ) {
+			if ( $this->has_lms_keyword_match( $tagline, $keyword ) ) {
+				return true;
+			}
+		}
+
+		return $this->has_lms_page_title();
+	}
+
+	/**
+	 * Check if a supported LMS plugin is active.
+	 *
+	 * @return bool True if an LMS plugin is active, false otherwise.
+	 */
+	private function has_active_lms_plugin() {
+		if ( defined( 'MASTERIYO_VERSION' ) ) {
+			return true;
+		}
+
+		include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		$lms_plugins = array(
+			'tutor/tutor.php',
+			'sfwd-lms/sfwd_lms.php',
+			'lifterlms/lifterlms.php',
+			'sensei-lms/sensei-lms.php',
+			'learnpress/learnpress.php',
+			'masterstudy-lms-learning-management-system/masterstudy-lms-learning-management-system.php',
+			'learning-management-system/lms.php',
+		);
+
+		foreach ( $lms_plugins as $plugin ) {
+			if ( is_plugin_active( $plugin ) || ( is_multisite() && is_plugin_active_for_network( $plugin ) ) ) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if the current request can display a plugin install promo.
+	 *
+	 * @return bool True if a plugin install promo can be displayed, false otherwise.
+	 */
+	private function can_check_plugin_install_promo() {
+		if ( ! is_admin() || ! current_user_can( 'install_plugins' ) ) {
+			return false;
+		}
+
+		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( isset( $current_screen->id ) ) {
+			return $current_screen->id === 'plugin-install';
+		}
+
+		global $pagenow;
+
+		return isset( $pagenow ) && $pagenow === 'plugin-install.php';
+	}
+
+	/**
+	 * Check if a published page title contains LMS related keywords.
+	 *
+	 * @return bool True if an LMS-related page title is found, false otherwise.
+	 */
+	private function has_lms_page_title() {
+		$lms_page_title_signal = get_transient( 'tisdk_lms_page_title_signal_v1' );
+
+		if ( in_array( $lms_page_title_signal, array( 'yes', 'no' ), true ) ) {
+			return 'yes' === $lms_page_title_signal;
+		}
+
+		$has_lms_page_title = $this->has_published_page_title_with_keywords( $this->get_lms_page_title_keywords() );
+
+		set_transient( 'tisdk_lms_page_title_signal_v1', $has_lms_page_title ? 'yes' : 'no', 7 * DAY_IN_SECONDS );
+
+		return $has_lms_page_title;
+	}
+
+	/**
+	 * Get cached keyword matches for published page titles.
+	 *
+	 * @return array Page title keyword matches.
+	 */
+	private function get_page_title_keyword_matches() {
+		$default_matches = array(
+			'support' => 'no',
+			'donate'  => 'no',
+		);
+
+		$page_title_matches = get_transient( 'tisdk_page_title_signals_v1' );
+
+		if ( is_array( $page_title_matches ) && empty( array_diff_key( $default_matches, $page_title_matches ) ) ) {
+			return array_merge( $default_matches, $page_title_matches );
+		}
+
+		global $wpdb;
+
+		$select_clauses = array();
+		$query_values   = array();
+		$page_checks    = $this->get_page_title_checks();
+
+		foreach ( $page_checks as $match_key => $keywords ) {
+			$match_clauses = array();
+
+			$query_values[] = 'page';
+			$query_values[] = 'publish';
+
+			foreach ( $keywords as $keyword ) {
+				$match_clauses[] = 'post_title LIKE %s';
+				$query_values[]  = '%' . $wpdb->esc_like( $keyword ) . '%';
+			}
+
+			$select_clauses[] = 'EXISTS( SELECT 1 FROM ' . $wpdb->posts . ' WHERE post_type = %s AND post_status = %s AND ( ' . implode( ' OR ', $match_clauses ) . ' ) LIMIT 1 ) AS has_' . $match_key;
+		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$query = $wpdb->get_row( //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->prepare(
+				'SELECT ' . implode( ', ', $select_clauses ),
+				$query_values
+			),
+			ARRAY_A
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
+		$page_title_matches = $default_matches;
+
+		if ( is_array( $query ) ) {
+			foreach ( array_keys( $page_checks ) as $match_key ) {
+				$page_title_matches[ $match_key ] = ! empty( $query[ 'has_' . $match_key ] ) ? 'yes' : 'no';
+			}
+		}
+
+		set_transient( 'tisdk_page_title_signals_v1', $page_title_matches, 7 * DAY_IN_SECONDS );
+
+		return $page_title_matches;
+	}
+
+	/**
+	 * Check if a keyword matches content.
+	 *
+	 * @param string $content Content to check.
+	 * @param string $keyword Keyword to look for.
+	 *
+	 * @return bool True if the keyword matches, false otherwise.
+	 */
+	private function has_lms_keyword_match( $content, $keyword ) {
+		if ( in_array( $keyword, array( 'lms', 'course', 'class' ), true ) ) {
+			return preg_match( '/(^|[^a-z0-9])' . preg_quote( $keyword, '/' ) . '([^a-z0-9]|$)/', $content ) === 1;
+		}
+
+		return strpos( $content, $keyword ) !== false;
+	}
+
+	/**
+	 * Get LMS related keywords.
+	 *
+	 * @return array LMS related keywords.
+	 */
+	private function get_lms_keywords() {
+		return array(
+			'lms',
+			'learning',
+			'course',
+			'courses',
+			'academy',
+			'training',
+			'lesson',
+			'lessons',
+			'class',
+			'classes',
+			'student',
+			'students',
+			'teach',
+			'teaching',
+			'tutor',
+			'quiz',
+			'education',
+			'online course',
+			'online courses',
+		);
+	}
+
+	/**
+	 * Get LMS related keywords for page title matching.
+	 *
+	 * @return array LMS related keywords.
+	 */
+	private function get_lms_page_title_keywords() {
+		return array_values( array_diff( $this->get_lms_keywords(), array( 'lms', 'course', 'class' ) ) );
+	}
+
+	/**
+	 * Check if a published page title contains any of the provided keywords.
+	 *
+	 * @param array $keywords Keywords to look for.
+	 *
+	 * @return bool True if a matching page title is found, false otherwise.
+	 */
+	private function has_published_page_title_with_keywords( $keywords ) {
+		if ( empty( $keywords ) ) {
+			return false;
+		}
+
+		global $wpdb;
+
+		$query_values = array( 'page', 'publish' );
+		$clauses      = array();
+
+		foreach ( $keywords as $keyword ) {
+			$clauses[]      = 'post_title LIKE %s';
+			$query_values[] = '%' . $wpdb->esc_like( $keyword ) . '%';
+		}
+
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		$page_title_match = $wpdb->get_var( //phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$wpdb->prepare(
+				'SELECT 1 FROM ' . $wpdb->posts . ' WHERE post_type = %s AND post_status = %s AND ( ' . implode( ' OR ', $clauses ) . ' ) LIMIT 1',
+				$query_values
+			)
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+
+		return ! empty( $page_title_match );
+	}
+
+	/**
+	 * Get page title keyword checks.
+	 *
+	 * @return array Page title keyword checks.
+	 */
+	private function get_page_title_checks() {
+		return array(
+			'support' => array( 'support' ),
+			'donate'  => array( 'donate' ),
+		);
 	}
 }

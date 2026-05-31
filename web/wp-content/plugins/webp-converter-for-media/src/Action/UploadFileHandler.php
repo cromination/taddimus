@@ -15,22 +15,16 @@ use WebpConverter\Settings\Option\SupportedExtensionsOption;
  */
 class UploadFileHandler implements HookableInterface {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var CronInitiator
-	 */
-	private $cron_initiator;
+	private CronInitiator $cron_initiator;
 
 	/**
 	 * Paths of converted images.
 	 *
 	 * @var string[]
 	 */
-	private $uploaded_paths = [];
+	private array $uploaded_paths = [];
 
 	public function __construct(
 		PluginData $plugin_data,
@@ -45,15 +39,14 @@ class UploadFileHandler implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'init', [ $this, 'init_hooks_after_setup' ] );
 	}
 
 	/**
-	 * @return void
 	 * @internal
 	 */
-	public function init_hooks_after_setup() {
+	public function init_hooks_after_setup(): void {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		if ( ! $plugin_settings[ AutoConversionOption::OPTION_NAME ] ) {
 			return;
@@ -176,11 +169,9 @@ class UploadFileHandler implements HookableInterface {
 	}
 
 	/**
-	 * @return void
-	 *
 	 * @internal
 	 */
-	public function save_paths_to_conversion() {
+	public function save_paths_to_conversion(): void {
 		$paths = array_unique( $this->uploaded_paths );
 		if ( ! $paths ) {
 			return;

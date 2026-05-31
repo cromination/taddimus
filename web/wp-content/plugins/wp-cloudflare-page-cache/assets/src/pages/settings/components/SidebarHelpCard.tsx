@@ -56,7 +56,7 @@ const SidebarHelpCard = () => {
             </a>
 
             <a href="https://docs.themeisle.com/article/2077-super-page-cache-cloudflare-permissions" target="_blank" rel="noreferrer" className="block group text-sm font-medium text-foreground">
-              {__('API token Creation', 'wp-cloudflare-page-cache')}
+              {__('API Token Creation', 'wp-cloudflare-page-cache')}
             </a>
 
             <a href="https://docs.themeisle.com/article/1484-common-issues-for-wp-cloudflare-super-page-cache" target="_blank" rel="noreferrer" className="block group text-sm font-medium text-foreground">

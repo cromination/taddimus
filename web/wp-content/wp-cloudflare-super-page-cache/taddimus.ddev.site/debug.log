@@ -1,8 +1,19 @@
-[2026-04-04 19:41:48] [upgrader::run_update_migrations] Running migrations.
-[2026-04-04 19:41:48] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2026-04-04 19:41:48] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2026-04-04 19:41:48] [upgrader::update_cache_rule] Cache rule updated.
-[2026-04-04 19:41:48] [upgrader::run_update_migrations] Running migrations.
-[2026-04-04 19:41:48] [upgrader::update_cache_rule] Start cache rule upgrade.
-[2026-04-04 19:41:48] [cloudflare::update_cache_rule_if_diff] Cloudflare API is not enabled or cache rule is not set. Enabled: 1 Rule set: 
-[2026-04-04 19:41:48] [upgrader::update_cache_rule] Cache rule updated.
+[2026-05-31 02:34:16] [purge_queue::write] queue file not exist
+[2026-05-31 02:34:16] [third_party_integrations::autoptimize_hooks] Purge whole cache (fired action: autoptimize_action_cachepurged)
+[2026-05-31 02:34:20] [cloudflare::purge_cache] Cache purged successfully.
+[2026-05-31 02:34:20] [preloader::start_for_all_urls] Getting last published posts for post types: Array
+(
+    [0] => post
+    [1] => page
+)
+
+[2026-05-31 02:34:20] [preloader::enqueue_urls] Adding 21 URLs to preloader queue
+[2026-05-31 02:34:20] [cache_controller::purge_all] Purged whole cache
+[2026-05-31 02:34:20] [preloader::start_for_all_urls] Getting last published posts for post types: Array
+(
+    [0] => post
+    [1] => page
+)
+
+[2026-05-31 02:34:20] [preloader::enqueue_urls] Unable to start the preloader. Another preloading process is currently running.
+[2026-05-31 02:34:20] [purge_queue::process_queue] Cache purging complete

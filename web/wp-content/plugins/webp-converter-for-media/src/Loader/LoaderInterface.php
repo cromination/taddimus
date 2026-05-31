@@ -21,31 +21,23 @@ interface LoaderInterface {
 
 	/**
 	 * Integrates with WordPress hooks.
-	 *
-	 * @return void
 	 */
-	public function init_admin_hooks();
+	public function init_admin_hooks(): void;
 
 	/**
 	 * Integrates with WordPress hooks.
-	 *
-	 * @return void
 	 */
-	public function init_front_end_hooks();
+	public function init_front_end_hooks(): void;
 
 	/**
 	 * Initializes actions for activating loader.
 	 *
 	 * @param bool $is_debug Is debugging?
-	 *
-	 * @return void
 	 */
-	public function activate_loader( bool $is_debug = false );
+	public function activate_loader( bool $is_debug = false ): void;
 
 	/**
 	 * Initializes actions for deactivating loader.
-	 *
-	 * @return void
 	 */
-	public function deactivate_loader();
+	public function deactivate_loader(): void;
 }

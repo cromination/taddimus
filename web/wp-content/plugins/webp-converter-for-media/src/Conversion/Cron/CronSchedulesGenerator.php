@@ -14,7 +14,7 @@ class CronSchedulesGenerator implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'cron_schedules', [ $this, 'add_cron_interval' ] );
 	}
 

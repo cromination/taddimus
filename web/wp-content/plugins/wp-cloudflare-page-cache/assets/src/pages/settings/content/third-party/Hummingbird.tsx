@@ -8,7 +8,7 @@ const Hummingbird = () => {
     {
       id: 'cf_hummingbird_purge_on_cache_flush',
       type: 'toggle',
-      label: __('Automatically purge the cache when Hummingbird flushs page cache', 'wp-cloudflare-page-cache'),
+      label: __('Automatically purge the cache when Hummingbird flushes page cache', 'wp-cloudflare-page-cache'),
     }
   ];
 

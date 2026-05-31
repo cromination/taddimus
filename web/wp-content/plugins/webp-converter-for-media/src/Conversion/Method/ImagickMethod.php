@@ -137,7 +137,7 @@ class ImagickMethod extends LibraryMethodAbstract {
 	 * @throws ConversionErrorException
 	 * @throws ImagickNotSupportWebpException
 	 */
-	public function convert_image_to_output( $image, string $source_path, string $output_path, string $format, array $plugin_settings ) {
+	public function convert_image_to_output( $image, string $source_path, string $output_path, string $format, array $plugin_settings ): void {
 		$extension      = self::get_format_extension( $format );
 		$image          = apply_filters( 'webpc_imagick_before_saving', $image, $source_path );
 		$output_quality = min( $plugin_settings[ ImagesQualityOption::OPTION_NAME ], self::MAX_METHOD_QUALITY );

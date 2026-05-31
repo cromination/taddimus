@@ -17,7 +17,7 @@ const AdvancedOthers = () => {
     {
       id: 'cf_opcache_purge_on_flush',
       type: 'toggle',
-      label: __('Automatically purge the OPcache cache is purged', 'wp-cloudflare-page-cache'),
+      label: __('Automatically purge the OPcache when cache is purged', 'wp-cloudflare-page-cache'),
     },
     {
       id: 'cf_object_cache_purge_on_flush',
@@ -28,7 +28,7 @@ const AdvancedOthers = () => {
       id: 'cronjob_purge_url',
       type: 'custom',
       label: __('Purge the whole cache via Cronjob', 'wp-cloudflare-page-cache'),
-      description: __('If you want purge the whole cache at specific intervals decided by you, you can create a cronjob that hits the following URL:', 'wp-cloudflare-page-cache'),
+      description: __('If you want to purge the whole cache at specific intervals decided by you, you can create a cronjob that hits the following URL:', 'wp-cloudflare-page-cache'),
       component: <LockedInputCopy content={fullCronjobPurgeURL} />,
     },
     {
@@ -41,12 +41,6 @@ const AdvancedOthers = () => {
       id: 'cf_remove_purge_option_toolbar',
       type: 'toggle',
       label: __('Remove purge option from toolbar', 'wp-cloudflare-page-cache'),
-    },
-    {
-      id: 'cf_disable_single_metabox',
-      type: 'toggle',
-      label: __('	Hide Metaboxes', 'wp-cloudflare-page-cache'),
-      description: __('Disable the metaboxes on single pages and posts to avoid conflicts with other plugins.', 'wp-cloudflare-page-cache'),
     },
     {
       id: 'cf_seo_redirect',
@@ -62,25 +56,10 @@ const AdvancedOthers = () => {
       component: <UserRolesCheckboxes />,
     },
     {
-      id: 'cf_prefetch_urls_viewport',
-      type: 'toggle',
-      label: __('Auto prefetch URLs in viewport', 'wp-cloudflare-page-cache'),
-      description: __('If enabled, the browser prefetches in background all the internal URLs found in the viewport.', 'wp-cloudflare-page-cache'),
-      //		render_description(__('Purge the cache and wait about 30 seconds after enabling/disabling this option.', 'wp-cloudflare-page-cache'), true);
-      //		render_description(__('URIs in <em>Prevent the following URIs to be cached</em> will not be prefetched.', 'wp-cloudflare-page-cache'), true);
-
-    },
-    {
-      id: 'cf_prefetch_urls_on_hover',
-      type: 'toggle',
-      label: __('Auto prefetch URLs on mouse hover', 'wp-cloudflare-page-cache'),
-      description: __('If enabled, the browser prefetches in background all the internal URLs found in the viewport.', 'wp-cloudflare-page-cache'),
-    },
-    {
       type: 'toggle',
       id: 'cf_remove_cache_buster',
       label: __('Remove Cache Buster Query Parameter', 'wp-cloudflare-page-cache'),
-      description: __('Stop adding cache buster query parameter when using the default page rule mode.', 'wp-cloudflare-page-cache'),
+      description: __('Stop appending the cache-busting query string (?swcfpc=1) to URLs when using the default caching mode.', 'wp-cloudflare-page-cache'),
       // This is here as a legacy fallback.
       hide: window.SPCDash.settings?.cf_remove_cache_buster || 1,
     },

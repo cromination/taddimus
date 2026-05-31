@@ -11,9 +11,10 @@ type TextareaProps = {
 }
 
 const Textarea = (props: TextareaProps) => {
-  const { updateSetting, settings } = useSettingsStore();
+  const { updateSetting, settings, isSettingOverridden, getManagedDescription } = useSettingsStore();
   const { asyncLocked } = useAppStore();
   const { id } = props;
+  const overridden = isSettingOverridden(id);
 
   const handleChange = (nextValue: string) => {
     updateSetting(id, nextValue);
@@ -21,10 +22,11 @@ const Textarea = (props: TextareaProps) => {
 
   return (
     <TextareaControl
+      {...props}
       onChange={handleChange}
       value={settings[id] as string}
-      disabled={asyncLocked}
-      {...props}
+      disabled={asyncLocked || overridden}
+      description={getManagedDescription(id, props.description)}
     />
   );
 }

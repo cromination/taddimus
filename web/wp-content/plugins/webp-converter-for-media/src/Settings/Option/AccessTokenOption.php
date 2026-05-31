@@ -11,10 +11,7 @@ class AccessTokenOption extends OptionAbstract {
 
 	const OPTION_NAME = 'access_token';
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
 	public function __construct( TokenRepository $token_repository ) {
 		$this->token_repository = $token_repository;

@@ -26,6 +26,10 @@ const DocumentationCategories = () => {
 
   const categories = help.categories;
 
+  if (!categories?.length) {
+    return null;
+  }
+
   return (
     <div className="mb-12">
       <h3 className="text-xl font-semibold mb-6">{__('Documentation Categories', 'wp-cloudflare-page-cache')}</h3>

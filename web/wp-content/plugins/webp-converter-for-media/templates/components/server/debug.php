@@ -87,9 +87,11 @@ use WebpConverter\Service\TokenValidator;
 	<tr>
 		<td class="e">Error detection logs</td>
 		<td class="v">
-			<?php foreach ( $GLOBALS[ FileLoader::GLOBAL_LOGS_VARIABLE ] ?? [] as $log_data ) : ?>
-				<?php echo esc_html( json_encode( $log_data ) ?: '-' ); ?>
-			<br>
+			<?php foreach ( $GLOBALS[ FileLoader::GLOBAL_LOGS_VARIABLE ] ?? [] as $index => $log_data ) : ?>
+				<?php if ( $index > 0 ) : ?>
+					<br><br>
+				<?php endif; ?>
+				<?php echo esc_html( json_encode( $log_data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT ) ?: '-' ); ?>
 			<?php endforeach; ?>
 		</td>
 	</tr>

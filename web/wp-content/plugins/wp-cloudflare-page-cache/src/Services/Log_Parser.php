@@ -2,6 +2,8 @@
 
 namespace SPC\Services;
 
+use SPC\Utils\Logger;
+
 /**
  * Log parser.
  *
@@ -21,12 +23,7 @@ class Log_Parser {
 	 * }[]
 	 */
 	private function get_parsed_logs() {
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
-		$log_data = $sw_cloudflare_pagecache->get_logger()->get_logs( self::LINES_TO_RETRIEVE );
+		$log_data = Logger::read( self::LINES_TO_RETRIEVE );
 
 		$log_data = explode( PHP_EOL, $log_data );
 

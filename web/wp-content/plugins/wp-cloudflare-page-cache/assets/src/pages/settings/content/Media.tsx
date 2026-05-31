@@ -11,12 +11,18 @@ const Media = () => {
 
   const { i18n, isPro } = window.SPCDash;
   const { pageCacheOn, isToggleOn, isValueSelected,updateSetting } = useSettingsStore();
-  const { active: isOptimoleActive } = window.SPCDash.optimoleData;
   const controls = [
     {
       id: 'cf_native_lazy_loading',
       type: 'toggle',
       label: __('Native Lazy Load', 'wp-cloudflare-page-cache'),
+      description: <>
+        {__('Uses the browser\'s built-in lazy loading attribute to defer offscreen images without any custom JavaScript.', 'wp-cloudflare-page-cache')}
+        {' '}
+        <ExternalLink url="https://docs.themeisle.com/super-page-cache/native-lazyloading-vs-spc-lazyloading">
+          {__('More Info', 'wp-cloudflare-page-cache')}
+        </ExternalLink>
+      </>,
       disabled: isToggleOn('cf_lazy_loading'),
     },
     {
@@ -26,7 +32,7 @@ const Media = () => {
       description: <>
         {__('Disables native lazy-loading and uses a custom solution for better control over image loading, potentially improving performance.', 'wp-cloudflare-page-cache')}
 
-        <ExternalLink url="https://docs.themeisle.com/article/2059-native-lazyloading-vs-spc-lazyloading">
+        <ExternalLink url="https://docs.themeisle.com/super-page-cache/seting-up-lazy-loading">
           {__('More Info', 'wp-cloudflare-page-cache')}
         </ExternalLink>
       </>,
@@ -127,7 +133,7 @@ const Media = () => {
 
       </Card>
 
-      {!isOptimoleActive && <ImageOptimization />}
+      <ImageOptimization />
     </PageContent >
   )
 }

@@ -65,6 +65,7 @@ const LicenseCard = () => {
     setEnablingCache(false);
     setLicenseData(licenseData);
     setShowWizard(false);
+    setRootPage(ROOT_PAGES.SETTINGS);
   }
 
   const isLoading = activating || enablingCache;

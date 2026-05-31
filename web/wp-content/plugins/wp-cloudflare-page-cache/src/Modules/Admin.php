@@ -4,8 +4,11 @@ namespace SPC\Modules;
 
 use SPC\Constants;
 use SPC\Services\SDK_Integrations;
+use SPC\Services\Settings_Store;
 use SPC\Utils\Assets_Handler;
+use SPC\Utils\Helpers;
 use SPC\Utils\I18n;
+use SPC\Utils\Logger;
 
 class Admin implements Module_Interface {
 
@@ -30,6 +33,7 @@ class Admin implements Module_Interface {
 		add_filter( 'plugin_action_links_' . plugin_basename( SPC_PATH ), [ $this, 'add_plugin_action_links' ] );
 		add_action( 'admin_init', [ $this, 'redirect_to_settings' ] );
 		add_action( 'admin_notices', [ $this, 'failed_rule_update_notice' ] );
+		add_action( 'admin_notices', [ $this, 'credentials_encryption_notice' ] );
 		add_filter( 'all_plugins', [ $this, 'filter_conflicting_plugins' ] );
 
 		add_filter( $this->sdk_service->get_product_key() . '_logger_data', [ $this->sdk_service, 'get_logger_data' ] );
@@ -37,6 +41,21 @@ class Admin implements Module_Interface {
 			$this->sdk_service->get_product_key() . '_about_us_metadata',
 			[ $this->sdk_service, 'get_about_us_metadata' ]
 		);
+
+		add_action( 'init', [ Logger::class, 'download_handler' ] );
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'load_custom_wp_admin_styles_and_script' ] );
+		add_filter( 'script_loader_tag', [ $this, 'modify_script_attributes' ], 10, 2 );
+
+		if ( is_admin() && is_user_logged_in() && current_user_can( 'manage_options' ) ) {
+			add_filter( 'post_row_actions', [ $this, 'add_post_row_actions' ], PHP_INT_MAX, 2 );
+			add_filter( 'page_row_actions', [ $this, 'add_post_row_actions' ], PHP_INT_MAX, 2 );
+		}
+
+		if ( ! Settings_Store::get_instance()->get( Constants::SETTING_REMOVE_PURGE_OPTION_TOOLBAR ) && Helpers::can_current_user_purge_cache() ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'load_toolbar_styles_and_script' ] );
+			add_action( 'admin_bar_menu', [ $this, 'add_toolbar_items' ], PHP_INT_MAX );
+		}
 	}
 
 	/**
@@ -170,16 +189,35 @@ class Admin implements Module_Interface {
 	}
 
 	/**
+	 * Display a notice when encrypted credentials can no longer be decrypted.
+	 *
+	 * @return void
+	 */
+	public function credentials_encryption_notice() {
+		if ( ! current_user_can( 'manage_options' ) || ! \SPC\Services\Settings_Store::get_instance()->should_show_invalid_encryption_notice() ) {
+			return;
+		}
+
+		$cloudflare_settings_url = admin_url( 'admin.php?page=' . Dashboard::PAGE_SLUG . '-settings#cloudflare' );
+
+		?>
+		<div class="notice notice-error">
+			<p>
+				<?php esc_html_e( 'Super Page Cache could not decrypt your stored Cloudflare credentials. This usually means your WordPress secret keys changed.', 'wp-cloudflare-page-cache' ); ?>
+				<a href="<?php echo esc_url( $cloudflare_settings_url ); ?>">
+					<?php esc_html_e( 'Open Cloudflare settings and enter your credentials again.', 'wp-cloudflare-page-cache' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Get third party compatibilities.
 	 *
 	 * @return array
 	 */
 	public static function get_third_party_view_map() {
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
 		return apply_filters(
 			'swcfpc_admin_third_party_compatibilities_view_map',
 			[
@@ -197,10 +235,10 @@ class Admin implements Module_Interface {
 				'wp_performance'    => is_plugin_active( 'wp-performance/wp-performance.php' ),
 				'yasr'              => is_plugin_active( 'yet-another-stars-rating/yet-another-stars-rating.php' ) || is_plugin_active( 'yet-another-stars-rating-premium/yet-another-stars-rating.php' ),
 				'swift_performance' => is_plugin_active( 'swift-performance-lite/performance.php' ) || is_plugin_active( 'swift-performance/performance.php' ),
-				'siteground'        => $sw_cloudflare_pagecache->get_cache_controller()->is_siteground_supercacher_enabled(),
-				'wp_engine'         => $sw_cloudflare_pagecache->get_cache_controller()->can_wpengine_cache_be_purged(),
-				'spinup_wp'         => $sw_cloudflare_pagecache->get_cache_controller()->can_spinupwp_cache_be_purged(),
-				'kinsta'            => $sw_cloudflare_pagecache->get_cache_controller()->can_kinsta_cache_be_purged(),
+				'siteground'        => Third_Party_Integrations::is_siteground_supercacher_enabled(),
+				'wp_engine'         => Third_Party_Integrations::can_wpengine_cache_be_purged(),
+				'spinup_wp'         => Third_Party_Integrations::can_spinupwp_cache_be_purged(),
+				'kinsta'            => Third_Party_Integrations::can_kinsta_cache_be_purged(),
 			]
 		);
 	}
@@ -278,5 +316,191 @@ class Admin implements Module_Interface {
 		}
 
 		return $enabled;
+	}
+
+	/**
+	 * Enqueue admin-side styles and scripts on admin screens.
+	 */
+	public function load_custom_wp_admin_styles_and_script(): void {
+		if ( $this->should_skip_custom_assets() ) {
+			return;
+		}
+
+		$this->register_admin_assets();
+
+		wp_enqueue_style( 'swcfpc_admin_css' );
+		wp_enqueue_script( 'swcfpc_admin_js' );
+
+		if ( ! Settings_Store::get_instance()->get( Constants::SETTING_REMOVE_PURGE_OPTION_TOOLBAR ) && Helpers::can_current_user_purge_cache() ) {
+			$this->register_toolbar_assets();
+
+			wp_enqueue_style( 'swcfpc_admin_css' );
+			wp_enqueue_script( 'swcfpc_toolbar_js' );
+		}
+	}
+
+	/**
+	 * Enqueue toolbar-only styles and scripts on the frontend for logged-in users.
+	 */
+	public function load_toolbar_styles_and_script(): void {
+		if ( $this->should_skip_custom_assets() ) {
+			return;
+		}
+
+		$this->register_toolbar_assets();
+
+		wp_enqueue_style( 'swcfpc_admin_css' );
+		wp_enqueue_script( 'swcfpc_toolbar_js' );
+	}
+
+	private function register_admin_assets(): void {
+		wp_register_style( 'swcfpc_admin_css', SWCFPC_PLUGIN_URL . 'assets/css/style.min.css', [], SWCFPC_VERSION );
+		wp_register_script( 'swcfpc_admin_js', SWCFPC_PLUGIN_URL . 'assets/js/backend.min.js', [], SWCFPC_VERSION, true );
+		wp_localize_script(
+			'swcfpc_admin_js',
+			'swcfpcOptions',
+			[
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'spc-ajax-nonce' ),
+			]
+		);
+	}
+
+	private function register_toolbar_assets(): void {
+		wp_register_style( 'swcfpc_admin_css', SWCFPC_PLUGIN_URL . 'assets/css/style.min.css', [], SWCFPC_VERSION );
+		wp_register_script( 'swcfpc_toolbar_js', SWCFPC_PLUGIN_URL . 'assets/js/toolbar.min.js', [], SWCFPC_VERSION, true );
+		wp_localize_script(
+			'swcfpc_toolbar_js',
+			'swcfpcOptions',
+			[
+				'ajaxUrl'             => admin_url( 'admin-ajax.php' ),
+				'nonce'               => wp_create_nonce( 'spc-ajax-nonce' ),
+				'cacheEnabled'        => Settings_Store::get_instance()->get( Constants::SETTING_CF_CACHE_ENABLED ),
+				'purgeConfirmMessage' => __( 'Purge the entire cache? All cached pages will be regenerated on the next visit, which may briefly slow down your site.', 'wp-cloudflare-page-cache' ),
+			]
+		);
+	}
+
+	private function should_skip_custom_assets(): bool {
+		$screen = ( is_admin() && function_exists( 'get_current_screen' ) ) ? get_current_screen() : false;
+
+		$page_action = $_GET['action'] ?? false;
+
+		$on_oxygen_ct_builder_page = isset( $_GET['ct_builder'] ) && $_GET['ct_builder'] === 'true';
+		$on_oxygen_builder_page    = ( substr( $page_action, 0, strlen( 'oxy_render' ) ) === 'oxy_render' );
+
+		return ( function_exists( 'amp_is_request' ) && ( ! is_admin() && amp_is_request() ) ) ||
+			( function_exists( 'ampforwp_is_amp_endpoint' ) && ( ! is_admin() && ampforwp_is_amp_endpoint() ) ) ||
+			( is_object( $screen ) && $screen->base === 'woofunnels_page_wfob' ) ||
+			is_customize_preview() ||
+			$on_oxygen_ct_builder_page ||
+			$on_oxygen_builder_page;
+	}
+
+	public function modify_script_attributes( string $tag, string $handle ): string {
+		$plugin_scripts = [
+			'swcfpc_admin_js',
+			'swcfpc_toolbar_js',
+		];
+
+		if ( ! empty( $tag ) && in_array( $handle, $plugin_scripts, true ) ) {
+			return str_replace( ' id', ' defer id', $tag );
+		}
+
+		return $tag;
+	}
+
+	public function add_toolbar_items( \WP_Admin_Bar $admin_bar ): void {
+		$screen = is_admin() ? get_current_screen() : false;
+
+		if (
+			( function_exists( 'amp_is_request' ) && ( ! is_admin() && amp_is_request() ) ) ||
+			( function_exists( 'ampforwp_is_amp_endpoint' ) && ( ! is_admin() && ampforwp_is_amp_endpoint() ) ) ||
+			( is_object( $screen ) && $screen->base === 'woofunnels_page_wfob' ) ||
+			is_customize_preview()
+		) {
+			return;
+		}
+
+		if ( ! Settings_Store::get_instance()->get( Constants::SETTING_REMOVE_PURGE_OPTION_TOOLBAR ) ) {
+
+			$swpfpc_toolbar_container_url_query_arg_admin = [
+				'page'              => Dashboard::PAGE_SLUG,
+				SWCFPC_CACHE_BUSTER => 1,
+			];
+
+			if ( Settings_Store::get_instance()->get( Constants::SETTING_REMOVE_CACHE_BUSTER ) ) {
+				$swpfpc_toolbar_container_url_query_arg_admin = [
+					'page' => Dashboard::PAGE_SLUG,
+				];
+			}
+
+			$admin_bar->add_menu(
+				[
+					'id'    => 'wp-cloudflare-super-page-cache-toolbar-container',
+					'title' => '<span class="ab-icon"></span><span class="ab-label">' . __( 'Super Page Cache', 'wp-cloudflare-page-cache' ) . '</span>',
+					'href'  => current_user_can( 'manage_options' ) ? add_query_arg( $swpfpc_toolbar_container_url_query_arg_admin, admin_url( 'admin.php' ) ) : '#',
+				]
+			);
+
+			if ( Settings_Store::get_instance()->get( Constants::SETTING_CF_CACHE_ENABLED ) ) {
+				global $post;
+
+				$admin_bar->add_menu(
+					[
+						'id'     => 'wp-cloudflare-super-page-cache-toolbar-purge-all',
+						'parent' => 'wp-cloudflare-super-page-cache-toolbar-container',
+						'title'  => __( 'Purge whole cache', 'wp-cloudflare-page-cache' ),
+						'href'   => '#',
+					]
+				);
+
+				if ( Settings_Store::get_instance()->get( Constants::SETTING_PURGE_ONLY_HTML ) ) {
+
+					$admin_bar->add_menu(
+						[
+							'id'     => 'wp-cloudflare-super-page-cache-toolbar-force-purge-everything',
+							'parent' => 'wp-cloudflare-super-page-cache-toolbar-container',
+							'title'  => __( 'Force purge everything', 'wp-cloudflare-page-cache' ),
+							'href'   => '#',
+						]
+					);
+				}
+
+				if ( is_object( $post ) ) {
+
+					$admin_bar->add_menu(
+						[
+							'id'     => 'wp-cloudflare-super-page-cache-toolbar-purge-single',
+							'parent' => 'wp-cloudflare-super-page-cache-toolbar-container',
+							'title'  => __( 'Purge cache for this page only', 'wp-cloudflare-page-cache' ),
+							'href'   => "#{$post->ID}",
+						]
+					);
+				}
+
+				if ( ! is_admin() && Settings_Store::get_instance()->get( Constants::SETTING_ENABLE_ASSETS_MANAGER ) ) {
+					$admin_bar->add_menu(
+						[
+							'id'    => 'wp-cloudflare-super-page-cache-toolbar-asset-manager',
+							'title' => '<div style="display: flex; align-items: center;"><span class="ab-icon dashicons dashicons-editor-code"></span><span class="ab-label">' . __( 'Assets Manager', 'wp-cloudflare-page-cache' ) . '</span></div>',
+							'href'  => add_query_arg( Assets_Manager::ASSETS_MANAGER_QUERY_VAR, 'yes', $_SERVER['REQUEST_URI'] ),
+						]
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param array<string, string> $actions
+	 * @return array<string, string>
+	 */
+	public function add_post_row_actions( array $actions, \WP_Post $post ): array {
+		if ( ! in_array( $post->post_type, [ 'shop_order', 'shop_subscription' ], true ) ) {
+			$actions['swcfpc_single_purge'] = '<a class="swcfpc_action_row_single_post_cache_purge" data-post_id="' . $post->ID . '" href="#" target="_blank">' . __( 'Purge Cache', 'wp-cloudflare-page-cache' ) . '</a>';
+		}
+
+		return $actions;
 	}
 }

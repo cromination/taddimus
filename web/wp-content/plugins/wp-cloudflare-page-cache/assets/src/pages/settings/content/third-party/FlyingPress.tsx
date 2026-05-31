@@ -8,7 +8,7 @@ const FlyingPress = () => {
     {
       id: 'cf_flypress_purge_on_cache_flush',
       type: 'toggle',
-      label: __('Automatically purge the cache when Flying Press flushs its own cache', 'wp-cloudflare-page-cache'),
+      label: __('Automatically purge the cache when Flying Press flushes its own cache', 'wp-cloudflare-page-cache'),
     }
   ];
 

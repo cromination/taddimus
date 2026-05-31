@@ -13,30 +13,15 @@ use WebpConverter\Service\ServerConfigurator;
  */
 class MethodFactory {
 
-	/**
-	 * @var TokenRepository
-	 */
-	private $token_repository;
+	private TokenRepository $token_repository;
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
-	/**
-	 * @var CrashedFilesOperator
-	 */
-	private $skip_crashed;
+	private CrashedFilesOperator $skip_crashed;
 
-	/**
-	 * @var LargerFilesOperator
-	 */
-	private $skip_larger;
+	private LargerFilesOperator $skip_larger;
 
-	/**
-	 * @var ServerConfigurator
-	 */
-	private $server_configurator;
+	private ServerConfigurator $server_configurator;
 
 	/**
 	 * Objects of supported conversion methods.
@@ -67,10 +52,8 @@ class MethodFactory {
 	 * Sets integration for method.
 	 *
 	 * @param MethodInterface $method .
-	 *
-	 * @return void
 	 */
-	private function set_integration( MethodInterface $method ) {
+	private function set_integration( MethodInterface $method ): void {
 		$this->methods[ $method->get_name() ] = $method;
 	}
 

@@ -6,13 +6,19 @@ use SPC\Modules\Database_Optimization;
 use SPC\Constants;
 use SPC\Models\Asset_Rules;
 use SPC\Modules\Module_Interface;
+use SPC\Modules\Preloader_Process;
 use SPC\Modules\Settings_Manager;
 use SPC\Services\Cloudflare_Client;
+use SPC\Services\Cloudflare_Integration;
 use SPC\Services\Log_Parser;
 use SPC\Services\SDK_Integrations;
 use SPC\Services\Settings_Store;
 use SPC\Utils\Cache_Tester;
+use SPC\Utils\Htaccess_Writer;
+use SPC\Utils\Logger;
 use SPC\Services\Notices_Handler;
+use SPC\Services\Varnish;
+use SPC\Utils\I18n;
 use WP_REST_Response;
 use WP_REST_Request;
 use WP_REST_Server;
@@ -20,22 +26,22 @@ use WP_REST_Server;
 class Rest_Server implements Module_Interface {
 
 
-	public const REST_NAMESPACE = 'spc/v1';
+	public const REST_NAMESPACE                   = 'spc/v1';
+	private const ALLOWED_CRITICAL_CSS_RULE_TYPES = [ 'declarations', 'fallback', 'import', 'font-face', 'keyframes', 'other' ];
+	private const MAX_CRITICAL_CSS_PAYLOAD_BYTES  = 262144;
 
 	public function init() {
 		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
 	public function register_rest_routes() {
-		global $sw_cloudflare_pagecache;
-
 		register_rest_route(
 			self::REST_NAMESPACE,
 			'/cache/purge',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'purge_cache' ],
-				'permission_callback' => [ $sw_cloudflare_pagecache, 'can_current_user_purge_cache' ],
+				'permission_callback' => [ \SPC\Utils\Helpers::class, 'can_current_user_purge_cache' ],
 				// TODO Args for single page.
 			]
 		);
@@ -44,9 +50,9 @@ class Rest_Server implements Module_Interface {
 			self::REST_NAMESPACE,
 			'/cache/test',
 			[
-				'methods'             => WP_REST_Server::READABLE,
+				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => [ $this, 'test_cache' ],
-				'permission_callback' => [ $sw_cloudflare_pagecache, 'can_current_user_purge_cache' ],
+				'permission_callback' => [ \SPC\Utils\Helpers::class, 'can_current_user_purge_cache' ],
 			]
 		);
 
@@ -56,7 +62,7 @@ class Rest_Server implements Module_Interface {
 			[
 				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => [ $this, 'purge_varnish_cache' ],
-				'permission_callback' => [ $sw_cloudflare_pagecache, 'can_current_user_purge_cache' ],
+				'permission_callback' => [ \SPC\Utils\Helpers::class, 'can_current_user_purge_cache' ],
 			]
 		);
 
@@ -297,6 +303,18 @@ class Rest_Server implements Module_Interface {
 
 		register_rest_route(
 			self::REST_NAMESPACE,
+			'/database/optimize-counts',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_database_optimization_counts' ),
+				'permission_callback' => function () {
+					return current_user_can( 'manage_options' );
+				},
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
 			'/cloudflare/analytics',
 			[
 				'methods'             => WP_REST_Server::READABLE,
@@ -411,7 +429,7 @@ class Rest_Server implements Module_Interface {
 		 */
 		global $sw_cloudflare_pagecache;
 
-		$cached_pages = $sw_cloudflare_pagecache->get_html_cache_handler()->get_cached_urls();
+		$cached_pages = $sw_cloudflare_pagecache->get_core_loader()->html_cache()->get_cached_urls();
 
 		return $this->data_response( $cached_pages );
 	}
@@ -508,7 +526,11 @@ class Rest_Server implements Module_Interface {
 			);
 			$sanitized_lcp_data['type']   = empty( $sanitized_lcp_data['imageId'] ) ? 'bg' : 'img';
 		}
-		$profile = new \SPC_Pro\Modules\PageProfiler\Profile();
+		$profile      = new \SPC_Pro\Modules\PageProfiler\Profile();
+		$critical_css = $this->sanitize_critical_css_payload( $critical_css );
+		if ( is_wp_error( $critical_css ) ) {
+			return $this->message_response( 'Invalid critical CSS payload', 400 );
+		}
 		$profile->store( $url, $device_type, $above_fold_images, $sanitized_selectors, $sanitized_lcp_data, $critical_css );
 		if ( $profile->exists_all( $url ) ) {
 			$page_url = base64_decode( $page_url );
@@ -520,12 +542,151 @@ class Rest_Server implements Module_Interface {
 				10,
 				2
 			);
-			/**
-			 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-			 */
-			$sw_cloudflare_pagecache->get_cache_controller()->purge_urls( [ ( $page_url ) ] );
+			Cache_Controller::purge_urls( [ ( $page_url ) ] );
 		}
 		return $this->message_response( 'Above fold data stored successfully' );
+	}
+
+	/**
+	 * Validate and sanitize critical CSS payload data.
+	 *
+	 * @param mixed $critical_css Critical CSS payload from request.
+	 *
+	 * @return array{css?: array<string, array<string, array{_type: string, _cssText: string, _order?: int}>>}|\WP_Error
+	 */
+	private function sanitize_critical_css_payload( $critical_css ) {
+		if ( empty( $critical_css ) ) {
+			return [];
+		}
+		if ( ! is_array( $critical_css ) ) {
+			return new \WP_Error( 'invalid_critical_css', 'Critical CSS payload must be an array.' );
+		}
+		$allowed_top_level_keys = [ 'css' ];
+		$unknown_top_level_keys = array_diff( array_keys( $critical_css ), $allowed_top_level_keys );
+		if ( ! empty( $unknown_top_level_keys ) || ! array_key_exists( 'css', $critical_css ) || ! is_array( $critical_css['css'] ) ) {
+			return new \WP_Error( 'invalid_critical_css', 'Invalid critical CSS payload shape.' );
+		}
+		$encoded_payload = wp_json_encode( $critical_css );
+		if ( ! is_string( $encoded_payload ) || strlen( $encoded_payload ) > self::MAX_CRITICAL_CSS_PAYLOAD_BYTES ) {
+			return new \WP_Error( 'invalid_critical_css', 'Critical CSS payload too large.' );
+		}
+
+		$allowed_rule_keys = [ '_type', '_cssText', '_order' ];
+		$sanitized_payload = [
+			'css' => [],
+		];
+
+		foreach ( $critical_css['css'] as $media_query => $selectors ) {
+			if ( ! is_string( $media_query ) || ! is_array( $selectors ) || $this->contains_unsafe_css_tokens( $media_query ) ) {
+				return new \WP_Error( 'invalid_critical_css', 'Invalid critical CSS media query.' );
+			}
+			$sanitized_payload['css'][ $media_query ] = [];
+			foreach ( $selectors as $selector => $rule_data ) {
+				if ( ! is_string( $selector ) || ! is_array( $rule_data ) || $this->contains_unsafe_css_tokens( $selector ) || $this->contains_disallowed_lt_character( $selector ) ) {
+					return new \WP_Error( 'invalid_critical_css', 'Invalid critical CSS selector.' );
+				}
+
+				$unknown_rule_keys = array_diff( array_keys( $rule_data ), $allowed_rule_keys );
+				if ( ! empty( $unknown_rule_keys ) ) {
+					return new \WP_Error( 'invalid_critical_css', 'Invalid critical CSS rule keys.' );
+				}
+
+				if ( ! isset( $rule_data['_type'], $rule_data['_cssText'] ) || ! is_string( $rule_data['_type'] ) || ! is_string( $rule_data['_cssText'] ) ) {
+					return new \WP_Error( 'invalid_critical_css', 'Invalid critical CSS rule data.' );
+				}
+				if ( ! in_array( $rule_data['_type'], self::ALLOWED_CRITICAL_CSS_RULE_TYPES, true ) ) {
+					return new \WP_Error( 'invalid_critical_css', 'Invalid critical CSS rule type.' );
+				}
+				if ( $this->contains_unsafe_css_tokens( $rule_data['_cssText'] ) || $this->contains_disallowed_angle_brackets( $rule_data['_cssText'] ) ) {
+					return new \WP_Error( 'invalid_critical_css', 'Unsafe critical CSS content.' );
+				}
+
+				$sanitized_rule = [
+					'_type'    => $rule_data['_type'],
+					'_cssText' => $rule_data['_cssText'],
+				];
+				if ( array_key_exists( '_order', $rule_data ) ) {
+					if ( ! is_numeric( $rule_data['_order'] ) ) {
+						return new \WP_Error( 'invalid_critical_css', 'Invalid critical CSS rule order.' );
+					}
+					$sanitized_rule['_order'] = (int) $rule_data['_order'];
+				}
+				$sanitized_payload['css'][ $media_query ][ $selector ] = $sanitized_rule;
+			}
+		}
+		return $sanitized_payload;
+	}
+
+	/**
+	 * Detect potentially dangerous non-CSS tokens that may break out of style context.
+	 *
+	 * @param string $value Value to validate.
+	 *
+	 * @return bool
+	 */
+	private function contains_unsafe_css_tokens( string $value ): bool {
+		if ( preg_match( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', $value ) === 1 ) {
+			return true;
+		}
+
+		$unsafe_patterns = [
+			'/<\s*\/\s*style\b/i',
+			'/<\s*style\b/i',
+			'/<\s*\/\s*script\b/i',
+			'/<\s*script\b/i',
+			'/<!--/i',
+			'/-->/i',
+			'/<\?/i',
+		];
+
+		foreach ( $unsafe_patterns as $pattern ) {
+			if ( preg_match( $pattern, $value ) === 1 ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Reject raw angle brackets unless they are media query range operators.
+	 *
+	 * @param string $value Value to validate.
+	 *
+	 * @return bool
+	 */
+	private function contains_disallowed_angle_brackets( string $value ): bool {
+		if ( strpos( $value, '<' ) === false && strpos( $value, '>' ) === false ) {
+			return false;
+		}
+
+		$value = preg_replace_callback(
+			'/@media\b[^{}]*\{/i',
+			static function ( array $matches ): string {
+				return preg_replace( '/(?<=\S)\s*(?:<=|>=|<|>)\s*(?=\S)/', '', $matches[0] );
+			},
+			$value
+		);
+		$value = preg_replace_callback(
+			'/@property\b[^{}]*\{[^{}]*\}/i',
+			static function ( array $matches ): string {
+				return preg_replace( '/syntax\s*:\s*(["\']).*?\1/isu', 'syntax: ""', $matches[0] );
+			},
+			is_string( $value ) ? $value : ''
+		);
+
+		return is_string( $value ) && ( strpos( $value, '<' ) !== false || strpos( $value, '>' ) !== false );
+	}
+
+	/**
+	 * Reject raw "<" in selector keys; ">" is a valid CSS combinator and remains allowed.
+	 *
+	 * @param string $value Value to validate.
+	 *
+	 * @return bool
+	 */
+	private function contains_disallowed_lt_character( string $value ): bool {
+		return strpos( $value, '<' ) !== false;
 	}
 
 
@@ -536,11 +697,9 @@ class Rest_Server implements Module_Interface {
 	 * @return WP_REST_Response
 	 */
 	public function purge_cache( WP_REST_Request $request ) {
-		global $sw_cloudflare_pagecache;
+		Logger::log( 'cache_controller::ajax_purge_whole_cache', 'Purge whole cache' );
 
-		$sw_cloudflare_pagecache->get_logger()->add_log( 'cache_controller::ajax_purge_whole_cache', 'Purge whole cache' );
-
-		$status = $sw_cloudflare_pagecache->get_cache_controller()->purge_all( false, false );
+		$status = Cache_Controller::purge_all( false, false );
 
 		if ( ! $status ) {
 			return $this->message_response(
@@ -549,7 +708,7 @@ class Rest_Server implements Module_Interface {
 			);
 		}
 
-		return $this->message_response( __( 'Cache purge initiated successfully. Please wait for the process to complete.', 'wp-cloudflare-page-cache' ) );
+		return $this->message_response( __( 'Cache purge started. This may take a moment to complete.', 'wp-cloudflare-page-cache' ) );
 	}
 
 	/**
@@ -559,9 +718,8 @@ class Rest_Server implements Module_Interface {
 	 * @return WP_REST_Response
 	 */
 	public function purge_varnish_cache( WP_REST_Request $request ) {
-		global $sw_cloudflare_pagecache;
-
-		$status = $sw_cloudflare_pagecache->get_varnish_handler()->purge_varnish_cache();
+		$varish_handler = new Varnish();
+		$status         = $varish_handler->purge_varnish_cache();
 
 		if ( ! is_array( $status ) || ! isset( $status['status'] ) ) {
 			// If the response is not an array or does not contain the expected status.
@@ -579,18 +737,21 @@ class Rest_Server implements Module_Interface {
 			);
 		}
 
-		return $this->message_response( __( 'Cache purge initiated successfully. Please wait for the process to complete.', 'wp-cloudflare-page-cache' ) );
+		return $this->message_response( __( 'Cache purge started. This may take a moment to complete.', 'wp-cloudflare-page-cache' ) );
 	}
 
 	/**
-	 * Test the cache functionality.
+	 * Test the cache functionality from browser-captured Cloudflare headers.
 	 *
-	 * @param WP_REST_Request $request The REST request object.
+	 * @param WP_REST_Request $request The REST request object. Body: { headers: {...} }.
 	 * @return WP_REST_Response
 	 */
 	public function test_cache( WP_REST_Request $request ) {
 		try {
-			$results = ( new Cache_Tester() )->test();
+			$headers = $request->get_param( 'headers' );
+			$headers = is_array( $headers ) ? $headers : [];
+
+			$results = ( new Cache_Tester() )->run( $headers );
 
 			return $this->data_response( $results );
 		} catch ( \Exception $e ) {
@@ -615,7 +776,7 @@ class Rest_Server implements Module_Interface {
 		global $sw_cloudflare_pagecache;
 
 		try {
-			$sw_cloudflare_pagecache->get_logger()->reset_log();
+			Logger::reset();
 			return $this->message_response( __( 'Logs cleared successfully.', 'wp-cloudflare-page-cache' ) );
 		} catch ( \Exception $e ) {
 			return $this->message_response(
@@ -636,11 +797,6 @@ class Rest_Server implements Module_Interface {
 	}
 
 	public function start_preloader( WP_REST_Request $request ) {
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
 		if ( ! Settings_Store::get_instance()->get( Constants::SETTING_ENABLE_PRELOADER ) ) {
 			return $this->message_response(
 				__( 'Preloader is not enabled', 'wp-cloudflare-page-cache' ),
@@ -648,30 +804,21 @@ class Rest_Server implements Module_Interface {
 			);
 		}
 
-		$cache_controller = $sw_cloudflare_pagecache->get_cache_controller();
-
-		if ( ! $cache_controller->can_i_start_preloader() ) {
+		if ( ! Preloader_Process::can_start() ) {
 			return $this->message_response(
 				__( 'Unable to start the preloader. Another preloading process is currently running.', 'wp-cloudflare-page-cache' ),
 				400
 			);
 		}
 
-		if ( ! class_exists( 'SWCFPC_Preloader_Process' ) ) {
-			return $this->message_response(
-				__( 'Unable to start background processes: SWCFPC_Preloader_Process does not exists.', 'wp-cloudflare-page-cache' ),
-				500
-			);
-		}
-
-		if ( ! $cache_controller->is_cache_enabled() ) {
+		if ( ! Settings_Store::get_instance()->is_cache_enabled() ) {
 			return $this->message_response(
 				__( 'You cannot start the preloader while the page cache is disabled.', 'wp-cloudflare-page-cache' ),
 				400
 			);
 		}
 
-		$cache_controller->start_preloader_for_all_urls();
+		Preloader_Process::start_for_all_urls();
 
 		return $this->message_response( __( 'Preloader started successfully', 'wp-cloudflare-page-cache' ) );
 	}
@@ -693,13 +840,12 @@ class Rest_Server implements Module_Interface {
 
 		$settings = Settings_Store::get_instance();
 
-		$cloudflare_handler     = $sw_cloudflare_pagecache->get_cloudflare_handler();
-		$cache_controller       = $sw_cloudflare_pagecache->get_cache_controller();
-		$html_cache_handler     = $sw_cloudflare_pagecache->get_html_cache_handler();
-		$fallback_cache_handler = $sw_cloudflare_pagecache->get_fallback_cache_handler();
+		$cloudflare_handler     = new Cloudflare_Integration();
+		$html_cache_handler     = $sw_cloudflare_pagecache->get_core_loader()->html_cache();
+		$fallback_cache_handler = $sw_cloudflare_pagecache->get_core_loader()->fallback_cache();
 
 		// Purge all caches and prevent preloader to start
-		$cache_controller->purge_all( true, false, true );
+		Cache_Controller::purge_all( true, false, true );
 
 		// Reset old browser cache TTL
 		$cloudflare_handler->change_browser_cache_ttl( $settings->get( Constants::SETTING_OLD_BC_TTL ), $error );
@@ -741,7 +887,7 @@ class Rest_Server implements Module_Interface {
 			->save();
 
 		// Delete all htaccess rules
-		$cache_controller->reset_htaccess();
+		Htaccess_Writer::reset();
 
 		// Unschedule purge cache cron
 		$timestamp = wp_next_scheduled( 'swcfpc_cache_purge_cron' );
@@ -752,8 +898,8 @@ class Rest_Server implements Module_Interface {
 		}
 
 		// Reset log
-		$sw_cloudflare_pagecache->get_logger()->reset_log();
-		$sw_cloudflare_pagecache->get_logger()->add_log( 'cache_controller::reset_all', 'Reset complete' );
+		Logger::reset();
+		Logger::log( 'cache_controller::reset_all', 'Reset complete' );
 
 		if ( ! empty( $error ) ) {
 			return $this->message_response(
@@ -787,13 +933,13 @@ class Rest_Server implements Module_Interface {
 			! Settings_Manager::is_on( Constants::SETTING_FALLBACK_CACHE_CURL ) &&
 			! defined( 'SWCFPC_ADVANCED_CACHE' )
 		) {
-			$sw_cloudflare_pagecache->get_fallback_cache_handler()->fallback_cache_advanced_cache_enable();
+			$sw_cloudflare_pagecache->get_core_loader()->fallback_cache()->fallback_cache_advanced_cache_enable();
 		}
 
 		$return_array['success_msg'] = __( 'Page cache enabled successfully', 'wp-cloudflare-page-cache' );
 
 		// Enable the fallback cache
-		$sw_cloudflare_pagecache->get_fallback_cache_handler()->fallback_cache_enable();
+		$sw_cloudflare_pagecache->get_core_loader()->fallback_cache()->fallback_cache_enable();
 
 		// Set the config to enable the page cache
 		Settings_Store::get_instance()
@@ -803,7 +949,8 @@ class Rest_Server implements Module_Interface {
 		return $this->data_response(
 			[
 				'message'  => __( 'Page cache enabled successfully.', 'wp-cloudflare-page-cache' ),
-				'settings' => Settings_Store::get_instance()->get_all(),
+				'settings' => $this->get_safe_settings_payload(),
+				'meta'     => $this->get_dashboard_state_payload(),
 			]
 		);
 	}
@@ -841,7 +988,7 @@ class Rest_Server implements Module_Interface {
 			if ( $fields['action'] === 'activate' && $license_status === 'valid' ) {
 				return $this->data_response(
 					[
-						'message' => __( 'Activated.', 'wp-cloudflare-page-cache' ),
+						'message' => __( 'Activated', 'wp-cloudflare-page-cache' ),
 						'success' => true,
 						'license' => $license,
 					]
@@ -856,7 +1003,7 @@ class Rest_Server implements Module_Interface {
 
 		return $this->data_response(
 			[
-				'message' => $fields['action'] === 'activate' ? __( 'Activated.', 'wp-cloudflare-page-cache' ) : __( 'Deactivated', 'wp-cloudflare-page-cache' ),
+				'message' => $fields['action'] === 'activate' ? __( 'Activated', 'wp-cloudflare-page-cache' ) : __( 'Deactivated', 'wp-cloudflare-page-cache' ),
 				'success' => true,
 				'license' => $license,
 			]
@@ -891,14 +1038,23 @@ class Rest_Server implements Module_Interface {
 
 		try {
 			$settings_manager = new Settings_Manager();
-			$settings_manager->update_settings( $data['settings'] );
+			$result           = $settings_manager->update_settings( $data['settings'], true );
 
-			return $this->data_response(
-				[
-					'message'  => __( 'Settings updated successfully.', 'wp-cloudflare-page-cache' ),
-					'settings' => Settings_Store::get_instance()->get_all(),
-				]
-			);
+			if ( empty( $result['updated'] ) && ! empty( $result['rejected'] ) ) {
+				return $this->message_response(
+					$this->get_overridden_settings_message( $result['rejected'] ),
+					409
+				);
+			}
+
+				return $this->data_response(
+					[
+						'message'  => $this->get_settings_update_message( $result['rejected'] ),
+						'settings' => $this->get_safe_settings_payload(),
+						'meta'     => $this->get_dashboard_state_payload(),
+						'rejected' => $result['rejected'],
+					]
+				);
 		} catch ( \Exception $e ) {
 			return $this->message_response(
 				__( 'An error occurred while updating settings: ', 'wp-cloudflare-page-cache' ) . $e->getMessage(),
@@ -923,13 +1079,22 @@ class Rest_Server implements Module_Interface {
 			return $this->message_response( __( 'Invalid settings format provided.', 'wp-cloudflare-page-cache' ), 400 );
 		}
 
-		$status = Settings_Store::get_instance()->import_settings( $data['settings'] );
+		$status = Settings_Store::get_instance()->import_settings( $data['settings'], true );
 
-		if ( ! $status ) {
+		if ( ! $status['success'] && empty( $status['rejected'] ) ) {
 			return $this->message_response( __( 'Failed to import settings.', 'wp-cloudflare-page-cache' ), 500 );
 		}
 
-		return $this->message_response( __( 'Settings imported successfully.', 'wp-cloudflare-page-cache' ) );
+		if ( empty( $status['imported'] ) && ! empty( $status['rejected'] ) ) {
+			return $this->message_response( $this->get_overridden_settings_message( $status['rejected'] ), 409 );
+		}
+
+		return $this->data_response(
+			[
+				'message'  => $this->get_import_settings_message( $status['rejected'] ),
+				'rejected' => $status['rejected'],
+			]
+		);
 	}
 
 	/**
@@ -940,13 +1105,11 @@ class Rest_Server implements Module_Interface {
 	 * @return WP_REST_Response
 	 */
 	public function cloudflare_connect( WP_REST_Request $request ) {
-		global $sw_cloudflare_pagecache;
-
 		$data = $request->get_body();
 		$data = json_decode( $data, true );
 
 		if ( ! is_array( $data ) || ! isset( $data['auth_mode'] ) ) {
-			return $this->message_response( __( 'Invalid data format provided.', 'wp-cloudflare-page-cache' ), 400 );
+			return $this->message_response( I18n::get( 'invalidDataFormat' ), 400 );
 		}
 
 		$auth_mode = $data['auth_mode'];
@@ -954,74 +1117,121 @@ class Rest_Server implements Module_Interface {
 
 		try {
 			$settings = Settings_Store::get_instance();
+			$client   = new Cloudflare_Client();
 
 			// Set authentication mode using constants
 			$auth_mode_value = $auth_mode === 'api_key' ? SWCFPC_AUTH_MODE_API_KEY : SWCFPC_AUTH_MODE_API_TOKEN;
-			$settings->set( Constants::SETTING_AUTH_MODE, $auth_mode_value );
+			$auth_overrides  = [
+				Constants::SETTING_AUTH_MODE => $auth_mode_value,
+			];
+
+			if ( $settings->is_overridden( Constants::SETTING_AUTH_MODE ) && (int) $settings->get( Constants::SETTING_AUTH_MODE ) !== $auth_mode_value ) {
+				return $this->message_response( $this->get_overridden_settings_message( [ Constants::SETTING_AUTH_MODE ] ), 409 );
+			}
+
+			$protected_keys = [
+				Constants::ZONE_ID_LIST,
+			];
 
 			if ( $auth_mode === 'api_key' ) {
 				if ( ! isset( $data['email'] ) || ! isset( $data['api_key'] ) ) {
 					return $this->message_response( __( 'Email and API Key are required for API Key authentication.', 'wp-cloudflare-page-cache' ), 400 );
 				}
 
-				// Set API Key credentials, clear token credentials
-				$settings
-					->set( Constants::SETTING_CF_EMAIL, sanitize_email( $data['email'] ) )
-					->set( Constants::SETTING_CF_API_KEY, sanitize_text_field( $data['api_key'] ) )
-					->set( Constants::SETTING_CF_API_TOKEN, '' )
-					->set( Constants::SETTING_CF_DOMAIN_NAME, '' );
+				$email   = sanitize_email( $data['email'] );
+				$api_key = sanitize_text_field( $data['api_key'] );
 
-				// Configure Cloudflare handler
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_auth_mode( SWCFPC_AUTH_MODE_API_KEY );
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_api_email( sanitize_email( $data['email'] ) );
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_api_key( sanitize_text_field( $data['api_key'] ) );
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_api_token( '' );
+				if ( empty( $email ) || empty( $api_key ) ) {
+					return $this->message_response( __( 'Email and API Key are required for API Key authentication.', 'wp-cloudflare-page-cache' ), 400 );
+				}
+
+				$auth_overrides[ Constants::SETTING_CF_EMAIL ]   = $email;
+				$auth_overrides[ Constants::SETTING_CF_API_KEY ] = $api_key;
+				$protected_keys[]                                = Constants::SETTING_CF_EMAIL;
+				$protected_keys[]                                = Constants::SETTING_CF_API_KEY;
 			} elseif ( $auth_mode === 'api_token' ) {
 				if ( ! isset( $data['api_token'] ) ) {
 					return $this->message_response( __( 'API Token is required for API Token authentication.', 'wp-cloudflare-page-cache' ), 400 );
 				}
 
-				// Set API Token credentials, clear API Key credentials
-				$settings
-					->set( Constants::SETTING_CF_API_TOKEN, sanitize_text_field( $data['api_token'] ) )
-					->set( Constants::SETTING_CF_EMAIL, '' )
-					->set( Constants::SETTING_CF_API_KEY, '' )
-					->set( Constants::ZONE_ID_LIST, null )
-					->set( Constants::SETTING_CF_ZONE_ID, '' );
+				$api_token = sanitize_text_field( $data['api_token'] );
 
-				// Configure Cloudflare handler
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_auth_mode( SWCFPC_AUTH_MODE_API_TOKEN );
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_api_token( sanitize_text_field( $data['api_token'] ) );
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_api_email( '' );
-				$sw_cloudflare_pagecache->get_cloudflare_handler()->set_api_key( '' );
+				if ( empty( $api_token ) ) {
+					return $this->message_response( __( 'API Token is required for API Token authentication.', 'wp-cloudflare-page-cache' ), 400 );
+				}
+
+				$auth_overrides[ Constants::SETTING_CF_API_TOKEN ] = $api_token;
+				$protected_keys[]                                  = Constants::SETTING_CF_API_TOKEN;
 			} else {
 				return $this->message_response( __( 'Invalid authentication mode provided.', 'wp-cloudflare-page-cache' ), 400 );
 			}
 
-			// Save settings immediately to enable connection
-			$settings->save();
+			$override_check = $settings->split_overridden_settings( array_fill_keys( $protected_keys, true ) );
 
-			$client = new Cloudflare_Client( $sw_cloudflare_pagecache );
+			if ( ! empty( $override_check['rejected'] ) ) {
+				return $this->message_response( $this->get_overridden_settings_message( $override_check['rejected'] ), 409 );
+			}
 
-			// Attempt to get zone ID list to validate the connection
-			$zone_id_list = $client->get_zone_id_list( $error_msg );
+			// Validate credentials against Cloudflare before persisting them.
+			$zone_id_list = $client->get_zone_id_list( $error_msg, $auth_overrides );
 
 			if ( $zone_id_list === false || ! empty( $error_msg ) ) {
+				if ( strpos( $error_msg, 'err code: 6003' ) !== false ) {
+					$error_msg = __( 'Cloudflare rejected the authentication headers. Verify your auth mode and credentials.', 'wp-cloudflare-page-cache' );
+				}
+
 				return $this->message_response(
 					__( 'Failed to connect to Cloudflare: ', 'wp-cloudflare-page-cache' ) . $error_msg,
 					400
 				);
 			}
 
-			// Store zone ID list using Settings_Store
+			if ( ! $settings->is_overridden( Constants::SETTING_AUTH_MODE ) ) {
+				$settings->set( Constants::SETTING_AUTH_MODE, $auth_mode_value );
+			}
+
+			if ( $auth_mode === 'api_key' ) {
+				$settings
+					->set( Constants::SETTING_CF_EMAIL, $auth_overrides[ Constants::SETTING_CF_EMAIL ] )
+					->set( Constants::SETTING_CF_API_KEY, $auth_overrides[ Constants::SETTING_CF_API_KEY ] );
+
+				if ( ! $settings->is_overridden( Constants::SETTING_CF_API_TOKEN ) ) {
+					$settings->set( Constants::SETTING_CF_API_TOKEN, '' );
+				}
+
+				if ( ! $settings->is_overridden( Constants::SETTING_CF_DOMAIN_NAME ) ) {
+					$settings->set( Constants::SETTING_CF_DOMAIN_NAME, '' );
+				}
+			} else {
+				$settings
+					->set( Constants::SETTING_CF_API_TOKEN, $auth_overrides[ Constants::SETTING_CF_API_TOKEN ] );
+
+				if ( ! $settings->is_overridden( Constants::SETTING_CF_EMAIL ) ) {
+					$settings->set( Constants::SETTING_CF_EMAIL, '' );
+				}
+
+				if ( ! $settings->is_overridden( Constants::SETTING_CF_API_KEY ) ) {
+					$settings->set( Constants::SETTING_CF_API_KEY, '' );
+				}
+			}
+
 			$settings->set( Constants::ZONE_ID_LIST, $zone_id_list );
+
+			if ( ! $settings->is_overridden( Constants::SETTING_CF_ZONE_ID ) ) {
+				$current_zone_id = (string) $settings->get( Constants::SETTING_CF_ZONE_ID, '' );
+
+				if ( '' !== $current_zone_id && ! in_array( $current_zone_id, array_values( $zone_id_list ), true ) ) {
+					$settings->set( Constants::SETTING_CF_ZONE_ID, '' );
+				}
+			}
 
 			// Final save
 			$settings->save();
 
 			$response_data = [
 				'auth_mode' => $auth_mode,
-				'settings'  => Settings_Store::get_instance()->get_all(),
+				'settings'  => $this->get_safe_settings_payload(),
+				'meta'      => $this->get_dashboard_state_payload(),
 				'message'   => $auth_mode === 'api_key'
 					? __( 'Cloudflare connected successfully via API Key.', 'wp-cloudflare-page-cache' )
 					: __( 'Cloudflare connected successfully via API Token.', 'wp-cloudflare-page-cache' ),
@@ -1044,15 +1254,33 @@ class Rest_Server implements Module_Interface {
 	 * @return WP_REST_Response
 	 */
 	public function cloudflare_disconnect( WP_REST_Request $request ) {
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
+		$error    = '';
+		$settings = Settings_Store::get_instance();
 
-		$error = '';
-		$sw_cloudflare_pagecache->get_cloudflare_handler()->disconnect( $error );
+		$override_check = $settings->split_overridden_settings(
+			array_fill_keys(
+				[
+					Constants::SETTING_CF_EMAIL,
+					Constants::SETTING_CF_API_KEY,
+					Constants::SETTING_CF_API_TOKEN,
+					Constants::SETTING_CF_DOMAIN_NAME,
+					Constants::ZONE_ID_LIST,
+					Constants::SETTING_CF_ZONE_ID,
+					Constants::RULESET_ID_CACHE,
+					Constants::RULE_ID_CACHE,
+					Constants::ENABLE_CACHE_RULE,
+				],
+				true
+			)
+		);
 
-		Settings_Store::get_instance()
+		if ( ! empty( $override_check['rejected'] ) ) {
+			return $this->message_response( $this->get_overridden_settings_message( $override_check['rejected'] ), 409 );
+		}
+
+		( new Cloudflare_Integration() )->disconnect( $error );
+
+		$settings
 			->set( Constants::SETTING_CF_EMAIL, '' )
 			->set( Constants::SETTING_CF_API_KEY, '' )
 			->set( Constants::SETTING_CF_API_TOKEN, '' )
@@ -1067,7 +1295,8 @@ class Rest_Server implements Module_Interface {
 		return $this->data_response(
 			[
 				'message'  => __( 'Disconnected from Cloudflare.', 'wp-cloudflare-page-cache' ),
-				'settings' => Settings_Store::get_instance()->get_all(),
+				'settings' => $this->get_safe_settings_payload(),
+				'meta'     => $this->get_dashboard_state_payload(),
 			]
 		);
 	}
@@ -1084,12 +1313,16 @@ class Rest_Server implements Module_Interface {
 		$data = json_decode( $data, true );
 
 		if ( ! is_array( $data ) || ! isset( $data['zone_id'] ) ) {
-			return $this->message_response( __( 'Invalid data format provided.', 'wp-cloudflare-page-cache' ), 400 );
+			return $this->message_response( I18n::get( 'invalidDataFormat' ), 400 );
 		}
 
 		$zone_id = $data['zone_id'];
 
 		$settings = Settings_Store::get_instance();
+
+		if ( $settings->is_overridden( Constants::SETTING_CF_ZONE_ID ) ) {
+			return $this->message_response( $this->get_overridden_settings_message( [ Constants::SETTING_CF_ZONE_ID ] ), 409 );
+		}
 
 		$is_token_auth = $settings->get( Constants::SETTING_AUTH_MODE ) === SWCFPC_AUTH_MODE_API_TOKEN;
 
@@ -1098,7 +1331,7 @@ class Rest_Server implements Module_Interface {
 			 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
 			 */
 			global $sw_cloudflare_pagecache;
-			$client = new Cloudflare_Client( $sw_cloudflare_pagecache );
+			$client = new Cloudflare_Client();
 
 			$missing_permissions = $client->verify_token_permissions( $zone_id );
 
@@ -1125,7 +1358,8 @@ class Rest_Server implements Module_Interface {
 		return $this->data_response(
 			[
 				'message'  => __( 'Successfully connected to Cloudflare.', 'wp-cloudflare-page-cache' ),
-				'settings' => $settings->get_all(),
+				'settings' => $this->get_safe_settings_payload(),
+				'meta'     => $this->get_dashboard_state_payload(),
 			]
 		);
 	}
@@ -1139,13 +1373,13 @@ class Rest_Server implements Module_Interface {
 	 * @return WP_REST_Response
 	 */
 	public function optimize_database( WP_REST_Request $request ) {
-		$data   = $request->get_body();
-		$data   = json_decode( $data, true );
-		$action = isset( $data['action'] ) ? $data['action'] : 'all';
+		$data                  = $request->get_body();
+		$data                  = json_decode( $data, true );
+		$action                = isset( $data['action'] ) ? $data['action'] : 'all';
+		$database_optimization = new Database_Optimization();
 
 		try {
-			$message               = '';
-			$database_optimization = new Database_Optimization();
+			$message = '';
 
 			switch ( $action ) {
 				case Constants::SETTING_POST_REVISION_INTERVAL:
@@ -1173,10 +1407,34 @@ class Rest_Server implements Module_Interface {
 					$message = $database_optimization->remove_all();
 			}
 
+			$database_optimization->clear_cleanup_counts_cache();
+
 			return $this->message_response( $message );
 		} catch ( \Exception $e ) {
 			return $this->message_response(
 				__( 'An error occurred while optimizing the database:', 'wp-cloudflare-page-cache' ) . ' ' . $e->getMessage(),
+				500
+			);
+		}
+	}
+
+	/**
+	 * Get database optimization preview counts.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function get_database_optimization_counts() {
+		try {
+			$database_optimization = new Database_Optimization();
+
+			return $this->data_response(
+				[
+					'counts' => $database_optimization->get_cleanup_counts(),
+				]
+			);
+		} catch ( \Exception $e ) {
+			return $this->message_response(
+				__( 'An error occurred while fetching database optimization counts:', 'wp-cloudflare-page-cache' ) . ' ' . $e->getMessage(),
 				500
 			);
 		}
@@ -1195,7 +1453,7 @@ class Rest_Server implements Module_Interface {
 		 */
 		global $sw_cloudflare_pagecache;
 
-		$client = new Cloudflare_Client( $sw_cloudflare_pagecache );
+		$client = new Cloudflare_Client();
 
 		$analytics = $client->get_analytics();
 
@@ -1224,7 +1482,7 @@ class Rest_Server implements Module_Interface {
 
 		$error = '';
 
-		$status = $sw_cloudflare_pagecache->get_cloudflare_handler()->reset_cf_rule( $error );
+		$status = ( new Cloudflare_Integration() )->reset_cf_rule( $error );
 
 		if ( ! empty( $error ) ) {
 			return $this->message_response( $error, 400 );
@@ -1251,7 +1509,7 @@ class Rest_Server implements Module_Interface {
 		$data = json_decode( $data, true );
 
 		if ( ! is_array( $data ) || ! isset( $data['key'] ) ) {
-			return $this->message_response( __( 'Invalid data format provided.', 'wp-cloudflare-page-cache' ), 400 );
+			return $this->message_response( I18n::get( 'invalidDataFormat' ), 400 );
 		}
 
 		$dismiss = Notices_Handler::dismiss( $data['key'] );
@@ -1276,7 +1534,7 @@ class Rest_Server implements Module_Interface {
 		$data = json_decode( $data, true );
 
 		if ( ! is_array( $data ) || ! isset( $data['assets_data'] ) ) {
-			return $this->message_response( __( 'Invalid data format provided.', 'wp-cloudflare-page-cache' ), 400 );
+			return $this->message_response( I18n::get( 'invalidDataFormat' ), 400 );
 		}
 
 		$assets_data = $data['assets_data'];
@@ -1295,12 +1553,7 @@ class Rest_Server implements Module_Interface {
 			}
 		}
 
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
-		$sw_cloudflare_pagecache->get_cache_controller()->purge_all( false, false );
+		Cache_Controller::purge_all( false, false );
 
 		$message = __( 'No changes to save.', 'wp-cloudflare-page-cache' );
 
@@ -1340,12 +1593,13 @@ class Rest_Server implements Module_Interface {
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function message_response( string $message, int $status_code = 200 ): WP_REST_Response {
+	final protected function message_response( string $message, int $status_code = 200 ): WP_REST_Response {
 		return new WP_REST_Response(
 			[
 				'success' => $status_code === 200,
 				'message' => $message,
-			]
+			],
+			$status_code
 		);
 	}
 
@@ -1357,7 +1611,7 @@ class Rest_Server implements Module_Interface {
 	 *
 	 * @return WP_REST_Response
 	 */
-	private function data_response( array $data = [], int $status_code = 200 ): WP_REST_Response {
+	final protected function data_response( array $data = [], int $status_code = 200 ): WP_REST_Response {
 		return new WP_REST_Response(
 			[
 				'success' => $status_code === 200,
@@ -1366,5 +1620,82 @@ class Rest_Server implements Module_Interface {
 			],
 			$status_code
 		);
+	}
+
+	/**
+	 * Build a frontend-safe settings payload that does not expose sensitive values.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function get_safe_settings_payload(): array {
+		$settings_manager = new Settings_Manager();
+		$settings         = Settings_Store::get_instance()->get_all();
+
+		foreach ( array_keys( $settings ) as $key ) {
+			if ( $settings_manager->is_encrypted_field( $key ) ) {
+				$settings[ $key ] = '';
+			}
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Build a lightweight runtime state payload for the dashboard app.
+	 *
+	 * @return array<string, bool>
+	 */
+	private function get_dashboard_state_payload(): array {
+		$settings = Settings_Store::get_instance();
+
+		return [
+			'cloudflareConnected'    => $settings->is_cloudflare_connected(),
+			'invalidEncryptionState' => $settings->should_show_invalid_encryption_notice(),
+		];
+	}
+
+	/**
+	 * Build a consistent message for overridden settings.
+	 *
+	 * @param list<string> $keys Rejected keys.
+	 *
+	 * @return string
+	 */
+	private function get_overridden_settings_message( array $keys ): string {
+		return sprintf(
+			/* translators: %s: comma-separated settings keys. */
+			__( 'These settings are managed by wp-config.php and cannot be changed here: %s', 'wp-cloudflare-page-cache' ),
+			implode( ', ', $keys )
+		);
+	}
+
+	/**
+	 * Build the settings update success message.
+	 *
+	 * @param list<string> $rejected Rejected keys.
+	 *
+	 * @return string
+	 */
+	private function get_settings_update_message( array $rejected ): string {
+		if ( empty( $rejected ) ) {
+			return __( 'Settings updated successfully.', 'wp-cloudflare-page-cache' );
+		}
+
+		return __( 'Settings updated successfully. Some wp-config.php managed settings were skipped.', 'wp-cloudflare-page-cache' );
+	}
+
+	/**
+	 * Build the config import success message.
+	 *
+	 * @param list<string> $rejected Rejected keys.
+	 *
+	 * @return string
+	 */
+	private function get_import_settings_message( array $rejected ): string {
+		if ( empty( $rejected ) ) {
+			return __( 'Settings imported successfully.', 'wp-cloudflare-page-cache' );
+		}
+
+		return __( 'Settings imported successfully. Some wp-config.php managed settings were skipped.', 'wp-cloudflare-page-cache' );
 	}
 }

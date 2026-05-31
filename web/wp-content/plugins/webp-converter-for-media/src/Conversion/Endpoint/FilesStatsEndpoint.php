@@ -14,15 +14,9 @@ use WebpConverter\Settings\Option\OutputFormatsOption;
  */
 class FilesStatsEndpoint extends EndpointAbstract {
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
 	public function __construct( PluginData $plugin_data, FormatFactory $format_factory ) {
 		$this->plugin_data    = $plugin_data;

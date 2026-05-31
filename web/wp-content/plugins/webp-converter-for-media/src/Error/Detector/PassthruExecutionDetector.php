@@ -3,6 +3,7 @@
 namespace WebpConverter\Error\Detector;
 
 use WebpConverter\Conversion\Format\FormatFactory;
+use WebpConverter\Error\Notice\NoticeInterface;
 use WebpConverter\Error\Notice\PassthruExecutionNotice;
 use WebpConverter\Loader\LoaderAbstract;
 use WebpConverter\Loader\PassthruLoader;
@@ -15,20 +16,11 @@ use WebpConverter\Settings\Option\LoaderTypeOption;
  */
 class PassthruExecutionDetector implements DetectorInterface {
 
-	/**
-	 * @var PluginInfo
-	 */
-	private $plugin_info;
+	private PluginInfo $plugin_info;
 
-	/**
-	 * @var PluginData
-	 */
-	private $plugin_data;
+	private PluginData $plugin_data;
 
-	/**
-	 * @var FormatFactory
-	 */
-	private $format_factory;
+	private FormatFactory $format_factory;
 
 	public function __construct( PluginInfo $plugin_info, PluginData $plugin_data, FormatFactory $format_factory ) {
 		$this->plugin_info    = $plugin_info;
@@ -36,10 +28,7 @@ class PassthruExecutionDetector implements DetectorInterface {
 		$this->format_factory = $format_factory;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_error() {
+	public function get_error(): ?NoticeInterface {
 		$plugin_settings = $this->plugin_data->get_plugin_settings();
 		if ( $plugin_settings[ LoaderTypeOption::OPTION_NAME ] !== PassthruLoader::LOADER_TYPE ) {
 			return null;
@@ -81,7 +70,6 @@ class PassthruExecutionDetector implements DetectorInterface {
 		curl_setopt( $ch, CURLOPT_TIMEOUT, 3 );
 		curl_exec( $ch );
 		$code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
 
 		return ( $code === 200 );
 	}

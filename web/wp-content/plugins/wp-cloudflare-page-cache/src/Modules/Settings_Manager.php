@@ -4,8 +4,11 @@ namespace SPC\Modules;
 
 use SPC\Constants;
 use SPC\Modules\Database_Optimization;
+use SPC\Services\Cloudflare_Integration;
 use SPC\Services\Settings_Store;
 use SPC\Utils\Helpers;
+use SPC\Utils\Htaccess_Writer;
+use SPC\Utils\Logger;
 
 class Settings_Manager implements Module_Interface {
 
@@ -70,9 +73,10 @@ class Settings_Manager implements Module_Interface {
 			'default'    => 0,
 		],
 		Constants::SETTING_LAZY_LOAD_BG_SELECTORS       => [
-			'type'       => self::SETTING_TYPE_TEXTAREA,
-			'bust_cache' => true,
-			'default'    => [],
+			'type'              => self::SETTING_TYPE_TEXTAREA,
+			'bust_cache'        => true,
+			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_background_selectors',
+			'default'           => [],
 		],
 		Constants::SETTING_AUTO_PURGE                   => [
 			'type'    => self::SETTING_TYPE_BOOLEAN,
@@ -111,10 +115,11 @@ class Settings_Manager implements Module_Interface {
 			'type'    => self::SETTING_TYPE_TEXT,
 			'default' => '',
 		],
-		Constants::SETTING_PREFETCH_ON_HOVER            => [
-			'type'       => self::SETTING_TYPE_BOOLEAN,
-			'bust_cache' => true,
-			'default'    => 0,
+		Constants::SETTING_PREFETCH_URLS_MODE           => [
+			'type'              => self::SETTING_TYPE_TEXT,
+			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_prefetch_urls_mode',
+			'bust_cache'        => true,
+			'default'           => Speculative_Loading::PREFETCH_MODE_OFF,
 		],
 		Constants::SETTING_REMOVE_CACHE_BUSTER          => [
 			'type'    => self::SETTING_TYPE_BOOLEAN,
@@ -180,7 +185,22 @@ class Settings_Manager implements Module_Interface {
 			'bust_cache' => true,
 			'default'    => 0,
 		],
+		Constants::SETTING_STALE_WHILE_REVALIDATE       => [
+			'type'       => self::SETTING_TYPE_BOOLEAN,
+			'bust_cache' => true,
+			'default'    => 0,
+		],
+		Constants::SETTING_STALE_WHILE_REVALIDATE_TTL   => [
+			'type'       => self::SETTING_TYPE_INTEGER,
+			'bust_cache' => true,
+			'default'    => 60,
+		],
 		Constants::SETTING_FALLBACK_CACHE_SAVE_HEADERS  => [
+			'type'       => self::SETTING_TYPE_BOOLEAN,
+			'bust_cache' => true,
+			'default'    => 0,
+		],
+		Constants::SETTING_MINIFY_HTML                  => [
 			'type'       => self::SETTING_TYPE_BOOLEAN,
 			'bust_cache' => true,
 			'default'    => 0,
@@ -316,7 +336,7 @@ class Settings_Manager implements Module_Interface {
 		],
 		Constants::SETTING_LOG_VERBOSITY                => [
 			'type'              => self::SETTING_TYPE_INTEGER,
-			'default'           => SWCFPC_LOGS_STANDARD_VERBOSITY,
+			'default'           => Logger::VERBOSITY_STANDARD,
 			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_log_verbosity',
 		],
 		Constants::SETTING_OBJECT_CACHE_PURGE_ON_FLUSH  => [
@@ -335,10 +355,6 @@ class Settings_Manager implements Module_Interface {
 			'type'    => self::SETTING_TYPE_BOOLEAN,
 			'default' => 0,
 		],
-		Constants::SETTING_DISABLE_SINGLE_METABOX       => [
-			'type'    => self::SETTING_TYPE_BOOLEAN,
-			'default' => 1,
-		],
 		Constants::SETTING_SEO_REDIRECT                 => [
 			'type'    => self::SETTING_TYPE_BOOLEAN,
 			'default' => 0,
@@ -347,14 +363,37 @@ class Settings_Manager implements Module_Interface {
 			'type'    => self::SETTING_TYPE_ARRAY,
 			'default' => [],
 		],
-		Constants::SETTING_PREFETCH_URLS_VIEWPORT       => [
-			'type'    => self::SETTING_TYPE_BOOLEAN,
-			'default' => 0,
+		Constants::SETTING_HEARTBEAT_ADMIN              => [
+			'type'              => self::SETTING_TYPE_TEXT,
+			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_heartbeat_mode',
+			'default'           => 'default',
+		],
+		Constants::SETTING_HEARTBEAT_EDITOR             => [
+			'type'              => self::SETTING_TYPE_TEXT,
+			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_heartbeat_mode',
+			'default'           => 'default',
+		],
+		Constants::SETTING_HEARTBEAT_FRONTEND           => [
+			'type'              => self::SETTING_TYPE_TEXT,
+			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_heartbeat_mode',
+			'default'           => 'default',
+		],
+		Constants::SETTING_DNS_PREFETCH_DOMAINS         => [
+			'type'              => self::SETTING_TYPE_TEXTAREA,
+			'bust_cache'        => true,
+			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_prefetch_domains',
+			'default'           => [],
+		],
+		Constants::SETTING_PRECONNECT_DOMAINS           => [
+			'type'              => self::SETTING_TYPE_TEXTAREA,
+			'bust_cache'        => true,
+			'sanitize_callback' => 'SPC\Utils\Sanitization::sanitize_prefetch_domains',
+			'default'           => [],
 		],
 		Constants::SETTING_AUTH_MODE                    => [
 			'type'       => self::SETTING_TYPE_INTEGER,
 			'bust_cache' => true,
-			'default'    => SWCFPC_AUTH_MODE_API_KEY,
+			'default'    => SWCFPC_AUTH_MODE_API_TOKEN,
 		],
 		Constants::SETTING_CF_EMAIL                     => [
 			'type'       => self::SETTING_TYPE_TEXT,
@@ -365,11 +404,13 @@ class Settings_Manager implements Module_Interface {
 			'type'       => self::SETTING_TYPE_TEXT,
 			'bust_cache' => true,
 			'default'    => '',
+			'encrypted'  => true,
 		],
 		Constants::SETTING_CF_API_TOKEN                 => [
 			'type'       => self::SETTING_TYPE_TEXT,
 			'bust_cache' => true,
 			'default'    => '',
+			'encrypted'  => true,
 		],
 		Constants::SETTING_CF_DOMAIN_NAME               => [
 			'type'       => self::SETTING_TYPE_TEXT,
@@ -455,7 +496,7 @@ class Settings_Manager implements Module_Interface {
 		],
 		Constants::SETTING_OPTIMIZE_GOOGLE_FONTS        => [
 			'type'    => self::SETTING_TYPE_BOOLEAN,
-			'default' => 0,
+			'default' => 1,
 		],
 		Constants::SETTING_LOCAL_GOOGLE_FONTS           => [
 			'type'    => self::SETTING_TYPE_BOOLEAN,
@@ -473,7 +514,7 @@ class Settings_Manager implements Module_Interface {
 		],
 	];
 
-	private const ALLOWED_FIELD_TYPES = [ 'type', 'bust_cache', 'default', 'sync_rules' ];
+	private const ALLOWED_FIELD_TYPES = [ 'type', 'bust_cache', 'default', 'sync_rules', 'encrypted' ];
 
 	/**
 	 * Initialize the settings manager.
@@ -489,14 +530,9 @@ class Settings_Manager implements Module_Interface {
 	 *
 	 * @param array{key: string, value: mixed} $settings_data An associative array of settings data.
 	 *
-	 * @return void
+	 * @return array{updated:list<string>, rejected:list<string>}
 	 */
-	public function update_settings( array $settings_data ) {
-		/**
-		 * @var \SW_CLOUDFLARE_PAGECACHE $sw_cloudflare_pagecache
-		 */
-		global $sw_cloudflare_pagecache;
-
+	public function update_settings( array $settings_data, bool $reject_overridden = false ) {
 		$fields_to_update = array_filter(
 			$this->get_fields(),
 			function ( $args, $key ) use ( $settings_data ) {
@@ -506,52 +542,41 @@ class Settings_Manager implements Module_Interface {
 		);
 
 		if ( empty( $fields_to_update ) ) {
-			return;
+			return [
+				'updated'  => [],
+				'rejected' => [],
+			];
 		}
 
 		$settings = Settings_Store::get_instance();
+
+		$rejected = [];
 
 		foreach ( $fields_to_update as $key => $args ) {
 			if ( ! isset( $settings_data[ $key ] ) ) {
 				continue;
 			}
 
-			$value = $settings_data[ $key ];
+			$value = $this->sanitize_setting_value( $key, $settings_data[ $key ], $settings_data );
 
-			if ( isset( $args['sanitize_callback'] ) ) {
-				$value = call_user_func( $args['sanitize_callback'], $value, $settings_data );
-			}
-
-			if ( ! isset( $args['type'] ) ) {
+			if ( ! array_key_exists( 'type', $args ) ) {
 				continue;
 			}
 
-			switch ( $args['type'] ) {
-				case self::SETTING_TYPE_BOOLEAN:
-				case self::SETTING_TYPE_INTEGER:
-					$settings->set( $key, (int) $value );
-					break;
+			if ( $reject_overridden && $settings->is_overridden( $key ) ) {
+				if ( $this->is_unchanged_overridden_setting( $key, $value, $settings ) ) {
+					continue;
+				}
 
-				case self::SETTING_TYPE_TEXTAREA:
-					$value = array_values( array_filter( array_map( 'sanitize_text_field', array_map( 'trim', explode( "\n", (string) $value ) ) ) ) );
-					$settings->set( $key, count( $value ) > 0 ? $value : [] );
-					break;
-
-				case self::SETTING_TYPE_TEXT:
-					$settings->set( $key, sanitize_text_field( $value ) );
-					break;
-
-				case self::SETTING_TYPE_ARRAY:
-					if ( is_array( $value ) ) {
-						$value = array_map( 'sanitize_text_field', array_map( 'trim', $value ) );
-					} else {
-						$value = [];
-					}
-					$settings->set( $key, $value );
-					break;
-				default:
-					break;
+				$rejected[] = $key;
+				continue;
 			}
+
+			if ( $this->should_preserve_encrypted_setting( $key, $value, $settings ) ) {
+				continue;
+			}
+
+			$settings->set( $key, $value );
 		}
 
 		$changed = array_keys( $settings->get_changed_settings() );
@@ -565,12 +590,136 @@ class Settings_Manager implements Module_Interface {
 		$update_rules_fields = array_keys( $this->get_fields( [ 'sync_rules' => true ] ) );
 
 		if ( count( array_intersect( $changed, $update_rules_fields ) ) > 0 ) {
-			$sw_cloudflare_pagecache->get_cloudflare_handler()->update_cache_rule_if_diff();
+			( new Cloudflare_Integration() )->update_cache_rule_if_diff();
 		}
 
 		if ( count( array_intersect( $changed, $bust_cache_fields ) ) > 0 ) {
-			$sw_cloudflare_pagecache->get_cache_controller()->purge_all( false, false, true );
+			Cache_Controller::purge_all( false, false, true );
 		}
+
+		return [
+			'updated'  => array_values( array_diff( $changed, $rejected ) ),
+			'rejected' => $rejected,
+		];
+	}
+
+	/**
+	 * Get a single field configuration.
+	 *
+	 * @param string $key Setting key.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	public function get_field( string $key ) {
+		$fields = $this->get_fields();
+
+		return $fields[ $key ] ?? null;
+	}
+
+	/**
+	 * Check if a field should be stored encrypted.
+	 *
+	 * @param string $key Setting key.
+	 *
+	 * @return bool
+	 */
+	public function is_encrypted_field( string $key ): bool {
+		$field = $this->get_field( $key );
+
+		return ! empty( $field['encrypted'] );
+	}
+
+	/**
+	 * Sanitize a setting value using the field metadata.
+	 *
+	 * @param string $key Setting key.
+	 * @param mixed  $value Raw value.
+	 * @param array<string, mixed> $all_settings All incoming settings.
+	 *
+	 * @return mixed
+	 */
+	public function sanitize_setting_value( string $key, $value, array $all_settings = [] ) {
+		$args = $this->get_field( $key );
+
+		if ( empty( $args ) ) {
+			return $value;
+		}
+
+		if ( isset( $args['sanitize_callback'] ) ) {
+			$value = call_user_func( $args['sanitize_callback'], $value, $all_settings );
+		}
+
+		if ( ! isset( $args['type'] ) ) {
+			return $value;
+		}
+
+		switch ( $args['type'] ) {
+			case self::SETTING_TYPE_BOOLEAN:
+			case self::SETTING_TYPE_INTEGER:
+				return (int) $value;
+
+			case self::SETTING_TYPE_TEXTAREA:
+				if ( is_array( $value ) ) {
+					$lines = $value;
+				} else {
+					$lines = explode( "\n", (string) $value );
+				}
+
+				$lines = array_values( array_filter( array_map( 'sanitize_text_field', array_map( 'trim', $lines ) ) ) );
+
+				return count( $lines ) > 0 ? $lines : [];
+
+			case self::SETTING_TYPE_TEXT:
+				return sanitize_text_field( (string) $value );
+
+			case self::SETTING_TYPE_ARRAY:
+				if ( is_array( $value ) ) {
+					return array_map( 'sanitize_text_field', array_map( 'trim', $value ) );
+				}
+
+				return [];
+
+			default:
+				return $value;
+		}
+	}
+
+	/**
+	 * Keep stored encrypted secrets when generic settings updates submit masked empty values.
+	 *
+	 * @param string         $key Setting key.
+	 * @param mixed          $value Sanitized incoming value.
+	 * @param Settings_Store $settings Settings store.
+	 *
+	 * @return bool
+	 */
+	private function should_preserve_encrypted_setting( string $key, $value, Settings_Store $settings ): bool {
+		if ( ! $this->is_encrypted_field( $key ) ) {
+			return false;
+		}
+
+		if ( '' !== $value ) {
+			return false;
+		}
+
+		return '' !== (string) $settings->get( $key, '' ) || $settings->has_stored_encrypted_value( $key );
+	}
+
+	/**
+	 * Check whether an overridden setting was submitted with the same effective value.
+	 *
+	 * @param string         $key      Setting key.
+	 * @param mixed          $value    Sanitized incoming value.
+	 * @param Settings_Store $settings Settings store.
+	 *
+	 * @return bool
+	 */
+	private function is_unchanged_overridden_setting( string $key, $value, Settings_Store $settings ): bool {
+		if ( $this->is_encrypted_field( $key ) && '' === $value && '' !== (string) $settings->get( $key, '' ) ) {
+			return true;
+		}
+
+		return $settings->get( $key ) === $value;
 	}
 
 	/**
@@ -631,17 +780,15 @@ class Settings_Manager implements Module_Interface {
 
 		$error = '';
 
-		$logger = $sw_cloudflare_pagecache->get_logger();
-
-		$logger->set_verbosity( $settings->get( Constants::SETTING_LOG_VERBOSITY ) );
+		Logger::set_verbosity( (int) $settings->get( Constants::SETTING_LOG_VERBOSITY ) );
 
 		if ( $settings->get( Constants::SETTING_LOG_ENABLED ) ) {
-			$logger->enable_logging();
+			Logger::enable();
 		} else {
-			$logger->disable_logging();
+			Logger::disable();
 		}
 
-		$cloudflare_handler = $sw_cloudflare_pagecache->get_cloudflare_handler();
+		$cloudflare_handler = new Cloudflare_Integration();
 
 		// Not so sure about this:
 		if ( $settings->get( Constants::SETTING_BYPASS_BACKEND_WITH_RULE ) ) {
@@ -661,7 +808,7 @@ class Settings_Manager implements Module_Interface {
 			$cloudflare_handler->delete_legacy_page_rules( $error );
 		}
 
-		$fallback_cache_handler = $sw_cloudflare_pagecache->get_fallback_cache_handler();
+		$fallback_cache_handler = $sw_cloudflare_pagecache->get_core_loader()->fallback_cache();
 
 		if (
 			! $settings->get( Constants::SETTING_ENABLE_FALLBACK_CACHE ) ||
@@ -680,9 +827,7 @@ class Settings_Manager implements Module_Interface {
 
 		}
 
-		$cache_controller = $sw_cloudflare_pagecache->get_cache_controller();
-
-		$cache_controller->write_htaccess( $error );
+		Htaccess_Writer::write( $error );
 	}
 
 	/**

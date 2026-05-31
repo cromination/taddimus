@@ -83,6 +83,7 @@ const LINKS = {
   YOUTUBE_PLAYLIST: 'https://youtube.com/playlist?list=PLmRasCVwuvpSJuwaV7kDiuXhxl08zbZr5&si=jeVnA7W6rNnGm7vL',
   DIRECT_SUPPORT: window.SPCDash?.directSupportURL,
   MAIN_PAGE: window.SPCDash?.mainPageURL,
+  CLOUDFLARE_SETTINGS: window.SPCDash?.cloudflareSettingsURL,
   CF_SIGNUP: 'http://rviv.ly/spccfaccountsignup',
   UPSELL: window.SPCDash?.upsellURL,
   PLUGINS_PAGE: window.SPCDash?.pluginsPageURL
